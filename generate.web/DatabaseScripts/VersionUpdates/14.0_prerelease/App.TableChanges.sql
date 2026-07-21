@@ -25,6 +25,29 @@ BEGIN
 	) ON [PRIMARY]
 END
 
+IF OBJECT_ID('App.EtlMapFileSpec', 'U') IS NULL
+BEGIN
+	-- Associates a map with one or more EDFacts file specs, identified either by spec number
+	-- (e.g. FS002) or by Fact Type (rds.DimFactTypes). DimFactTypeId is intentionally not a hard
+	-- foreign key because RDS dimension tables can be reloaded by data migrations; FactTypeCode is
+	-- denormalized so the association stays meaningful across reloads.
+	CREATE TABLE [App].[EtlMapFileSpec] (
+		[EtlMapFileSpecId] [int] IDENTITY(1,1) NOT NULL,
+		[EtlMapId] [int] NOT NULL,
+		[FileSpecNumber] [varchar](20) NULL,
+		[DimFactTypeId] [int] NULL,
+		[FactTypeCode] [varchar](100) NULL,
+		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_EtlMapFileSpec_CreatedDate] DEFAULT (GETDATE()),
+		CONSTRAINT [PK_EtlMapFileSpec] PRIMARY KEY CLUSTERED ([EtlMapFileSpecId] ASC)
+			WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY],
+		CONSTRAINT [FK_EtlMapFileSpec_EtlMap] FOREIGN KEY ([EtlMapId])
+			REFERENCES [App].[EtlMap] ([EtlMapId]) ON DELETE CASCADE
+	) ON [PRIMARY]
+
+	CREATE NONCLUSTERED INDEX [IX_EtlMapFileSpec_EtlMapId]
+		ON [App].[EtlMapFileSpec] ([EtlMapId] ASC)
+END
+
 IF OBJECT_ID('App.EtlSourceElementMapping', 'U') IS NULL
 BEGIN
 	CREATE TABLE [App].[EtlSourceElementMapping] (

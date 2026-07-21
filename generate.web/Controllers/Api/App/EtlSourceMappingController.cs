@@ -34,6 +34,60 @@ namespace generate.web.Controllers.Api.App
             return Json(results);
         }
 
+        [HttpPost("maps")]
+        public IActionResult CreateMap([FromBody] EtlMapSaveDto save)
+        {
+            if (save == null || string.IsNullOrWhiteSpace(save.MapName))
+            {
+                return BadRequest("A map name is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(save.ModifiedBy))
+            {
+                save.ModifiedBy = User?.Identity?.Name;
+            }
+
+            var result = _etlSourceMappingService.CreateMap(save);
+            return Json(result);
+        }
+
+        [HttpPut("maps/{id}")]
+        public IActionResult UpdateMap(int id, [FromBody] EtlMapSaveDto save)
+        {
+            if (save == null)
+            {
+                return BadRequest("No update was provided.");
+            }
+
+            if (string.IsNullOrWhiteSpace(save.ModifiedBy))
+            {
+                save.ModifiedBy = User?.Identity?.Name;
+            }
+
+            var result = _etlSourceMappingService.UpdateMap(id, save);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Json(result);
+        }
+
+        [HttpGet("facttypes")]
+        public JsonResult GetFactTypes()
+        {
+            var results = _etlSourceMappingService.GetFactTypes();
+            return Json(results);
+        }
+
+        [HttpGet("filespecnumbers")]
+        public JsonResult GetFileSpecNumbers()
+        {
+            var results = _etlSourceMappingService.GetFileSpecNumbers();
+            return Json(results);
+        }
+
         [HttpDelete("maps/{id}")]
         public IActionResult DeleteMap(int id)
         {

@@ -9,6 +9,8 @@ import {
     CedsElementMatch,
     CedsOptionSetValue,
     EtlMap,
+    EtlMapSave,
+    FactType,
     EtlSourceElementMapping,
     EtlSourceElementMappingResult,
     EtlSourceElementMappingUpdate,
@@ -41,6 +43,42 @@ export class EtlSourceMappingService extends BaseService {
             .pipe(
                 map(resp => resp.body),
                 tap(() => this.log('fetched etl maps')),
+                catchError(this.handleError)
+            );
+    }
+
+    createMap(save: EtlMapSave): Observable<EtlMap> {
+        return this.http.post<EtlMap>(this._apiUrl + '/maps', save, { observe: 'response' })
+            .pipe(
+                map(resp => resp.body),
+                tap(() => this.log('created etl map')),
+                catchError(this.handleError)
+            );
+    }
+
+    updateMap(etlMapId: number, save: EtlMapSave): Observable<EtlMap> {
+        return this.http.put<EtlMap>(this._apiUrl + '/maps/' + etlMapId, save, { observe: 'response' })
+            .pipe(
+                map(resp => resp.body),
+                tap(() => this.log('updated etl map')),
+                catchError(this.handleError)
+            );
+    }
+
+    getFactTypes(): Observable<FactType[]> {
+        return this.http.get<FactType[]>(this._apiUrl + '/facttypes', { observe: 'response' })
+            .pipe(
+                map(resp => resp.body),
+                tap(() => this.log('fetched fact types')),
+                catchError(this.handleError)
+            );
+    }
+
+    getFileSpecNumbers(): Observable<string[]> {
+        return this.http.get<string[]>(this._apiUrl + '/filespecnumbers', { observe: 'response' })
+            .pipe(
+                map(resp => resp.body),
+                tap(() => this.log('fetched file spec numbers')),
                 catchError(this.handleError)
             );
     }

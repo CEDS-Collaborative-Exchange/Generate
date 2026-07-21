@@ -17,9 +17,29 @@ namespace generate.core.Interfaces.Services
         List<EtlSourceElementMappingResultDto> UploadDataDictionary(EtlSourceMappingUploadDto upload);
 
         /// <summary>
-        /// All maps with audit information and element counts, newest first.
+        /// All maps with audit information, element counts, and file spec associations, newest first.
         /// </summary>
         List<EtlMapDto> GetMaps();
+
+        /// <summary>
+        /// Creates a map (name + EDFacts file spec associations) without an upload.
+        /// </summary>
+        EtlMapDto CreateMap(EtlMapSaveDto save);
+
+        /// <summary>
+        /// Updates a map's name and replaces its EDFacts file spec associations.
+        /// </summary>
+        EtlMapDto UpdateMap(int etlMapId, EtlMapSaveDto save);
+
+        /// <summary>
+        /// Fact Types from rds.DimFactTypes (for the map file spec picker).
+        /// </summary>
+        List<FactTypeDto> GetFactTypes();
+
+        /// <summary>
+        /// Distinct EDFacts file spec numbers known to App.EtlMetadata (for the picker).
+        /// </summary>
+        List<string> GetFileSpecNumbers();
 
         /// <summary>
         /// Element mappings (with option set value mappings), optionally filtered to one map.

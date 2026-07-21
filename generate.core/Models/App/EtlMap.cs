@@ -18,5 +18,6 @@ namespace generate.core.Models.App
         public string ModifiedBy { get; set; }
 
         public List<EtlSourceElementMapping> EtlSourceElementMappings { get; set; }
+        public List<EtlMapFileSpec> EtlMapFileSpecs { get; set; }
     }
 }

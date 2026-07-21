@@ -669,6 +669,29 @@ namespace generate.infrastructure.Contexts
                    .HasMaxLength(260);
             });
 
+            // EtlMapFileSpec (CIID-9029 - map to EDFacts file spec / fact type associations)
+
+            modelBuilder.Entity<EtlMapFileSpec>(entity =>
+            {
+                entity.ToTable("EtlMapFileSpec");
+
+                entity.HasKey(x => x.EtlMapFileSpecId);
+
+                entity
+                   .Property(x => x.FileSpecNumber)
+                   .HasMaxLength(20);
+
+                entity
+                   .Property(x => x.FactTypeCode)
+                   .HasMaxLength(100);
+
+                entity
+                    .HasOne(pt => pt.EtlMap)
+                    .WithMany(t => t.EtlMapFileSpecs)
+                    .HasForeignKey(pt => pt.EtlMapId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             // EtlSourceElementMapping (CIID-9031 - left side of the ETL Checklist)
 
             modelBuilder.Entity<EtlSourceElementMapping>(entity =>
@@ -1388,6 +1411,7 @@ namespace generate.infrastructure.Contexts
         public DbSet<CedsConnection_CedsElement> CedsConnection_CedsElements { get; set; }
         public DbSet<EtlMetadata> EtlMetadata { get; set; }
         public DbSet<EtlMap> EtlMaps { get; set; }
+        public DbSet<EtlMapFileSpec> EtlMapFileSpecs { get; set; }
         public DbSet<EtlSourceElementMapping> EtlSourceElementMappings { get; set; }
         public DbSet<EtlSourceOptionSetMapping> EtlSourceOptionSetMappings { get; set; }
 

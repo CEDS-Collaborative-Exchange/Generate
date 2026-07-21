@@ -8,10 +8,42 @@ namespace generate.core.Dtos.App
     /// </summary>
     public class EtlSourceMappingUploadDto
     {
+        /// <summary>When set, elements are appended to this existing map instead of creating one.</summary>
+        public int? EtlMapId { get; set; }
         public string MapName { get; set; }
         public string UploadFileName { get; set; }
         public string UploadedBy { get; set; }
         public List<EtlSourceElementUploadDto> Elements { get; set; }
+    }
+
+    /// <summary>
+    /// One EDFacts file spec association: by spec number (e.g. FS002) or by Fact Type.
+    /// </summary>
+    public class EtlMapFileSpecDto
+    {
+        public string FileSpecNumber { get; set; }
+        public int? DimFactTypeId { get; set; }
+        public string FactTypeCode { get; set; }
+    }
+
+    /// <summary>
+    /// Create/edit payload for a map: name plus its EDFacts file spec associations.
+    /// </summary>
+    public class EtlMapSaveDto
+    {
+        public string MapName { get; set; }
+        public List<EtlMapFileSpecDto> FileSpecs { get; set; }
+        public string ModifiedBy { get; set; }
+    }
+
+    /// <summary>
+    /// A Fact Type from rds.DimFactTypes (for the map file spec picker).
+    /// </summary>
+    public class FactTypeDto
+    {
+        public int DimFactTypeId { get; set; }
+        public string FactTypeCode { get; set; }
+        public string FactTypeDescription { get; set; }
     }
 
     /// <summary>
@@ -28,6 +60,7 @@ namespace generate.core.Dtos.App
         public string ModifiedBy { get; set; }
         public int ElementCount { get; set; }
         public int MappedElementCount { get; set; }
+        public List<EtlMapFileSpecDto> FileSpecs { get; set; }
     }
 
     /// <summary>

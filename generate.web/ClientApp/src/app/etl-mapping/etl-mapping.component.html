@@ -58,16 +58,59 @@
   <div *ngIf="uploadError" class="etl-mapping__message etl-mapping__message--error">{{ uploadError }}</div>
   <div *ngIf="statusMessage" class="etl-mapping__message">{{ statusMessage }}</div>
 
+  <!-- Map add/edit editor -->
+  <div *ngIf="editingMapId !== null" class="etl-mapping__editor">
+    <h3>{{ editingMapId === 0 ? 'New Map' : 'Edit Map' }}</h3>
+    <div class="etl-mapping__editor-row">
+      <label>Map name</label>
+      <input type="text" [(ngModel)]="editorName" placeholder="e.g. NJ AllTests Assessment" />
+    </div>
+    <div class="etl-mapping__editor-row">
+      <label>EDFacts file specs</label>
+      <span class="etl-mapping__chip" *ngFor="let spec of editorSpecs; let i = index">
+        {{ specLabel(spec) }}
+        <a href="javascript:void(0)" (click)="removeEditorSpec(i)" title="Remove">&times;</a>
+      </span>
+      <span *ngIf="editorSpecs.length === 0" class="etl-mapping__subtext">None yet &mdash; add by spec number or fact type below.</span>
+    </div>
+    <div class="etl-mapping__editor-row">
+      <label>Add by spec number</label>
+      <input type="text" list="etl-mapping-filespecs" [(ngModel)]="editorSpecNumber" placeholder="FS002" (keyup.enter)="addEditorSpecNumber()" />
+      <datalist id="etl-mapping-filespecs">
+        <option *ngFor="let specNumber of fileSpecNumbers" [value]="specNumber"></option>
+      </datalist>
+      <button type="button" class="mdl-button mdl-js-button" (click)="addEditorSpecNumber()">Add Spec</button>
+
+      <label>Add by fact type</label>
+      <select [(ngModel)]="editorFactTypeId">
+        <option [ngValue]="null">&mdash; select fact type &mdash;</option>
+        <option *ngFor="let factType of factTypes" [ngValue]="factType.dimFactTypeId">{{ factType.factTypeCode }}</option>
+      </select>
+      <button type="button" class="mdl-button mdl-js-button" (click)="addEditorFactType()">Add Fact Type</button>
+    </div>
+    <div class="etl-mapping__editor-row">
+      <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)="saveMapEditor()">Save Map</button>
+      <button type="button" class="mdl-button mdl-js-button" (click)="cancelMapEditor()">Cancel</button>
+    </div>
+  </div>
+
   <!-- Maps list -->
   <div *ngIf="!selectedMap">
+    <div class="etl-mapping__list-toolbar">
+      <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)="newMap()">
+        New Map
+      </button>
+    </div>
+
     <div *ngIf="!isLoading && maps.length === 0" class="etl-mapping__empty">
-      No data dictionary has been uploaded yet.
+      No maps yet. Create a map or upload a data dictionary to get started.
     </div>
 
     <table *ngIf="maps.length > 0" class="etl-mapping__table">
       <thead>
         <tr>
           <th>Map Name</th>
+          <th>EDFacts File Specs</th>
           <th>Uploaded File</th>
           <th>Elements</th>
           <th>Created</th>
@@ -78,6 +121,10 @@
       <tbody>
         <tr *ngFor="let map of maps">
           <td><a href="javascript:void(0)" (click)="openMap(map)"><strong>{{ map.mapName }}</strong></a></td>
+          <td>
+            <span *ngIf="map.fileSpecs && map.fileSpecs.length > 0">{{ specsSummary(map) }}</span>
+            <span *ngIf="!map.fileSpecs || map.fileSpecs.length === 0" class="etl-mapping__subtext">&mdash;</span>
+          </td>
           <td>{{ map.uploadFileName }}</td>
           <td>{{ map.mappedElementCount }} of {{ map.elementCount }} mapped</td>
           <td>
@@ -91,6 +138,7 @@
           </td>
           <td class="etl-mapping__actions">
             <button type="button" class="mdl-button mdl-js-button mdl-button--primary" (click)="openMap(map)">Open</button>
+            <button type="button" class="mdl-button mdl-js-button" (click)="editMap(map)">Edit</button>
             <button type="button" class="mdl-button mdl-js-button" (click)="exportChecklist(map)">Export</button>
             <button type="button" class="mdl-button mdl-js-button" (click)="deleteMap(map)">Delete</button>
           </td>
@@ -104,12 +152,15 @@
     <button type="button" class="mdl-button mdl-js-button" (click)="backToMaps()">&larr; All Maps</button>
     <h3>{{ selectedMap.mapName }}</h3>
     <span class="etl-mapping__subtext">
+      <span *ngIf="selectedMap.fileSpecs && selectedMap.fileSpecs.length > 0">{{ specsSummary(selectedMap) }} &middot; </span>
       {{ selectedMap.mappedElementCount }} of {{ selectedMap.elementCount }} elements mapped
       <span *ngIf="selectedMap.modifiedDate"> &middot; last updated {{ selectedMap.modifiedDate | date:'short' }}<span *ngIf="selectedMap.modifiedBy"> by {{ selectedMap.modifiedBy }}</span></span>
     </span>
+    <button type="button" class="mdl-button mdl-js-button" (click)="editMap(selectedMap)">Edit Map</button>
     <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="exportChecklist()">
       Export Checklist (CSV)
     </button>
+    <span class="etl-mapping__subtext">Uploading a file now adds its elements to this map.</span>
   </div>
 
   <div *ngIf="selectedMap && !isLoading && mappings.length === 0" class="etl-mapping__empty">

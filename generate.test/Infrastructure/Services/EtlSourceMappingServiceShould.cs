@@ -1,6 +1,8 @@
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Repositories.App;
+using generate.core.Interfaces.Repositories.RDS;
 using generate.core.Models.App;
+using generate.core.Models.RDS;
 using generate.infrastructure.Services;
 using Moq;
 using System;
@@ -17,6 +19,7 @@ namespace generate.test.Infrastructure.Services
     public class EtlSourceMappingServiceShould
     {
         private readonly Mock<IAppRepository> _appRepository = new Mock<IAppRepository>();
+        private readonly Mock<IRDSRepository> _rdsRepository = new Mock<IRDSRepository>();
         private readonly List<EtlMetadata> _metadata;
         private readonly List<EtlSourceElementMapping> _mappings = new List<EtlSourceElementMapping>();
         private readonly List<EtlMap> _maps = new List<EtlMap>();
@@ -126,11 +129,20 @@ namespace generate.test.Infrastructure.Services
             _appRepository
                 .Setup(r => r.GetAll<EtlMap>(It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(() => _maps);
+
+            _rdsRepository
+                .Setup(r => r.GetAllReadOnly<DimFactType>(It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(new List<DimFactType>
+                {
+                    new DimFactType { DimFactTypeId = 3, FactTypeCode = "childcount", FactTypeDescription = "CHILDCOUNT - 002,089" },
+                    new DimFactType { DimFactTypeId = 4, FactTypeCode = "exiting", FactTypeDescription = "EXITING - 009" },
+                    new DimFactType { DimFactTypeId = -1, FactTypeCode = "NA", FactTypeDescription = null }
+                });
         }
 
         private EtlSourceMappingService BuildService()
         {
-            return new EtlSourceMappingService(_appRepository.Object, new CedsAutoMapService());
+            return new EtlSourceMappingService(_appRepository.Object, _rdsRepository.Object, new CedsAutoMapService());
         }
 
         private static EtlSourceMappingUploadDto BuildUpload()
@@ -358,6 +370,103 @@ namespace generate.test.Infrastructure.Services
             service.UploadDataDictionary(BuildUpload());
 
             Assert.Equal("StateDataDictionary.xlsx", service.GetMaps()[0].MapName);
+        }
+
+        [Fact]
+        public void CreateMapWithFileSpecAssociations()
+        {
+            var service = BuildService();
+
+            var created = service.CreateMap(new EtlMapSaveDto
+            {
+                MapName = "NJ Assessment",
+                ModifiedBy = "creator",
+                FileSpecs = new List<EtlMapFileSpecDto>
+                {
+                    new EtlMapFileSpecDto { FileSpecNumber = "FS002" },
+                    new EtlMapFileSpecDto { DimFactTypeId = 3 }
+                }
+            });
+
+            Assert.Equal("NJ Assessment", created.MapName);
+            Assert.Equal("creator", created.CreatedBy);
+            Assert.Equal(2, created.FileSpecs.Count);
+            Assert.Contains(created.FileSpecs, s => s.FileSpecNumber == "FS002");
+            // Fact type code is denormalized from rds.DimFactTypes
+            Assert.Contains(created.FileSpecs, s => s.DimFactTypeId == 3 && s.FactTypeCode == "childcount");
+        }
+
+        [Fact]
+        public void RejectMapCreationWithoutName()
+        {
+            var service = BuildService();
+
+            Assert.Throws<ArgumentException>(() => service.CreateMap(new EtlMapSaveDto { MapName = "  " }));
+        }
+
+        [Fact]
+        public void UpdateMapNameAndReplaceFileSpecs()
+        {
+            var service = BuildService();
+            service.CreateMap(new EtlMapSaveDto
+            {
+                MapName = "Original",
+                FileSpecs = new List<EtlMapFileSpecDto> { new EtlMapFileSpecDto { FileSpecNumber = "FS002" } }
+            });
+
+            var updated = service.UpdateMap(1, new EtlMapSaveDto
+            {
+                MapName = "Renamed",
+                ModifiedBy = "editor",
+                FileSpecs = new List<EtlMapFileSpecDto> { new EtlMapFileSpecDto { FileSpecNumber = "FS009" } }
+            });
+
+            Assert.Equal("Renamed", updated.MapName);
+            Assert.Equal("editor", updated.ModifiedBy);
+            Assert.NotNull(updated.ModifiedDate);
+            Assert.Single(updated.FileSpecs);
+            Assert.Equal("FS009", updated.FileSpecs[0].FileSpecNumber);
+
+            Assert.Null(service.UpdateMap(999, new EtlMapSaveDto { MapName = "X" }));
+        }
+
+        [Fact]
+        public void AppendUploadToExistingMap()
+        {
+            var service = BuildService();
+            var map = service.CreateMap(new EtlMapSaveDto { MapName = "Existing Map" });
+
+            var upload = BuildUpload();
+            upload.EtlMapId = map.EtlMapId;
+            upload.MapName = null;
+
+            service.UploadDataDictionary(upload);
+
+            var maps = service.GetMaps();
+            Assert.Single(maps);
+            Assert.Equal("Existing Map", maps[0].MapName);
+            Assert.Equal(2, maps[0].ElementCount);
+        }
+
+        [Fact]
+        public void ExcludeNaFactTypeFromPicker()
+        {
+            var factTypes = BuildService().GetFactTypes();
+
+            Assert.Equal(2, factTypes.Count);
+            Assert.DoesNotContain(factTypes, f => f.DimFactTypeId <= 0);
+        }
+
+        [Fact]
+        public void SplitCommaSeparatedFileSpecNumbers()
+        {
+            _metadata.Add(new EtlMetadata { EtlMetadataId = 99, CedsElementGlobalId = "000999", CedsElementName = "X", EdFactsFileSpecNumber = "FS175, FS178" });
+
+            var specNumbers = BuildService().GetFileSpecNumbers();
+
+            Assert.Contains("FS052", specNumbers);
+            Assert.Contains("FS175", specNumbers);
+            Assert.Contains("FS178", specNumbers);
         }
 
         [Fact]

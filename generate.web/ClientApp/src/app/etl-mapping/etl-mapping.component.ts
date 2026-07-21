@@ -7,10 +7,12 @@ import {
   CedsElementCatalog,
   CedsOptionSetValue,
   EtlMap,
+  EtlMapFileSpec,
   EtlSourceElementMapping,
   EtlSourceElementUpload,
   EtlSourceMappingUpload,
-  EtlSourceOptionSetMapping
+  EtlSourceOptionSetMapping,
+  FactType
 } from '../models/app/etlSourceMapping';
 
 // Header aliases used to locate columns in the uploaded data dictionary. Keys are the upload DTO
@@ -45,6 +47,15 @@ export class EtlMappingComponent implements OnInit {
   maps: EtlMap[] = [];
   selectedMap: EtlMap = null;
   mapNameInput = '';
+
+  // Map add/edit editor
+  editingMapId: number = null;   // null = editor closed, 0 = new map, >0 = editing that map
+  editorName = '';
+  editorSpecs: EtlMapFileSpec[] = [];
+  editorSpecNumber = '';
+  editorFactTypeId: number = null;
+  factTypes: FactType[] = [];
+  fileSpecNumbers: string[] = [];
 
   mappings: EtlSourceElementMapping[] = [];
   cedsElements: CedsElementCatalog[] = [];
@@ -86,6 +97,106 @@ export class EtlMappingComponent implements OnInit {
   ngOnInit() {
     this.loadMaps();
     this.loadCedsElements();
+
+    this.etlSourceMappingService.getFactTypes().subscribe({
+      next: factTypes => this.factTypes = factTypes || [],
+      error: () => { }
+    });
+    this.etlSourceMappingService.getFileSpecNumbers().subscribe({
+      next: fileSpecNumbers => this.fileSpecNumbers = fileSpecNumbers || [],
+      error: () => { }
+    });
+  }
+
+  // -------------------- Map add / edit --------------------
+
+  newMap() {
+    this.editingMapId = 0;
+    this.editorName = '';
+    this.editorSpecs = [];
+    this.editorSpecNumber = '';
+    this.editorFactTypeId = null;
+  }
+
+  editMap(etlMap: EtlMap) {
+    this.editingMapId = etlMap.etlMapId;
+    this.editorName = etlMap.mapName;
+    this.editorSpecs = (etlMap.fileSpecs || []).map(s => ({ ...s }));
+    this.editorSpecNumber = '';
+    this.editorFactTypeId = null;
+  }
+
+  cancelMapEditor() {
+    this.editingMapId = null;
+  }
+
+  addEditorSpecNumber() {
+    const specNumber = (this.editorSpecNumber || '').trim().toUpperCase();
+
+    if (!specNumber) {
+      return;
+    }
+
+    if (!this.editorSpecs.some(s => (s.fileSpecNumber || '').toUpperCase() === specNumber)) {
+      this.editorSpecs.push({ fileSpecNumber: specNumber, dimFactTypeId: null, factTypeCode: null });
+    }
+
+    this.editorSpecNumber = '';
+  }
+
+  addEditorFactType() {
+    if (this.editorFactTypeId === null) {
+      return;
+    }
+
+    const factType = this.factTypes.find(f => f.dimFactTypeId === +this.editorFactTypeId);
+
+    if (factType && !this.editorSpecs.some(s => s.dimFactTypeId === factType.dimFactTypeId)) {
+      this.editorSpecs.push({ fileSpecNumber: null, dimFactTypeId: factType.dimFactTypeId, factTypeCode: factType.factTypeCode });
+    }
+
+    this.editorFactTypeId = null;
+  }
+
+  removeEditorSpec(index: number) {
+    this.editorSpecs.splice(index, 1);
+  }
+
+  specLabel(spec: EtlMapFileSpec): string {
+    return spec.fileSpecNumber || spec.factTypeCode || ('FactType ' + spec.dimFactTypeId);
+  }
+
+  specsSummary(etlMap: EtlMap): string {
+    return (etlMap.fileSpecs || []).map(s => this.specLabel(s)).join(', ');
+  }
+
+  saveMapEditor() {
+    const name = (this.editorName || '').trim();
+
+    if (!name) {
+      this.statusMessage = 'A map name is required.';
+      return;
+    }
+
+    const save = { mapName: name, fileSpecs: this.editorSpecs };
+
+    const request = this.editingMapId === 0
+      ? this.etlSourceMappingService.createMap(save)
+      : this.etlSourceMappingService.updateMap(this.editingMapId, save);
+
+    request.subscribe({
+      next: savedMap => {
+        this.editingMapId = null;
+        this.statusMessage = 'Map "' + savedMap.mapName + '" was saved.';
+
+        if (this.selectedMap && this.selectedMap.etlMapId === savedMap.etlMapId) {
+          this.selectedMap = savedMap;
+        }
+
+        this.loadMaps();
+      },
+      error: () => this.statusMessage = 'The map could not be saved.'
+    });
   }
 
   loadMaps() {
@@ -375,6 +486,8 @@ export class EtlMappingComponent implements OnInit {
 
   private uploadElements(elements: EtlSourceElementUpload[]) {
     const upload: EtlSourceMappingUpload = {
+      // Uploading while a map is open appends the elements to that map
+      etlMapId: this.selectedMap ? this.selectedMap.etlMapId : null,
       mapName: (this.mapNameInput || '').trim() || this.uploadFileName,
       uploadFileName: this.uploadFileName,
       uploadedBy: null,

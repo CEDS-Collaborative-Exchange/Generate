@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Repositories.App;
+using generate.core.Interfaces.Repositories.RDS;
 using generate.core.Interfaces.Services;
 using generate.core.Models.App;
+using generate.core.Models.RDS;
 
 namespace generate.infrastructure.Services
 {
@@ -23,11 +25,13 @@ namespace generate.infrastructure.Services
         private const decimal CandidateThreshold = 0.2m;
 
         private readonly IAppRepository _appRepository;
+        private readonly IRDSRepository _rdsRepository;
         private readonly ICedsAutoMapService _cedsAutoMapService;
 
-        public EtlSourceMappingService(IAppRepository appRepository, ICedsAutoMapService cedsAutoMapService)
+        public EtlSourceMappingService(IAppRepository appRepository, IRDSRepository rdsRepository, ICedsAutoMapService cedsAutoMapService)
         {
             _appRepository = appRepository;
+            _rdsRepository = rdsRepository;
             _cedsAutoMapService = cedsAutoMapService;
         }
 
@@ -48,17 +52,37 @@ namespace generate.infrastructure.Services
                 .GroupBy(m => m.CedsElementGlobalId.Trim(), StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
 
-            var etlMap = new EtlMap
-            {
-                MapName = !string.IsNullOrWhiteSpace(upload.MapName)
-                    ? upload.MapName.Trim()
-                    : (!string.IsNullOrWhiteSpace(upload.UploadFileName) ? upload.UploadFileName : "Data Dictionary Map"),
-                UploadFileName = upload.UploadFileName,
-                CreatedDate = DateTime.UtcNow,
-                CreatedBy = upload.UploadedBy
-            };
+            EtlMap etlMap = null;
 
-            _appRepository.Create(etlMap);
+            if (upload.EtlMapId.HasValue)
+            {
+                // Append the upload to an existing map
+                etlMap = _appRepository
+                    .Find<EtlMap>(m => m.EtlMapId == upload.EtlMapId.Value, 0, 0)
+                    .FirstOrDefault();
+
+                if (etlMap != null)
+                {
+                    etlMap.UploadFileName = upload.UploadFileName ?? etlMap.UploadFileName;
+                    etlMap.ModifiedDate = DateTime.UtcNow;
+                    etlMap.ModifiedBy = upload.UploadedBy;
+                }
+            }
+
+            if (etlMap == null)
+            {
+                etlMap = new EtlMap
+                {
+                    MapName = !string.IsNullOrWhiteSpace(upload.MapName)
+                        ? upload.MapName.Trim()
+                        : (!string.IsNullOrWhiteSpace(upload.UploadFileName) ? upload.UploadFileName : "Data Dictionary Map"),
+                    UploadFileName = upload.UploadFileName,
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = upload.UploadedBy
+                };
+
+                _appRepository.Create(etlMap);
+            }
 
             foreach (var element in upload.Elements.Where(e => e != null && !string.IsNullOrWhiteSpace(e.SourceElementName)))
             {
@@ -129,22 +153,159 @@ namespace generate.infrastructure.Services
         public List<EtlMapDto> GetMaps()
         {
             return _appRepository
-                .GetAllReadOnly<EtlMap>(0, 0, m => m.EtlSourceElementMappings)
-                .Select(m => new EtlMapDto
-                {
-                    EtlMapId = m.EtlMapId,
-                    MapName = m.MapName,
-                    UploadFileName = m.UploadFileName,
-                    CreatedDate = m.CreatedDate,
-                    CreatedBy = m.CreatedBy,
-                    ModifiedDate = m.ModifiedDate,
-                    ModifiedBy = m.ModifiedBy,
-                    ElementCount = m.EtlSourceElementMappings?.Count ?? 0,
-                    MappedElementCount = m.EtlSourceElementMappings?.Count(e =>
-                        e.MappingStatus == EtlMappingStatus.Accepted || e.MappingStatus == EtlMappingStatus.Suggested) ?? 0
-                })
+                .GetAllReadOnly<EtlMap>(0, 0, m => m.EtlSourceElementMappings, m => m.EtlMapFileSpecs)
+                .Select(ToMapDto)
                 .OrderByDescending(m => m.ModifiedDate ?? m.CreatedDate)
                 .ToList();
+        }
+
+        public EtlMapDto CreateMap(EtlMapSaveDto save)
+        {
+            if (save == null || string.IsNullOrWhiteSpace(save.MapName))
+            {
+                throw new ArgumentException("A map name is required.");
+            }
+
+            var etlMap = new EtlMap
+            {
+                MapName = save.MapName.Trim(),
+                CreatedDate = DateTime.UtcNow,
+                CreatedBy = save.ModifiedBy,
+                EtlMapFileSpecs = BuildFileSpecs(save.FileSpecs)
+            };
+
+            _appRepository.Create(etlMap);
+            _appRepository.Save();
+
+            return ToMapDto(etlMap);
+        }
+
+        public EtlMapDto UpdateMap(int etlMapId, EtlMapSaveDto save)
+        {
+            if (save == null)
+            {
+                return null;
+            }
+
+            var etlMap = _appRepository
+                .Find<EtlMap>(m => m.EtlMapId == etlMapId, 0, 0, m => m.EtlMapFileSpecs, m => m.EtlSourceElementMappings)
+                .FirstOrDefault();
+
+            if (etlMap == null)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(save.MapName))
+            {
+                etlMap.MapName = save.MapName.Trim();
+            }
+
+            if (save.FileSpecs != null)
+            {
+                // Replace the file spec associations
+                if (etlMap.EtlMapFileSpecs != null && etlMap.EtlMapFileSpecs.Count > 0)
+                {
+                    _appRepository.DeleteRange(etlMap.EtlMapFileSpecs.ToList());
+                }
+
+                etlMap.EtlMapFileSpecs = BuildFileSpecs(save.FileSpecs);
+            }
+
+            etlMap.ModifiedDate = DateTime.UtcNow;
+            etlMap.ModifiedBy = save.ModifiedBy;
+
+            _appRepository.Save();
+
+            return ToMapDto(etlMap);
+        }
+
+        public List<FactTypeDto> GetFactTypes()
+        {
+            return _rdsRepository
+                .GetAllReadOnly<DimFactType>(0, 0)
+                .Where(f => f.DimFactTypeId > 0 && !string.IsNullOrWhiteSpace(f.FactTypeCode))
+                .Select(f => new FactTypeDto
+                {
+                    DimFactTypeId = f.DimFactTypeId,
+                    FactTypeCode = f.FactTypeCode,
+                    FactTypeDescription = f.FactTypeDescription
+                })
+                .OrderBy(f => f.FactTypeCode, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        public List<string> GetFileSpecNumbers()
+        {
+            // EDFacts_File_Spec_Number values may hold a single spec or a comma-separated list
+            return LoadMetadata()
+                .Where(m => !string.IsNullOrWhiteSpace(m.EdFactsFileSpecNumber))
+                .SelectMany(m => m.EdFactsFileSpecNumber.Split(','))
+                .Select(s => s.Trim())
+                .Where(s => s.Length > 0)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        private List<EtlMapFileSpec> BuildFileSpecs(List<EtlMapFileSpecDto> fileSpecs)
+        {
+            var result = new List<EtlMapFileSpec>();
+
+            if (fileSpecs == null)
+            {
+                return result;
+            }
+
+            // Resolve denormalized fact type codes once when any are needed
+            List<FactTypeDto> factTypes = null;
+
+            foreach (var spec in fileSpecs.Where(s => s != null &&
+                (!string.IsNullOrWhiteSpace(s.FileSpecNumber) || s.DimFactTypeId.HasValue)))
+            {
+                string factTypeCode = spec.FactTypeCode;
+
+                if (spec.DimFactTypeId.HasValue && string.IsNullOrWhiteSpace(factTypeCode))
+                {
+                    factTypes = factTypes ?? GetFactTypes();
+                    factTypeCode = factTypes.FirstOrDefault(f => f.DimFactTypeId == spec.DimFactTypeId.Value)?.FactTypeCode;
+                }
+
+                result.Add(new EtlMapFileSpec
+                {
+                    FileSpecNumber = string.IsNullOrWhiteSpace(spec.FileSpecNumber) ? null : spec.FileSpecNumber.Trim(),
+                    DimFactTypeId = spec.DimFactTypeId,
+                    FactTypeCode = factTypeCode,
+                    CreatedDate = DateTime.UtcNow
+                });
+            }
+
+            return result;
+        }
+
+        private static EtlMapDto ToMapDto(EtlMap m)
+        {
+            return new EtlMapDto
+            {
+                EtlMapId = m.EtlMapId,
+                MapName = m.MapName,
+                UploadFileName = m.UploadFileName,
+                CreatedDate = m.CreatedDate,
+                CreatedBy = m.CreatedBy,
+                ModifiedDate = m.ModifiedDate,
+                ModifiedBy = m.ModifiedBy,
+                ElementCount = m.EtlSourceElementMappings?.Count ?? 0,
+                MappedElementCount = m.EtlSourceElementMappings?.Count(e =>
+                    e.MappingStatus == EtlMappingStatus.Accepted || e.MappingStatus == EtlMappingStatus.Suggested) ?? 0,
+                FileSpecs = (m.EtlMapFileSpecs ?? new List<EtlMapFileSpec>())
+                    .Select(s => new EtlMapFileSpecDto
+                    {
+                        FileSpecNumber = s.FileSpecNumber,
+                        DimFactTypeId = s.DimFactTypeId,
+                        FactTypeCode = s.FactTypeCode
+                    })
+                    .ToList()
+            };
         }
 
         public List<EtlSourceElementMapping> GetAllMappings(int? etlMapId = null)

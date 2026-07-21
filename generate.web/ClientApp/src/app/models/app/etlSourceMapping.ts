@@ -14,6 +14,24 @@ export interface EtlSourceOptionSetMapping {
     modifiedBy: string;
 }
 
+export interface EtlMapFileSpec {
+    fileSpecNumber: string;
+    dimFactTypeId: number;
+    factTypeCode: string;
+}
+
+export interface EtlMapSave {
+    mapName: string;
+    fileSpecs: Array<EtlMapFileSpec>;
+    modifiedBy?: string;
+}
+
+export interface FactType {
+    dimFactTypeId: number;
+    factTypeCode: string;
+    factTypeDescription: string;
+}
+
 export interface EtlMap {
     etlMapId: number;
     mapName: string;
@@ -24,6 +42,7 @@ export interface EtlMap {
     modifiedBy: string;
     elementCount: number;
     mappedElementCount: number;
+    fileSpecs: Array<EtlMapFileSpec>;
 }
 
 export interface EtlSourceElementMapping {
@@ -107,6 +126,7 @@ export interface EtlSourceElementUpload {
 }
 
 export interface EtlSourceMappingUpload {
+    etlMapId?: number;
     mapName: string;
     uploadFileName: string;
     uploadedBy: string;

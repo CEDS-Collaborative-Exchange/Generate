@@ -28,6 +28,60 @@
     min-width: 280px;
   }
 
+  &__list-toolbar {
+    margin-bottom: 12px;
+  }
+
+  &__editor {
+    margin: 8px 0 16px;
+    padding: 12px 16px;
+    background-color: #f7f9fb;
+    border: 1px solid #dde5ec;
+    border-radius: 4px;
+    max-width: 900px;
+
+    h3 {
+      margin: 0 0 8px;
+    }
+  }
+
+  &__editor-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+
+    label {
+      font-weight: bold;
+      min-width: 140px;
+    }
+
+    input,
+    select {
+      padding: 5px 8px;
+      border: 1px solid #bbb;
+      border-radius: 3px;
+    }
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    background-color: #e3ecf3;
+    border: 1px solid #b8cede;
+    border-radius: 12px;
+    font-size: 13px;
+
+    a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #7a2020;
+    }
+  }
+
   &__map-header {
     display: flex;
     gap: 12px;
