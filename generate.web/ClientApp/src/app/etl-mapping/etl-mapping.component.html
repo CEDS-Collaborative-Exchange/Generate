@@ -173,6 +173,7 @@
         <th>Source Element</th>
         <th>Source Definition</th>
         <th>CEDS Element</th>
+        <th>CEDS Staging Table.Column(s)</th>
         <th>Confidence</th>
         <th>Status</th>
         <th>Actions</th>
@@ -193,6 +194,7 @@
             <div *ngIf="mapping.cedsElementName">
               <strong>{{ mapping.cedsElementName }}</strong>
               <div class="etl-mapping__subtext">Global ID: {{ mapping.cedsElementGlobalId }}</div>
+              <div *ngIf="mapping.matchType === 'OptionSetValue'" class="etl-mapping__subtext">matched via option set value</div>
             </div>
             <div *ngIf="!mapping.cedsElementName" class="etl-mapping__subtext">&mdash;</div>
 
@@ -207,6 +209,10 @@
                 <li *ngIf="filteredCedsElements.length === 0" class="etl-mapping__subtext">No CEDS elements match.</li>
               </ul>
             </div>
+          </td>
+          <td class="etl-mapping__definition">
+            <span *ngIf="mapping.stagingTableColumns">{{ mapping.stagingTableColumns }}</span>
+            <span *ngIf="!mapping.stagingTableColumns" class="etl-mapping__subtext">&mdash;</span>
           </td>
           <td>{{ confidencePercent(mapping.matchConfidence) }}</td>
           <td><span class="etl-mapping__status" [ngClass]="statusClass(mapping.mappingStatus)">{{ mapping.mappingStatus }}</span></td>
@@ -231,7 +237,7 @@
         </tr>
 
         <tr *ngIf="expandedElementId === mapping.etlSourceElementMappingId">
-          <td colspan="7" class="etl-mapping__options">
+          <td colspan="8" class="etl-mapping__options">
             <table class="etl-mapping__options-table">
               <thead>
                 <tr>

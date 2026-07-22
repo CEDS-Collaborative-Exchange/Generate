@@ -147,4 +147,36 @@ BEGIN
 		ON [App].[EtlSourceOptionSetMapping] ([EtlSourceElementMappingId] ASC)
 END
 
+-- CIID-9036: capture the CEDS Data Warehouse Staging destination(s) for the mapped CEDS element
+IF COL_LENGTH('App.EtlSourceElementMapping', 'StagingTableColumns') IS NULL
+BEGIN
+	ALTER TABLE [App].[EtlSourceElementMapping] ADD [StagingTableColumns] [nvarchar](max) NULL
+END
+
+-- CIID-9036: surfaces the CEDS extended properties on Staging-schema columns so the automapper can
+-- (a) restrict the CEDS element catalog to elements loadable into the warehouse and
+-- (b) show the Staging table + column for each mapped element.
+-- The CEDS_GlobalId extended property holds the CEDS Ontology identifier minus the C/P prefix.
+IF OBJECT_ID('App.vwEtlStagingCedsColumns', 'V') IS NOT NULL
+	EXEC('DROP VIEW [App].[vwEtlStagingCedsColumns]')
+EXEC('
+CREATE VIEW [App].[vwEtlStagingCedsColumns]
+AS
+	SELECT
+		s.name									AS [SchemaName]
+		, t.name								AS [TableName]
+		, c.name								AS [ColumnName]
+		, CAST(gid.value AS varchar(100))		AS [CedsGlobalId]
+		, CAST(el.value AS nvarchar(500))		AS [CedsElement]
+	FROM sys.columns c
+	JOIN sys.tables t ON c.object_id = t.object_id
+	JOIN sys.schemas s ON t.schema_id = s.schema_id
+	JOIN sys.extended_properties gid
+		ON gid.major_id = c.object_id AND gid.minor_id = c.column_id AND gid.name = ''CEDS_GlobalId''
+	LEFT JOIN sys.extended_properties el
+		ON el.major_id = c.object_id AND el.minor_id = c.column_id AND el.name = ''CEDS_Element''
+	WHERE s.name = ''Staging''
+		AND CAST(gid.value AS varchar(100)) LIKE ''[0-9]%''
+')
+
 print 'App.TableChanges.sql executed for 14.0.'

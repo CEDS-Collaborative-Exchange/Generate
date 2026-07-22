@@ -67,6 +67,7 @@ namespace generate.infrastructure.Services
                         CedsPath = candidate.CedsPath,
                         CedsDataModelId = candidate.CedsDataModelId,
                         HasOptionSet = candidate.HasOptionSet,
+                        StagingTableColumns = candidate.StagingTableColumns,
                         Confidence = confidence
                     });
                 }
@@ -172,9 +173,10 @@ namespace generate.infrastructure.Services
 
         private static string BuildSentence(string name, string definition)
         {
+            // "Label - Definition" format (CIID-9057), applied consistently to source and catalog
             return string.IsNullOrWhiteSpace(definition)
                 ? (name ?? "").Trim()
-                : (name ?? "").Trim() + ": " + definition.Trim();
+                : (name ?? "").Trim() + " - " + definition.Trim();
         }
 
         private static string Normalize(string text)

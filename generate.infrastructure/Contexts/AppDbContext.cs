@@ -719,6 +719,10 @@ namespace generate.infrastructure.Contexts
                 entity
                    .Property(x => x.MatchConfidence)
                    .HasColumnType("decimal(5, 4)");
+
+                entity
+                   .Property(x => x.StagingTableColumns)
+                   .HasColumnType("nvarchar(max)");
             });
 
             // EtlSourceOptionSetMapping (CIID-9031)

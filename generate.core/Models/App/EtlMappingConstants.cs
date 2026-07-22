@@ -21,5 +21,7 @@ namespace generate.core.Models.App
         public const string ExactCode = "ExactCode";
         public const string Semantic = "Semantic";
         public const string Manual = "Manual";
+        /// <summary>Element mapped to an option set class because an option set value matched.</summary>
+        public const string OptionSetValue = "OptionSetValue";
     }
 }

@@ -19,21 +19,43 @@ namespace generate.infrastructure.Services
     /// </summary>
     public class EtlSourceMappingService : IEtlSourceMappingService
     {
-        // Minimum confidence for the top candidate to be stored as a suggestion (vs. left Unmapped)
-        private const decimal SuggestionThreshold = 0.5m;
+        // Default minimum confidence for a direct element match to be suggested; below this the
+        // automapper falls back to option-set-value matching. Configurable via
+        // CedsAutoMap:ElementMatchThreshold (CIID-9057).
+        private const decimal DefaultElementMatchThreshold = 0.60m;
         // Minimum confidence for a candidate to be returned for review
         private const decimal CandidateThreshold = 0.2m;
 
         private readonly IAppRepository _appRepository;
         private readonly IRDSRepository _rdsRepository;
         private readonly ICedsAutoMapService _cedsAutoMapService;
+        private readonly ICedsStagingCatalogProvider _catalogProvider;
+        private readonly decimal _elementMatchThreshold;
 
-        public EtlSourceMappingService(IAppRepository appRepository, IRDSRepository rdsRepository, ICedsAutoMapService cedsAutoMapService)
+        public EtlSourceMappingService(
+            IAppRepository appRepository,
+            IRDSRepository rdsRepository,
+            ICedsAutoMapService cedsAutoMapService,
+            ICedsStagingCatalogProvider catalogProvider = null,
+            Microsoft.Extensions.Configuration.IConfiguration configuration = null)
         {
             _appRepository = appRepository;
             _rdsRepository = rdsRepository;
             _cedsAutoMapService = cedsAutoMapService;
+            _catalogProvider = catalogProvider;
+
+            _elementMatchThreshold = DefaultElementMatchThreshold;
+            string configured = configuration?["CedsAutoMap:ElementMatchThreshold"];
+            if (!string.IsNullOrWhiteSpace(configured) &&
+                decimal.TryParse(configured, NumberStyles.Any, CultureInfo.InvariantCulture, out var threshold) &&
+                threshold > 0m && threshold <= 1m)
+            {
+                _elementMatchThreshold = threshold;
+            }
         }
+
+        /// <summary>True when the ontology + Staging catalog is available (else legacy EtlMetadata).</summary>
+        private bool UseOntologyCatalog => _catalogProvider != null && _catalogProvider.IsAvailable;
 
         public List<EtlSourceElementMappingResultDto> UploadDataDictionary(EtlSourceMappingUploadDto upload)
         {
@@ -44,13 +66,11 @@ namespace generate.infrastructure.Services
                 return results;
             }
 
-            // One EtlMetadata load serves both the element catalog and every option set lookup below
-            var metadata = LoadMetadata();
-            var catalog = BuildCatalog(metadata);
-            var metadataByGlobalId = metadata
-                .Where(m => !string.IsNullOrWhiteSpace(m.CedsElementGlobalId))
-                .GroupBy(m => m.CedsElementGlobalId.Trim(), StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+            // CEDS element catalog: ontology ∩ Staging when available, else legacy EtlMetadata
+            var catalog = GetCedsElementCatalog();
+            var fallbackCatalog = UseOntologyCatalog
+                ? _catalogProvider.GetOptionValueFallbackCatalog()
+                : new List<CedsElementCatalogDto>();
 
             EtlMap etlMap = null;
 
@@ -124,16 +144,42 @@ namespace generate.infrastructure.Services
 
                 var topCandidate = candidates.FirstOrDefault();
 
-                if (topCandidate != null && topCandidate.Confidence >= SuggestionThreshold)
+                if (topCandidate != null && topCandidate.Confidence >= _elementMatchThreshold)
                 {
+                    // Confident direct element match
                     ApplyCedsElement(mapping, topCandidate);
+                    mapping.StagingTableColumns = JoinStaging(topCandidate.StagingTableColumns);
                     mapping.MatchConfidence = topCandidate.Confidence;
                     mapping.MatchType = EtlMatchType.Suggested;
                     mapping.MappingStatus = EtlMappingStatus.Suggested;
 
-                    metadataByGlobalId.TryGetValue(topCandidate.CedsElementGlobalId, out var elementMetadata);
                     SuggestOptionSetMappings(mapping, includeAccepted: true,
-                        cedsOptionSetValues: BuildOptionSetValues(elementMetadata));
+                        cedsOptionSetValues: GetCedsOptionSetValues(topCandidate.CedsElementGlobalId));
+                }
+                else if (fallbackCatalog.Count > 0)
+                {
+                    // No confident element match: look for an option set VALUE that matches the source
+                    // definition, and if found map to that value's CEDS option set class.
+                    var valueMatch = _cedsAutoMapService
+                        .MatchElement(mapping.SourceElementName, mapping.SourceElementDefinition, fallbackCatalog, 1, CandidateThreshold)
+                        .FirstOrDefault();
+
+                    if (valueMatch != null && valueMatch.Confidence >= _elementMatchThreshold)
+                    {
+                        var scheme = _catalogProvider.GetElementByGlobalId(valueMatch.CedsElementGlobalId);
+
+                        if (scheme != null)
+                        {
+                            ApplyCedsElement(mapping, scheme);
+                            mapping.StagingTableColumns = JoinStaging(scheme.StagingTableColumns);
+                            mapping.MatchConfidence = valueMatch.Confidence;
+                            mapping.MatchType = EtlMatchType.OptionSetValue;
+                            mapping.MappingStatus = EtlMappingStatus.Suggested;
+
+                            SuggestOptionSetMappings(mapping, includeAccepted: true,
+                                cedsOptionSetValues: GetCedsOptionSetValues(scheme.CedsElementGlobalId));
+                        }
+                    }
                 }
 
                 _appRepository.Create(mapping);
@@ -339,12 +385,23 @@ namespace generate.infrastructure.Services
 
         public List<CedsElementCatalogDto> GetCedsElementCatalog()
         {
-            return BuildCatalog(LoadMetadata());
+            // CEDS Ontology ∩ Staging when available (CIID-9057), else legacy EtlMetadata catalog
+            return UseOntologyCatalog
+                ? _catalogProvider.GetElementCatalog()
+                : BuildCatalog(LoadMetadata());
         }
 
         public List<CedsOptionSetValueDto> GetCedsOptionSetValues(string cedsElementGlobalId)
         {
-            return BuildOptionSetValues(FindMetadataByGlobalId(cedsElementGlobalId));
+            return UseOntologyCatalog
+                ? _catalogProvider.GetOptionSetValues(cedsElementGlobalId)
+                : BuildOptionSetValues(FindMetadataByGlobalId(cedsElementGlobalId));
+        }
+
+        /// <summary>Joins the Staging Table.Column destinations for display/persistence.</summary>
+        private static string JoinStaging(List<string> tableColumns)
+        {
+            return tableColumns == null || tableColumns.Count == 0 ? null : string.Join("; ", tableColumns);
         }
 
         private List<EtlMetadata> LoadMetadata()
@@ -450,6 +507,7 @@ namespace generate.infrastructure.Services
                 mapping.CedsElementDefinition = null;
                 mapping.CedsDataModelId = null;
                 mapping.CedsPath = null;
+                mapping.StagingTableColumns = null;
                 mapping.MatchConfidence = null;
                 mapping.MatchType = EtlMatchType.Manual;
             }
@@ -460,23 +518,25 @@ namespace generate.infrastructure.Services
 
                 if (elementChanged)
                 {
-                    var elementMetadata = FindMetadataByGlobalId(update.CedsElementGlobalId);
-                    var catalogEntry = BuildCatalog(elementMetadata).FirstOrDefault();
+                    var catalogEntry = UseOntologyCatalog
+                        ? _catalogProvider.GetElementByGlobalId(update.CedsElementGlobalId)
+                        : BuildCatalog(FindMetadataByGlobalId(update.CedsElementGlobalId)).FirstOrDefault();
 
                     if (catalogEntry == null)
                     {
                         throw new ArgumentException(
-                            $"CEDS element with Global ID '{update.CedsElementGlobalId}' was not found in App.EtlMetadata.");
+                            $"CEDS element with Global ID '{update.CedsElementGlobalId}' is not available in the CEDS catalog.");
                     }
 
                     ApplyCedsElement(mapping, catalogEntry);
+                    mapping.StagingTableColumns = JoinStaging(catalogEntry.StagingTableColumns);
                     mapping.MatchConfidence = null;
                     mapping.MatchType = EtlMatchType.Manual;
 
                     // Re-suggest option set value mappings against the new element's option set,
                     // preserving values a reviewer has already accepted.
                     SuggestOptionSetMappings(mapping, includeAccepted: false,
-                        cedsOptionSetValues: BuildOptionSetValues(elementMetadata));
+                        cedsOptionSetValues: GetCedsOptionSetValues(update.CedsElementGlobalId));
                 }
             }
 
@@ -633,6 +693,7 @@ namespace generate.infrastructure.Services
                 "Source Data Type", "Source Data Length", "Source Option Set Code", "Source Option Set Description",
                 "Source Data Steward", "Selection Criteria", "Transformation Rules", "Notes",
                 "Mapping Status", "Match Confidence", "Match Type",
+                "CEDS Data Warehouse Staging Table.Column(s)",
                 "EDFacts File Spec Number(s)", "CEDS Path", "CEDS Element Name", "CEDS Element Definition",
                 "CEDS Data Type", "CEDS Data Length", "CEDS Option Set Code", "CEDS Option Set Description",
                 "CEDS Element Global ID", "CEDS Element Data Model ID",
@@ -716,6 +777,7 @@ namespace generate.infrastructure.Services
                 CsvEscape(optionMapping != null ? optionMapping.MappingStatus : mapping.MappingStatus),
                 CsvEscape((optionMapping != null ? optionMapping.MatchConfidence : mapping.MatchConfidence)?.ToString("0.####", CultureInfo.InvariantCulture)),
                 CsvEscape(optionMapping != null ? optionMapping.MatchType : mapping.MatchType),
+                CsvEscape(mapping.StagingTableColumns),
                 CsvEscape(metadataRow?.EdFactsFileSpecNumber),
                 CsvEscape(mapping.CedsPath ?? metadataRow?.CedsPath),
                 CsvEscape(mapping.CedsElementName),

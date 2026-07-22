@@ -64,6 +64,7 @@ namespace generate.infrastructure.Services
                         CedsPath = cedsElement.CedsPath,
                         CedsDataModelId = cedsElement.CedsDataModelId,
                         HasOptionSet = cedsElement.HasOptionSet,
+                        StagingTableColumns = cedsElement.StagingTableColumns,
                         Confidence = confidence
                     });
                 }

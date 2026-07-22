@@ -1,6 +1,7 @@
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Repositories.App;
 using generate.core.Interfaces.Repositories.RDS;
+using generate.core.Interfaces.Services;
 using generate.core.Models.App;
 using generate.core.Models.RDS;
 using generate.infrastructure.Services;
@@ -143,6 +144,105 @@ namespace generate.test.Infrastructure.Services
         private EtlSourceMappingService BuildService()
         {
             return new EtlSourceMappingService(_appRepository.Object, _rdsRepository.Object, new CedsAutoMapService());
+        }
+
+        private EtlSourceMappingService BuildServiceWithCatalog(ICedsStagingCatalogProvider catalogProvider)
+        {
+            return new EtlSourceMappingService(_appRepository.Object, _rdsRepository.Object, new CedsAutoMapService(), catalogProvider);
+        }
+
+        [Fact]
+        public void FallBackToOptionSetValueWhenNoConfidentElementMatch()
+        {
+            // Element catalog entry is unrelated to the source; the fallback option set value matches.
+            var scheme = new CedsElementCatalogDto
+            {
+                CedsElementGlobalId = "000021",
+                CedsElementName = "Assessment Academic Subject",
+                CedsElementDefinition = "The description of the academic content or subject area being evaluated.",
+                HasOptionSet = true,
+                StagingTableColumns = new List<string> { "Assessment.AssessmentAcademicSubject" }
+            };
+
+            var catalog = new Mock<ICedsStagingCatalogProvider>();
+            catalog.Setup(c => c.IsAvailable).Returns(true);
+            catalog.Setup(c => c.GetElementCatalog()).Returns(new List<CedsElementCatalogDto> { scheme });
+            catalog.Setup(c => c.GetOptionValueFallbackCatalog()).Returns(new List<CedsElementCatalogDto>
+            {
+                new CedsElementCatalogDto
+                {
+                    CedsElementGlobalId = "000021",
+                    CedsElementName = "Mathematics subject area",
+                    CedsElementDefinition = "Mathematics subject area",
+                    HasOptionSet = true,
+                    StagingTableColumns = scheme.StagingTableColumns
+                }
+            });
+            catalog.Setup(c => c.GetElementByGlobalId("000021")).Returns(scheme);
+            catalog.Setup(c => c.GetOptionSetValues(It.IsAny<string>())).Returns(new List<CedsOptionSetValueDto>());
+
+            var service = BuildServiceWithCatalog(catalog.Object);
+
+            var upload = new EtlSourceMappingUploadDto
+            {
+                MapName = "Fallback Test",
+                UploadedBy = "tester",
+                Elements = new List<EtlSourceElementUploadDto>
+                {
+                    new EtlSourceElementUploadDto
+                    {
+                        SourceElementName = "Mathematics subject area",
+                        SourceElementDefinition = "Mathematics subject area"
+                    }
+                }
+            };
+
+            var mapping = service.UploadDataDictionary(upload)[0].Mapping;
+
+            Assert.Equal("000021", mapping.CedsElementGlobalId);
+            Assert.Equal(EtlMatchType.OptionSetValue, mapping.MatchType);
+            Assert.Equal(EtlMappingStatus.Suggested, mapping.MappingStatus);
+            Assert.Equal("Assessment.AssessmentAcademicSubject", mapping.StagingTableColumns);
+        }
+
+        [Fact]
+        public void SetStagingTableColumnsOnConfidentElementMatch()
+        {
+            var scheme = new CedsElementCatalogDto
+            {
+                CedsElementGlobalId = "000933",
+                CedsElementName = "Assessment Family Short Name",
+                CedsElementDefinition = "The abbreviated title of the Assessment Family.",
+                HasOptionSet = false,
+                StagingTableColumns = new List<string> { "Assessment.AssessmentFamilyShortName", "AssessmentFamily.ShortName" }
+            };
+
+            var catalog = new Mock<ICedsStagingCatalogProvider>();
+            catalog.Setup(c => c.IsAvailable).Returns(true);
+            catalog.Setup(c => c.GetElementCatalog()).Returns(new List<CedsElementCatalogDto> { scheme });
+            catalog.Setup(c => c.GetOptionValueFallbackCatalog()).Returns(new List<CedsElementCatalogDto>());
+            catalog.Setup(c => c.GetOptionSetValues(It.IsAny<string>())).Returns(new List<CedsOptionSetValueDto>());
+
+            var service = BuildServiceWithCatalog(catalog.Object);
+
+            var upload = new EtlSourceMappingUploadDto
+            {
+                MapName = "Direct Test",
+                Elements = new List<EtlSourceElementUploadDto>
+                {
+                    new EtlSourceElementUploadDto
+                    {
+                        SourceElementName = "Assessment Family Short Name",
+                        SourceElementDefinition = "The abbreviated title of the Assessment Family."
+                    }
+                }
+            };
+
+            var mapping = service.UploadDataDictionary(upload)[0].Mapping;
+
+            Assert.Equal("000933", mapping.CedsElementGlobalId);
+            Assert.Equal(EtlMatchType.Suggested, mapping.MatchType);
+            Assert.Equal("Assessment.AssessmentFamilyShortName; AssessmentFamily.ShortName", mapping.StagingTableColumns);
         }
 
         private static EtlSourceMappingUploadDto BuildUpload()

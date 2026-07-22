@@ -45,6 +45,9 @@ namespace generate.core.Models.App
         public string MatchType { get; set; }
         public string MappingStatus { get; set; }
 
+        // CEDS Data Warehouse Staging destination(s) for the mapped CEDS element (Table.Column list)
+        public string StagingTableColumns { get; set; }
+
         // Audit
         public string UploadFileName { get; set; }
         public DateTime CreatedDate { get; set; }

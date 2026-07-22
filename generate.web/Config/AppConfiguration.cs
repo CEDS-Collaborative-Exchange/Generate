@@ -102,6 +102,12 @@ namespace generate.web.Config
             services.AddScoped<IStateDefinedReportService, StateDefinedReportService>();
             services.AddScoped<IFSMetadataUpdateService, MetadataUpdateService>();
             services.AddScoped<IAboutService, AboutService>();
+            // CEDS Ontology + Staging catalog (CIID-9057): source the match corpus from the ontology
+            // RDF filtered to CEDS elements present in the warehouse Staging schema.
+            services.AddSingleton<CedsOntologyProvider>();
+            services.AddSingleton<StagingCedsColumnProvider>();
+            services.AddSingleton<ICedsStagingCatalogProvider, CedsStagingCatalogProvider>();
+
             // CEDS automapping (CIID-9032): the fine-tuned CEDS Copilot embedding model (ONNX) when
             // configured and present; otherwise the deterministic lexical matcher.
             services.AddSingleton<CedsEmbeddingModelProvider>();

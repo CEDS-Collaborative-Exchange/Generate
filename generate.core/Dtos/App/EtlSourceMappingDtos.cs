@@ -106,6 +106,8 @@ namespace generate.core.Dtos.App
         public string CedsPath { get; set; }
         public string CedsDataModelId { get; set; }
         public bool HasOptionSet { get; set; }
+        /// <summary>CEDS Data Warehouse Staging "Table.Column" destination(s) for this element.</summary>
+        public List<string> StagingTableColumns { get; set; }
     }
 
     /// <summary>

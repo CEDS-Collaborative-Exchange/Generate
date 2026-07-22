@@ -72,6 +72,7 @@ export interface EtlSourceElementMapping {
     matchConfidence: number;
     matchType: string;
     mappingStatus: string;
+    stagingTableColumns: string;
     uploadFileName: string;
     createdDate: string;
     createdBy: string;
