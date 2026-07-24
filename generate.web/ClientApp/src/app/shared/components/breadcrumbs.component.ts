@@ -1,7 +1,7 @@
-﻿import {Component, Input, AfterViewInit} from '@angular/core';
+import {Component, Input, AfterViewInit} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-declare var componentHandler: any;
+declare let componentHandler: any;
 
 @Component({
     selector: 'generate-app-breadcrumbs',
