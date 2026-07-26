@@ -147,6 +147,52 @@ BEGIN
 		ON [App].[EtlSourceOptionSetMapping] ([EtlSourceElementMappingId] ASC)
 END
 
+-- CIID-9061: AI ETL developer chatbot sessions + transcript, stored by map
+IF OBJECT_ID('App.EtlChatSession', 'U') IS NULL
+BEGIN
+	CREATE TABLE [App].[EtlChatSession] (
+		[EtlChatSessionId] [int] IDENTITY(1,1) NOT NULL,
+		[EtlMapId] [int] NOT NULL,
+		[SessionName] [nvarchar](200) NULL,
+		[SourceConnection] [nvarchar](1000) NULL,   -- source server/database/schema or connection descriptor
+		[SourceObject] [nvarchar](500) NULL,        -- source table/view/query the ETL pulls from
+		[Status] [varchar](20) NOT NULL CONSTRAINT [DF_EtlChatSession_Status] DEFAULT ('Active'),  -- Active | AwaitingInput | Completed | Failed
+		[MaxLoops] [int] NOT NULL CONSTRAINT [DF_EtlChatSession_MaxLoops] DEFAULT (10),
+		[CurrentLoop] [int] NOT NULL CONSTRAINT [DF_EtlChatSession_CurrentLoop] DEFAULT (0),
+		[LastEtlSql] [nvarchar](max) NULL,
+		[LastTestSql] [nvarchar](max) NULL,
+		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_EtlChatSession_CreatedDate] DEFAULT (GETDATE()),
+		[CreatedBy] [nvarchar](100) NULL,
+		[ModifiedDate] [datetime] NULL,
+		[ModifiedBy] [nvarchar](100) NULL,
+		CONSTRAINT [PK_EtlChatSession] PRIMARY KEY CLUSTERED ([EtlChatSessionId] ASC)
+			WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY],
+		CONSTRAINT [FK_EtlChatSession_EtlMap] FOREIGN KEY ([EtlMapId])
+			REFERENCES [App].[EtlMap] ([EtlMapId]) ON DELETE CASCADE
+	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+	CREATE NONCLUSTERED INDEX [IX_EtlChatSession_EtlMapId] ON [App].[EtlChatSession] ([EtlMapId] ASC)
+END
+
+IF OBJECT_ID('App.EtlChatMessage', 'U') IS NULL
+BEGIN
+	CREATE TABLE [App].[EtlChatMessage] (
+		[EtlChatMessageId] [int] IDENTITY(1,1) NOT NULL,
+		[EtlChatSessionId] [int] NOT NULL,
+		[Role] [varchar](20) NOT NULL,              -- user | assistant | system | tool
+		[MessageType] [varchar](20) NOT NULL CONSTRAINT [DF_EtlChatMessage_MessageType] DEFAULT ('chat'),  -- chat | question | sql | testresult | status | error
+		[IterationNumber] [int] NULL,
+		[Content] [nvarchar](max) NULL,
+		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_EtlChatMessage_CreatedDate] DEFAULT (GETDATE()),
+		CONSTRAINT [PK_EtlChatMessage] PRIMARY KEY CLUSTERED ([EtlChatMessageId] ASC)
+			WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY],
+		CONSTRAINT [FK_EtlChatMessage_EtlChatSession] FOREIGN KEY ([EtlChatSessionId])
+			REFERENCES [App].[EtlChatSession] ([EtlChatSessionId]) ON DELETE CASCADE
+	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+	CREATE NONCLUSTERED INDEX [IX_EtlChatMessage_EtlChatSessionId] ON [App].[EtlChatMessage] ([EtlChatSessionId] ASC)
+END
+
 -- CIID-9036: capture the CEDS Data Warehouse Staging destination(s) for the mapped CEDS element
 IF COL_LENGTH('App.EtlSourceElementMapping', 'StagingTableColumns') IS NULL
 BEGIN

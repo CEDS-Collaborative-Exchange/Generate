@@ -1,0 +1,75 @@
+<div class="etl-chat">
+  <h2 class="etl-chat__title">AI ETL Developer</h2>
+  <p class="etl-chat__intro">
+    The assistant builds SQL that loads your source into the mapped Staging tables, then tests it and
+    loops until the source and Staging row counts match (or the max loop count is hit). Answer its
+    questions in the box below to refine the work.
+  </p>
+
+  <div *ngIf="statusMessage" class="etl-chat__status">{{ statusMessage }}</div>
+
+  <!-- Session list -->
+  <div *ngIf="!selectedSession">
+    <div class="etl-chat__toolbar">
+      <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+              (click)="showNewForm = !showNewForm">New Session</button>
+    </div>
+
+    <div *ngIf="showNewForm" class="etl-chat__new">
+      <div class="etl-chat__field"><label>Session name</label><input type="text" [(ngModel)]="newName" placeholder="e.g. Load PARCC results" /></div>
+      <div class="etl-chat__field"><label>Source connection / server.database.schema</label><input type="text" [(ngModel)]="newSourceConnection" placeholder="e.g. StateSIS on SRV01, or a linked server" /></div>
+      <div class="etl-chat__field"><label>Source object (table / view / query)</label><input type="text" [(ngModel)]="newSourceObject" placeholder="e.g. dbo.ALLTESTS_PARCC_LAL" /></div>
+      <div class="etl-chat__field"><label>Max loops</label><input type="number" min="1" [(ngModel)]="newMaxLoops" /></div>
+      <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)="createSession()">Create</button>
+      <button type="button" class="mdl-button mdl-js-button" (click)="showNewForm = false">Cancel</button>
+    </div>
+
+    <div *ngIf="sessions.length === 0" class="etl-chat__empty">No ETL chat sessions for this map yet.</div>
+
+    <table *ngIf="sessions.length > 0" class="etl-chat__table">
+      <thead>
+        <tr><th>Session</th><th>Source</th><th>Status</th><th>Loops</th><th>Updated</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of sessions" (click)="openSession(s)" class="etl-chat__row">
+          <td><strong>{{ s.sessionName }}</strong></td>
+          <td>{{ s.sourceObject }}</td>
+          <td><span class="etl-chat__badge etl-chat__badge--{{ s.status }}">{{ s.status }}</span></td>
+          <td>{{ s.currentLoop }}/{{ s.maxLoops }}</td>
+          <td>{{ (s.modifiedDate || s.createdDate) | date:'short' }}</td>
+          <td><button type="button" class="mdl-button mdl-js-button" (click)="deleteSession(s, $event)">Delete</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Transcript -->
+  <div *ngIf="selectedSession" class="etl-chat__session">
+    <div class="etl-chat__session-header">
+      <button type="button" class="mdl-button mdl-js-button" (click)="backToSessions()">&larr; Sessions</button>
+      <h3>{{ selectedSession.sessionName }}</h3>
+      <span class="etl-chat__badge etl-chat__badge--{{ selectedSession.status }}">{{ selectedSession.status }}</span>
+      <span class="etl-chat__subtext">loop {{ selectedSession.currentLoop }}/{{ selectedSession.maxLoops }} · source: {{ selectedSession.sourceObject || '—' }}</span>
+      <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+              (click)="run()" [disabled]="isRunning">{{ isRunning ? 'Running…' : 'Run' }}</button>
+    </div>
+
+    <div class="etl-chat__transcript">
+      <div *ngFor="let m of messages" class="etl-chat__msg" [ngClass]="roleClass(m)">
+        <div class="etl-chat__msg-meta">
+          {{ m.role }}<span *ngIf="m.messageType !== 'chat'"> · {{ m.messageType }}</span>
+          <span *ngIf="m.iterationNumber"> · loop {{ m.iterationNumber }}</span>
+        </div>
+        <pre *ngIf="isSql(m)" class="etl-chat__sql">{{ m.content }}</pre>
+        <div *ngIf="!isSql(m)" class="etl-chat__msg-body">{{ m.content }}</div>
+      </div>
+      <div *ngIf="messages.length === 0" class="etl-chat__empty">No messages yet. Click Run to begin.</div>
+    </div>
+
+    <div class="etl-chat__composer">
+      <input type="text" [(ngModel)]="userInput" (keyup.enter)="send()"
+             placeholder="Answer the assistant's questions or add guidance, then press Enter…" />
+      <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="send()">Send</button>
+    </div>
+  </div>
+</div>

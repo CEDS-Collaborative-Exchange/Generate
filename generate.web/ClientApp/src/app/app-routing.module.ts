@@ -42,6 +42,12 @@ import { AboutComponent } from './about/about.component';
                 loadChildren: () => import('./etl-mapping/etl-mapping.module').then(m => m.EtlMappingModule),
                 canActivate: [LoginGuard]
             },
+            // AI ETL Developer chatbot (CIID-9061)
+            {
+                path: 'etl-chat',
+                loadChildren: () => import('./etl-chat/etl-chat.module').then(m => m.EtlChatModule),
+                canActivate: [LoginGuard]
+            },
             { path: '**', component: AppNotFoundComponent }
 
         ])

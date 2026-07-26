@@ -692,6 +692,41 @@ namespace generate.infrastructure.Contexts
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // EtlChatSession / EtlChatMessage (CIID-9061 - AI ETL developer chat, stored by map)
+
+            modelBuilder.Entity<EtlChatSession>(entity =>
+            {
+                entity.ToTable("EtlChatSession");
+                entity.HasKey(x => x.EtlChatSessionId);
+                entity.Property(x => x.SessionName).HasMaxLength(200);
+                entity.Property(x => x.SourceConnection).HasMaxLength(1000);
+                entity.Property(x => x.SourceObject).HasMaxLength(500);
+                entity.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                entity.Property(x => x.LastEtlSql).HasColumnType("nvarchar(max)");
+                entity.Property(x => x.LastTestSql).HasColumnType("nvarchar(max)");
+
+                entity
+                    .HasOne(pt => pt.EtlMap)
+                    .WithMany()
+                    .HasForeignKey(pt => pt.EtlMapId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<EtlChatMessage>(entity =>
+            {
+                entity.ToTable("EtlChatMessage");
+                entity.HasKey(x => x.EtlChatMessageId);
+                entity.Property(x => x.Role).IsRequired().HasMaxLength(20);
+                entity.Property(x => x.MessageType).IsRequired().HasMaxLength(20);
+                entity.Property(x => x.Content).HasColumnType("nvarchar(max)");
+
+                entity
+                    .HasOne(pt => pt.EtlChatSession)
+                    .WithMany(t => t.EtlChatMessages)
+                    .HasForeignKey(pt => pt.EtlChatSessionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             // EtlSourceElementMapping (CIID-9031 - left side of the ETL Checklist)
 
             modelBuilder.Entity<EtlSourceElementMapping>(entity =>
@@ -1416,6 +1451,8 @@ namespace generate.infrastructure.Contexts
         public DbSet<EtlMetadata> EtlMetadata { get; set; }
         public DbSet<EtlMap> EtlMaps { get; set; }
         public DbSet<EtlMapFileSpec> EtlMapFileSpecs { get; set; }
+        public DbSet<EtlChatSession> EtlChatSessions { get; set; }
+        public DbSet<EtlChatMessage> EtlChatMessages { get; set; }
         public DbSet<EtlSourceElementMapping> EtlSourceElementMappings { get; set; }
         public DbSet<EtlSourceOptionSetMapping> EtlSourceOptionSetMappings { get; set; }
 

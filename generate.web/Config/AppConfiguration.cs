@@ -121,6 +121,10 @@ namespace generate.web.Config
                     : (ICedsAutoMapService)serviceProvider.GetRequiredService<CedsAutoMapService>();
             });
             services.AddScoped<IEtlSourceMappingService, EtlSourceMappingService>();
+
+            // AI ETL developer chatbot (CIID-9061): local Ollama model + looping ETL development
+            services.AddScoped<IOllamaClient, OllamaClient>();
+            services.AddScoped<IEtlChatService, EtlChatService>();
         }
 
 

@@ -160,6 +160,8 @@
     <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="exportChecklist()">
       Export Checklist (CSV)
     </button>
+    <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+       [routerLink]="['/etl-chat', selectedMap.etlMapId]">AI ETL Developer</a>
     <span class="etl-mapping__subtext">Uploading a file now adds its elements to this map.</span>
   </div>
 
