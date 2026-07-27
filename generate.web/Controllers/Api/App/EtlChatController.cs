@@ -75,6 +75,13 @@ namespace generate.web.Controllers.Api.App
             return Json(result);
         }
 
+        [HttpPost("sessions/{id}/publish")]
+        public IActionResult Publish(int id)
+        {
+            var session = _etlChatService.PublishProcedure(id);
+            return session == null ? (IActionResult)NotFound() : Json(session);
+        }
+
         [HttpDelete("sessions/{id}")]
         public IActionResult DeleteSession(int id)
         {

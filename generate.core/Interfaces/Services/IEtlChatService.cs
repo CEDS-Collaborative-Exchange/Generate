@@ -26,5 +26,12 @@ namespace generate.core.Interfaces.Services
         /// CanContinue is true (up to MaxLoops).
         /// </summary>
         Task<EtlChatIterationResultDto> RunIterationAsync(int etlChatSessionId);
+
+        /// <summary>
+        /// Materializes the session's validated ETL as a unique stored procedure (CREATE OR ALTER)
+        /// and registers it in App.DataMigrationTasks so the Generate tool can execute it. Runs
+        /// automatically when a session completes; can also be invoked manually.
+        /// </summary>
+        EtlChatSession PublishProcedure(int etlChatSessionId);
     }
 }

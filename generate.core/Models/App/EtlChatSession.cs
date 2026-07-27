@@ -20,6 +20,7 @@ namespace generate.core.Models.App
         public int CurrentLoop { get; set; }
         public string LastEtlSql { get; set; }
         public string LastTestSql { get; set; }
+        public string GeneratedProcedureName { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }

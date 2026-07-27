@@ -193,6 +193,12 @@ BEGIN
 	CREATE NONCLUSTERED INDEX [IX_EtlChatMessage_EtlChatSessionId] ON [App].[EtlChatMessage] ([EtlChatSessionId] ASC)
 END
 
+-- CIID-9061: record the stored procedure the AI ETL developer published for a session
+IF COL_LENGTH('App.EtlChatSession', 'GeneratedProcedureName') IS NULL
+BEGIN
+	ALTER TABLE [App].[EtlChatSession] ADD [GeneratedProcedureName] [nvarchar](300) NULL
+END
+
 -- CIID-9036: capture the CEDS Data Warehouse Staging destination(s) for the mapped CEDS element
 IF COL_LENGTH('App.EtlSourceElementMapping', 'StagingTableColumns') IS NULL
 BEGIN

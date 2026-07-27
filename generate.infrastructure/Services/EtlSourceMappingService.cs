@@ -31,6 +31,8 @@ namespace generate.infrastructure.Services
         private readonly ICedsAutoMapService _cedsAutoMapService;
         private readonly ICedsStagingCatalogProvider _catalogProvider;
         private readonly decimal _elementMatchThreshold;
+        private readonly string _connectionString;
+        private readonly int _referenceDataSchoolYear;
 
         public EtlSourceMappingService(
             IAppRepository appRepository,
@@ -43,6 +45,7 @@ namespace generate.infrastructure.Services
             _rdsRepository = rdsRepository;
             _cedsAutoMapService = cedsAutoMapService;
             _catalogProvider = catalogProvider;
+            _connectionString = configuration?["Data:AppDbContextConnection"];
 
             _elementMatchThreshold = DefaultElementMatchThreshold;
             string configured = configuration?["CedsAutoMap:ElementMatchThreshold"];
@@ -52,6 +55,12 @@ namespace generate.infrastructure.Services
             {
                 _elementMatchThreshold = threshold;
             }
+
+            // Reference-data mappings are keyed by school year (staging-to-fact copies forward if
+            // a later year is missing). Configurable via CedsAutoMap:ReferenceDataSchoolYear.
+            _referenceDataSchoolYear = int.TryParse(configuration?["CedsAutoMap:ReferenceDataSchoolYear"], out var yr) && yr > 1900
+                ? yr
+                : 2026;
         }
 
         /// <summary>True when the ontology + Staging catalog is available (else legacy EtlMetadata).</summary>
@@ -638,7 +647,105 @@ namespace generate.infrastructure.Services
 
             _appRepository.Save();
 
+            // Reflect the approved option-set-value mapping into Staging.SourceSystemReferenceData so
+            // the staging-to-fact scripts translate the source code to the CEDS code (CIID-9061).
+            SyncSourceSystemReferenceData(parentElement, optionMapping);
+
             return optionMapping;
+        }
+
+        /// <summary>
+        /// Upserts (or removes) a Staging.SourceSystemReferenceData row for an option-set-value
+        /// mapping: TableName = the CEDS reference table (dbo.Ref&lt;element&gt;), InputCode = the source
+        /// code, OutputCode = the CEDS code, keyed by the configured school year. No-op when the CEDS
+        /// element has no matching Ref table (e.g. bit/free-text elements).
+        /// </summary>
+        private void SyncSourceSystemReferenceData(EtlSourceElementMapping element, EtlSourceOptionSetMapping option)
+        {
+            if (string.IsNullOrWhiteSpace(_connectionString) || element == null || option == null)
+            {
+                return;
+            }
+
+            string inputCode = option.SourceOptionSetCode;
+            if (string.IsNullOrWhiteSpace(inputCode))
+            {
+                return;
+            }
+
+            try
+            {
+                using var conn = new Microsoft.Data.SqlClient.SqlConnection(_connectionString);
+                conn.Open();
+
+                string refTable = ResolveRefTableName(conn, element.CedsElementName);
+                if (refTable == null)
+                {
+                    return; // element's option set is not backed by a CEDS reference table
+                }
+
+                bool remove = option.MappingStatus == EtlMappingStatus.NotInCeds
+                    || option.MappingStatus == EtlMappingStatus.Rejected
+                    || string.IsNullOrWhiteSpace(option.CedsOptionSetCode);
+
+                using var cmd = conn.CreateCommand();
+                if (remove)
+                {
+                    cmd.CommandText =
+                        "DELETE FROM Staging.SourceSystemReferenceData " +
+                        "WHERE SchoolYear=@yr AND TableName=@tbl AND TableFilter IS NULL AND InputCode=@in";
+                }
+                else
+                {
+                    cmd.CommandText = @"
+MERGE Staging.SourceSystemReferenceData AS t
+USING (SELECT @yr AS SchoolYear, @tbl AS TableName, @in AS InputCode) AS s
+    ON t.SchoolYear = s.SchoolYear AND t.TableName = s.TableName AND t.TableFilter IS NULL AND t.InputCode = s.InputCode
+WHEN MATCHED THEN UPDATE SET OutputCode = @out
+WHEN NOT MATCHED THEN INSERT (SchoolYear, TableName, TableFilter, InputCode, OutputCode)
+    VALUES (@yr, @tbl, NULL, @in, @out);";
+                    cmd.Parameters.AddWithValue("@out", (object)option.CedsOptionSetCode ?? System.DBNull.Value);
+                }
+                cmd.Parameters.AddWithValue("@yr", _referenceDataSchoolYear);
+                cmd.Parameters.AddWithValue("@tbl", refTable);
+                cmd.Parameters.AddWithValue("@in", inputCode);
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                // Reference-data sync is best-effort; a failure must not block the mapping update.
+            }
+        }
+
+        /// <summary>
+        /// Resolves the CEDS reference table (dbo.Ref&lt;name&gt;) for a CEDS element by trying the
+        /// element label and known variants, returning the base table name (e.g. RefSex) if it exists.
+        /// </summary>
+        private static string ResolveRefTableName(Microsoft.Data.SqlClient.SqlConnection conn, string cedsElementName)
+        {
+            if (string.IsNullOrWhiteSpace(cedsElementName))
+            {
+                return null;
+            }
+
+            string core = new string(cedsElementName.Where(char.IsLetterOrDigit).ToArray());
+            var candidates = new List<string> { "Ref" + core };
+            // Common CEDS naming differences
+            candidates.Add("Ref" + core.Replace("PrimaryDisabilityType", "IDEADisabilityType"));
+            candidates.Add("Ref" + core.Replace("Type", ""));
+
+            foreach (var candidate in candidates.Distinct())
+            {
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT name FROM sys.tables WHERE name = @n";
+                cmd.Parameters.AddWithValue("@n", candidate);
+                var found = cmd.ExecuteScalar() as string;
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+            return null;
         }
 
         /// <summary>
