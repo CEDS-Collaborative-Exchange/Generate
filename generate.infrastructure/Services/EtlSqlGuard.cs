@@ -36,6 +36,12 @@ namespace generate.infrastructure.Services
             {
                 return "does not target the Staging schema.";
             }
+            // Guard against accidental mass deletes/updates: any DELETE/UPDATE must be scoped by WHERE.
+            if ((Regex.IsMatch(lower, @"\bdelete\b") || Regex.IsMatch(lower, @"\bupdate\b")) &&
+                !Regex.IsMatch(lower, @"\bwhere\b"))
+            {
+                return "contains an unscoped DELETE/UPDATE (a WHERE clause is required).";
+            }
             return null;
         }
 

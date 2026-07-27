@@ -9,7 +9,7 @@ namespace generate.test.Infrastructure.Services
         [Fact]
         public void AllowStagingTargetedEtl()
         {
-            string sql = "DELETE FROM Staging.Assessment; INSERT INTO Staging.Assessment (Sex) SELECT Gender FROM src.Students;";
+            string sql = "DELETE FROM Staging.Assessment WHERE SchoolYear = 2026; INSERT INTO Staging.Assessment (Sex) SELECT Gender FROM src.Students;";
             Assert.Null(EtlSqlGuard.ValidateEtl(sql));
         }
 
@@ -36,6 +36,13 @@ namespace generate.test.Infrastructure.Services
         public void RejectEmptyEtl()
         {
             Assert.NotNull(EtlSqlGuard.ValidateEtl("   "));
+        }
+
+        [Fact]
+        public void RejectUnscopedDeleteButAllowScopedReload()
+        {
+            Assert.NotNull(EtlSqlGuard.ValidateEtl("DELETE FROM Staging.K12Enrollment; INSERT INTO Staging.K12Enrollment (Sex) SELECT Gender FROM Source.t"));
+            Assert.Null(EtlSqlGuard.ValidateEtl("DELETE FROM Staging.K12Enrollment WHERE SchoolYear = 2026; INSERT INTO Staging.K12Enrollment (SchoolYear, Sex) SELECT 2026, Gender FROM Source.t"));
         }
 
         [Fact]
