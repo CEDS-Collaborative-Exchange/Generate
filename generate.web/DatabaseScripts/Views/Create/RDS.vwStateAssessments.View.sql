@@ -1,4 +1,6 @@
-﻿CREATE VIEW RDS.vwStateAssessments
+﻿
+
+CREATE VIEW [RDS].[vwStateAssessments]
   AS 
   
     SELECT 
@@ -12,7 +14,6 @@
 	  , f.AssessmentId
 	  , f.AssessmentRegistrationId
 	  , f.AssessmentPerformanceLevelId
-	  , f.FactK12StudentAssessmentAccommodationId
       , f.K12DemographicId
       , f.GradeLevelWhenAssessedId
       , f.IdeaStatusId
@@ -33,7 +34,6 @@
 	inner join rds.DimLeas lea on f.LeaId = lea.DimLeaID
 	inner join rds.DimK12Schools sch on f.K12SchoolId = sch.DimK12SchoolId
 	left join (select distinct FactK12StudentAssessmentId, RaceId from rds.BridgeK12StudentAssessmentRaces) race on f.FactK12StudentAssessmentId = race.FactK12StudentAssessmentId
-	left join rds.BridgeK12StudentAssessmentAccommodations accomodations on f.FactK12StudentAssessmentAccommodationId = accomodations.FactK12StudentAssessmentAccommodationId
 	left join (
 			select distinct  fact.K12StudentId,  fact.SchoolYearId, fact.AssessmentPerformanceLevelId,
 			case 
