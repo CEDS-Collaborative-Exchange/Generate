@@ -10,6 +10,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -59,7 +60,7 @@ Expanded Search Functionality:
 * Search by Header Value: Added support for searching based on header values.
 * Search by Permitted Value: Enhanced search functionality to include searching by the underlying permitted value.
 
-<figure><img src="../../.gitbook/assets/VideoProject-ezgif.com-overlay (1).gif" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/VideoProject-ezgif.com-overlay.gif" alt=""><figcaption></figcaption></figure>
 
 #### Performance Improvements
 
@@ -92,8 +93,6 @@ Generate was tested on the following operating systems and browsers:
 
 * Windows 10 Pro
 * Google Chrome, Version 68 0.3440.106 (Official Build) (64-bit) and Firefox Quantum 61.01 (64 bit)
-
-
 
 ***
 

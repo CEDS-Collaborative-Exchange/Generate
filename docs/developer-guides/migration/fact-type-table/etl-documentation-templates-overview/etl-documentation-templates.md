@@ -1,18 +1,17 @@
 # ETL Documentation Templates
 
-Once the decision has been made to integrate IDEA data into the statewide longitudinal data system (SLDS), the technical aspects of extracting the data from its source system, making any transformations in the data to help it align with the target system with which it is being integrated, and the process of loading the data must be developed. This extract, transform, and load (ETL) process must be done correctly for the integrated data to be appropriately available to be utilized. Much thought and consideration needs to go into the ‘rules’ for doing the ETL. To assist with this effort, the following templates have been developed.\
-Institution: Center for the Integration of IDEA Data\
-Publication Year: 2025\
+Once the decision has been made to integrate IDEA data into the statewide longitudinal data system (SLDS), the technical aspects of extracting the data from its source system, making any transformations in the data to help it align with the target system with which it is being integrated, and the process of loading the data must be developed. This extract, transform, and load (ETL) process must be done correctly for the integrated data to be appropriately available to be utilized. Much thought and consideration needs to go into the ‘rules’ for doing the ETL. To assist with this effort, the following templates have been developed.\
+Institution: Center for the Integration of IDEA Data\
+Publication Year: 2025\
 Topics: Data Collection: Assessment; Child Count; Discipline; Personnel; Templates; Documentation Step 5: Task 5.1; Task 5.2; Task 5.3; Task 5.4; Task 5.5
 
-**Associated Files**
---------------------
+## **Associated Files**
 
 #### Assessment ETL Documentation Template - Generate v12.4 to Current
 
 {% file src="../../../../.gitbook/assets/Assessment ETL Documentation Template.xlsx" %}
 
-#### Base IDEA Checklist - Generate v11.0 to Current&#x20;
+#### Base IDEA Checklist - Generate v11.0 to Current
 
 {% file src="../../../../.gitbook/assets/Base IDEA Checklist.xlsx" %}
 
@@ -40,26 +39,26 @@ Topics: Data Collection: Assessment; Child Count; Discipline; Personnel; Templat
 
 {% file src="../../../../.gitbook/assets/Exiting ETL Documentation Template.xlsx" %}
 
-#### Membership ETL Documentation Template - Generate v12.4 to Current&#x20;
+#### Membership ETL Documentation Template - Generate v12.4 to Current
 
 {% file src="../../../../.gitbook/assets/Membership ETL Documentation Template.xlsx" %}
 
 #### NorD Participation ETL Checklist - Generate v3.8 to Current
 
-{% file src="../../../../.gitbook/assets/NorD Participation ETL Checklist (1).xlsx" %}
+{% file src="../../../../.gitbook/assets/NorD Participation ETL Checklist.xlsx" %}
 
 #### OESE ETL Checklist - Generate v11.0 to Current
 
 {% file src="../../../../.gitbook/assets/OESE ETL Checklist (1).xlsx" %}
 
-#### Personnel ETL Documentation Template - Generate v12.4 to Current&#x20;
+#### Personnel ETL Documentation Template - Generate v12.4 to Current
 
 {% file src="../../../../.gitbook/assets/Personnel ETL Documentation Template1.xlsx" %}
 
-#### Title I ETL Documentation Template - Generate v3.8 to Current&#x20;
+#### Title I ETL Documentation Template - Generate v3.8 to Current
 
-{% file src="../../../../.gitbook/assets/Title I ETL Documentation Template (1).xlsx" %}
+{% file src="../../../../.gitbook/assets/Title I ETL Documentation Template.xlsx" %}
 
 #### Title III ETL Checklist - Generate v3.8 to Current
 
-{% file src="../../../../.gitbook/assets/Title IIIETL Checklist (1).xlsx" %}
+{% file src="../../../../.gitbook/assets/Title IIIETL Checklist.xlsx" %}

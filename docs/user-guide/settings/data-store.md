@@ -10,14 +10,10 @@ hidden: true
 From the Data Store three migrations can be executed:
 
 * [x] [**Staging Migration**](data-store.md#staging-migration)
-* [x] [**RDS Migration**](data-store.md#rds\_migration)
-* [x] [**Reports Migration**](data-store.md#reports\_migration)
+* [x] [**RDS Migration**](data-store.md#rds_migration)
+* [x] [**Reports Migration**](data-store.md#reports_migration)
 
-<div data-full-width="true">
-
-<figure><img src="../../.gitbook/assets/1 - Data Store Home.png" alt=""><figcaption><p>The three Migration process choices a Generate Admin can make are <strong>Staging Migration</strong>, <strong>RDS Migration</strong>, <strong>Reports Migration</strong>.</p></figcaption></figure>
-
-</div>
+<div data-full-width="true"><figure><img src="../../.gitbook/assets/1 - Data Store Home.png" alt=""><figcaption><p>The three Migration process choices a Generate Admin can make are <strong>Staging Migration</strong>, <strong>RDS Migration</strong>, <strong>Reports Migration</strong>.</p></figcaption></figure></div>
 
 Migrations are done via an ETL (Extract, Transform, Load) process that moves data from one database to another database. They are run independently and can be run in any order. Data travels through the system from the staging tables to the RDS to the Reports. While you can run components within each of these groups in whichever order is appropriate for your needs, data must follow the flow above to see reports in Generate. As an example, while working on issues related to data quality, the Staging Migration can be run as many times as needed until the data in Staging is correct. Then, the RDS Migration can be run to extract quality data from Staging. Following that, the Reports Migration would be run to aggregate the data and populate the reports.
 
@@ -31,11 +27,7 @@ Click on the **Staging Migration** button to select it.
 
 This opens the **Staging Migration** page.
 
-<div data-full-width="true">
-
-<figure><img src="../../.gitbook/assets/image (15).png" alt=""><figcaption><p>Staging Migration School Years and Staging Migration Tasks</p></figcaption></figure>
-
-</div>
+<div data-full-width="true"><figure><img src="../../.gitbook/assets/image (15).png" alt=""><figcaption><p>Staging Migration School Years and Staging Migration Tasks</p></figcaption></figure></div>
 
 From this page, you can enable or disable the Staging migration for specific school years and stored procedures.
 
@@ -51,7 +43,7 @@ Follow the steps below to enable the migration for a particular school year.
 
 2. To disable a school year’s migration to Staging, deselect the checkbox next to the school year.
 
-![](<../../.gitbook/assets/image (83).png>)
+![](<../../.gitbook/assets/image (78).png>)
 
 ### Staging Stored Procedures
 
@@ -64,11 +56,7 @@ The following steps explain how to disable or enable stored procedures. Generall
 1. To disable a stored procedure and prevent its migration to Staging, deselect the checkbox under the “**Enabled**?” column next to the stored procedure’s name.
 2. To enable the stored procedure, select the checkbox under the “**Enabled**?” column next to the stored procedure’s name.
 
-<div data-full-width="true">
-
-<figure><img src="../../.gitbook/assets/image (17).png" alt="Staging Migration School Years and Staging Migration Tasks with Enabled column  highlighted"><figcaption><p>Staging Migration School Years and Staging Migration Tasks with Enabled column highlighted</p></figcaption></figure>
-
-</div>
+<div data-full-width="true"><figure><img src="../../.gitbook/assets/image (17).png" alt="Staging Migration School Years and Staging Migration Tasks with Enabled column  highlighted"><figcaption><p>Staging Migration School Years and Staging Migration Tasks with Enabled column highlighted</p></figcaption></figure></div>
 
 #### **To change the execution order:**
 
@@ -79,21 +67,13 @@ The following steps explain how to disable or enable stored procedures. Generall
 3. Click the Down arrow to move the stored procedure down a level in the order of execution.
    1. You will see the Execution Order number change as the stored procedure changes location.
 
-<div data-full-width="true">
-
-<figure><img src="../../.gitbook/assets/image (18).png" alt="Staging Migration School Years and Staging Migration Tasks with Execution Order column highlighted"><figcaption><p>Staging Migration School Years and Staging Migration Tasks with Execution Order column highlighted</p></figcaption></figure>
-
-</div>
+<div data-full-width="true"><figure><img src="../../.gitbook/assets/image (18).png" alt="Staging Migration School Years and Staging Migration Tasks with Execution Order column highlighted"><figcaption><p>Staging Migration School Years and Staging Migration Tasks with Execution Order column highlighted</p></figcaption></figure></div>
 
 When the school years and stored procedures have been selected, you can execute the migration. To execute the migration:
 
 1\. Click on the “**MIGRATE TO STAGING**” button.
 
-<div data-full-width="true">
-
-<figure><img src="../../.gitbook/assets/image (19).png" alt="Staging Migration School Years, Tasks, and Migrate buttons with arrow pointing to &#x22;Migrate&#x22; button "><figcaption><p>Staging Migration School Years, Tasks, and Migrate buttons with arrow pointing to "Migrate" button</p></figcaption></figure>
-
-</div>
+<div data-full-width="true"><figure><img src="../../.gitbook/assets/image (19).png" alt="Staging Migration School Years, Tasks, and Migrate buttons with arrow pointing to &#x22;Migrate&#x22; button"><figcaption><p>Staging Migration School Years, Tasks, and Migrate buttons with arrow pointing to "Migrate" button</p></figcaption></figure></div>
 
 The migration will begin and a message at the top of the page will show the processes being run, as well as the date and time of the migration progression.
 
@@ -101,7 +81,7 @@ When the process is complete, the message at the top of the page will show the d
 
 ## RDS Migration <a href="#rds_migration" id="rds_migration"></a>
 
-The RDS migration moves data from Generate Staging into the Generate Reporting Data Store (RDS).&#x20;
+The RDS migration moves data from Generate Staging into the Generate Reporting Data Store (RDS).
 
 {% hint style="warning" %}
 Toggle settings should be applied **before** this process is run.

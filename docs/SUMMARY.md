@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Introduction to Generate](README.md)
+* [Introduction to Generate and Status Updates](README.md)
 
 ## User Guide
 

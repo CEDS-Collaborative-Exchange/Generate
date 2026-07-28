@@ -50,7 +50,7 @@ Reports show the levels for reporting, SEA, LEA, or School. If you are only inte
 
 4. To return a short list of results, or search for a specific report, enter a combination of letters in the Filter field.
 
-![](<../../.gitbook/assets/image (110).png>)
+![](<../../.gitbook/assets/image (70).png>)
 
 5. Click OK when you have made all selections.
 
@@ -68,7 +68,7 @@ To edit Report Topics, follow the steps below.
 
 1. Click on the paper and pencil edit button.
 
-<figure><img src="../../.gitbook/assets/image (146).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (103).png" alt=""><figcaption></figcaption></figure>
 
 The Edit Report Topic popup window will open.
 
@@ -116,7 +116,7 @@ Reports can be run at the LEA and School level, as well. You have the option to 
 
 1. Click on the Level “SCHOOLS”.
 2. Under Report LEA, click on the dropdown arrow next to “All LEAs” and select an LEA.
-3. Under Report School, click on the dropdown arrow next to “Select School.”&#x20;
+3. Under Report School, click on the dropdown arrow next to “Select School.”
 
 All schools that reside in the LEA you selected will display.
 
@@ -140,8 +140,6 @@ Reports can be produced in various ways.
 <figure><img src="../../.gitbook/assets/image (135).png" alt=""><figcaption><p>Expanded View</p></figcaption></figure>
 
 <figure><img src="../../.gitbook/assets/image (105).png" alt=""><figcaption><p>Collapsed View</p></figcaption></figure>
-
-
 
 ### Exporting Reports <a href="#exporting_reports" id="exporting_reports"></a>
 

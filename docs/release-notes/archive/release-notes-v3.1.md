@@ -1,4 +1,4 @@
-# Release Notes v3.1
+# Release Notes 3.1
 
 Generate
 
@@ -7,8 +7,6 @@ Installation and Configuration
 Version 3.1
 
 Table of Contents
-
-
 
 ### Installation <a href="#installation" id="installation"></a>
 
@@ -47,7 +45,7 @@ If you are upgrading from an earlier installation, please skip to the Update sec
 4. Execute iisreset at the command line or restart the server to pick up changes to the system PATH.
 5. Install the Application Initialization Module for IIS. You can install the Application Initialization module via the Server Manager. You can find the module under Server Roles -> Web Server -> Application Developer -> Application Initialization.
 
-![](<../../.gitbook/assets/1 (14)>)
+![](<../../.gitbook/assets/4 (1)>)
 
 1. Please note, the Web Application will need to be accessible independent of the Background Application. You can achieve this by one of the following methods:
    1. Place the web application and background applications on different servers.
@@ -122,7 +120,7 @@ The SQL Connection String should be the same for all three connections.
 1. Make sure that the Application Pool Identity user account used by this website has permission to Create and Modify files in the Updates and Logs directories of the application folder.
 2. Ensure that Anonymous Authentication is enabled on the website.
 
-![](<../../.gitbook/assets/10 (2)>)
+![](<../../.gitbook/assets/6 (2)>)
 
 1. Open the “appSettings.json” file located in the “Config” directory of the generate.background application folder. To retain proper formatting, Notepad++ is recommended over Notepad or Wordpad.
 2. Replace the values of the SQL Server Connection String keys with values appropriate for the installed environment.
@@ -455,11 +453,11 @@ To install Active Directory Lightweight directory services (AD LDS) on a machine
 
 Please use the following screen shots as a guide to install AD LDS.
 
-![](<../../.gitbook/assets/13 (2)>)
+![](../../.gitbook/assets/0.jpeg)
 
 ![](<../../.gitbook/assets/14 (1)>)
 
-![](<../../.gitbook/assets/15 (2)>)
+![](../../.gitbook/assets/2.png)
 
 ![](<../../.gitbook/assets/16 (3)>)
 
@@ -480,7 +478,7 @@ Please use the following screen shots as a guide to install AD LDS.
 *
   * Click on the “Configuration required” task and click on the Action link from the Task Window to open up the Active Directory Setup Wizard.
 
-![](<../../.gitbook/assets/20 (1)>)
+![](../../.gitbook/assets/7.png)
 
 * Click Next.
 * Select “Unique Instance” option and click Next.
