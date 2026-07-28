@@ -31,8 +31,11 @@ The Snapshot Utility would be executed **AFTER** running an ETL to populate Stag
 To execute the Snapshot Utility, run the following command in SSMS with the desired parameters:
 
 ```
+DECLARE
+@SchoolYear SMALLINT,
+@ReportCode as varchar(50)
 exec Utilities.CreateSnapshotFromStaging
-@SchoolYear = 2026
+@SchoolYear = 2026,
 @ReportCode = '029'
 ```
 
@@ -40,14 +43,14 @@ exec Utilities.CreateSnapshotFromStaging
 The `@SchoolYear` value should correspond to the data that currently exists in Staging tables.
 {% endhint %}
 
-The Snapshot Utility will make backup copies of all staging tables that pertain to the `@ReportCode` and place them in the **Source schema** in the Generate database.  For example, for `@ReportCode = '`**`029`**`'` these tables are:
+The Snapshot Utility will make backup copies of all staging tables that pertain to the `@ReportCode` and place them in the **Source schema** in the Generate database. For example, for `@ReportCode = '`**`029`**`'` these tables are:
 
-* `Staging.K12Organization`
-* `Staging.OrganizationAddress`
-* `Staging.OrganizationFederalFunding`
-* `Staging.OrganizationPhone`
-* `Staging.OrganizationProgramType`
-* `Staging.StateDetail`
+* `Source.K12Organization`
+* `Source.OrganizationAddress`
+* `Source.OrganizationFederalFunding`
+* `Source.OrganizationPhone`
+* `Source.OrganizationProgramType`
+* `Source.StateDetail`
 
 <figure><img src="../../.gitbook/assets/Capture 2.PNG" alt="Screenshot of the server folder tree in the Generate database with Tables expanded to show the newly created"><figcaption><p>Where to find the newly created tables from the Create Snapshot From Staging utility</p></figcaption></figure>
 
@@ -57,16 +60,16 @@ The tables are an identical copy of the Staging table(s), with the addition of t
 * **SnapshotSchoolYear** – the school year for which the snapshot data applies
 * **SnapshotDate** – the date the snapshot was created
 
-These additional columns provide features to retain backups for multiple school years, and to retain a backup for multiple report codes in the same table.&#x20;
+These additional columns provide features to retain backups for multiple school years, and to retain a backup for multiple report codes in the same table.
 
 > **Example**: After running your Child Count ETL, you could run the Snapshot Utility for C002 (a Child Count file) for 2023 to retain data from `Staging.K12Enrollment` and other related staging tables. Later in the year after running your Exiting ETL, you could run the Snapshot Utility for C009 (Exiting) to retain data from the staging tables. Both sets of data (Child Count and Exiting) will be available in each snapshot table, allowing you to review and compare if needed.
 
 {% hint style="warning" %}
-**Note:** The Snapshot Utility retains a single instance of data in each table for a particular _School Year_ and _Report Code_.  This means you cannot retain multiple “versions” of data for K12Enrollment for 2023 for C002. &#x20;
+**Note:** The Snapshot Utility retains a single instance of data in each table for a particular _School Year_ and _Report Code_. This means you cannot retain multiple “versions” of data for K12Enrollment for 2023 for C002.
 
 ***
 
-For example, while you could have Snapshot data in `Source.K12Enrollment` for 2023 for C002, C089, C009, etc., you cannot have data for 2023 C002 “Version 1”, “Version 2”, etc. &#x20;
+For example, while you could have Snapshot data in `Source.K12Enrollment` for 2023 for C002, C089, C009, etc., you cannot have data for 2023 C002 “Version 1”, “Version 2”, etc.
 
 * [ ] That may be a future enhancement to the Snapshot Utility if desired.
 {% endhint %}
@@ -81,7 +84,7 @@ The Snapshot Utility could be coded within an ETL to automatically make a backup
 
 1. In the Source-to-Staging\_Directory ETL, the Snapshot Utility could be embedded to run automatically to create a copy of all Directory data.
 2. The Snapshot Utility will run automatically and create/update backup copies of the Staging tables in the Source schema.
-3. In the Source-to-Staging\_ChildCount ETL, required Organization information can be pulled directly from the Snapshot tables rather than from the Directory source system.  This not only assures that Directory information used for Child Count will match the submitted C029 data, but may improve ETL performance by not requiring the ETL to jump to another system/database to pull Directory data.&#x20;
+3. In the Source-to-Staging\_ChildCount ETL, required Organization information can be pulled directly from the Snapshot tables rather than from the Directory source system. This not only assures that Directory information used for Child Count will match the submitted C029 data, but may improve ETL performance by not requiring the ETL to jump to another system/database to pull Directory data.
 
 Below is an example of code that could be used to restore data from a Snapshot table into a Staging table. In this case, data from `Source.K12Organization` for a school year for C029 will be restored to `Staging.K12Organization` for use with Child Count.
 
