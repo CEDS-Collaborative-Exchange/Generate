@@ -1,6 +1,12 @@
-<div *ngIf="breadcrumbs == 'ReportsEdFacts'" class="generate-app-breadcrumbs mdl-typography--body-2-color-contrast" aria-hidden="true">
-    Standard Reports > ED<span class="generate-text--italic">Facts</span> Submission Reports
-</div>
-<div *ngIf="breadcrumbs != 'ReportsEdFacts'" class="generate-app-breadcrumbs mdl-typography--body-2-color-contrast" aria-hidden="true">
-    {{breadcrumbs}}
+<div class="generate-app-breadcrumbs mdl-typography--body-2-color-contrast">
+    <ng-container *ngFor="let item of breadcrumbItems; let i = index">
+        <a *ngIf="item.route && !item.isCurrent"
+           class="generate-app-breadcrumbs__link"
+           href="javascript:void(0)"
+           (click)="navigateTo(item.route)">
+            {{item.label}}
+        </a>
+        <span *ngIf="!item.route || item.isCurrent" class="generate-app-breadcrumbs__current">{{item.label}}</span>
+        <span *ngIf="i < breadcrumbItems.length - 1" class="generate-app-breadcrumbs__separator"> &gt; </span>
+    </ng-container>
 </div>
