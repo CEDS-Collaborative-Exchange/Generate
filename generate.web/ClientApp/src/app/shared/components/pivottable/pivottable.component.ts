@@ -52,6 +52,10 @@ export class PivottableComponent {
         this.restoreSearchFields = this.restoreSearchFields.bind(this);
     }
 
+    private normalizeReportValue(value: any) {
+        return (value ?? '').toString().trim().toLowerCase();
+    }
+
     openDialog(data: any) {
         this.dialog.open(ReportDebugInformationComponent, {
             width: '1000px',
@@ -536,7 +540,7 @@ export class PivottableComponent {
                     if (c === f.header) {
                         reportData.categorySets[0].categoryOptions.forEach(o => {
                             const bindingKey = getBindingKey(d, f.binding);
-                            if ((o.categoryOptionCode ?? '').toString().toLowerCase() === getBindingValue(d, f.binding).toLowerCase()) {
+                            if (this.normalizeReportValue(o.categoryOptionCode) === this.normalizeReportValue(getBindingValue(d, f.binding))) {
                                 d[bindingKey] = o.categoryOptionName;
                             }
                         });
@@ -762,7 +766,7 @@ export class PivottableComponent {
                 viewDef.fields.forEach(f => {
                     if (c === f.header) {
                         reportData.categorySets[0].categoryOptions.forEach(o => {
-                            if (o.categoryOptionCode === d[f.binding]) {
+                            if (this.normalizeReportValue(o.categoryOptionCode) === this.normalizeReportValue(d[f.binding])) {
                                 d[f.binding] = o.categoryOptionName;
                             }
                         });
@@ -1288,7 +1292,7 @@ export class PivottableComponent {
                 viewDef.fields.forEach(f => {
                     if (c === f.header) {
                         reportData.categorySets[0].categoryOptions.forEach(o => {
-                            if (o.categoryOptionCode === d[f.binding]) {
+                            if (this.normalizeReportValue(o.categoryOptionCode) === this.normalizeReportValue(d[f.binding])) {
                                 d[f.binding] = o.categoryOptionName;
                             }
                         });
