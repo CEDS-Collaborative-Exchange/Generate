@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // F5: launches the ASP.NET Core backend, which in Development also starts the
+            // Angular dev server itself (Program.cs UseSpa -> UseAngularCliServer runs
+            // "npm start" in ClientApp on a dynamic port and proxies / to it), so this one
+            // configuration runs BOTH apps. First page load waits until ng serve finishes
+            // its initial build (SPA startup timeout is 6 minutes).
+            "name": "Generate (backend + Angular)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-backend",
+            "program": "${workspaceFolder}/generate.web/bin/Debug/net10.0/generate.web.exe",
+            "cwd": "${workspaceFolder}/generate.web",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "https://localhost:44312;http://localhost:54731",
+                // Resolve the user-local .NET 10 runtime (machine-wide install is 9.x)
+                "DOTNET_ROOT": "${env:LOCALAPPDATA}\\Microsoft\\dotnet",
+                // Put user-local Node 22.20 first so the SPA middleware's "npm start"
+                // child process satisfies Angular CLI 20's Node >= 22.12 requirement
+                "PATH": "${env:LOCALAPPDATA}\\node-v22.20.0-win-x64;${env:LOCALAPPDATA}\\Microsoft\\dotnet;${env:PATH}"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}

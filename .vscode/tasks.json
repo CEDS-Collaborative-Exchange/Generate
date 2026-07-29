@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            // Builds the backend with the repo-pinned .NET 10 SDK (installed user-locally,
+            // since the machine-wide SDK is 9.x and global.json pins 10.0.203)
+            "label": "build-backend",
+            "type": "process",
+            "command": "${env:LOCALAPPDATA}\\Microsoft\\dotnet\\dotnet.exe",
+            "args": [
+                "build",
+                "${workspaceFolder}/generate.web/generate.web.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "options": {
+                "env": {
+                    "DOTNET_ROOT": "${env:LOCALAPPDATA}\\Microsoft\\dotnet"
+                }
+            },
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            // Optional: run the Angular dev server standalone on http://localhost:4200
+            // (not needed for F5 - the backend's SPA middleware starts Angular itself).
+            // Uses the user-local Node 22.20 because Angular CLI 20 requires Node >= 22.12.
+            "label": "angular-serve",
+            "type": "shell",
+            "command": "npm start",
+            "options": {
+                "cwd": "${workspaceFolder}/generate.web/ClientApp",
+                "env": {
+                    "PATH": "${env:LOCALAPPDATA}\\node-v22.20.0-win-x64;${env:PATH}"
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        }
+    ]
+}

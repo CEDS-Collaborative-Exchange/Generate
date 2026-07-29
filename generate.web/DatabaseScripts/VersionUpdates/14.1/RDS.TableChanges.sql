@@ -1,0 +1,54 @@
+/**********************************************************************
+  14.1 - Restore DEFAULT((-1)) on NOT NULL dimension/date key columns
+         of the RDS student-count fact tables.
+
+  The 14.0 fact-table rebuild recreated these tables but dropped the
+  DEFAULT((-1)) constraints on every key column except K12Student_CurrentId.
+  As a result, any Staging->Fact procedure that does not explicitly list a
+  (newly added) NOT NULL key column fails its INSERT with a
+  "Cannot insert the value NULL" error. That error is swallowed by the
+  procedures' generic TRY/CATCH, so the migration silently produces ZERO
+  fact rows (observed across ChildCount, TitleI, Membership, etc. for 2027).
+
+  -1 is the standard star-schema "not applicable / unknown" dimension
+  member used throughout Generate (see the surviving default on
+  K12Student_CurrentId). Restoring the defaults makes fact population
+  robust to key columns a given fact type does not populate.
+
+  Idempotent: only adds a default where the column currently has none.
+***********************************************************************/
+SET NOCOUNT ON;
+
+DECLARE @facts TABLE (tbl sysname);
+INSERT INTO @facts (tbl) VALUES
+      ('RDS.FactK12StudentCounts')
+    , ('RDS.FactK12StudentDisciplines')
+    , ('RDS.FactK12StudentAssessments');
+
+DECLARE @sql nvarchar(max) = N'';
+
+SELECT @sql = @sql
+    + 'ALTER TABLE ' + f.tbl
+    + ' ADD CONSTRAINT [DF_' + OBJECT_NAME(c.object_id) + '_' + c.name + ']'
+    + ' DEFAULT((-1)) FOR ' + QUOTENAME(c.name) + ';' + CHAR(10)
+FROM @facts f
+JOIN sys.columns c
+    ON c.object_id = OBJECT_ID(f.tbl)
+LEFT JOIN sys.default_constraints dc
+    ON dc.parent_object_id = c.object_id
+    AND dc.parent_column_id = c.column_id
+WHERE OBJECT_ID(f.tbl) IS NOT NULL
+    AND c.is_nullable = 0
+    AND c.is_identity = 0
+    AND dc.object_id IS NULL      -- no existing default
+    AND c.name LIKE '%Id';        -- dimension / date foreign keys only (never the StudentCount measure)
+
+IF @sql <> N''
+BEGIN
+    PRINT @sql;
+    EXEC sp_executesql @sql;
+END
+ELSE
+    PRINT '14.1 RDS.TableChanges: all fact-table key columns already have defaults; nothing to do.';
+
+SET NOCOUNT OFF;

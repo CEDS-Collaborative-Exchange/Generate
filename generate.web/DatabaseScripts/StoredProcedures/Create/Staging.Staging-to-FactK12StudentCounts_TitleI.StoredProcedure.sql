@@ -122,6 +122,7 @@ BEGIN
 			, LEAId									int null
 			, K12SchoolId							int null
 			, K12Student_CurrentId					int null
+			, K12StudentId							int null
 			, IdeaStatusId							int null
 			, DisabilityStatusId					int null
 			, LanguageId							int null
@@ -158,8 +159,9 @@ BEGIN
 			, -1														IEUId									
 			, ISNULL(rdl.DimLeaID, -1)									LEAId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId							
-			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId							
-			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId							
+			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId
+			, ISNULL(rdp.DimPersonId, -1)								K12StudentId
+			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId
 			, -1														DisabilityStatusId							
 			, -1														LanguageId							
 			, ISNULL(rdms.DimMigrantStatusId, -1) 						MigrantStatusId						
@@ -193,6 +195,12 @@ BEGIN
 			ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
 			AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
 			AND rdpc.IsActiveK12Student = 1
+	--dimpeople (rds) point-in-time - supplies the NOT NULL K12StudentId
+		LEFT JOIN RDS.DimPeople rdp
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+			AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdp.BirthDate, '1900-01-01')
+			AND rdp.IsActiveK12Student = 1
+			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 	--title I
 		JOIN Staging.ProgramParticipationTitleI title1
 			ON ske.SchoolYear = title1.SchoolYear		
@@ -332,6 +340,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12Student_CurrentId]
+			, [K12StudentId]
 			, [IdeaStatusId]
 			, [DisabilityStatusId]
 			, [LanguageId]
@@ -366,6 +375,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12Student_CurrentId]
+			, [K12StudentId]
 			, [IdeaStatusId]
 			, [DisabilityStatusId]
 			, [LanguageId]

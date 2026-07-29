@@ -110,6 +110,7 @@ BEGIN
 			, LEAId									int null
 			, K12SchoolId							int null
 			, K12Student_CurrentId					int null
+			, K12StudentId							int null
 			, IdeaStatusId							int null
 			, LanguageId							int null
 			, MigrantStatusId						int null
@@ -146,6 +147,7 @@ BEGIN
 			, ISNULL(rdl.DimLeaID, -1)											LEAId
 			, ISNULL(rdksch.DimK12SchoolId, -1)									K12SchoolId
 			, ISNULL(rdpc.DimPersonId, -1)										K12Student_CurrentId
+			, ISNULL(rdp.DimPersonId, -1)										K12StudentId
 			, ISNULL(rdis.DimIdeaStatusId, -1)									IdeaStatusId
 			, -1																LanguageId
 			, -1																MigrantStatusId
@@ -190,7 +192,13 @@ BEGIN
 				ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
 				AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
 				AND rdpc.IsActiveK12Student = 1
-		--leas (rds)	
+		--dimpeople (rds) point-in-time - supplies the NOT NULL K12StudentId
+			LEFT JOIN RDS.DimPeople rdp
+				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+				AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdp.BirthDate, '1900-01-01')
+				AND rdp.IsActiveK12Student = 1
+				AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+		--leas (rds)
 			LEFT JOIN RDS.DimLeas rdl
 				ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
 				AND @ChildCountDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
@@ -263,6 +271,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12Student_CurrentId]
+			, [K12StudentId]
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
@@ -296,6 +305,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12Student_CurrentId]
+			, [K12StudentId]
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
