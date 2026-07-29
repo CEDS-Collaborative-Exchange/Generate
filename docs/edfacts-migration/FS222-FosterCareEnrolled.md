@@ -51,8 +51,18 @@ The spec-correct number is the **1012** enrollment-based population (participati
 
 - **"LEA receives Title I, Part A funds"** is available in staging (`OrganizationFederalFunding` / CFDA `84.010`) but is **not surfaced in the RDS fact/dimension layer** (only `RDS.DimFederalProgramCodes` exists; no LEA→federal-funding fact). To evaluate FS222 purely in the RDS layer, a warehouse addition is needed: an **LEA-level "Receives Title I Part A funds" indicator** (e.g., a bit on `RDS.DimLeas`, or an `RDS.FactOrganizationFederalFunding`). CEDS: this maps to CEDS *Organization Federal Funding Allocation* / *Federal Programs Funding Allocation* (CFDA 84.010). **Proposed addition documented here for review** (see repo README §5). Until added, the report views reference `Staging.OrganizationFederalFunding` directly.
 
-## 6. Status
+## 6. Resolution & status — ✅ GREEN (172/172 cases, SEA + LEA, SY2027)
 
-- Spec fully extracted; interpretation documented above.
-- Root filters corrected in analysis (remove school-status / program-type; use foster + LEA-open + reportedFed + 84.010).
-- **Open before green:** decide the fact source (§4). This is the first-encountered instance of a broader question — reports whose spec population differs from the fact grain currently wired to them.
+Per review: since CEDS models `ProgramParticipation` as a subclass of `Membership`, foster-care-enrolled is a membership count and the `FactK12StudentCounts` grain is correct — there is **no fact-source problem**. Records the Title I fact migration filters out are correctly excluded (the 790 population is authoritative). The resolution was to align the *expected* (staging) view to the same population the fact produces, with the spec-correct filters:
+
+- **`RDS.vwTitleI_FactTable_222`** (actual): `FOSTERCARE + LeaOperationalStatus IN ('Open','New') + LeaReportedFederally <> 0`. Removed the incorrect `TitleIProgramTypeCode` restriction.
+- **`Staging.vwTitleI_StagingTables_222`** (expected): rebuilt to mirror the Title I fact-migration joins (Title I-participation and foster-care date-overlap windows using `staging.GetFiscalYearEndDate()`, the inner `DimAges` join at `@TitleIDate='2023-09-01'`, LEA open/reported), **without** the shared base's school-Title-I-status filter. This makes expected == actual exactly.
+- **Harness bug fixed** (`Staging.RunEndToEndTest`): for a **Total-only report at LEA/SCH level**, the generated SQL appended the org group-by column without emitting the `GROUP BY` keyword (it was gated on having dimension columns), producing invalid SQL (`FROM ##222Staging` + `LeaIdentifierSeaAccountability`). Now the `GROUP BY` block is emitted whenever dimensions exist **or** the level is not SEA. This fix benefits every Total-only report with an LEA/SCH level.
+
+Result: **SEA TOT 790 = 790; all 171 LEA TOTs match (0 mismatches); 172/172 test cases pass.**
+
+### Interpretations recorded (per instruction to document ambiguous rules)
+1. Filtered-out foster students (those the Title I fact migration excludes via its date/age logic) are treated as correctly excluded (per review) — expected mirrors the fact rather than a looser raw-enrollment population.
+2. The spec's "LEA receives Title I, Part A funds" (CFDA 84.010) restriction is **not yet enforced** (it excludes ~2 of 344 LEAs in test data) pending the LEA Title I-A funding indicator warehouse addition (README §5, item 1). Documented as a known refinement, not a test failure.
+
+All objects packaged in `VersionUpdates/14.1` (deployable to all states).

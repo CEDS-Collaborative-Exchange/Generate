@@ -55,7 +55,10 @@ Locking only the target report bounds which fact type migrates (protects the hyd
 - **DB baseline**: local DB was at schema **13.0**; branch scripts at 14.0. Applied the sanctioned `VersionUpdates/13.1→14.0_prerelease` folders (skipping the baseline `Restore *.bak` helpers), then authored **`VersionUpdates/14.1`** for all new work so it deploys to every state via the normal update process.
 
 ### Fixes made to shared tooling
-- **Hydrate reset bug** (`generate.testdata/Helpers/OutputHelper.cs`): the staging reset deleted RDS fact tables without first truncating 6 bridge tables that FK to them (`BridgeK12StudentAssessmentAccommodations`, three `…Discipline…`, two `…Enrollment…`), causing FK error 547. Now truncated before the fact deletes.
+- **Hydrate reset bug** (`generate.testdata/Helpers/OutputHelper.cs`): the staging reset deleted RDS fact tables without first truncating the bridge tables that FK to them, causing FK error 547. Now truncated before the fact deletes, guarded with `IF OBJECT_ID` for version-safety across 13.x/14.x bridge renames.
+- **Fact-table `-1` key defaults** (`14.1/RDS.TableChanges.sql`): the 14.0 rebuild dropped the `DEFAULT(-1)` NA-member constraints on the fact tables' NOT NULL dimension/date keys, so every staging→fact proc that omitted a key silently failed its INSERT (swallowed by TRY/CATCH) → 0 fact rows. Restored idempotently.
+- **`RunEndToEndTest` harness bug** (`Staging.RunEndToEndTest`): for a Total-only report at LEA/SCH level it appended the org group-by column without the `GROUP BY` keyword (gated on dimensions), yielding invalid SQL. Now emits `GROUP BY` whenever dimensions exist **or** the level is not SEA. Benefits every Total-only LEA/SCH report.
+- **Fact procs `K12StudentId`** (ChildCount, TitleI): now populate the NOT NULL `K12StudentId` via a point-in-time `DimPeople` join. **Membership** proc: fixed `EconomicDisadvantage_StatusEndDate` → `_StatusExitDate`.
 
 ---
 

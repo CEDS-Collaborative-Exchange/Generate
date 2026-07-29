@@ -8,4 +8,10 @@ VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCou
 VersionUpdates\14.1\StoredProcedures\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 VersionUpdates\14.1,App.Metadata-RollForward-2027.sql,0
+VersionUpdates\14.1\StoredProcedures\Drop,Staging.RunEndToEndTest.StoredProcedure.sql,0
+VersionUpdates\14.1\StoredProcedures\Create,Staging.RunEndToEndTest.StoredProcedure.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_222.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_222.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_222.View.sql,0
 VersionUpdates\14.1,UpdateDbVersion.sql,0
