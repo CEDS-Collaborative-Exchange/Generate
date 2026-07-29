@@ -77,7 +77,9 @@ All SQL objects are placed in `generate.web/DatabaseScripts/VersionUpdates/14.1`
 
 ## 5. CEDS / warehouse field additions (running log — review before merge)
 
-_None yet. Each addition will be logged here: table, column, type, why it was added, and whether a matching CEDS element exists (if not, flagged for CEDS Open Source Community submission)._
+| # | Object / field | Type | Why | CEDS element | Status |
+|---|---|---|---|---|---|
+| 1 | `RDS.DimLeas.ReceivesTitleIPartAFunds` (or `RDS.FactOrganizationFederalFunding`) — **proposed, not yet applied** | bit / fact | FS222 population is "LEA that receives Title I-A funds" (CFDA 84.010). That funding signal exists in `Staging.OrganizationFederalFunding` but is not surfaced in the RDS fact/dim layer, so report views can't evaluate it purely in RDS. | Maps to CEDS *Organization Federal Funding Allocation* / *Federal Programs Funding Allocation* (CFDA 84.010) — matching CEDS elements exist; no new CEDS element needed. | Proposed — pending FS222 fact-source decision (see [FS222 doc](FS222-FosterCareEnrolled.md) §4-5). |
 
 ---
 
