@@ -159,6 +159,8 @@ BEGIN
 		[Status] [varchar](20) NOT NULL CONSTRAINT [DF_EtlChatSession_Status] DEFAULT ('Active'),  -- Active | AwaitingInput | Completed | Failed
 		[MaxLoops] [int] NOT NULL CONSTRAINT [DF_EtlChatSession_MaxLoops] DEFAULT (10),
 		[CurrentLoop] [int] NOT NULL CONSTRAINT [DF_EtlChatSession_CurrentLoop] DEFAULT (0),
+		[SchoolYear] [int] NULL,                     -- target end school year for migration/validation (e.g. 2026)
+		[CurrentPhase] [varchar](40) NULL,           -- EtlChatPhase.*: StagingLoad -> StagingValidate -> RdsMigrate -> ReportMigrate -> ReportValidate -> Done
 		[LastEtlSql] [nvarchar](max) NULL,
 		[LastTestSql] [nvarchar](max) NULL,
 		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_EtlChatSession_CreatedDate] DEFAULT (GETDATE()),
@@ -173,6 +175,12 @@ BEGIN
 
 	CREATE NONCLUSTERED INDEX [IX_EtlChatSession_EtlMapId] ON [App].[EtlChatSession] ([EtlMapId] ASC)
 END
+
+-- Add the end-to-end phase columns to any pre-existing EtlChatSession table (CIID-9061 phase machine).
+IF OBJECT_ID('App.EtlChatSession', 'U') IS NOT NULL AND COL_LENGTH('App.EtlChatSession', 'SchoolYear') IS NULL
+	ALTER TABLE [App].[EtlChatSession] ADD [SchoolYear] [int] NULL
+IF OBJECT_ID('App.EtlChatSession', 'U') IS NOT NULL AND COL_LENGTH('App.EtlChatSession', 'CurrentPhase') IS NULL
+	ALTER TABLE [App].[EtlChatSession] ADD [CurrentPhase] [varchar](40) NULL
 
 IF OBJECT_ID('App.EtlChatMessage', 'U') IS NULL
 BEGIN

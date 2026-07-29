@@ -18,6 +18,13 @@ namespace generate.core.Models.App
         public string Status { get; set; }
         public int MaxLoops { get; set; }
         public int CurrentLoop { get; set; }
+
+        /// <summary>Target school year for the migration/validation (end year, e.g. 2026 for 2025-26).</summary>
+        public int? SchoolYear { get; set; }
+
+        /// <summary>Current phase in the end-to-end run (EtlChatPhase.*). Null = StagingLoad.</summary>
+        public string CurrentPhase { get; set; }
+
         public string LastEtlSql { get; set; }
         public string LastTestSql { get; set; }
         public string GeneratedProcedureName { get; set; }

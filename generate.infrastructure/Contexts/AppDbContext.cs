@@ -702,6 +702,7 @@ namespace generate.infrastructure.Contexts
                 entity.Property(x => x.SourceConnection).HasMaxLength(1000);
                 entity.Property(x => x.SourceObject).HasMaxLength(500);
                 entity.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                entity.Property(x => x.CurrentPhase).HasMaxLength(40);
                 entity.Property(x => x.LastEtlSql).HasColumnType("nvarchar(max)");
                 entity.Property(x => x.LastTestSql).HasColumnType("nvarchar(max)");
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { EtlChatService } from '../services/app/etlChat.service';
@@ -14,7 +14,7 @@ import {
   styleUrls: ['./etl-chat.component.scss'],
   standalone: false
 })
-export class EtlChatComponent implements OnInit {
+export class EtlChatComponent implements OnInit, OnDestroy {
 
   mapId: number = null;
   sessions: EtlChatSession[] = [];
@@ -25,18 +25,42 @@ export class EtlChatComponent implements OnInit {
   statusMessage = '';
   userInput = '';
 
+  // While an iteration is running the server commits progress messages (model streaming,
+  // SQL produced, executing, test counts) incrementally; poll so they appear live.
+  private pollHandle: any = null;
+  private readonly pollIntervalMs = 1500;
+
   // New-session form
   showNewForm = false;
   newName = '';
   newSourceConnection = '';
   newSourceObject = '';
   newMaxLoops = 10;
+  newSchoolYear: number = null;
+
+  @ViewChild('transcript') transcriptRef: ElementRef<HTMLElement>;
 
   constructor(private route: ActivatedRoute, private etlChatService: EtlChatService) { }
 
   ngOnInit() {
     this.mapId = +this.route.snapshot.paramMap.get('mapId');
     this.loadSessions();
+  }
+
+  ngOnDestroy() {
+    this.stopPolling();
+  }
+
+  private startPolling() {
+    if (this.pollHandle) { return; }
+    this.pollHandle = setInterval(() => this.refreshMessages(), this.pollIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollHandle) {
+      clearInterval(this.pollHandle);
+      this.pollHandle = null;
+    }
   }
 
   loadSessions() {
@@ -61,9 +85,22 @@ export class EtlChatComponent implements OnInit {
   refreshMessages() {
     if (!this.selectedSession) { return; }
     this.etlChatService.getMessages(this.selectedSession.etlChatSessionId).subscribe({
-      next: m => this.messages = m || [],
+      next: m => {
+        const grew = (m || []).length !== this.messages.length ||
+          (m && m.length > 0 && this.messages.length > 0 &&
+           m[m.length - 1].content !== this.messages[this.messages.length - 1].content);
+        this.messages = m || [];
+        if (grew) { this.scrollToLatest(); }
+      },
       error: () => this.statusMessage = 'Unable to load messages.'
     });
+  }
+
+  private scrollToLatest() {
+    setTimeout(() => {
+      const el = this.transcriptRef && this.transcriptRef.nativeElement;
+      if (el) { el.scrollTop = el.scrollHeight; }
+    }, 0);
   }
 
   createSession() {
@@ -72,12 +109,14 @@ export class EtlChatComponent implements OnInit {
       sessionName: this.newName,
       sourceConnection: this.newSourceConnection,
       sourceObject: this.newSourceObject,
-      maxLoops: this.newMaxLoops
+      maxLoops: this.newMaxLoops,
+      schoolYear: this.newSchoolYear
     };
     this.etlChatService.createSession(create).subscribe({
       next: session => {
         this.showNewForm = false;
         this.newName = this.newSourceConnection = this.newSourceObject = '';
+        this.newSchoolYear = null;
         this.sessions.unshift(session);
         this.openSession(session);
       },
@@ -106,6 +145,7 @@ export class EtlChatComponent implements OnInit {
     if (!this.selectedSession || this.isRunning) { return; }
     this.isRunning = true;
     this.statusMessage = 'Working…';
+    this.startPolling();
     this.iterate();
   }
 
@@ -115,16 +155,19 @@ export class EtlChatComponent implements OnInit {
         this.refreshMessages();
         this.selectedSession.status = result.status;
         this.selectedSession.currentLoop = result.iterationNumber;
+        if (result.phase) { this.selectedSession.currentPhase = result.phase; }
         this.statusMessage = this.describe(result.outcome, result);
         if (result.canContinue) {
-          // keep looping toward matching counts
+          // keep auto-advancing through the phases (staging → validate → RDS → reports → test)
           setTimeout(() => this.iterate(), 400);
         } else {
           this.isRunning = false;
+          this.stopPolling();
         }
       },
       error: () => {
         this.isRunning = false;
+        this.stopPolling();
         this.statusMessage = 'The iteration failed.';
         this.refreshMessages();
       }
@@ -133,12 +176,25 @@ export class EtlChatComponent implements OnInit {
 
   private describe(outcome: string, r: any): string {
     switch (outcome) {
-      case 'Passed': return `✅ Counts match (source ${r.sourceCount} = staging ${r.stagingCount}). Done in ${r.iterationNumber} loop(s).`;
-      case 'Failed': return `Loop ${r.iterationNumber}/${r.maxLoops}: ${r.summary}`;
+      case 'Passed': return `✅ The numbers validated end-to-end. ${r.summary || ''}`;
+      case 'PhaseComplete': return `${this.phaseLabel(r.phase)} — ${r.summary || ''}`;
+      case 'Failed': return r.summary || `Loop ${r.iterationNumber}/${r.maxLoops}`;
       case 'AwaitingInput': return 'The assistant needs your input — answer below and Run again.';
       case 'MaxLoopsReached': return `Stopped at max ${r.maxLoops} loops. ${r.summary || ''}`;
       case 'Error': return `Error: ${r.summary}`;
       default: return r.summary || '';
+    }
+  }
+
+  phaseLabel(phase: string): string {
+    switch (phase) {
+      case 'StagingLoad': return 'Step 2 · Staging load';
+      case 'StagingValidate': return 'Step 2 · Staging validation';
+      case 'RdsMigrate': return 'Step 3 · CEDS Data Warehouse';
+      case 'ReportMigrate': return 'Step 4 · Report tables';
+      case 'ReportValidate': return 'Step 4 · Validate the numbers';
+      case 'Done': return 'Done';
+      default: return phase || '';
     }
   }
 

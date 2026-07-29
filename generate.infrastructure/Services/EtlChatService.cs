@@ -75,6 +75,8 @@ namespace generate.infrastructure.Services
                 Status = EtlChatSessionStatus.Active,
                 MaxLoops = create.MaxLoops.HasValue && create.MaxLoops.Value > 0 ? create.MaxLoops.Value : _defaultMaxLoops,
                 CurrentLoop = 0,
+                SchoolYear = create.SchoolYear.HasValue && create.SchoolYear.Value > 0 ? create.SchoolYear : null,
+                CurrentPhase = EtlChatPhase.StagingLoad,
                 CreatedDate = DateTime.UtcNow,
                 CreatedBy = create.CreatedBy
             };
@@ -136,6 +138,35 @@ namespace generate.infrastructure.Services
                 NewMessages = new List<EtlChatMessage>()
             };
 
+            string phase = string.IsNullOrWhiteSpace(session.CurrentPhase) ? EtlChatPhase.StagingLoad : session.CurrentPhase;
+            result.Phase = phase;
+
+            if (session.Status == EtlChatSessionStatus.Completed || phase == EtlChatPhase.Done)
+            {
+                result.Outcome = EtlChatIterationOutcome.Passed;
+                result.Status = EtlChatSessionStatus.Completed;
+                result.CanContinue = false;
+                result.Summary = "This session already finished — the numbers were validated.";
+                return result;
+            }
+
+            // The run is a phase machine following the fact-type doc (steps 2-4). Each call advances one
+            // phase and returns CanContinue=true so the client auto-runs the next, stopping only when the
+            // final validation passes (Done), the bot needs input, or it hits a genuine problem.
+            switch (phase)
+            {
+                case EtlChatPhase.StagingValidate: return RunStagingValidatePhase(session, result);
+                case EtlChatPhase.RdsMigrate: return RunRdsMigratePhase(session, result);
+                case EtlChatPhase.ReportMigrate: return RunReportMigratePhase(session, result);
+                case EtlChatPhase.ReportValidate: return RunReportValidatePhase(session, result);
+                default: return await RunStagingLoadPhaseAsync(session, result);
+            }
+        }
+
+        // -------------------- Phase 2: Staging load (LLM) --------------------
+
+        private async Task<EtlChatIterationResultDto> RunStagingLoadPhaseAsync(EtlChatSession session, EtlChatIterationResultDto result)
+        {
             if (session.CurrentLoop >= session.MaxLoops && session.Status != EtlChatSessionStatus.Completed)
             {
                 session.Status = EtlChatSessionStatus.Failed;
@@ -155,23 +186,38 @@ namespace generate.infrastructure.Services
                 return result;
             }
 
-            // Build the conversation and call the model
+            // Build the conversation and call the model. Stream the response into a single live
+            // "thinking" message that updates as tokens arrive, so the user can watch it work.
             var messages = BuildPrompt(session);
+            var liveMessage = AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Status, session.CurrentLoop,
+                $"🧠 Asking the model ({_ollama.Model}) for the next attempt…");
             string reply;
             try
             {
-                reply = await _ollama.ChatAsync(messages);
+                reply = await _ollama.ChatAsync(messages, accumulated =>
+                {
+                    // Show the tail of what the model is producing so progress is visible.
+                    string tail = accumulated.Length > 600 ? "…" + accumulated.Substring(accumulated.Length - 600) : accumulated;
+                    liveMessage.Content = $"🧠 The model is responding… ({accumulated.Length:N0} characters so far)\n\n{tail}";
+                    liveMessage.CreatedDate = DateTime.UtcNow;
+                    _appRepository.Save();
+                });
             }
             catch (Exception ex)
             {
+                liveMessage.Content = "🧠 The model call failed.";
                 AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Error, session.CurrentLoop, "LLM error: " + ex.Message);
-                _appRepository.Save();
                 result.Outcome = EtlChatIterationOutcome.Error;
                 result.Summary = ex.Message;
                 result.CanContinue = false;
                 result.Status = session.Status;
                 return result;
             }
+
+            // Collapse the live streaming message now that the full reply is in hand; the parsed
+            // explanation and SQL are posted as their own messages below.
+            liveMessage.Content = $"🧠 Model responded ({(reply ?? string.Empty).Length:N0} characters). Processing…";
+            _appRepository.Save();
 
             var parsed = ParseReply(reply);
 
@@ -239,6 +285,8 @@ namespace generate.infrastructure.Services
                 return FailOrContinue(session, result, $"ETL rejected by safety guard: {guardError}");
             }
 
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                "⚙️ Executing the ETL against the Staging schema…");
             string execError = ExecuteNonQuery(parsed.EtlSql);
             if (execError != null)
             {
@@ -256,6 +304,8 @@ namespace generate.infrastructure.Services
                     AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, "Rejected test SQL: " + testGuard);
                     return FailOrContinue(session, result, $"Test SQL rejected: {testGuard}");
                 }
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                    "🧪 Validating — comparing source vs Staging row counts…");
                 string testError = RunTest(parsed.TestSql, out sourceCount, out stagingCount);
                 if (testError != null)
                 {
@@ -272,20 +322,17 @@ namespace generate.infrastructure.Services
             bool passed = sourceCount.HasValue && stagingCount.HasValue && sourceCount.Value == stagingCount.Value && stagingCount.Value > 0;
             if (passed)
             {
-                session.Status = EtlChatSessionStatus.Completed;
                 session.ModifiedDate = DateTime.UtcNow;
                 AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Status, session.CurrentLoop,
-                    $"✅ Counts match ({counts}). ETL complete in {session.CurrentLoop} loop(s).");
+                    $"✅ Staging load matches source counts ({counts}) after {session.CurrentLoop} loop(s).");
                 _appRepository.Save();
 
                 // Materialize the validated ETL as an executable, registered stored procedure
                 TryPublishProcedure(session);
 
-                result.Outcome = EtlChatIterationOutcome.Passed;
-                result.Status = session.Status;
-                result.CanContinue = false;
-                result.Summary = "Counts match — done.";
-                return result;
+                // Advance to the rest of the fact-type runbook (validate → RDS → reports → test).
+                return Advance(session, result, EtlChatPhase.StagingValidate,
+                    "Staging loaded — now validating the staging data, then migrating to the warehouse and reports.");
             }
 
             return FailOrContinue(session, result, $"Counts do not match ({counts}).");
@@ -311,6 +358,471 @@ namespace generate.infrastructure.Services
             result.CanContinue = true;
             result.Summary = summary;
             return result;
+        }
+
+        // -------------------- Phase transitions --------------------
+
+        // Move to the next phase and tell the client to auto-run it.
+        private EtlChatIterationResultDto Advance(EtlChatSession session, EtlChatIterationResultDto result, string nextPhase, string summary)
+        {
+            session.CurrentPhase = nextPhase;
+            session.Status = EtlChatSessionStatus.Active;
+            session.ModifiedDate = DateTime.UtcNow;
+            _appRepository.Save();
+            result.Phase = nextPhase;
+            result.Outcome = EtlChatIterationOutcome.PhaseComplete;
+            result.Status = session.Status;
+            result.CanContinue = true;
+            result.Summary = summary;
+            return result;
+        }
+
+        private EtlChatIterationResultDto Done(EtlChatSession session, EtlChatIterationResultDto result, string summary)
+        {
+            session.CurrentPhase = EtlChatPhase.Done;
+            session.Status = EtlChatSessionStatus.Completed;
+            session.ModifiedDate = DateTime.UtcNow;
+            _appRepository.Save();
+            result.Phase = EtlChatPhase.Done;
+            result.Outcome = EtlChatIterationOutcome.Passed;
+            result.Status = session.Status;
+            result.CanContinue = false;
+            result.Summary = summary;
+            return result;
+        }
+
+        // A genuine problem: stop and hand back to the user (they can advise, then Run again).
+        private EtlChatIterationResultDto Problem(EtlChatSession session, EtlChatIterationResultDto result, string summary)
+        {
+            session.Status = EtlChatSessionStatus.AwaitingInput;
+            session.ModifiedDate = DateTime.UtcNow;
+            _appRepository.Save();
+            result.Outcome = EtlChatIterationOutcome.Failed;
+            result.Status = session.Status;
+            result.CanContinue = false;
+            result.Summary = summary;
+            return result;
+        }
+
+        // -------------------- Phase 2b: Staging validation (deterministic) --------------------
+
+        private EtlChatIterationResultDto RunStagingValidatePhase(EtlChatSession session, EtlChatIterationResultDto result)
+        {
+            int year = ResolveSchoolYear(session);
+            var rb = ResolveRunbook(session.EtlMapId);
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                $"🧪 Phase 2 — validating the Staging data for '{rb.FactTypeCode ?? "?"}' (SY{year})…");
+
+            if (!rb.IsResolved)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                    "No fact type is linked to this map's file spec, so I can't run the warehouse/report steps. Link a fact type or file spec to continue.");
+                return Problem(session, result, "No fact type linked to the map — cannot run steps 3-4.");
+            }
+
+            if (string.IsNullOrWhiteSpace(rb.StagingValidationExecuteSql))
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                    "No Staging validation is registered for this fact type; skipping to the warehouse migration.");
+                return Advance(session, result, EtlChatPhase.RdsMigrate, "No staging validation configured — migrating to the CEDS Data Warehouse.");
+            }
+
+            string execSql = AsExec(SubstituteTokens(rb.StagingValidationExecuteSql, year, rb.FactTypeCode));
+            string err = ExecuteAdminSql(execSql, 600);
+            if (err != null)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, "Staging validation could not run:\n" + err);
+                return Advance(session, result, EtlChatPhase.RdsMigrate, "Staging validation errored; proceeding to the warehouse migration.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(rb.StagingValidationResultsSql))
+            {
+                string resultsSql = AsExec(SubstituteTokens(rb.StagingValidationResultsSql, year, rb.FactTypeCode));
+                string table = ReadTabular(resultsSql, 20, out int rows);
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.TestResult, session.CurrentLoop,
+                    $"Staging validation results ({rows} row(s)):\n" + table);
+            }
+
+            return Advance(session, result, EtlChatPhase.RdsMigrate, "Staging validated — migrating to the CEDS Data Warehouse (RDS).");
+        }
+
+        // -------------------- Phase 3: Staging → RDS (deterministic) --------------------
+
+        private EtlChatIterationResultDto RunRdsMigratePhase(EtlChatSession session, EtlChatIterationResultDto result)
+        {
+            int year = ResolveSchoolYear(session);
+            var rb = ResolveRunbook(session.EtlMapId);
+            if (!rb.IsResolved || string.IsNullOrWhiteSpace(rb.RdsWrapperProc))
+            {
+                return Problem(session, result, "No RDS migration wrapper is registered for this fact type; cannot migrate to the warehouse.");
+            }
+
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                $"⚙️ Phase 3 — migrating Staging → CEDS Data Warehouse via {rb.RdsWrapperProc} (SY{year})…");
+
+            string selErr = ExecuteAdminSql(SelectYearSql(year, 2), 120);
+            if (selErr != null)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, "Could not select the school year for RDS:\n" + selErr);
+                return Problem(session, result, "Could not select the school year for the RDS migration.");
+            }
+
+            string err = ExecuteAdminSql(AsExec(rb.RdsWrapperProc), 1800);
+            if (err != null)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, "The RDS migration wrapper failed:\n" + err);
+                return Problem(session, result, "The Staging → RDS migration failed — see the error above.");
+            }
+
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop, "✅ CEDS Data Warehouse (fact/dim) migration complete.");
+            return Advance(session, result, EtlChatPhase.ReportMigrate, "Warehouse loaded — building the report tables.");
+        }
+
+        // -------------------- Phase 4a: Build report tables (deterministic) --------------------
+
+        private EtlChatIterationResultDto RunReportMigratePhase(EtlChatSession session, EtlChatIterationResultDto result)
+        {
+            int year = ResolveSchoolYear(session);
+            var rb = ResolveRunbook(session.EtlMapId);
+            if (!rb.IsResolved)
+            {
+                return Problem(session, result, "No fact type linked — cannot build report tables.");
+            }
+
+            string codes = rb.ReportCodes.Count > 0 ? string.Join(", ", rb.ReportCodes) : "(none)";
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                $"📊 Phase 4 — building report tables for {codes} (SY{year})…");
+
+            string selErr = ExecuteAdminSql(SelectYearSql(year, 3), 120);
+            if (selErr != null)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, "Could not select the report year:\n" + selErr);
+                return Problem(session, result, "Could not select the school year for the report migration.");
+            }
+
+            if (rb.ReportCodes.Count > 0)
+            {
+                string inList = string.Join(",", rb.ReportCodes.Select(c => "'" + c.Replace("'", "''") + "'"));
+                string lockErr = ExecuteAdminSql(
+                    "UPDATE App.GenerateReports SET IsLocked = 0;\n" +
+                    $"UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ({inList});", 120);
+                if (lockErr != null)
+                {
+                    AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, "Could not lock the reports:\n" + lockErr);
+                    return Problem(session, result, "Could not lock the reports for this fact type.");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(rb.EmptyReportsSql))
+            {
+                string e = ExecuteAdminSql(AsExec(SubstituteTokens(rb.EmptyReportsSql, year, rb.FactTypeCode)), 600);
+                if (e != null)
+                {
+                    AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, "Empty_Reports failed:\n" + e);
+                    return Problem(session, result, "Empty_Reports failed — see the error above.");
+                }
+            }
+
+            string createSql = !string.IsNullOrWhiteSpace(rb.CreateReportsSql)
+                ? AsExec(SubstituteTokens(rb.CreateReportsSql, year, rb.FactTypeCode))
+                : $"EXEC rds.create_reports '{rb.FactTypeCode}', 0";
+            string cErr = ExecuteAdminSql(createSql, 1800);
+            if (cErr != null)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, "create_reports failed:\n" + cErr);
+                return Problem(session, result, "create_reports failed — see the error above.");
+            }
+
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop, "✅ Report tables built.");
+            return Advance(session, result, EtlChatPhase.ReportValidate, "Reports built — validating the numbers.");
+        }
+
+        // -------------------- Phase 4b: Validate the numbers (deterministic) --------------------
+
+        private EtlChatIterationResultDto RunReportValidatePhase(EtlChatSession session, EtlChatIterationResultDto result)
+        {
+            int year = ResolveSchoolYear(session);
+            var rb = ResolveRunbook(session.EtlMapId);
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                $"🔎 Phase 4 — validating the numbers with the registered test case(s) (SY{year})…");
+
+            if (rb.TestProcByReportCode.Count == 0)
+            {
+                return Problem(session, result, "No test cases are registered for these report codes, so I can't automatically validate the numbers.");
+            }
+
+            var lines = new List<string>();
+            bool allPass = true;
+            bool anyReal = false;
+            foreach (var kv in rb.TestProcByReportCode)
+            {
+                string code = kv.Key;
+                string proc = kv.Value;
+
+                long beforeId = ExecuteScalarLong("SELECT ISNULL(MAX(SqlUnitTestResultId), 0) FROM App.SqlUnitTestCaseResult") ?? 0;
+                string exErr = ExecuteAdminSql($"EXEC App.[{proc}] @SchoolYear = {year}", 1200);
+                if (exErr != null)
+                {
+                    lines.Add($"FS{code}: test failed to run — {exErr.Split('\n')[0]}");
+                    allPass = false;
+                    continue;
+                }
+
+                long total = ExecuteScalarLong($"SELECT COUNT(*) FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestResultId > {beforeId}") ?? 0;
+                long passedCnt = ExecuteScalarLong($"SELECT COUNT(*) FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestResultId > {beforeId} AND Passed = 1") ?? 0;
+                long noResults = ExecuteScalarLong($"SELECT COUNT(*) FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestResultId > {beforeId} AND (ISNULL(TestCaseName,'') = 'NO TEST RESULTS' OR ExpectedResult = '-1')") ?? 0;
+                long realChecks = total - noResults;
+
+                if (realChecks <= 0)
+                {
+                    lines.Add($"FS{code}: NO TEST RESULTS — the test produced no comparisons (often a report-code label mismatch, e.g. the generator stamps '{code}' but the test joins on 'C{code}').");
+                    allPass = false;
+                }
+                else
+                {
+                    anyReal = true;
+                    lines.Add($"FS{code}: {passedCnt}/{realChecks} checks passed" + (passedCnt < realChecks ? " ❌" : " ✅"));
+                    if (passedCnt < realChecks) allPass = false;
+                }
+            }
+
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.TestResult, session.CurrentLoop,
+                "Validation results:\n" + string.Join("\n", lines));
+
+            if (allPass && anyReal)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Status, session.CurrentLoop,
+                    "✅ The numbers validated — Staging → RDS → Reports all check out. Done.");
+                return Done(session, result, "All report numbers validated.");
+            }
+
+            return Problem(session, result, "Validation found problems — see the results above.");
+        }
+
+        // -------------------- Runbook resolution + SQL helpers --------------------
+
+        private int ResolveSchoolYear(EtlChatSession session)
+        {
+            if (session.SchoolYear.HasValue && session.SchoolYear.Value > 0)
+            {
+                return session.SchoolYear.Value;
+            }
+            long? selected = ExecuteScalarLong(
+                @"SELECT TOP 1 sy.SchoolYear FROM RDS.DimSchoolYearDataMigrationTypes dm
+                  JOIN RDS.DimSchoolYears sy ON dm.DimSchoolYearId = sy.DimSchoolYearId
+                  WHERE dm.IsSelected = 1 ORDER BY sy.SchoolYear DESC");
+            return selected.HasValue && selected.Value > 0 ? (int)selected.Value : DateTime.UtcNow.Year;
+        }
+
+        private EtlFactTypeRunbook ResolveRunbook(int etlMapId)
+        {
+            var rb = new EtlFactTypeRunbook();
+            try
+            {
+                ResolveRunbookCore(etlMapId, rb);
+            }
+            catch
+            {
+                // Best-effort: if metadata can't be read (e.g. no DB in a unit test), return whatever
+                // resolved. Deterministic phases will surface an unresolved runbook as a clear problem.
+            }
+            return rb;
+        }
+
+        private void ResolveRunbookCore(int etlMapId, EtlFactTypeRunbook rb)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            conn.Open();
+
+            // Resolve the fact type from the map's file-spec linkage, which may carry any of:
+            // DimFactTypeId, FactTypeCode, or a FileSpecNumber (e.g. 'FS089' -> report code '089' -> fact type).
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText =
+                    @"SELECT TOP 1 rdft.DimFactTypeId, rdft.FactTypeCode
+                      FROM App.EtlMapFileSpec f
+                      OUTER APPLY (
+                          SELECT TOP 1 d.DimFactTypeId, d.FactTypeCode
+                          FROM RDS.DimFactTypes d
+                          WHERE d.DimFactTypeId = f.DimFactTypeId
+                             OR d.FactTypeCode = f.FactTypeCode
+                             OR d.DimFactTypeId = (
+                                 SELECT TOP 1 agrft.FactTypeId
+                                 FROM App.GenerateReports agr
+                                 JOIN App.GenerateReport_FactType agrft ON agr.GenerateReportId = agrft.GenerateReportId
+                                 WHERE agr.ReportCode = REPLACE(UPPER(f.FileSpecNumber), 'FS', ''))
+                      ) rdft
+                      WHERE f.EtlMapId = @map AND rdft.DimFactTypeId IS NOT NULL";
+                cmd.Parameters.AddWithValue("@map", etlMapId);
+                using var r = cmd.ExecuteReader();
+                if (r.Read())
+                {
+                    rb.FactTypeId = r.GetInt32(0);
+                    rb.FactTypeCode = r.IsDBNull(1) ? null : r.GetString(1).Trim();
+                }
+            }
+            if (!rb.IsResolved)
+            {
+                return;
+            }
+
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText =
+                    @"SELECT agr.ReportCode
+                      FROM App.GenerateReport_FactType agrft
+                      JOIN App.GenerateReports agr ON agr.GenerateReportId = agrft.GenerateReportId
+                      WHERE agrft.FactTypeId = @ft AND LEN(agr.ReportCode) = 3
+                      ORDER BY agr.ReportCode";
+                cmd.Parameters.AddWithValue("@ft", rb.FactTypeId);
+                using var r = cmd.ExecuteReader();
+                while (r.Read())
+                {
+                    if (!r.IsDBNull(0)) rb.ReportCodes.Add(r.GetString(0).Trim());
+                }
+            }
+
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText =
+                    @"SELECT DataMigrationTypeId, StoredProcedureName
+                      FROM App.DataMigrationTasks WHERE FactTypeId = @ft AND IsActive = 1";
+                cmd.Parameters.AddWithValue("@ft", rb.FactTypeId);
+                using var r = cmd.ExecuteReader();
+                while (r.Read())
+                {
+                    int type = r.GetInt32(0);
+                    string sp = r.IsDBNull(1) ? "" : r.GetString(1).Trim();
+                    if (string.IsNullOrWhiteSpace(sp)) continue;
+                    string low = sp.ToLowerInvariant();
+                    if (type == 2 && string.IsNullOrEmpty(rb.RdsWrapperProc) && low.Contains("wrapper_migrate")) rb.RdsWrapperProc = sp;
+                    else if (type == 3 && low.Contains("empty_reports")) rb.EmptyReportsSql = sp;
+                    else if (type == 3 && low.Contains("create_reports")) rb.CreateReportsSql = sp;
+                    else if (type == 5 && low.Contains("stagingvalidation_execute")) rb.StagingValidationExecuteSql = sp;
+                }
+            }
+
+            rb.StagingValidationResultsSql = rb.StagingValidationExecuteSql?
+                .Replace("StagingValidation_Execute", "StagingValidation_GetResults");
+
+            foreach (var code in rb.ReportCodes)
+            {
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText =
+                    @"SELECT TOP 1 StoredProcedureName FROM App.SqlUnitTest
+                      WHERE TestScope = @scope AND IsActive = 1 AND StoredProcedureName NOT LIKE '%[_]Demo'
+                      ORDER BY SqlUnitTestId";
+                cmd.Parameters.AddWithValue("@scope", "FS" + code);
+                var val = cmd.ExecuteScalar();
+                if (val != null && val != DBNull.Value)
+                {
+                    rb.TestProcByReportCode[code] = val.ToString().Trim();
+                }
+            }
+        }
+
+        private static string SubstituteTokens(string sql, int year, string factCode)
+        {
+            if (string.IsNullOrWhiteSpace(sql)) return sql;
+            return sql
+                .Replace("@SchoolYear", year.ToString())
+                .Replace("@FactTypeOrReportCode", "'" + (factCode ?? "").Replace("'", "''") + "'");
+        }
+
+        private static string AsExec(string procCall)
+        {
+            string t = (procCall ?? "").Trim();
+            return t.StartsWith("exec", StringComparison.OrdinalIgnoreCase) ? t : "EXEC " + t;
+        }
+
+        private static string SelectYearSql(int year, int dataMigrationTypeId)
+        {
+            return
+                $"UPDATE RDS.DimSchoolYearDataMigrationTypes SET IsSelected = 0 WHERE DataMigrationTypeId = {dataMigrationTypeId};\n" +
+                $"UPDATE dm SET IsSelected = 1 FROM RDS.DimSchoolYearDataMigrationTypes dm\n" +
+                $"JOIN RDS.DimSchoolYears sy ON dm.DimSchoolYearId = sy.DimSchoolYearId\n" +
+                $"WHERE sy.SchoolYear = {year} AND dm.DataMigrationTypeId = {dataMigrationTypeId};";
+        }
+
+        // Trusted, service-authored SQL (migration/report/validation runbook steps). No transaction
+        // wrapper — these procs manage their own; and no guard, since the SQL is fixed by us, not the LLM.
+        private string ExecuteAdminSql(string sql, int timeoutSeconds)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                conn.Open();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandTimeout = timeoutSeconds;
+                cmd.ExecuteNonQuery();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        private long? ExecuteScalarLong(string sql)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                conn.Open();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandTimeout = 120;
+                var val = cmd.ExecuteScalar();
+                return val == null || val == DBNull.Value ? (long?)null : Convert.ToInt64(val);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        // Runs a SELECT (or proc returning a rowset) and formats the first result set as compact text.
+        private string ReadTabular(string sql, int maxRows, out int rowCount)
+        {
+            rowCount = 0;
+            var sb = new StringBuilder();
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                conn.Open();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandTimeout = 300;
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    rowCount++;
+                    if (rowCount <= maxRows)
+                    {
+                        var cells = new List<string>();
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            string v = reader.IsDBNull(i) ? "NULL" : reader.GetValue(i).ToString();
+                            cells.Add($"{reader.GetName(i)}={v}");
+                        }
+                        sb.AppendLine(string.Join(" | ", cells));
+                    }
+                }
+                if (rowCount > maxRows)
+                {
+                    sb.AppendLine($"… ({rowCount - maxRows} more row(s))");
+                }
+                if (rowCount == 0)
+                {
+                    sb.Append("(no rows)");
+                }
+            }
+            catch (Exception ex)
+            {
+                sb.Append("(could not read results: " + ex.Message + ")");
+            }
+            return sb.ToString().TrimEnd();
         }
 
         // -------------------- Publish as stored procedure --------------------
@@ -451,6 +963,18 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
         {
             var sb = new StringBuilder();
             sb.AppendLine("You are a senior Microsoft SQL Server ETL developer. You write T-SQL that loads a source dataset into a CEDS-aligned data warehouse Staging schema, then validates the load.");
+            sb.AppendLine();
+
+            // Scope: the LLM owns only Step 2 (Source -> Staging). The service runs steps 3-4 automatically.
+            var runbook = ResolveRunbook(session.EtlMapId);
+            sb.AppendLine("## Your job (Step 2 of the fact-type runbook)");
+            if (runbook.IsResolved)
+            {
+                sb.AppendLine($"- Fact type: {runbook.FactTypeCode}" +
+                              (runbook.ReportCodes.Count > 0 ? $" (EDFacts files: {string.Join(", ", runbook.ReportCodes)})" : ""));
+            }
+            sb.AppendLine("- You ONLY build and run the Source→Staging load. When your staging row count matches the source, you are done.");
+            sb.AppendLine("- Do NOT write migration, RDS/warehouse, report, lock, or test SQL. After your staging load matches, the system AUTOMATICALLY runs staging validation, the Staging→RDS migration, report generation, and the official test case — you do not need to (and must not) do those.");
             sb.AppendLine();
             sb.AppendLine("## Source");
             sb.AppendLine($"- Connection/descriptor: {session.SourceConnection ?? "(ask the user)"}");
@@ -617,9 +1141,12 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
             return fallbackIndex < reader.FieldCount ? fallbackIndex : -1;
         }
 
-        private void AddMessage(int sessionId, string role, string type, int? iteration, string content)
+        // Progress messages are committed immediately so a polling UI can show each step live
+        // (prompting, SQL produced, executing, test counts, pass/fail) as it happens rather than
+        // all at once when the iteration returns.
+        private EtlChatMessage AddMessage(int sessionId, string role, string type, int? iteration, string content)
         {
-            _appRepository.Create(new EtlChatMessage
+            var message = _appRepository.Create(new EtlChatMessage
             {
                 EtlChatSessionId = sessionId,
                 Role = role,
@@ -628,6 +1155,8 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
                 Content = content,
                 CreatedDate = DateTime.UtcNow
             });
+            _appRepository.Save();
+            return message;
         }
     }
 }

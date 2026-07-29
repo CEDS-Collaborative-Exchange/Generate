@@ -7,6 +7,8 @@ export interface EtlChatSession {
     status: string;
     maxLoops: number;
     currentLoop: number;
+    schoolYear?: number;
+    currentPhase: string;   // StagingLoad | StagingValidate | RdsMigrate | ReportMigrate | ReportValidate | Done
     lastEtlSql: string;
     lastTestSql: string;
     createdDate: string;
@@ -31,12 +33,14 @@ export interface EtlChatSessionCreate {
     sourceConnection: string;
     sourceObject: string;
     maxLoops?: number;
+    schoolYear?: number;
 }
 
 export interface EtlChatIterationResult {
     etlChatSessionId: number;
-    outcome: string;       // AwaitingInput | Passed | Failed | MaxLoopsReached | Error
+    outcome: string;       // AwaitingInput | Passed | Failed | PhaseComplete | MaxLoopsReached | Error
     status: string;
+    phase: string;         // EtlChatPhase.* the session is now in
     iterationNumber: number;
     maxLoops: number;
     sourceCount?: number;

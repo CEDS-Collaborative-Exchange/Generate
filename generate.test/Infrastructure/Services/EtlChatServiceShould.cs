@@ -65,7 +65,7 @@ namespace generate.test.Infrastructure.Services
         public async Task PauseForInputWhenModelAsksQuestions()
         {
             Session();
-            _ollama.Setup(o => o.ChatAsync(It.IsAny<IEnumerable<OllamaMessage>>()))
+            _ollama.Setup(o => o.ChatAsync(It.IsAny<IEnumerable<OllamaMessage>>(), It.IsAny<Action<string>>()))
                 .ReturnsAsync("{\"questions\":[\"What is the source primary key?\"],\"etlSql\":\"\",\"testSql\":\"\",\"explanation\":\"\"}");
 
             var result = await Build().RunIterationAsync(1);
@@ -80,7 +80,7 @@ namespace generate.test.Infrastructure.Services
         public async Task ReturnSqlAndAwaitWhenExecutionDisabled()
         {
             Session();
-            _ollama.Setup(o => o.ChatAsync(It.IsAny<IEnumerable<OllamaMessage>>()))
+            _ollama.Setup(o => o.ChatAsync(It.IsAny<IEnumerable<OllamaMessage>>(), It.IsAny<Action<string>>()))
                 .ReturnsAsync("{\"etlSql\":\"INSERT INTO Staging.K12Enrollment (Sex) SELECT Gender FROM src.t\",\"testSql\":\"SELECT 1 AS SourceCount, 1 AS StagingCount\",\"explanation\":\"loads sex\"}");
 
             var result = await Build(allowExec: "false").RunIterationAsync(1);
@@ -100,7 +100,7 @@ namespace generate.test.Infrastructure.Services
             Assert.Equal(EtlChatIterationOutcome.MaxLoopsReached, result.Outcome);
             Assert.Equal(EtlChatSessionStatus.Failed, result.Status);
             Assert.False(result.CanContinue);
-            _ollama.Verify(o => o.ChatAsync(It.IsAny<IEnumerable<OllamaMessage>>()), Times.Never);
+            _ollama.Verify(o => o.ChatAsync(It.IsAny<IEnumerable<OllamaMessage>>(), It.IsAny<Action<string>>()), Times.Never);
         }
 
         [Fact]

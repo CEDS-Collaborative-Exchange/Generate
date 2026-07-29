@@ -11,6 +11,7 @@ namespace generate.core.Dtos.App
         public string SourceConnection { get; set; }
         public string SourceObject { get; set; }
         public int? MaxLoops { get; set; }
+        public int? SchoolYear { get; set; }
         public string CreatedBy { get; set; }
     }
 
@@ -27,6 +28,7 @@ namespace generate.core.Dtos.App
         public int EtlChatSessionId { get; set; }
         public string Outcome { get; set; }        // EtlChatIterationOutcome.*
         public string Status { get; set; }         // session status
+        public string Phase { get; set; }          // EtlChatPhase.* the session is now in
         public int IterationNumber { get; set; }
         public int MaxLoops { get; set; }
         public long? SourceCount { get; set; }

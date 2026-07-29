@@ -19,6 +19,7 @@
       <div class="etl-chat__field"><label>Session name</label><input type="text" [(ngModel)]="newName" placeholder="e.g. Load PARCC results" /></div>
       <div class="etl-chat__field"><label>Source connection / server.database.schema</label><input type="text" [(ngModel)]="newSourceConnection" placeholder="e.g. StateSIS on SRV01, or a linked server" /></div>
       <div class="etl-chat__field"><label>Source object (table / view / query)</label><input type="text" [(ngModel)]="newSourceObject" placeholder="e.g. dbo.ALLTESTS_PARCC_LAL" /></div>
+      <div class="etl-chat__field"><label>School year (end year, e.g. 2026)</label><input type="number" min="2000" [(ngModel)]="newSchoolYear" placeholder="defaults to the selected migration year" /></div>
       <div class="etl-chat__field"><label>Max loops</label><input type="number" min="1" [(ngModel)]="newMaxLoops" /></div>
       <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)="createSession()">Create</button>
       <button type="button" class="mdl-button mdl-js-button" (click)="showNewForm = false">Cancel</button>
@@ -49,12 +50,13 @@
       <button type="button" class="mdl-button mdl-js-button" (click)="backToSessions()">&larr; Sessions</button>
       <h3>{{ selectedSession.sessionName }}</h3>
       <span class="etl-chat__badge etl-chat__badge--{{ selectedSession.status }}">{{ selectedSession.status }}</span>
+      <span *ngIf="selectedSession.currentPhase && selectedSession.currentPhase !== 'Done'" class="etl-chat__phase">{{ phaseLabel(selectedSession.currentPhase) }}</span>
       <span class="etl-chat__subtext">loop {{ selectedSession.currentLoop }}/{{ selectedSession.maxLoops }} · source: {{ selectedSession.sourceObject || '—' }}</span>
       <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
               (click)="run()" [disabled]="isRunning">{{ isRunning ? 'Running…' : 'Run' }}</button>
     </div>
 
-    <div class="etl-chat__transcript">
+    <div class="etl-chat__transcript" #transcript>
       <div *ngFor="let m of messages" class="etl-chat__msg" [ngClass]="roleClass(m)">
         <div class="etl-chat__msg-meta">
           {{ m.role }}<span *ngIf="m.messageType !== 'chat'"> · {{ m.messageType }}</span>
@@ -63,7 +65,8 @@
         <pre *ngIf="isSql(m)" class="etl-chat__sql">{{ m.content }}</pre>
         <div *ngIf="!isSql(m)" class="etl-chat__msg-body">{{ m.content }}</div>
       </div>
-      <div *ngIf="messages.length === 0" class="etl-chat__empty">No messages yet. Click Run to begin.</div>
+      <div *ngIf="isRunning" class="etl-chat__live">● live — streaming progress…</div>
+      <div *ngIf="messages.length === 0 && !isRunning" class="etl-chat__empty">No messages yet. Click Run to begin.</div>
     </div>
 
     <div class="etl-chat__composer">
