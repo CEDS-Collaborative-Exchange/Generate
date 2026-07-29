@@ -484,17 +484,36 @@ namespace generate.testdata.Helpers
                 output.AppendLine("TRUNCATE TABLE Staging.AccessibleEducationMaterialAssignment");
                 output.AppendLine("TRUNCATE TABLE Staging.AccessibleEducationMaterialProvider");
 
-                output.AppendLine("truncate table rds.BridgeK12AccessibleEducationMaterialAssignmentIdeaDisabilityTypes");
-                output.AppendLine("truncate table rds.BridgeK12AccessibleEducationMaterialRaces");
-                output.AppendLine("truncate table rds.BridgeLeaGradeLevels");
-                output.AppendLine("truncate table rds.BridgeK12SchoolGradeLevels");
-                output.AppendLine("truncate table rds.BridgeK12StudentAssessmentRaces");
-                output.AppendLine("truncate table rds.BridgeK12ProgramParticipationRaces");
-                output.AppendLine("truncate table rds.BridgeK12StudentCourseSectionK12Staff");
-                output.AppendLine("truncate table rds.BridgeK12StudentCourseSectionRaces");
-                output.AppendLine("truncate table rds.BridgeK12StudentEnrollmentRaces");
-                output.AppendLine("truncate table rds.BridgeK12StudentDisciplineRaces");
-                // output.AppendLine("truncate table rds.BridgeK12StudentAssessmentAccommodations");
+                // Bridge tables must be emptied before the fact tables they FK to are deleted,
+                // otherwise the fact DELETEs fail with a REFERENCE constraint error (547).
+                // Each is guarded with IF OBJECT_ID so the reset is version-safe: some bridge
+                // names change across schema versions (e.g. at 14.0 BridgeK12StudentAssessmentAccommodations
+                // -> BridgeK12StudentAssessmentAccessibilityFeatures, and the misspelled
+                // BridgeK12StudentDisciplineDiscplineReasons -> BridgeK12StudentDisciplineDisciplineReasons),
+                // so truncating a name that no longer exists must be skipped rather than error.
+                foreach (var bridge in new[] {
+                    "BridgeK12AccessibleEducationMaterialAssignmentIdeaDisabilityTypes",
+                    "BridgeK12AccessibleEducationMaterialRaces",
+                    "BridgeLeaGradeLevels",
+                    "BridgeK12SchoolGradeLevels",
+                    "BridgeK12StudentAssessmentRaces",
+                    "BridgeK12StudentAssessmentAccommodations",           // pre-14.0
+                    "BridgeK12StudentAssessmentAccessibilityFeatures",    // 14.0+
+                    "BridgeK12ProgramParticipationRaces",
+                    "BridgeK12StudentCourseSectionK12Staff",
+                    "BridgeK12StudentCourseSectionRaces",
+                    "BridgeK12StudentEnrollmentRaces",
+                    "BridgeK12StudentEnrollmentIdeaDisabilityTypes",
+                    "BridgeK12StudentEnrollmentPersonAddresses",
+                    "BridgeK12StudentDisciplineRaces",
+                    "BridgeK12StudentDisciplineDiscplineReasons",         // pre-14.0 (misspelled)
+                    "BridgeK12StudentDisciplineDisciplineReasons",        // 14.0+
+                    "BridgeK12StudentDisciplineIdeaDisabilityTypes",
+                    "BridgeK12StudentDisciplineIncidentBehaviors",
+                })
+                {
+                    output.AppendLine($"IF OBJECT_ID('rds.{bridge}','U') IS NOT NULL TRUNCATE TABLE rds.{bridge}");
+                }
                 output.AppendLine("delete from rds.FactK12StaffCounts");
                 output.AppendLine("delete from rds.ReportEDFactsK12StudentAssessments");
                 output.AppendLine("delete from rds.FactK12StudentAssessments");
