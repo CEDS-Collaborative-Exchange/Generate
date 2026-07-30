@@ -1,5 +1,21 @@
 # Blocked / needs-review EDFacts files
 
+## TWO CLASSES OF COUNT REPORT (2026-07-30)
+
+**Class A — comprehensive-base reports: GREEN via the proven pattern.** Fact types whose `debug.vw*_StagingTables` base is "all K-12 enrollment + demographics" match the fact proc after aligning the base's status date-windows. **Done: FS052 (Membership), FS195 (ChronicAbsenteeism), FS032 (Dropout).** Recipe in memory `finish-generate-edfacts` + per-file entries below.
+
+**Class B — program-specific reports: expected view BLOCKED on base-population mismatch.** Fact types whose base is narrow/program-scoped do NOT match the fact proc's population, so the expected staging view can't be built from the base as-is:
+- **FS089/FS002 ChildCount** — base has 1 of 9 fact students (ChildCountDate-BETWEEN enrollment/participation windows too strict).
+- **FS134/FS037 TitleI** — base 516 vs fact 1556 (title-I-school-status filter too strict; TitleIIndicator coded 01-05 vs EdFacts NEG/SWP/TAS).
+- **FS054/FS121/FS145 Migrant** — `debug.vwMigrantEducationProgram_StagingTables` returns **0** (INNER `Staging.Migrant` + `MigrantStatus=1` is empty; the fact's 1991 come from a different source, likely `PersonStatus.MigrantStatus` — same base-vs-proc source discrepancy seen in the dropout Migrant dim).
+- **FS118 Homeless** — narrow base missing EL/Grade/IDEA/Migrant/Race dims.
+- **FS141 TitleIIIELOct / FS045/FS116 TitleIIIELSY** — EL-scoped bases (verify).
+
+For every Class B report the **report ACTUAL populates** (fact view + populator fix work; fact-view EdFacts-code infra committed where checked). To green each: reconcile the `debug.vw<FactType>_StagingTables` base's population/date-windows/source with `Staging-to-FactK12StudentCounts_<FactType>`, OR build the expected staging view directly from the fact proc's logic. Dimension mappings are worked out per file below. FS033 (Membership FRL) is Class A base but has a two-table-type (DIRECTCERT/LUNCHFREERED) + lunch-toggle wrinkle.
+
+---
+
+
 ---
 
 ## SYSTEMIC FIX (2026-07-30): RDS.Insert_CountsIntoReportTable pivot fan-out — RESOLVED
