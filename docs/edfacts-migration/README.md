@@ -76,6 +76,9 @@ For each in-scope file spec:
 
 All SQL objects are placed in `generate.web/DatabaseScripts/VersionUpdates/14.1` (with `VersionScripts.csv` entries) so the work is deployable to all states.
 
+### UI access ("done" also requires the report be usable in the app)
+The report UI (`generate.web/ClientApp`) is **metadata-driven** via the generic `generate-app-report` component (`shared/report.component.ts`) reached from the EDFacts reports page (`reports/edfacts`). A report becomes selectable/renderable in the UI when it is `IsActive`, associated with the `edfactsreport` report type/control type, and has its report **structure metadata** (`CategorySets`/`OrganizationLevels`) for the year — the same metadata the ETL uses. **Count-based reports** (e.g. 033, 052, 222, 226) render through the generic flextable with no per-report code. **Directory/custom-layout reports** have a dedicated `shared/reportcontrols/c<code>.component.ts` (e.g. c029, c035, c131, c163, c197–c207, c223); when converting one of those, add/verify its `c<code>` component. So the per-file UI step is: (a) count reports — confirm the report appears and renders in the EDFacts UI (metadata only); (b) directory/custom reports — add the `c<code>` component.
+
 ---
 
 ## 5. CEDS / warehouse field additions (running log — review before merge)
