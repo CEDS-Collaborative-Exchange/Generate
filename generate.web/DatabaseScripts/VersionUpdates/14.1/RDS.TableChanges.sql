@@ -1,6 +1,14 @@
 /**********************************************************************
-  14.1 - Restore DEFAULT((-1)) on NOT NULL dimension/date key columns
-         of the RDS student-count fact tables.
+  14.1 - RDS (CEDS Data Warehouse) fact-table repair.
+
+  DATA-PRESERVING UPGRADE: this script is strictly ADDITIVE and idempotent.
+  It only ADDs a missing column (with a default that back-fills existing rows)
+  and ADDs missing DEFAULT constraints. It performs NO drop, truncate, or
+  table rebuild, so states upgrading in place keep all existing fact data
+  (no reload of prior years required).
+
+  Restore DEFAULT((-1)) on NOT NULL dimension/date key columns
+         of the RDS fact tables (all RDS.Fact* tables).
 
   The 14.0 fact-table rebuild recreated these tables but dropped the
   DEFAULT((-1)) constraints on every key column except K12Student_CurrentId.
