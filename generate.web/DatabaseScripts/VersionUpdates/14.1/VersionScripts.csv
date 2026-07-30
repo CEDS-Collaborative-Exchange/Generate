@@ -24,6 +24,7 @@ VersionUpdates\14.1\Views\Drop,Debug.vwMembership_FactTable.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_222.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_226.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_052.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwHomeless_FactTable_194.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwMembership_FactTable_052.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwMembership_StagingTables.View.sql,0
@@ -31,6 +32,7 @@ VersionUpdates\14.1\Views\Create,Debug.vwMembership_FactTable.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_222.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_222.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_226.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_052.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwHomeless_FactTable_194.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwMembership_FactTable_052.View.sql,0
 VersionUpdates\14.1,App.Metadata-RollForward-2027.sql,0
