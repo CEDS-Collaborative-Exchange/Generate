@@ -29,6 +29,7 @@ VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_226.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_052.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwHomeless_FactTable_194.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwMembership_FactTable_052.View.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwChronicAbsenteeism_FactTable_195.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwMembership_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwMembership_FactTable.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwTitleI_FactTable.View.sql,0
@@ -39,5 +40,6 @@ VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_226.View.sql
 VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_052.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwHomeless_FactTable_194.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwMembership_FactTable_052.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwChronicAbsenteeism_FactTable_195.View.sql,0
 VersionUpdates\14.1,App.Metadata-RollForward-2027.sql,0
 VersionUpdates\14.1,UpdateDbVersion.sql,0
