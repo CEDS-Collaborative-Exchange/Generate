@@ -1,5 +1,20 @@
 # Blocked / needs-review EDFacts files
 
+---
+
+## SYSTEMIC FIX (2026-07-30): RDS.Insert_CountsIntoReportTable pivot fan-out — RESOLVED
+
+**Impact:** unblocks the report-populator's dimension-pivot path for every count report whose CategorySetCode repeats across multiple org levels and/or table types (i.e. essentially all multi-level dimensional EDFacts count reports). Previously only Total-only / single-level reports (222, 226, 218) populated; any dimensional multi-level report died with `Msg 1011 - The correlation name 'pv<CATEGORY>' is specified multiple times in a FROM clause`.
+
+**Root cause:** the populator built one pivot subquery alias `pv<CategoryCode>` per category via `STRING_AGG`, but its FROM `LEFT JOIN app.GenerateReport_OrganizationLevels grol` (and `...GenerateReport_TableType grtt`) fanned every category set across *all* of the report's org levels / table types. So a set with its own `OrganizationLevelId` still produced one row per report level → the same category (e.g. `AGEPK` on FS194's `CSA` set, which exists at both SEA and LEA) appeared multiple times in a single group → duplicate pivot aliases.
+
+**Fix (14.1, `RDS.Insert_CountsIntoReportTable`):** join `grol`/`grtt` only when the category set pins no level/table type of its own (`AND cs.OrganizationLevelId IS NULL` / `AND cs.TableTypeId IS NULL`), and key `aol`/`att` on `ISNULL(cs.<x>, g<xx>.<x>)`. This matches how `Staging.RunEndToEndTest` keys the expected side (strictly `cs.OrganizationLevelId`). Verified: FS194 no longer errors; regression-safe — FS226 (179), FS222 (172), FS218 (7) still populate identically.
+
+### FS194 (Homeless, by Age) — partially converted, NOT yet green
+- Fact/report now populate without error via the fixed populator. Added `f.AgeEdFactsCode` to `RDS.vwHomeless_FactTable_194` (the populator joins the report's permitted Age values on `cs.AgeEdFactsCode`; the view previously exposed only `BirthDate`) — clears the `Msg 207` invalid-column error.
+- **Remaining:** the report populates 1300 LEA rows but all `StudentCount = 0`, and no SEA rows — the fact's `AgeEdFactsCode` values do not align with the report's permitted Age category codes (AGEPK, AGE5, …), so the pivot join matches nothing. Needs: (1) reconcile the homeless age-group EdFacts codes between `debug.vwHomeless_FactTable.AgeEdFactsCode` and the report's permitted `app.CategoryCodeOptionsByReportAndYear` Age values for 2027; (2) confirm the SEA `CSA` set is present/'`cs.OrganizationLevelId`'d for SEA; (3) build the expected-side `Staging.vwHomeless_StagingTables_194` (StudentIdentifierState + LEAIdentifierSeaAccountability + `Age` = the EdFacts age-group code computed from BirthDate via `RDS.DimAges`, mirroring the homeless fact age-as-of date) for the e2e test. Deferred to keep momentum.
+
+
 Files where I hit a problem I couldn't fully resolve autonomously and moved on (per instruction). Each entry: file, symptom, what I tried/fixed, and what remains.
 
 ---
