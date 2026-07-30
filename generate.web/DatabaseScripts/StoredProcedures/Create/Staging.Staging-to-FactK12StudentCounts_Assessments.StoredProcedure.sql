@@ -98,15 +98,15 @@ BEGIN
 			, LeaIdentifierSeaAccountability
 			, SchoolIdentifierSea
 			, IDEAIndicator
-			, ProgramParticipationBeginDate
-			, ProgramParticipationEndDate
+			, ProgramParticipationStartDate
+			, ProgramParticipationExitDate
 		INTO #tempIdeaStatus
 		FROM Staging.ProgramParticipationSpecialEducation
 		WHERE IDEAIndicator = 1
 
 	-- Create Index for #tempIdeaStatus 
 		CREATE INDEX IX_tempIdeaStatus 
-			ON #tempIdeaStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
+			ON #tempIdeaStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationStartDate, ProgramParticipationExitDate)
 
 	--Pull the EL Status into a temp table
 		SELECT DISTINCT 
@@ -115,14 +115,14 @@ BEGIN
 			, SchoolIdentifierSea
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
-			, EnglishLearner_StatusEndDate
+			, EnglishLearner_StatusExitDate
 		INTO #tempELStatus
 		FROM Staging.PersonStatus
 		WHERE EnglishLearnerStatus = 1
 
 	-- Create Index for #tempELStatus 
 		CREATE INDEX IX_tempELStatus 
-			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
+			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusExitDate)
 
 	--Pull the Migrant Status into a temp table
 		SELECT DISTINCT 
@@ -131,14 +131,14 @@ BEGIN
 			, SchoolIdentifierSea
 			, MigrantStatus
 			, Migrant_StatusStartDate
-			, Migrant_StatusEndDate
+			, Migrant_StatusExitDate
 		INTO #tempMigrantStatus
 		FROM Staging.PersonStatus
 		WHERE MigrantStatus = 1
 
 	-- Create Index for #tempMigrantStatus 
 		CREATE INDEX IX_tempMigrantStatus 
-			ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusEndDate)
+			ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusExitDate)
 
 	--Pull the Military Status into a temp table
 		SELECT DISTINCT 
@@ -147,13 +147,13 @@ BEGIN
 			, SchoolIdentifierSea
 			, MilitaryConnectedStudentIndicator
 			, MilitaryConnected_StatusStartDate
-			, MilitaryConnected_StatusEndDate
+			, MilitaryConnected_StatusExitDate
 		INTO #tempMilitaryStatus
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempMilitaryStatus 
 		CREATE INDEX IX_tempMilitaryStatus 
-			ON #tempMilitaryStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, MilitaryConnected_StatusStartDate, MilitaryConnected_StatusEndDate)
+			ON #tempMilitaryStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, MilitaryConnected_StatusStartDate, MilitaryConnected_StatusExitDate)
 
 	--Pull the Homeless Status into a temp table
 		SELECT DISTINCT 
@@ -162,14 +162,14 @@ BEGIN
 			, SchoolIdentifierSea
 			, HomelessnessStatus
 			, Homelessness_StatusStartDate
-			, Homelessness_StatusEndDate
+			, Homelessness_StatusExitDate
 		INTO #tempHomelessnessStatus
 		FROM Staging.PersonStatus
 		WHERE HomelessnessStatus = 1
 
 	-- Create Index for #tempHomelessnessStatus 
 		CREATE INDEX IX_tempHomelessnessStatus 
-			ON #tempHomelessnessStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Homelessness_StatusStartDate, Homelessness_StatusEndDate)
+			ON #tempHomelessnessStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Homelessness_StatusStartDate, Homelessness_StatusExitDate)
 
 	--Pull the Foster Care Status into a temp table
 		SELECT DISTINCT 
@@ -178,14 +178,14 @@ BEGIN
 			, SchoolIdentifierSea
 			, ProgramType_FosterCare
 			, FosterCare_ProgramParticipationStartDate
-			, FosterCare_ProgramParticipationEndDate
+			, FosterCare_ProgramParticipationExitDate
 		INTO #tempFosterCareStatus
 		FROM Staging.PersonStatus
 		WHERE ProgramType_FosterCare = 1
 
 	-- Create Index for #tempFosterCareStatus
 		CREATE INDEX IX_tempFosterCareStatus 
-			ON #tempFosterCareStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, FosterCare_ProgramParticipationStartDate, FosterCare_ProgramParticipationEndDate)
+			ON #tempFosterCareStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, FosterCare_ProgramParticipationStartDate, FosterCare_ProgramParticipationExitDate)
 
 	--Pull the Economically Disadvantaged Status into a temp table
 		SELECT DISTINCT 
@@ -343,9 +343,9 @@ BEGIN
 				ON ske.StudentIdentifierState = idea.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(idea.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(idea.SchoolIdentifierSea,'')
-				AND ((idea.ProgramParticipationBeginDate BETWEEN @SYStartDate and @SYEndDate 
-						AND idea.ProgramParticipationBeginDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(idea.ProgramParticipationEndDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
+				AND ((idea.ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
+						AND idea.ProgramParticipationStartDate <= sar.AssessmentAdministrationStartDate) 
+					AND ISNULL(idea.ProgramParticipationExitDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
 		--idea status (rds)	
 			LEFT JOIN #vwIdeaStatuses rdis
 				ON rdis.IdeaIndicatorCode = 'Yes'
@@ -359,7 +359,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 				AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(el.EnglishLearner_StatusExitDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
 		--english learner (rds)
 			LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 				ON rsy.SchoolYear = rdels.SchoolYear
@@ -372,7 +372,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 				AND ((migrant.Migrant_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND migrant.Migrant_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(migrant.Migrant_StatusEndDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(migrant.Migrant_StatusExitDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
 		--migrant (rds)
 			LEFT JOIN #vwMigrantStatuses rdms
 				ON ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = ISNULL(CAST(rdms.MigrantStatusMap AS SMALLINT), -1)
@@ -389,7 +389,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
 				AND ((hmStatus.Homelessness_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND hmStatus.Homelessness_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(hmStatus.Homelessness_StatusEndDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(hmStatus.Homelessness_StatusExitDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
 		--homelessness (rds)
 			LEFT JOIN RDS.vwDimHomelessnessStatuses rdhs
 				ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
@@ -403,7 +403,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(foster.SchoolIdentifierSea, '')
 				AND ((foster.FosterCare_ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND foster.FosterCare_ProgramParticipationStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(foster.FosterCare_ProgramParticipationExitDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
 		--foster care (rds)
 			LEFT JOIN RDS.vwDimFosterCareStatuses rdfcs
 				ON ISNULL(CAST(foster.ProgramType_FosterCare AS SMALLINT), -1) = ISNULL(CAST(rdfcs.ProgramParticipationFosterCareMap AS SMALLINT), -1)
@@ -427,7 +427,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(military.SchoolIdentifierSea, '')
 				AND ((military.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND military.MilitaryConnected_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(military.MilitaryConnected_StatusEndDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(military.MilitaryConnected_StatusExitDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
 		--military (rds)
 			LEFT JOIN RDS.vwDimMilitaryStatuses rdmils
 				ON ISNULL(military.MilitaryConnectedStudentIndicator, 'MISSING') = ISNULL(rdmils.MilitaryConnectedStudentIndicatorMap, rdmils.MilitaryConnectedStudentIndicatorCode)
