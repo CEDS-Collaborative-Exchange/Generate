@@ -21,8 +21,16 @@ Files where I hit a problem I couldn't fully resolve autonomously and moved on (
 
 ---
 
-## Staging.[Staging-to-FactK12StudentAssessments] (file: Staging-to-FactK12StudentCounts_Assessments.StoredProcedure.sql)
+## Assessment fact layer — RESOLVED (facts populate); accessibility-features bridge DEFERRED
 
-**Status:** pre-existing broken; excluded from the 14.1 release deploy.
+**Status:** fact side FIXED — `RDS.FactK12StudentAssessments` now populates (3144 rows for 2027). Packaged in 14.1.
 
-Fixed a duplicate `@schoolyear` declaration (leftover `declare @schoolyear int = 2023` conflicting with the `@SchoolYear` parameter), but the proc still emits many `Msg 207 Invalid column name` errors (references columns not present in the current schema) — more 14.x-drift than a quick fix, and it's not on the critical path for the assessment reports (which use the assessment *fact* proc `Staging-to-FactK12StudentAssessment`). Left the canonical fixes committed but removed it from `VersionUpdates/14.1` so the release deploys cleanly. Needs a full column reconciliation before it can ship. Also note the file/proc name mismatch (file `_Counts_Assessments`, proc `FactK12StudentAssessments`).
+**Root cause (was blocking ALL assessment reports):** the wrapper `App.Wrapper_Migrate_Assessment_to_RDS` (step 8 `rds.Empty_RDS 'assessment'` and step 9 the fact proc) referenced `RDS.BridgeK12StudentAssessmentAccommodations`, which the **14.0 CEDS rebuild renamed/redesigned** into the granular `RDS.BridgeK12StudentAssessmentAccessibilityFeatures` (per-feature columns: Braille, Calculator, Break, ReadAloud, ExtendedTime, …). `Empty_RDS` died on the missing table before the fact proc ever ran → 0 facts, swallowed by the wrapper's TRY/CATCH into `App.DataMigrationHistories`.
+
+**Fixes (committed, in 14.1):**
+1. `RDS.Empty_RDS` — repointed the assessment-bridge cleanup DELETE to `BridgeK12StudentAssessmentAccessibilityFeatures`.
+2. `Staging.[Staging-to-FactK12StudentAssessment]` (the SINGULAR proc the wrapper actually calls — line 101) — repointed the cleanup DELETE (line 631) to the new bridge; the **core `FactK12StudentAssessments` INSERT now runs and populates**.
+
+**Deferred (logged, non-blocking):** the accommodations→accessibility-features **bridge population** block in the fact proc (old `RDS.vwAssessmentAccommodations` / `DimAssessmentAccommodationId` model) is disabled with a `/* … */` guard. It needs a full remap onto the granular AccessibilityFeatures model. The primary assessment reports are driven by `FactK12StudentAssessments.AssessmentCount`, not by this bridge, so those reports are unblocked.
+
+**Note / correction:** the file `Staging-to-FactK12StudentCounts_Assessments.StoredProcedure.sql` defines the PLURAL proc `Staging-to-FactK12StudentAssessments`, which the wrapper does **not** call — it is legacy/unused on the assessment path. Its column-name fixes were committed as a harmless canonical improvement but it is intentionally NOT in 14.1.
