@@ -811,10 +811,23 @@ BEGIN
 
 		end
 
-		-- Exclude Free/Reduced counts if toggle requires it
-		if @reportCode = '033' and @toggleLunchCounts = 'Direct Certification Only'
+		--Based on toggle, remove the unreported counts from the submission file
+		if @reportCode = '033'
 		begin
-			set @sql = @sql + 'delete from @reportData where TableTypeAbbrv = ''LUNCHFREERED'' '
+			if @toggleLunchCounts = 'Free and Reduced Only'
+			begin
+				set @sql = @sql + '
+				--remove zero count rows based on toggle response
+				delete from @reportData where TableTypeAbbrv = ''DIRECTCERT''
+				'
+			end
+			else if @toggleLunchCounts = 'Direct Certification Only'
+			begin
+				set @sql = @sql + '
+				--remove zero count rows based on toggle response
+				delete from @reportData where TableTypeAbbrv = ''LUNCHFREERED''
+				'
+			end
 		end
 
 	end		-- END @includeZeroCounts = 1

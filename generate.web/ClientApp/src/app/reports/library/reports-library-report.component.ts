@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Router} from '@angular/router';
 
 
-declare var componentHandler: any;
+declare let componentHandler: any;
 
 @Component({
     selector: 'generate-app-reports-library',

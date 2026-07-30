@@ -101,7 +101,7 @@
 </div>
     <generate-app-dialog #assessmentDialog class="generate-app-toggle-assessment__dialog" [hideTrigger]="'None'">
         <div>
-            <div class="generate-app-toggle-assessment__dialog-title">Add New Assessment</div>
+            <div class="generate-app-toggle-assessment__dialog-title">{{ selectedToggleAssessment !== undefined && selectedToggleAssessment.toggleAssessmentId > 0 ? 'Edit Assessment' : 'Add New Assessment' }}</div>
         </div>
         <div *ngIf="errorMessage != null" class="mdl-typography--text-center">
             <div class="mdl-grid">
