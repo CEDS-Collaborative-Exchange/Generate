@@ -4,7 +4,7 @@ import {Router} from '@angular/router';
 import { UserService } from '../services/app/user.service';
 
 
-declare var componentHandler: any;
+declare let componentHandler: any;
 
 @Component({
     selector: 'generate-app-home',

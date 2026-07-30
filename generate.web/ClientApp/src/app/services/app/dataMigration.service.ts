@@ -24,7 +24,7 @@ export class DataMigrationService extends BaseService {
 
     migrateODS(dimSchoolYear: DimSchoolYearDataMigrationType[], dataMigrationTasks: DataMigrationTask[]) {
 
-        var postData = {
+        const postData = {
             dimSchoolYearDataMigrationTypes: dimSchoolYear,
             dataMigrationTasks: dataMigrationTasks
         };
@@ -38,7 +38,7 @@ export class DataMigrationService extends BaseService {
     }
 
     cancelMigration(dataMigrationTypeCode: string) {
-        var postData = {
+        const postData = {
             migrationType: dataMigrationTypeCode
         }; 
 
@@ -53,7 +53,7 @@ export class DataMigrationService extends BaseService {
 
     migrateRDS(dimSchoolYear: DimSchoolYearDataMigrationType[], dataMigrationTasks: DataMigrationTask[]) {
 
-        var postData = {
+        const postData = {
             dimSchoolYearDataMigrationTypes: dimSchoolYear,
             dataMigrationTasks: dataMigrationTasks
         };
@@ -67,7 +67,7 @@ export class DataMigrationService extends BaseService {
     }
     migrateReport(dimSchoolYear: DimSchoolYearDataMigrationType[], generateReports: GenerateReport[], userName: string) {
 
-        var postData = {
+        const postData = {
             dimSchoolYearDataMigrationTypes: dimSchoolYear,
             generateReportLists: generateReports,
             userName: userName
@@ -211,7 +211,7 @@ export class DataMigrationService extends BaseService {
 
     saveMigrationConfiguration(dimdates: DimDateDataMigrationType[], dataMigrationTasks: DataMigrationTask[]) {
 
-        var postData = {
+        const postData = {
             dimDateDataMigrationTypes: dimdates,
             dataMigrationTasks: dataMigrationTasks
         };
