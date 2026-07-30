@@ -1,5 +1,4 @@
-﻿using generate.core.Helpers.ReferenceData;
-using generate.core.Models.IDS;
+﻿using generate.core.Models.IDS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -224,7 +223,7 @@ namespace generate.core.Helpers.TestDataHelper
 
         public IdsReferenceData()
         {
-
+#if false
             // Data
 
             this.RefK12responsibilityTypes = RefK12responsibilityTypeHelper.GetData();
@@ -437,7 +436,7 @@ namespace generate.core.Helpers.TestDataHelper
 
             this.ParaProfessionalId = this.RefK12staffClassifications.Single(c => c.Code == "Paraprofessionals").RefEducationStaffClassificationId;
             this.SpecialEdTeacherId = this.RefK12staffClassifications.Single(c => c.Code == "SpecialEducationTeachers").RefEducationStaffClassificationId;
-           
+#endif
 
         }
 
