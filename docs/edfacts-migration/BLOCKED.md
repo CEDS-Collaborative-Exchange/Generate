@@ -19,6 +19,24 @@ Files where I hit a problem I couldn't fully resolve autonomously and moved on (
 
 **Decision/feedback needed:** reconcile `debug.vwNeglectedOrDelinquent_StagingTables` with the columns the report staging views expect (or update the report views to the current column names), then create correctly-named `_218/_219/_220/_221` expected views mirroring the (now-working) NorD fact migration. This is a self-contained reconciliation but non-trivial (subpart + academic/CTE outcome dimensions, misspelled column names in the existing views). Deferred to keep momentum on other files.
 
+### Full diagnosis (2026-07-30) — the report *actual* works; the *expected* oracle is blocked by a dimensional-model inconsistency
+
+The FS218 **fact/report actual** side is fully working now:
+- `RDS.vwNeglectedOrDelinquent_FactTable_218` returns 412 rows; `RDS.Insert_CountsIntoReportTable '218','2027','K12StudentStudentIdentifierState',1,0` populates `RDS.ReportEDFactsK12StudentCounts` with 7 SEA-level rows, one per outcome-type EdFacts code: EARNCRE=12, EARNDIPL=10, EARNGED=8, ENROLLGED=9, ENROLLTRAIN=8, OBTAINEMP=12, POSTSEC=11.
+- FS218 metadata (2027): one CategorySet `CSA` at `sea` level, one dimension `EdFactsAcademicOrCareerAndTechnicalOutcomeType`; report table `ReportEDFactsK12StudentCounts`, count `StudentCount`.
+
+The harness (`Staging.RunEndToEndTest`) needs a `Staging.vwNeglectedOrDelinquent_StagingTables_218` exposing `StudentIdentifierState` + a column literally named `EdFactsAcademicOrCareerAndTechnicalOutcomeType` holding those same EdFacts codes, producing the same distinct-student counts.
+
+**Why the expected view can't be faithfully reconstructed yet — the model is internally inconsistent:**
+- `debug.vwNeglectedOrDelinquent_FactTable` reads the outcome code as `NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode` from **`RDS.DimNorDStatuses`** (joined via `Fact.NorDStatusId`).
+- But the fact proc `Staging-to-FactK12StudentCounts_NeglectedOrDelinquent` sets `NOrDStatusId` from `RDS.vwDimNOrDStatuses` joined on **subpart + academic achievement/outcome *indicators*** (lines ~245-254) — NOT on the outcome *type*. And `vwDimNOrDStatuses` does not expose any `EdFactsAcademicOrCareerAndTechnicalOutcomeType*` column at all.
+- The proc maps the outcome type/exit type to a *separate* dim, `CTEOutcomeIndicatorId` via `RDS.vwDimCteOutcomeIndicators` (lines ~256-260) — but **`RDS.vwDimCteOutcomeIndicators` returns zero rows** (unpopulated), so `CTEOutcomeIndicatorId` is always -1.
+- Net: the raw staging `Staging.ProgramParticipationNOrD` *does* carry `EdFactsAcademicOrCareerAndTechnicalOutcomeType`/`...ExitType`, but there is no populated, consistent dimension path from that raw value to the EdFacts code the report actually shows. The actual codes appear to ride on `DimNorDStatuses` rows whose key encodes subpart+indicators, conflating two concepts.
+
+**To finish (needs a design decision):** either (a) populate/repair `RDS.DimCteOutcomeIndicators` + `vwDimCteOutcomeIndicators` and have the proc + report read the outcome type from it consistently, or (b) confirm `DimNorDStatuses` is intended to carry the outcome type and expose a `...OutcomeType*Map` on `vwDimNOrDStatuses` so the staging oracle can join raw `ProgramParticipationNOrD.EdFactsAcademicOrCareerAndTechnicalOutcomeType` → EdFacts code the same way the fact does. Once the raw→code path is single-sourced, the `_218/_219/_220/_221` expected views are a straightforward mirror (join raw `ProgramParticipationNOrD` + enrollment/org, filter NorDStatus=1 + subpart='Subpart1' + outcome code present, expose `StudentIdentifierState` + `EdFactsAcademicOrCareerAndTechnicalOutcomeType`).
+
+This is a warehouse-model question (which dim owns the CTE/academic outcome type), so it is logged for review rather than guessed. Also still applies: the existing `_C218…_C221` views use the misspelled `NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode` and `ProgramParticipationBegin/EndDate` (now `Start/ExitDate`) and are named `_C###` instead of the harness's `_###`.
+
 ---
 
 ## Assessment fact layer — RESOLVED (facts populate); accessibility-features bridge DEFERRED
