@@ -18,4 +18,6 @@ VersionUpdates\14.1\Views\Drop,Debug.vwMembership_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwMembership_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_226.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_226.View.sql,0
+VersionUpdates\14.1\StoredProcedures\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
+VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
 VersionUpdates\14.1,UpdateDbVersion.sql,0

@@ -19,6 +19,15 @@
 ***********************************************************************/
 SET NOCOUNT ON;
 
+-- The 14.0 fact-table rebuild also dropped RDS.FactK12StudentCounts.CteOutcomeIndicatorId,
+-- which the NeglectedOrDelinquent fact proc still inserts (for FS218-221/119/127 CTE/academic
+-- outcome reporting) and debug.vwNeglectedOrDelinquent_FactTable joins. Its absence made that
+-- proc's INSERT fail (0 NorD facts) and the debug view fail to bind. Re-add it (NA-member default -1).
+IF COL_LENGTH('RDS.FactK12StudentCounts', 'CteOutcomeIndicatorId') IS NULL
+    ALTER TABLE RDS.FactK12StudentCounts
+        ADD CteOutcomeIndicatorId INT NOT NULL
+            CONSTRAINT DF_FactK12StudentCounts_CteOutcomeIndicatorId DEFAULT((-1));
+
 DECLARE @facts TABLE (tbl sysname);
 INSERT INTO @facts (tbl) VALUES
       ('RDS.FactK12StudentCounts')
