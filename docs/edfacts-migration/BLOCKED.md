@@ -18,3 +18,11 @@ Files where I hit a problem I couldn't fully resolve autonomously and moved on (
 - Also: the staging report views are inconsistently named (`_C218`, `_C219`, `_220`, `_C221`) vs the harness's expected `_218/_219/_220/_221`.
 
 **Decision/feedback needed:** reconcile `debug.vwNeglectedOrDelinquent_StagingTables` with the columns the report staging views expect (or update the report views to the current column names), then create correctly-named `_218/_219/_220/_221` expected views mirroring the (now-working) NorD fact migration. This is a self-contained reconciliation but non-trivial (subpart + academic/CTE outcome dimensions, misspelled column names in the existing views). Deferred to keep momentum on other files.
+
+---
+
+## Staging.[Staging-to-FactK12StudentAssessments] (file: Staging-to-FactK12StudentCounts_Assessments.StoredProcedure.sql)
+
+**Status:** pre-existing broken; excluded from the 14.1 release deploy.
+
+Fixed a duplicate `@schoolyear` declaration (leftover `declare @schoolyear int = 2023` conflicting with the `@SchoolYear` parameter), but the proc still emits many `Msg 207 Invalid column name` errors (references columns not present in the current schema) — more 14.x-drift than a quick fix, and it's not on the critical path for the assessment reports (which use the assessment *fact* proc `Staging-to-FactK12StudentAssessment`). Left the canonical fixes committed but removed it from `VersionUpdates/14.1` so the release deploys cleanly. Needs a full column reconciliation before it can ship. Also note the file/proc name mismatch (file `_Counts_Assessments`, proc `FactK12StudentAssessments`).

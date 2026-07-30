@@ -5,7 +5,6 @@ VersionUpdates\14.1\StoredProcedures\Drop,Staging.Staging-to-FactK12StudentCount
 VersionUpdates\14.1\StoredProcedures\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
-VersionUpdates\14.1\StoredProcedures\Drop,Staging.Staging-to-FactK12StudentCounts_Assessments.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Drop,Staging.Staging-to-FactK12StudentEnrollments.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Create,App.Run_Before_Tests.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Create,Staging.RunEndToEndTest.StoredProcedure.sql,0
@@ -13,7 +12,6 @@ VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCou
 VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
-VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_Assessments.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentEnrollments.StoredProcedure.sql,0
 VersionUpdates\14.1\Views\Drop,Debug.vwMembership_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
