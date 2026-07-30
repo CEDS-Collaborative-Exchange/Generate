@@ -11,6 +11,8 @@
 - **FS118 Homeless** — narrow base missing EL/Grade/IDEA/Migrant/Race dims.
 - **FS141 TitleIIIELOct / FS045/FS116 TitleIIIELSY** — EL-scoped bases (verify).
 
+**Confirmed Class B base-population numbers (base distinct students vs fact-view distinct — the gap each base must close):** ChildCount 089 = 1 vs 9; TitleI 134 = 516 vs 1556; Migrant 054 base = **0** (empty; `Staging.Migrant`+`MigrantStatus=1` unpopulated — fact uses `PersonStatus.MigrantStatus`, and the migrant proc additionally leaves the program dims ContinuationOfServicesReason/MigrantPrioritizedForServices = MISSING, so those breakouts need a proc-level fix too); TitleIIIELSY 045 base = 29 vs 1556; TitleIIIELOct 141 base = 10 vs 315 (bases INNER-join the sparse `Staging.ProgramParticipationTitleIII`; also `RDS.vwTitleIIIELSY_FactTable_045` currently reads `debug.vwTitleI_FactTable` — looks like a copy/paste bug to verify). Homeless 118 base lacks the EL/Grade/IDEA/Migrant/Race dims. The titleIII debug bases also had stale `EnglishLearner_StatusEndDate`/`ProgramParticipationEndDate` column refs in the DEPLOYED views (the .sql files are already fixed to `_StatusExitDate`/`ProgramParticipationExitDate`; just needed redeploy).
+
 For every Class B report the **report ACTUAL populates** (fact view + populator fix work; fact-view EdFacts-code infra committed where checked). To green each: reconcile the `debug.vw<FactType>_StagingTables` base's population/date-windows/source with `Staging-to-FactK12StudentCounts_<FactType>`, OR build the expected staging view directly from the fact proc's logic. Dimension mappings are worked out per file below. FS033 (Membership FRL) is Class A base but has a two-table-type (DIRECTCERT/LUNCHFREERED) + lunch-toggle wrinkle.
 
 ---
