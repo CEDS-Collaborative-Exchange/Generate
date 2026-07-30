@@ -36,6 +36,7 @@ VersionUpdates\14.1\Views\Drop,RDS.vwChronicAbsenteeism_FactTable_195.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwDropout_FactTable_032.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwChildCount_FactTable_089.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwChildCount_StagingTables_089.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwChildCount_StagingTables_002.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwDropout_StagingTables_032.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwChronicAbsenteeism_StagingTables_195.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwMembership_StagingTables.View.sql,0
@@ -55,6 +56,7 @@ VersionUpdates\14.1\Views\Create,RDS.vwChronicAbsenteeism_FactTable_195.View.sql
 VersionUpdates\14.1\Views\Create,RDS.vwDropout_FactTable_032.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwChildCount_FactTable_089.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwChildCount_StagingTables_089.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwChildCount_StagingTables_002.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwDropout_StagingTables_032.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwChronicAbsenteeism_StagingTables_195.View.sql,0
 VersionUpdates\14.1,App.Metadata-RollForward-2027.sql,0
