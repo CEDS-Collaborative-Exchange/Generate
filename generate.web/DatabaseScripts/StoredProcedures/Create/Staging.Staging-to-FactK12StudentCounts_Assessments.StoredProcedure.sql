@@ -196,14 +196,14 @@ declare @schoolyear int = 2023
 			, SchoolIdentifierSea
 			, EconomicDisadvantageStatus
 			, EconomicDisadvantage_StatusStartDate
-			, EconomicDisadvantage_StatusEndDate
+			, EconomicDisadvantage_StatusExitDate
 		INTO #tempEconomicallyDsadvantagedStatus
 		FROM Staging.PersonStatus
 		WHERE EconomicDisadvantageStatus = 1
 
 	-- Create Index for #tempEconomicallyDsadvantagedStatus 
 		CREATE INDEX IX_tempEconomicallyDsadvantagedStatus
-			ON #tempEconomicallyDsadvantagedStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, EconomicDisadvantage_StatusStartDate, EconomicDisadvantage_StatusEndDate)
+			ON #tempEconomicallyDsadvantagedStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, EconomicDisadvantage_StatusStartDate, EconomicDisadvantage_StatusExitDate)
 
 
 		SELECT @FactTypeId = DimFactTypeId 
@@ -416,7 +416,7 @@ declare @schoolyear int = 2023
 				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(ecoDisStatus.SchoolIdentifierSea, '')
 				AND ((ecoDisStatus.EconomicDisadvantage_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND ecoDisStatus.EconomicDisadvantage_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(ecoDisStatus.EconomicDisadvantage_StatusEndDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(ecoDisStatus.EconomicDisadvantage_StatusExitDate, GETDATE()) >= sar.AssessmentAdministrationStartDate)
 		--economically disadvantaged status (rds)
 			LEFT JOIN RDS.vwDimEconomicallyDisadvantagedStatuses rdeds
 				ON ISNULL(CAST(ecoDisStatus.EconomicDisadvantageStatus AS SMALLINT), -1) = ISNULL(CAST(rdeds.EconomicDisadvantageStatusMap AS SMALLINT), -1)

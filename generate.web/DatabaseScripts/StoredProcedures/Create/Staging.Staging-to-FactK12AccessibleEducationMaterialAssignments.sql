@@ -195,11 +195,11 @@ BEGIN
 		ON ske.StudentIdentifierState = ed.StudentIdentifierState
 		AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(ed.LeaIdentifierSeaAccountability,'')
 		AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(ed.SchoolIdentifierSea,'')
-		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN ed.EconomicDisadvantage_StatusStartDate AND ISNULL(ed.EconomicDisadvantage_StatusEndDate, GETDATE())
+		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN ed.EconomicDisadvantage_StatusStartDate AND ISNULL(ed.EconomicDisadvantage_StatusExitDate, GETDATE())
 	LEFT JOIN RDS.DimDates rddEconolicallyDisadvantagedStatusStartDateTime
 		ON ed.EconomicDisadvantage_StatusStartDate = rddEconolicallyDisadvantagedStatusStartDateTime.DateValue
 	LEFT JOIN RDS.DimDates rddEconolicallyDisadvantagedStatusEndDateTime
-		ON ed.EconomicDisadvantage_StatusEndDate = rddEconolicallyDisadvantagedStatusEndDateTime.DateValue
+		ON ed.EconomicDisadvantage_StatusExitDate = rddEconolicallyDisadvantagedStatusEndDateTime.DateValue
 	LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 		ON rsy.SchoolYear = rdels.SchoolYear
 		AND ISNULL(CAST(el.PerkinsEnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.PerkinsEnglishLearnerStatusMap, rdels.PerkinsEnglishLearnerStatusCode)

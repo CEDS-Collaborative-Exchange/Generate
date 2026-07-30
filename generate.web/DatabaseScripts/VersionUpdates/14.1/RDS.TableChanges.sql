@@ -29,10 +29,10 @@ IF COL_LENGTH('RDS.FactK12StudentCounts', 'CteOutcomeIndicatorId') IS NULL
             CONSTRAINT DF_FactK12StudentCounts_CteOutcomeIndicatorId DEFAULT((-1));
 
 DECLARE @facts TABLE (tbl sysname);
-INSERT INTO @facts (tbl) VALUES
-      ('RDS.FactK12StudentCounts')
-    , ('RDS.FactK12StudentDisciplines')
-    , ('RDS.FactK12StudentAssessments');
+-- All RDS fact tables (the 14.0 rebuild dropped the NA-member -1 defaults across the board).
+INSERT INTO @facts (tbl)
+SELECT 'RDS.' + name FROM sys.tables
+WHERE SCHEMA_NAME(schema_id) = 'RDS' AND name LIKE 'Fact%';
 
 DECLARE @sql nvarchar(max) = N'';
 

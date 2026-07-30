@@ -413,7 +413,7 @@ AS
 	LEFT JOIN RDS.DimDates rddedStart
 		ON sps.EconomicDisadvantage_StatusStartDate																= rddedStart.DateValue
 	LEFT JOIN RDS.DimDates rddedEnd
-		ON sps.EconomicDisadvantage_StatusEndDate																= rddedEnd.DateValue
+		ON sps.EconomicDisadvantage_StatusExitDate																= rddedEnd.DateValue
 	LEFT JOIN RDS.DimDates rddelStart
 		ON sps.EnglishLearner_StatusStartDate																	= rddelStart.DateValue
 	LEFT JOIN RDS.DimDates rddelEnd
