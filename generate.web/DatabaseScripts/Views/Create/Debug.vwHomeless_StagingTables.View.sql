@@ -59,7 +59,8 @@ AS
 			ON		enrollment.StudentIdentifierState						=	idea.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(idea.LEAIdentifierSeaAccountability, '') 
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(idea.SchoolIdentifierSea, '')
-			AND		idea.ProgramParticipationStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))
+			-- 14.1: homeless proc anchors the IDEA window on the homelessness start date
+			AND		hm.Homelessness_StatusStartDate  BETWEEN idea.ProgramParticipationStartDate AND ISNULL(idea.ProgramParticipationExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))
 
 	LEFT JOIN Staging.K12PersonRace							race
 			ON		enrollment.SchoolYear									=	race.SchoolYear
@@ -72,13 +73,13 @@ AS
 			ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-			AND		el.EnglishLearner_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))
+			AND		hm.Homelessness_StatusStartDate  BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))
 
 	LEFT JOIN Staging.PersonStatus							mig
 			ON		enrollment.StudentIdentifierState						=	mig.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(mig.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(mig.SchoolIdentifierSea, '')
-			AND		mig.Migrant_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))
+			AND		hm.Homelessness_StatusStartDate  BETWEEN mig.Migrant_StatusStartDate AND ISNULL(mig.Migrant_StatusExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))
 
 
 	--uncomment/modify the where clause conditions as necessary for validation
