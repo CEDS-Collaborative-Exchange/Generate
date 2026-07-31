@@ -23,8 +23,8 @@ AS
 		, homeless.Homelessness_StatusExitDate
 				
 		, migrant.MigrantStatus
-		, migrant.ProgramParticipationStartDate					Migrant_ProgramParticipationStartDate
-		, migrant.ProgramParticipationExitDate					Migrant_ProgramParticipationExitDate
+		, migrant.Migrant_StatusStartDate
+		, migrant.Migrant_StatusExitDate
 				
 		, idea.IDEAIndicator
 		, idea.ProgramParticipationStartDate					IDEA_ProgramParticipationStartDate
@@ -51,29 +51,29 @@ AS
 		AND		((titleI.ProgramParticipationStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear)))
 				OR (titleI.ProgramParticipationStartDate < enrollment.EnrollmentEntryDate AND ISNULL(titleI.ProgramParticipationExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear)) = staging.GetFiscalYearEndDate(enrollment.SchoolYear)))
 
-	LEFT JOIN Staging.Migrant								migrant
+	LEFT JOIN Staging.PersonStatus							migrant
 		ON		enrollment.StudentIdentifierState						=	migrant.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(migrant.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(migrant.SchoolIdentifierSea, '')
-		AND		ISNULL(migrant.ProgramParticipationExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		((migrant.Migrant_StatusStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))) OR (migrant.Migrant_StatusStartDate < enrollment.EnrollmentEntryDate AND ISNULL(migrant.Migrant_StatusExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear)) = staging.GetFiscalYearEndDate(enrollment.SchoolYear)))
 
 	LEFT JOIN Staging.PersonStatus							el
 		ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-		AND		ISNULL(el.EnglishLearner_StatusExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		((el.EnglishLearner_StatusStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))) OR (el.EnglishLearner_StatusStartDate < enrollment.EnrollmentEntryDate AND ISNULL(el.EnglishLearner_StatusExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear)) = staging.GetFiscalYearEndDate(enrollment.SchoolYear)))
 
 	LEFT JOIN Staging.PersonStatus							homeless
 		ON		enrollment.StudentIdentifierState						=	homeless.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(homeless.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(homeless.SchoolIdentifierSea, '')
-		AND		ISNULL(homeless.Homelessness_StatusExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		((homeless.Homelessness_StatusStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))) OR (homeless.Homelessness_StatusStartDate < enrollment.EnrollmentEntryDate AND ISNULL(homeless.Homelessness_StatusExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear)) = staging.GetFiscalYearEndDate(enrollment.SchoolYear)))
 
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation	idea
 		ON		enrollment.StudentIdentifierState						=	idea.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(idea.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(idea.SchoolIdentifierSea, '')
-		AND		ISNULL(idea.ProgramParticipationExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		((idea.ProgramParticipationStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear))) OR (idea.ProgramParticipationStartDate < enrollment.EnrollmentEntryDate AND ISNULL(idea.ProgramParticipationExitDate, staging.GetFiscalYearEndDate(enrollment.SchoolYear)) = staging.GetFiscalYearEndDate(enrollment.SchoolYear)))
 
 	LEFT JOIN Staging.PersonStatus							foster
 		ON		enrollment.StudentIdentifierState						=	foster.StudentIdentifierState

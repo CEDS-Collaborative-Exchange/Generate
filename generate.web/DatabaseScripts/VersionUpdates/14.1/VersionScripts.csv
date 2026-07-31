@@ -29,7 +29,9 @@ VersionUpdates\14.1\Views\Drop,Debug.vwChildCount_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Drop,Debug.vwHomeless_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_134.View.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_037.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_134.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_037.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_222.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_226.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_052.View.sql,0
@@ -54,7 +56,9 @@ VersionUpdates\14.1\Views\Create,Debug.vwChildCount_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwHomeless_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_222.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_134.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_037.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_134.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_037.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_222.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_226.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_052.View.sql,0
