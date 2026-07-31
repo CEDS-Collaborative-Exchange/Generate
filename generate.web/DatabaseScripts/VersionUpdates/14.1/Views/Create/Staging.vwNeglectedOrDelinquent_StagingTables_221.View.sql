@@ -1,15 +1,16 @@
-CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_220]
+CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_221]
 AS
-	-- FS220 - Neglected or Delinquent, Subpart 1 (State Agency), academic/CTE outcomes attained up to
-	-- 90 days AFTER exiting the program. SEA-level. One report dimension:
-	-- EdFactsAcademicOrCareerAndTechnicalOutcomeExitType.
+	-- FS221 - At-Risk or Delinquent, Subpart 2 (LEA), academic/CTE outcomes attained up to 90 days
+	-- AFTER exiting the program. LEA-level. One report dimension:
+	-- EdFactsAcademicOrCareerAndTechnicalOutcomeExitType (+ LEA breakout).
 	--
 	-- Expected-side population for RunEndToEndTest. Mirrors the actual migration
 	-- Staging.[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent] exactly so expected == actual
 	-- (see Staging.vwNeglectedOrDelinquent_StagingTables_218 for the full recipe notes). This view
-	-- differs from _218 only in exposing the outcome EXIT-type EdFacts code as the report dimension.
-	--   * report filters mirrored from RDS.vwNeglectedOrDelinquent_FactTable_220:
-	--       NeglectedOrDelinquentStatusCode = 'Yes' AND NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart1'.
+	-- exposes the outcome EXIT-type EdFacts code as the report dimension and the LEA identifier for the
+	-- LEA-level breakout, and filters to Subpart2.
+	--   * report filters mirrored from RDS.vwNeglectedOrDelinquent_FactTable_221:
+	--       NeglectedOrDelinquentStatusCode = 'Yes' AND NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart2'.
 	SELECT DISTINCT
 		  ske.StudentIdentifierState
 		, ske.LEAIdentifierSeaAccountability
@@ -70,4 +71,4 @@ AS
 		AND	sppnord.NeglectedOrDelinquentStatus = 1
 		AND	sssrd.OutputCode NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 		AND	rdnds.NeglectedOrDelinquentStatusCode = 'Yes'
-		AND	rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart1'
+		AND	rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart2'

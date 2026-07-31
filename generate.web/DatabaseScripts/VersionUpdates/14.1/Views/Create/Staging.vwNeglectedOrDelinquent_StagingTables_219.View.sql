@@ -1,20 +1,20 @@
-CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_220]
+CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_219]
 AS
-	-- FS220 - Neglected or Delinquent, Subpart 1 (State Agency), academic/CTE outcomes attained up to
-	-- 90 days AFTER exiting the program. SEA-level. One report dimension:
-	-- EdFactsAcademicOrCareerAndTechnicalOutcomeExitType.
+	-- FS219 - At-Risk or Delinquent, Subpart 2 (LEA), academic/CTE outcomes attained WHILE enrolled.
+	-- LEA-level. One report dimension: EdFactsAcademicOrCareerAndTechnicalOutcomeType (+ LEA breakout).
 	--
 	-- Expected-side population for RunEndToEndTest. Mirrors the actual migration
 	-- Staging.[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent] exactly so expected == actual
 	-- (see Staging.vwNeglectedOrDelinquent_StagingTables_218 for the full recipe notes). This view
-	-- differs from _218 only in exposing the outcome EXIT-type EdFacts code as the report dimension.
-	--   * report filters mirrored from RDS.vwNeglectedOrDelinquent_FactTable_220:
-	--       NeglectedOrDelinquentStatusCode = 'Yes' AND NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart1'.
+	-- differs from _218 only in the subpart filter (Subpart2 = LEA) and in exposing the LEA identifier
+	-- for the report's LEA-level breakout.
+	--   * report filters mirrored from RDS.vwNeglectedOrDelinquent_FactTable_219:
+	--       NeglectedOrDelinquentStatusCode = 'Yes' AND NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart2'.
 	SELECT DISTINCT
 		  ske.StudentIdentifierState
 		, ske.LEAIdentifierSeaAccountability
 		, ske.SchoolIdentifierSea
-		, ISNULL(dcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode, 'MISSING')	AS EdFactsAcademicOrCareerAndTechnicalOutcomeExitType
+		, ISNULL(dcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode, 'MISSING')	AS EdFactsAcademicOrCareerAndTechnicalOutcomeType
 
 	FROM Staging.K12Enrollment							ske
 
@@ -49,7 +49,7 @@ AS
 		AND		ISNULL(TRY_CAST(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator AS SMALLINT), -1)	= ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, -1)
 		AND		ISNULL(TRY_CAST(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator AS SMALLINT), -1)		= ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, -1)
 
-	--cte outcome indicators dim (supplies the academic/CTE outcome EXIT-type EdFacts code)
+	--cte outcome indicators dim (supplies the academic/CTE outcome-type EdFacts code)
 	LEFT JOIN RDS.vwDimCteOutcomeIndicators				rdcoi
 		ON		rdcoi.SchoolYear = ske.SchoolYear
 		AND		ISNULL(sppnord.EdFactsAcademicOrCareerAndTechnicalOutcomeType, 'MISSING')		= ISNULL(rdcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap, rdcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode)
@@ -70,4 +70,4 @@ AS
 		AND	sppnord.NeglectedOrDelinquentStatus = 1
 		AND	sssrd.OutputCode NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 		AND	rdnds.NeglectedOrDelinquentStatusCode = 'Yes'
-		AND	rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart1'
+		AND	rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart2'

@@ -98,6 +98,10 @@ Files where I hit a problem I couldn't fully resolve autonomously and moved on (
 
 ---
 
+## NorD 218/219/220/221 — e2e GREEN (pipeline) ✅ (FS218=7, FS219=60, FS220=16, FS221=132)
+RESOLVED the long-standing NorD block: the academic/CTE outcome-type EdFacts code comes from `RDS.DimCteOutcomeIndicators` (via `Fact.CteOutcomeIndicatorId`), and `RDS.vwDimCteOutcomeIndicators` IS populated (the earlier "empty" note was stale — I'd queried the wrong/older object). Subagent authored `Staging.vwNeglectedOrDelinquent_StagingTables_218/219/220/221` built directly from raw `Staging.ProgramParticipationNOrD` (mirroring the live fact proc): status+subpart via `vwDimNOrDStatuses`, outcome code via `vwDimCteOutcomeIndicators`→`DimCteOutcomeIndicators`, LEA reported-federally + op-status filters. 218/220=SEA (OutcomeType/OutcomeExitType, Subpart1); 219/221=LEA (Subpart2). All e2e green. **Spec-validation of the fact side still PENDING** per the done-bar. Packaged in 14.1.
+
+<!-- historical block notes below -->
 ## FS218 / FS219 / FS220 / FS221 (and FS119, FS127) — Neglected or Delinquent group
 
 **Status:** fact side FIXED (facts now populate, 1682 NorD facts for 2027; `RDS.vwNeglectedOrDelinquent_FactTable_218` = 412 rows). Staging/test side still blocked.

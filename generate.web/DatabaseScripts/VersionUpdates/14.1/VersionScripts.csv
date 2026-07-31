@@ -78,6 +78,14 @@ VersionUpdates\14.1\Views\Create,RDS.vwTitleIIIELSY_FactTable_116.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwTitleIIIELOct_FactTable_141.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleIIIELSY_StagingTables_116.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleIIIELOct_StagingTables_141.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_218.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_219.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_221.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwNeglectedOrDelinquent_StagingTables_218.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwNeglectedOrDelinquent_StagingTables_219.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwNeglectedOrDelinquent_StagingTables_221.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwMigrantEducationProgram_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwMigrantEducationProgram_FactTable_054.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwMigrantEducationProgram_FactTable_121.View.sql,0

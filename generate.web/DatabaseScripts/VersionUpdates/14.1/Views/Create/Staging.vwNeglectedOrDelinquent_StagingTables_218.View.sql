@@ -1,20 +1,26 @@
-CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_220]
+CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_218]
 AS
-	-- FS220 - Neglected or Delinquent, Subpart 1 (State Agency), academic/CTE outcomes attained up to
-	-- 90 days AFTER exiting the program. SEA-level. One report dimension:
-	-- EdFactsAcademicOrCareerAndTechnicalOutcomeExitType.
+	-- FS218 - Neglected or Delinquent, Subpart 1 (State Agency), academic/CTE outcomes attained
+	-- WHILE enrolled. SEA-level. One report dimension: EdFactsAcademicOrCareerAndTechnicalOutcomeType.
 	--
 	-- Expected-side population for RunEndToEndTest. Mirrors the actual migration
-	-- Staging.[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent] exactly so expected == actual
-	-- (see Staging.vwNeglectedOrDelinquent_StagingTables_218 for the full recipe notes). This view
-	-- differs from _218 only in exposing the outcome EXIT-type EdFacts code as the report dimension.
-	--   * report filters mirrored from RDS.vwNeglectedOrDelinquent_FactTable_220:
+	-- Staging.[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent] exactly so expected == actual:
+	--   * same K12Enrollment -> K12Organization (LEA_IsReportedFederally = 1) -> DimSchoolYears -> DimSeas
+	--     -> ProgramParticipationNOrD join (student + org + program-start within enrollment window),
+	--   * NOrDStatus resolved through RDS.vwDimNOrDStatuses on the same status / subpart / program-type /
+	--     achievement / outcome indicator maps the fact proc uses (supplies StatusCode + SubpartCode),
+	--   * the academic/CTE outcome-type EdFacts code resolved through RDS.vwDimCteOutcomeIndicators
+	--     (matched on OutcomeType + OutcomeExitType + Perkins post-program placement = MISSING) to get the
+	--     DimCteOutcomeIndicatorId, then RDS.DimCteOutcomeIndicators for its EdFacts code -- exactly the
+	--     path debug.vwNeglectedOrDelinquent_FactTable reads via Fact.CteOutcomeIndicatorId,
+	--   * LEA operational-status exclusion (Closed / FutureAgency / Inactive / MISSING),
+	--   * report filters mirrored from RDS.vwNeglectedOrDelinquent_FactTable_218:
 	--       NeglectedOrDelinquentStatusCode = 'Yes' AND NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'Subpart1'.
 	SELECT DISTINCT
 		  ske.StudentIdentifierState
 		, ske.LEAIdentifierSeaAccountability
 		, ske.SchoolIdentifierSea
-		, ISNULL(dcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode, 'MISSING')	AS EdFactsAcademicOrCareerAndTechnicalOutcomeExitType
+		, ISNULL(dcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode, 'MISSING')	AS EdFactsAcademicOrCareerAndTechnicalOutcomeType
 
 	FROM Staging.K12Enrollment							ske
 
@@ -49,7 +55,7 @@ AS
 		AND		ISNULL(TRY_CAST(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator AS SMALLINT), -1)	= ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, -1)
 		AND		ISNULL(TRY_CAST(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator AS SMALLINT), -1)		= ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, -1)
 
-	--cte outcome indicators dim (supplies the academic/CTE outcome EXIT-type EdFacts code)
+	--cte outcome indicators dim (supplies the academic/CTE outcome-type EdFacts code)
 	LEFT JOIN RDS.vwDimCteOutcomeIndicators				rdcoi
 		ON		rdcoi.SchoolYear = ske.SchoolYear
 		AND		ISNULL(sppnord.EdFactsAcademicOrCareerAndTechnicalOutcomeType, 'MISSING')		= ISNULL(rdcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap, rdcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode)
