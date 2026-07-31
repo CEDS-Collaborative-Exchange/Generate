@@ -32,6 +32,13 @@ VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_134.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_037.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_134.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_037.View.sql,0
+VersionUpdates\14.1\Views\Drop,Debug.vwMigrantEducationProgram_StagingTables.View.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwMigrantEducationProgram_FactTable_054.View.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwMigrantEducationProgram_FactTable_121.View.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwMigrantEducationProgram_FactTable_145.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwMigrantEducationProgram_StagingTables_054.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwMigrantEducationProgram_StagingTables_121.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwMigrantEducationProgram_StagingTables_145.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_222.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_226.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwMembership_StagingTables_052.View.sql,0
@@ -59,6 +66,13 @@ VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_134.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_037.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_134.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_037.View.sql,0
+VersionUpdates\14.1\Views\Create,Debug.vwMigrantEducationProgram_StagingTables.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwMigrantEducationProgram_FactTable_054.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwMigrantEducationProgram_FactTable_121.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwMigrantEducationProgram_FactTable_145.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwMigrantEducationProgram_StagingTables_054.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwMigrantEducationProgram_StagingTables_121.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwMigrantEducationProgram_StagingTables_145.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_222.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_226.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwMembership_StagingTables_052.View.sql,0
