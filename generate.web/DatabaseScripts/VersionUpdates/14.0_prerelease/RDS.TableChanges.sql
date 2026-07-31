@@ -545,24 +545,250 @@ BEGIN
 END;
 
 --Add default constraints to DimAssessmentRegistrations table
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationParticipationIndicatorCode DEFAULT 'MISSING' FOR AssessmentRegistrationParticipationIndicatorCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationParticipationIndicatorDescription DEFAULT 'MISSING' FOR AssessmentRegistrationParticipationIndicatorDescription
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationCompletionStatusCode DEFAULT 'MISSING' FOR AssessmentRegistrationCompletionStatusCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationCompletionStatusDescription DEFAULT 'MISSING' FOR AssessmentRegistrationCompletionStatusDescription
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_StateFullAcademicYearCode DEFAULT 'MISSING' FOR StateFullAcademicYearCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_StateFullAcademicYearDescription DEFAULT 'MISSING' FOR StateFullAcademicYearDescription
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_StateFullAcademicYearEdFactsCode DEFAULT 'MISSING' FOR StateFullAcademicYearEdFactsCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_LeaFullAcademicYearCode DEFAULT 'MISSING' FOR LeaFullAcademicYearCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_LeaFullAcademicYearDescription DEFAULT 'MISSING' FOR LeaFullAcademicYearDescription
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_LeaFullAcademicYearEdFactsCode DEFAULT 'MISSING' FOR LeaFullAcademicYearEdFactsCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_SchoolFullAcademicYearCode DEFAULT 'MISSING' FOR SchoolFullAcademicYearCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_SchoolFullAcademicYearDescription DEFAULT 'MISSING' FOR SchoolFullAcademicYearDescription
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_SchoolFullAcademicYearEdFactsCode DEFAULT 'MISSING' FOR SchoolFullAcademicYearEdFactsCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingCode DEFAULT 'MISSING' FOR AssessmentRegistrationReasonNotCompletingCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingDescription DEFAULT 'MISSING' FOR AssessmentRegistrationReasonNotCompletingDescription
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingEdFactsCode DEFAULT 'MISSING' FOR AssessmentRegistrationReasonNotCompletingEdFactsCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_ReasonNotTestedCode DEFAULT 'MISSING' FOR ReasonNotTestedCode
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_ReasonNotTestedDescription DEFAULT 'MISSING' FOR ReasonNotTestedDescription
-ALTER TABLE RDS.DimAssessmentRegistrations ADD CONSTRAINT DF_AssessmentRegistrations_ReasonNotTestedEdFactsCode DEFAULT 'MISSING' FOR ReasonNotTestedEdFactsCode
+IF OBJECT_ID(N'[RDS].[FactK12AcademicCalendarEvents]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[FactK12AcademicCalendarEvents]', N'CalendarEventDayId') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_FactK12AcademicCalendarEvents_CalendarEventDayId'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[FactK12AcademicCalendarEvents]')
+	)
+BEGIN
+	ALTER TABLE [RDS].[FactK12AcademicCalendarEvents]
+	ADD CONSTRAINT [DF_FactK12AcademicCalendarEvents_CalendarEventDayId] DEFAULT ((-1)) FOR [CalendarEventDayId];
+END;
 
+--Add default constraints to DimAssessmentRegistrations table
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'AssessmentRegistrationParticipationIndicatorCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_AssessmentRegistrationParticipationIndicatorCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationParticipationIndicatorCode DEFAULT 'MISSING' FOR AssessmentRegistrationParticipationIndicatorCode
+END;
 
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'AssessmentRegistrationCompletionStatusCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_AssessmentRegistrationCompletionStatusCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationCompletionStatusCode DEFAULT 'MISSING' FOR AssessmentRegistrationCompletionStatusCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'AssessmentRegistrationCompletionStatusDescription') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_AssessmentRegistrationCompletionStatusDescription'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationCompletionStatusDescription DEFAULT 'MISSING' FOR AssessmentRegistrationCompletionStatusDescription
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'StateFullAcademicYearCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_StateFullAcademicYearCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_StateFullAcademicYearCode DEFAULT 'MISSING' FOR StateFullAcademicYearCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'StateFullAcademicYearDescription') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_StateFullAcademicYearDescription'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_StateFullAcademicYearDescription DEFAULT 'MISSING' FOR StateFullAcademicYearDescription
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'StateFullAcademicYearEdFactsCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_StateFullAcademicYearEdFactsCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_StateFullAcademicYearEdFactsCode DEFAULT 'MISSING' FOR StateFullAcademicYearEdFactsCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'LeaFullAcademicYearCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_LeaFullAcademicYearCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_LeaFullAcademicYearCode DEFAULT 'MISSING' FOR LeaFullAcademicYearCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'LeaFullAcademicYearDescription') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_LeaFullAcademicYearDescription'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_LeaFullAcademicYearDescription DEFAULT 'MISSING' FOR LeaFullAcademicYearDescription
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'LeaFullAcademicYearEdFactsCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_LeaFullAcademicYearEdFactsCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_LeaFullAcademicYearEdFactsCode DEFAULT 'MISSING' FOR LeaFullAcademicYearEdFactsCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'SchoolFullAcademicYearCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_SchoolFullAcademicYearCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_SchoolFullAcademicYearCode DEFAULT 'MISSING' FOR SchoolFullAcademicYearCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'SchoolFullAcademicYearDescription') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_SchoolFullAcademicYearDescription'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_SchoolFullAcademicYearDescription DEFAULT 'MISSING' FOR SchoolFullAcademicYearDescription
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'SchoolFullAcademicYearEdFactsCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_SchoolFullAcademicYearEdFactsCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_SchoolFullAcademicYearEdFactsCode DEFAULT 'MISSING' FOR SchoolFullAcademicYearEdFactsCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'AssessmentRegistrationReasonNotCompletingCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingCode DEFAULT 'MISSING' FOR AssessmentRegistrationReasonNotCompletingCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'AssessmentRegistrationReasonNotCompletingDescription') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingDescription'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingDescription DEFAULT 'MISSING' FOR AssessmentRegistrationReasonNotCompletingDescription
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'AssessmentRegistrationReasonNotCompletingEdFactsCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingEdFactsCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_AssessmentRegistrationReasonNotCompletingEdFactsCode DEFAULT 'MISSING' FOR AssessmentRegistrationReasonNotCompletingEdFactsCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'ReasonNotTestedCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_ReasonNotTestedCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_ReasonNotTestedCode DEFAULT 'MISSING' FOR ReasonNotTestedCode
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'ReasonNotTestedDescription') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_ReasonNotTestedDescription'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_ReasonNotTestedDescription DEFAULT 'MISSING' FOR ReasonNotTestedDescription
+END;
+
+IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[DimAssessmentRegistrations]', N'ReasonNotTestedEdFactsCode') IS NOT NULL
+   AND NOT EXISTS (
+		SELECT 1
+		FROM sys.default_constraints
+		WHERE name = N'DF_AssessmentRegistrations_ReasonNotTestedEdFactsCode'
+		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
+	)
+BEGIN
+	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ADD CONSTRAINT DF_AssessmentRegistrations_ReasonNotTestedEdFactsCode DEFAULT 'MISSING' FOR ReasonNotTestedEdFactsCode
+END;
