@@ -32,6 +32,12 @@ VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_134.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwTitleI_FactTable_037.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_134.View.sql,0
 VersionUpdates\14.1\Views\Drop,Staging.vwTitleI_StagingTables_037.View.sql,0
+VersionUpdates\14.1\Views\Drop,Debug.vwTitleIIIELSY_StagingTables.View.sql,0
+VersionUpdates\14.1\Views\Drop,Debug.vwTitleIIIELOct_StagingTables.View.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwTitleIIIELSY_FactTable_116.View.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwTitleIIIELOct_FactTable_141.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwTitleIIIELSY_StagingTables_116.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwTitleIIIELOct_StagingTables_141.View.sql,0
 VersionUpdates\14.1\Views\Drop,Debug.vwMigrantEducationProgram_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwMigrantEducationProgram_FactTable_054.View.sql,0
 VersionUpdates\14.1\Views\Drop,RDS.vwMigrantEducationProgram_FactTable_121.View.sql,0
@@ -66,6 +72,12 @@ VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_134.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwTitleI_FactTable_037.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_134.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwTitleI_StagingTables_037.View.sql,0
+VersionUpdates\14.1\Views\Create,Debug.vwTitleIIIELSY_StagingTables.View.sql,0
+VersionUpdates\14.1\Views\Create,Debug.vwTitleIIIELOct_StagingTables.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwTitleIIIELSY_FactTable_116.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwTitleIIIELOct_FactTable_141.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwTitleIIIELSY_StagingTables_116.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwTitleIIIELOct_StagingTables_141.View.sql,0
 VersionUpdates\14.1\Views\Create,Debug.vwMigrantEducationProgram_StagingTables.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwMigrantEducationProgram_FactTable_054.View.sql,0
 VersionUpdates\14.1\Views\Create,RDS.vwMigrantEducationProgram_FactTable_121.View.sql,0
