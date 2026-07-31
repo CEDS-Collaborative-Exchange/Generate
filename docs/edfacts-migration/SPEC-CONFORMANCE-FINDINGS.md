@@ -49,6 +49,37 @@ all six reports — exactly the risk we flagged when the done-bar was redefined.
 - **A7 (FS218/220, latent):** SEA zero-fill branch is a no-op (no ELSE) → passes only because current data
   has no zero-count SEA outcomes.
 
+### Bucket B0 — CORRECTED (2026-07-31): IDEA→WDIS is a NEW-PATH gap, NOT a dim bug. Do NOT change the dim.
+
+**Initial (WRONG) reading:** I claimed `RDS.DimIdeaStatuses.IdeaIndicatorEdFactsCode='IDEA'` was a
+systemic bug breaking the disability breakout across ~30 reports. **Retracted.** Nathan pushed back:
+the spec-ed/assessment files submit successfully every year in many states — so the translation must
+work. It does.
+
+**Corrected understanding:** There are two populate paths, and the translation lives in the legacy one:
+- **Legacy `RDS.Get_CountSQL` (production submission path)** DOES translate, per-report, at
+  lines 2094–2119: default `IdeaIndicatorEdFactsCode='IDEA' → 'WDIS' ELSE 'WODIS'`; FS118 → `'IDEA' →
+  'WDIS' ELSE 'MISSING'` (line 2104-2110); FS175 → via `IdeaIndicatorCode` (line 2096-2102). This is why
+  the vetted spec-ed files submit correctly. **The dim value `'IDEA'` is the intended canonical code and
+  MUST stay — Get_CountSQL keys on it.**
+- **New `RDS.Insert_CountsIntoReportTable` (migration-target path / e2e harness)** joins the dim code to
+  the permitted value by exact string equality (`cs.<Dim>EdFactsCode = pv.CategoryOptionCode`, line 128)
+  with **no translation** → reports *migrated to the new path* (FS118/FS037/FS195/etc.) get an empty
+  `WDIS` bucket. The e2e masks it because the expected staging views read the same untranslated `'IDEA'`.
+
+**Correct fix (contained to new-path reports; dim + legacy + spec-ed untouched):** port the per-report
+translation into each new-path report's **fact view** `RDS.vw<Fact>_FactTable_<code>` AND its matching
+**expected staging view** `Staging.vw<Fact>_StagingTables_<code>` — a `CASE WHEN IdeaIndicatorEdFactsCode
+= 'IDEA' THEN 'WDIS' ELSE <'MISSING'|'WODIS' per Get_CountSQL for that report> END`. Both e2e sides move
+together → stays green AND conforms. No dim change, no fact re-populate, no impact on the legacy path or
+the vetted spec-ed reports.
+- **Nathan's WODIS call (2026-07-31): keep the ELSE branch = `MISSING` for the reports currently being
+  fixed** (FS118/FS037/FS195 all permit only WDIS/MISSING anyway — matches Get_CountSQL's FS118 branch).
+  WODIS for 032/040/144 is a separate targeted pass mirroring Get_CountSQL's default ELSE `'WODIS'`.
+- Best practice going forward: the cleanest long-term fix is to teach `Insert_CountsIntoReportTable` the
+  same per-report code translations Get_CountSQL already encodes, so the new path matches the proven
+  legacy path centrally rather than per-view. Flag for the shared-layer rework.
+
 ### Bucket B — fact-view EdFacts-code → permitted-value translation (small change, high impact)
 
 The report fact views surface a code that doesn't match the report's permitted value, so the whole

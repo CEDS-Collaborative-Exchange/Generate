@@ -109,5 +109,8 @@ VersionUpdates\14.1\Views\Create,Staging.vwDropout_StagingTables_032.View.sql,0
 VersionUpdates\14.1\Views\Create,Staging.vwChronicAbsenteeism_StagingTables_195.View.sql,0
 VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
 VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql,0
+VersionUpdates\14.1\Functions\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+VersionUpdates\14.1\StoredProcedures\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.StoredProcedure.sql,0
+VersionUpdates\14.1,RDS.DimIdeaStatuses-IDEAtoWDIS.sql,0
 VersionUpdates\14.1,App.Metadata-RollForward-2027.sql,0
 VersionUpdates\14.1,UpdateDbVersion.sql,0
