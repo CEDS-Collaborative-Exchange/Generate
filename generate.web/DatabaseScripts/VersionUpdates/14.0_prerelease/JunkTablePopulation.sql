@@ -331,6 +331,3 @@
 
 		ALTER TABLE [RDS].[FactK12StaffCounts] CHECK CONSTRAINT [FK_FactK12StaffCounts_K12StaffCategoryId];
 	END;
-
--- test for files showing up under github repo
-
