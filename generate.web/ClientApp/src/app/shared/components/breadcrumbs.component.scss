@@ -8,3 +8,22 @@
     margin-right: 15px;
     border-bottom: 1px solid $color-primary;
 }
+
+.generate-app-breadcrumbs__link {
+    color: $color-primary;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.generate-app-breadcrumbs__link:hover,
+.generate-app-breadcrumbs__link:focus {
+    text-decoration: underline;
+}
+
+.generate-app-breadcrumbs__current {
+    color: inherit;
+}
+
+.generate-app-breadcrumbs__separator {
+    color: inherit;
+}

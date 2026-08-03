@@ -1,6 +1,6 @@
-﻿import {Component, AfterViewInit} from '@angular/core';
+import {Component, AfterViewInit} from '@angular/core';
 
-declare var componentHandler: any;
+declare let componentHandler: any;
 
 @Component({
     templateUrl: './reports-edfacts.component.html',

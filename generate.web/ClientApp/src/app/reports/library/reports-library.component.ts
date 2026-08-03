@@ -12,7 +12,7 @@ import { UserService } from '../../services/app/user.service';
 import { OrganizationLevelDto } from '../../models/app/organizationLevelDto';
 
 
-declare var componentHandler: any;
+declare let componentHandler: any;
 
 @Component({
     selector: 'generate-app-reports-library',
