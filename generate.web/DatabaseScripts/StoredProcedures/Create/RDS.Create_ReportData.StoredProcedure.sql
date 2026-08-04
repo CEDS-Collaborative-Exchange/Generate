@@ -116,6 +116,18 @@ begin
 			declare @dimSchoolYearId as int
 			select @dimSchoolYearId = DimSchoolYearId from rds.DimSchoolYears where SchoolYear = @reportYear
 
+			-- Idempotency: remove THIS report code's existing rows for the year being (re)generated so a
+			-- re-run -- or a retry after a mid-run failure/timeout -- REPLACES rather than accumulates
+			-- duplicate rows. The caller normally runs RDS.Empty_Reports first, but this makes the proc
+			-- self-idempotent. Scoped to @reportCode + @reportYear so other codes sharing the report table
+			-- are untouched; write-path only (@runAsTest=0). @factReportTable is this fact type's ReportEDFacts* table.
+			if @runAsTest = 0 and isnull(@factReportTable, '') <> ''
+			begin
+				declare @idempotentDeleteSql as nvarchar(max)
+				set @idempotentDeleteSql = N'delete from rds.' + @factReportTable + N' where ReportCode = @rc and ReportYear = @ry'
+				exec sp_executesql @idempotentDeleteSql, N'@rc varchar(50), @ry varchar(50)', @rc = @reportCode, @ry = @reportYear
+			end
+
 			-- Get Category Sets for this Submission Year
 			declare @categorySets as table (
 				CategorySetId int,
