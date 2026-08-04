@@ -224,3 +224,51 @@ while the reports I greened via `RunEndToEndTest` use `RDS.Insert_CountsIntoRepo
 findings (age-5, HH/PPPS) and the Insert_CountsIntoReportTable zero-fill findings may therefore live on
 different paths than assumed. **Before reworking either shared object, confirm which populate path each
 target report actually uses in production** so a fix lands where the report is really generated.
+
+---
+
+## Session 2026-08-04 — Discipline / Staff / Assessment families brought online (2027)
+
+Three legacy-path families that were empty or SEA-only for 2027 now populate at every configured org
+level. Root cause in all three was **report-lock gating**, not data (see memory
+`report-lock-gating-and-empty-create`): `RDS.Create_Reports` skips any code with
+`app.GenerateReports.IsLocked=0`, so the families silently generated nothing. Fact data was healthy in
+all three. Fixed by the normal pipeline **lock → `RDS.Empty_Reports` → `RDS.Create_Reports`** (run via
+sqlcmd; the ETL-chat backend times out mid-generation and halts at "N of M").
+
+Verified clean 2027 output (zero duplicates certified across all columns):
+- **Discipline** — 7 EDFacts codes (005/006/007/086/088/143/144), SEA+LEA, 13,191 rows.
+- **Assessment** — 6 codes (175/178/179/185/188/189), SEA+LEA+school, 22,655 rows.
+- **Staff** — 5 codes (059/067/070/099/112), SEA+LEA(+school for 059), 828 rows.
+
+### Prerequisites fixed this session (committed)
+- **StateANSICode NULL on org dims** (commit 53f1884d): `DimLeas`/`DimK12Schools` had NULL `StateANSICode`
+  (loaded before CEDS state metadata resolved; MERGE change-detection never backfilled). Added a
+  post-MERGE self-heal deriving ANSI from each org's own `StateAbbreviationCode`. All orgs now `OH`/`39`
+  (matches the OH `Staging.OrganizationAddress` rows — the chosen state).
+- **NULL StateANSICode in report SELECT** (commit 4cec6cc9): `Get_CountSQL` emits transient
+  non-reported/rollup rows with NULL ANSI; `@reportData.StateANSICode` is `NOT NULL` → hard abort.
+  Wrapped as `ISNULL(f.StateANSICode,'')` in `RDS.Get_ReportData` + `RDS.Create_ReportData_ZeroCounts`,
+  matching the new-path `Insert_CountsIntoReportTable` convention.
+
+### Discrepancies to log for owner review (vetted spec-ed families — NOT changed)
+1. **Assessment FS17x/FS18x TestCases return "NO TEST RESULTS"** (`App.SqlUnitTestCaseResult` Expected=-1,
+   Actual=-1, Passed=NULL). The report side populates correctly; the *expected* side is empty because the
+   synthetic OH dataset lacks the specific assessment-subject fixtures the vetted tests re-derive from
+   (FS175→`01166_1`, FS178→`13373_1`, FS179→`00562_1`). This is a **test-data / fixture gap**, not a
+   report-logic bug — same placeholder class as `fs089-testcase-reportcode-mismatch`. Needs real
+   assessment fixture data in `generate.testdata` to self-validate.
+2. **`RDS.Create_ReportData` is non-idempotent** — no delete-before-insert on the report tables (only
+   `delete from @categorySets`, a table variable). Retries after a mid-run failure silently *accumulate
+   duplicate rows* rather than overwrite (observed FS070 sea/CSA = 4 unique × 3 partial runs = 12). The
+   pipeline relies on callers running `RDS.Empty_Reports` first; a defensive delete-by-key inside
+   `Create_ReportData` would harden against partial-run duplication.
+3. **Staff FS070 config** = SEA + LEA (no school), 4 category sets each (CSA/ST1/ST2/TOT = 8 combos);
+   matches the vetted spec-ed expectation (IDEA special-ed teacher FTE is LEA-level). Prior state had only
+   1 of 8 combos ever completed.
+
+### Note on lock state
+The `IsLocked=1` flips are **runtime data**, not repo changes, and `Create_ReportData` auto-clears
+`IsLocked` back to 0 on success (normal post-generation state). Whether the in-scope codes should ship
+`IsLocked=1` by default in `app.GenerateReports` seed data is an open config question for the owner —
+not changed here.
