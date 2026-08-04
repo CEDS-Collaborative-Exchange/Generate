@@ -297,8 +297,8 @@ BEGIN
 
 	-- @sqlSelectBeginning
 	set @sqlSelectBeginning = '
-		select	DISTINCT		
-			f.StateANSICode,
+		select	DISTINCT
+			ISNULL(f.StateANSICode, '''') AS StateANSICode,  -- 14.1: report rows for non-reported/rollup orgs can carry NULL ANSI; @reportData.StateANSICode is NOT NULL (matches Insert_CountsIntoReportTable''s isnull(StateANSICode,'''') convention)
 			f.StateAbbreviationCode,
 			f.StateAbbreviationDescription,			
 			f.OrganizationIdentifierNces,
