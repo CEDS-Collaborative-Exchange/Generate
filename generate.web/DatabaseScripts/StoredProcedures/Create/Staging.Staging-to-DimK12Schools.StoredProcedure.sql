@@ -537,6 +537,24 @@ BEGIN
 			, src.DimGradeLevelId
 		);
 
+	/* Self-heal StateANSICode: earlier loads can leave this NULL when the state metadata resolved
+	   after the dim was first populated, and the MERGE change-detection won't re-touch unchanged rows.
+	   Derive it from each school's own StateAbbreviationCode so it always matches the org's address state. */
+	UPDATE sch
+	SET StateANSICode = ansi.CedsOptionSetCode
+	FROM rds.DimK12Schools sch
+	CROSS APPLY (
+		SELECT ansimap.CedsOptionSetCode
+		FROM ceds.CedsOptionSetMapping abbrmap
+		JOIN ceds.CedsOptionSetMapping ansimap
+			ON ansimap.CedsElementTechnicalName = 'StateANSICode'
+			AND ansimap.CedsOptionSetDescription = abbrmap.CedsOptionSetDescription
+		WHERE abbrmap.CedsElementTechnicalName = 'StateAbbreviation'
+			AND abbrmap.CedsOptionSetCode = sch.StateAbbreviationCode
+	) ansi
+	WHERE sch.StateANSICode IS NULL
+		AND sch.StateAbbreviationCode IS NOT NULL;
+
 	DROP TABLE #K12Schools
 	DROP TABLE #gradeLevels
 	DROP TABLE #organizationTypes

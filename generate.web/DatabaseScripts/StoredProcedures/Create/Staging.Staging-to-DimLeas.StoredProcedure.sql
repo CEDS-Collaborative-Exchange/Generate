@@ -350,6 +350,24 @@ BEGIN
 
 /* NOTE: Population of the BridgeLeaGradeLevels is done in Staging-to-DimK12Schools */
 
+	/* Self-heal StateANSICode: earlier loads can leave this NULL when the state metadata resolved
+	   after the dim was first populated, and the MERGE change-detection won't re-touch unchanged rows.
+	   Derive it from each LEA's own StateAbbreviationCode so it always matches the org's address state. */
+	UPDATE lea
+	SET StateANSICode = ansi.CedsOptionSetCode
+	FROM rds.DimLeas lea
+	CROSS APPLY (
+		SELECT ansimap.CedsOptionSetCode
+		FROM ceds.CedsOptionSetMapping abbrmap
+		JOIN ceds.CedsOptionSetMapping ansimap
+			ON ansimap.CedsElementTechnicalName = 'StateANSICode'
+			AND ansimap.CedsOptionSetDescription = abbrmap.CedsOptionSetDescription
+		WHERE abbrmap.CedsElementTechnicalName = 'StateAbbreviation'
+			AND abbrmap.CedsOptionSetCode = lea.StateAbbreviationCode
+	) ansi
+	WHERE lea.StateANSICode IS NULL
+		AND lea.StateAbbreviationCode IS NOT NULL;
+
 	--Cleanup
 	DROP TABLE #organizationTypes
 	DROP TABLE #organizationLocationTypes
