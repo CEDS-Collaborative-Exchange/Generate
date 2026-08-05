@@ -11,17 +11,21 @@
 
 <div *ngIf="!isLoading">
     <div class="mdl-cell mdl-cell--12-col">
-        <a href="#" (click)="gotoToggle()">
-            Back to Toggle
-        </a>
-        <div class="generate-app-toggle-assessment__addassessment-container mdl-typography--text-right">
-            <button class="mdl-button mdl-js-button" (click)="showDialog(assessmentDialog,-1)">
-                <span class="fa-stack fa-lg">
-                    <i class="fa fa-folder-open fa-stack-2x generate-app-toggle-assessment__addassessment-folder"></i>
-                    <i class="fa fa-plus-circle fa-stack-1x fa-inverse generate-app-toggle-assessment__addassessment-circle"></i>
-                </span>
-            </button>
-            <span class="generate-app-toggle-assessment__addassessment-text">Add New Assessment</span>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--6-col mdl-typography--text-left">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" (click)="gotoToggle()">
+                    Back to Toggle
+                </button>
+            </div>
+            <div class="mdl-cell mdl-cell--6-col mdl-typography--text-right">
+                <button class="mdl-button mdl-js-button" (click)="showDialog(assessmentDialog,-1)">
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-folder-open fa-stack-2x generate-app-toggle-assessment__addassessment-folder"></i>
+                        <i class="fa fa-plus-circle fa-stack-1x fa-inverse generate-app-toggle-assessment__addassessment-circle"></i>
+                    </span>
+                </button>
+                <span class="generate-app-toggle-assessment__addassessment-text">Add New Assessment</span>
+            </div>
         </div>
     </div>
 
@@ -52,7 +56,23 @@
 
                <div class="mdl-grid generate-app-toggle-assessment__filters-actions">
                    <div class="mdl-cell mdl-cell--12-col mdl-typography--text-right">
-                       <button class="mdl-button mdl-js-button mdl-button--accent" (click)="clearFilters()">Clear Filters</button>
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-toggle-assessment__clear-filters" type="submit" (click)="clearFilters()">
+                            Clear Filters
+                        </button>
+                       <!-- <button class="mdl-button mdl-js-button mdl-button--accent generate-app-toggle-assessment__clear-filters" style="color: hsl(34, 100%, 63%) !important;" (click)="clearFilters()">Clear Filters</button> -->
+                   </div>
+                   
+               </div>
+
+               <div class="mdl-grid" *ngIf="filteredToggleAssessments !== null && filteredToggleAssessments.length > 0">
+                   <div class="mdl-cell mdl-cell--12-col generate-app-toggle-assessment__paginator">
+                       <mat-paginator [length]="filteredToggleAssessments.length"
+                                      [pageIndex]="pageIndex"
+                                      [pageSize]="pageSize"
+                                      [pageSizeOptions]="pageSizeOptions"
+                                      [showFirstLastButtons]="true"
+                                      (page)="pageChanged($event)">
+                       </mat-paginator>
                    </div>
                </div>
 
@@ -62,7 +82,7 @@
                    <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('subject')" style="cursor: pointer;"> Subject <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'subject', 'fa-sort-up': sortColumn === 'subject' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'subject' && sortDirection === 'desc'}"></i> </div>
                    <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('grade')" style="cursor: pointer;"> Grade <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'grade', 'fa-sort-up': sortColumn === 'grade' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'grade' && sortDirection === 'desc'}"></i> </div>
                    <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('performanceLevels')" style="cursor: pointer;"> # of Performance Levels <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'performanceLevels', 'fa-sort-up': sortColumn === 'performanceLevels' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'performanceLevels' && sortDirection === 'desc'}"></i> </div>
-                   <div class="mdl-cell mdl-cell--1-col"> At or Above Proficiency </div>
+                   <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('proficientOrAboveLevel')" style="cursor: pointer;"> At or Above Proficiency <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'proficientOrAboveLevel', 'fa-sort-up': sortColumn === 'proficientOrAboveLevel' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'proficientOrAboveLevel' && sortDirection === 'desc'}"></i> </div>
                    <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('eogEoc')" style="cursor: pointer;"> EOG/EOC <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'eogEoc', 'fa-sort-up': sortColumn === 'eogEoc' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'eogEoc' && sortDirection === 'desc'}"></i> </div>
                    <div class="mdl-cell mdl-cell--2-col"></div>
                </div>
@@ -124,17 +144,6 @@
                 </div>
             </div>
 
-            <div class="mdl-grid" *ngIf="filteredToggleAssessments !== null && filteredToggleAssessments.length > 0">
-                <div class="mdl-cell mdl-cell--12-col generate-app-toggle-assessment__paginator">
-                    <mat-paginator [length]="filteredToggleAssessments.length"
-                                   [pageIndex]="pageIndex"
-                                   [pageSize]="pageSize"
-                                   [pageSizeOptions]="pageSizeOptions"
-                                   [showFirstLastButtons]="true"
-                                   (page)="pageChanged($event)">
-                    </mat-paginator>
-                </div>
-            </div>
         </div>
         <div *ngIf="toggleAssessments !== null && toggleAssessments.length > 0 && filteredToggleAssessments.length === 0">
             No assessments match the selected filters.

@@ -29,7 +29,6 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     private assessmentTypeDisplayOrder: string[] = [
         'High school regular assessment I, without accommodations',
         'High school regular assessment I, with accommodations',
-        'Alternate assessment',
         'High school regular assessment II, without accommodations',
         'High school regular assessment II, with accommodations',
         'High school regular assessment III, without accommodations',
@@ -122,6 +121,8 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
         this.selectedFilterSubject = 'All Subjects';
         this.selectedFilterGrade = 'All Grades';
         this.selectedFilterAssessmentType = 'All Assessment Types';
+        this.sortColumn = '';
+        this.sortDirection = 'asc';
 
         if (this.comboFilterSubject) {
             this.comboFilterSubject.selectedItem = this.selectedFilterSubject;
@@ -172,6 +173,8 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
         this.selectedFilterSubject = 'All Subjects';
         this.selectedFilterGrade = 'All Grades';
         this.selectedFilterAssessmentType = 'All Assessment Types';
+        this.sortColumn = '';
+        this.sortDirection = 'asc';
 
         this.populateEOG();
         this.populatePerformanceLevels();
@@ -281,6 +284,46 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
         return grade === '13' ? 'HS' : grade;
     }
 
+    private getGradeRank(grade: string = ''): number {
+        const gradeDisplayOrder = ['PK', 'KG', 'UG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', 'HS'];
+        const normalizedGrade = this.normalizeGradeForDisplay(grade);
+        const rank = gradeDisplayOrder.findIndex(g => g === normalizedGrade);
+
+        return rank === -1 ? Number.MAX_SAFE_INTEGER : rank;
+    }
+
+    private compareGradeByCustomOrder(aGrade: string = '', bGrade: string = ''): number {
+        const aRank = this.getGradeRank(aGrade);
+        const bRank = this.getGradeRank(bGrade);
+
+        if (aRank !== bRank) {
+            return aRank - bRank;
+        }
+
+        return this.safeStringCompare(this.normalizeGradeForDisplay(aGrade), this.normalizeGradeForDisplay(bGrade));
+    }
+
+    private compareNumericStringValues(aValue: string = '', bValue: string = ''): number {
+        const aNumber = Number(aValue);
+        const bNumber = Number(bValue);
+        const aIsNumeric = !Number.isNaN(aNumber);
+        const bIsNumeric = !Number.isNaN(bNumber);
+
+        if (aIsNumeric && bIsNumeric) {
+            return aNumber - bNumber;
+        }
+
+        if (aIsNumeric) {
+            return -1;
+        }
+
+        if (bIsNumeric) {
+            return 1;
+        }
+
+        return this.safeStringCompare(String(aValue), String(bValue));
+    }
+
     private normalizeAssessmentTypeForLookup(assessmentType: string = ''): string {
         return assessmentType.trim().toLowerCase();
     }
@@ -306,7 +349,7 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     }
 
     private sortGradesForCombo(grades: string[]): string[] {
-        const gradeDisplayOrder = ['KG', 'PK', 'UG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', 'HS'];
+        const gradeDisplayOrder = ['PK', 'KG', 'UG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', 'HS'];
         const gradeRank = new Map<string, number>();
 
         gradeDisplayOrder.forEach((grade, index) => gradeRank.set(grade, index));
@@ -356,6 +399,16 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
 
     sortFilteredAssessments() {
         this.filteredToggleAssessments.sort((a, b) => {
+            if (this.sortColumn === 'grade') {
+                const rankCompare = this.compareGradeByCustomOrder(a.grade, b.grade);
+                return this.sortDirection === 'asc' ? rankCompare : -rankCompare;
+            }
+
+            if (this.sortColumn === 'proficientOrAboveLevel') {
+                const levelCompare = this.compareNumericStringValues(a.proficientOrAboveLevel, b.proficientOrAboveLevel);
+                return this.sortDirection === 'asc' ? levelCompare : -levelCompare;
+            }
+
             if (this.sortColumn === 'assessmentType') {
                 const rankCompare = this.compareAssessmentTypeByCustomOrder(a.assessmentType, b.assessmentType);
 
@@ -416,7 +469,7 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     }
 
     populateGrades() {
-        let gradesList = ['Select Grade', 'KG', 'PK', 'UG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', 'HS'];
+        let gradesList = ['Select Grade', 'PK', 'KG', 'UG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', 'HS'];
         this.grades = [];
 
         for (let i in gradesList) {
@@ -562,6 +615,7 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
             this.sortDirection = 'asc';
         }
 
+        // this.pageIndex = 0;
         this.sortFilteredAssessments();
     }
 
