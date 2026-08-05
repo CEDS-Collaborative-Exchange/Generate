@@ -115,7 +115,7 @@ The activities in Task 1.3 are to confirm the scope of work on the data integrat
 
 This task also sets the stage for acquiring necessary resources, obtaining approvals, and preparing to begin work. It can serve as the foundation for the project management plan, resource allocation, budgeting, and prioritization of the work.
 
-<figure><img src="../../.gitbook/assets/Screenshot 2025-12-01 125656.png" alt=""><figcaption><p>This diagram is useful as a reference throughout the<br>data integration project, and as a communication aid<br>with stakeholders within the department and with<br>department leadership.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot 2025-12-01 125656.png" alt="Example data system architecture diagram showing data sources and their connections."><figcaption><p>This diagram is useful as a reference throughout the<br>data integration project, and as a communication aid<br>with stakeholders within the department and with<br>department leadership.</p></figcaption></figure>
 
 #### Activity 1.3.1: Define scope of the data integration project.
 

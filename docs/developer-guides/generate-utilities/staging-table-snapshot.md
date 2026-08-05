@@ -52,7 +52,7 @@ The Snapshot Utility will make backup copies of all staging tables that pertain 
 * `Source.OrganizationProgramType`
 * `Source.StateDetail`
 
-<figure><img src="../../.gitbook/assets/Capture 2.PNG" alt="Screenshot of the server folder tree in the Generate database with Tables expanded to show the newly created"><figcaption><p>Where to find the newly created tables from the Create Snapshot From Staging utility</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Capture 2.PNG" alt="Generate database Object Explorer with the Tables folder expanded to show newly created snapshot tables."><figcaption><p>Where to find the newly created tables from the Create Snapshot From Staging utility</p></figcaption></figure>
 
 The tables are an identical copy of the Staging table(s), with the addition of three columns:
 
@@ -80,7 +80,7 @@ If a Snapshot table does not yet exist for a Staging table, it will be created. 
 
 The Snapshot Utility could be coded within an ETL to automatically make a backup copy of the related Staging Tables each time the ETL is executed. The following diagram shows how this feature might be leveraged at a State to reuse a Directory snapshot for Child Count reporting.
 
-<figure><img src="../../.gitbook/assets/Staging Snapshot Process.jpg" alt="Diagram illustrating the Source-to-Staging ETL process. A flowchart depicts three main stages: Source-to-Staging_Directory, Snapshot Utility, and Source-to-Staging_ChildCount. Source-to-Staging_Directory ETL: The diagram shows data flowing from the source directory system to the staging directory. A note indicates that the Snapshot Utility may be embedded to automatically create a copy of all directory data. Snapshot Utility: A separate process, represented by a box, runs automatically to create or update backup copies of the staging tables in the source schema. Source-to-Staging_ChildCount ETL: This stage involves pulling required organization information directly from the snapshot tables instead of the directory source system. This approach ensures alignment between directory information used for child count and submitted C029 data. Additionally, it may enhance ETL performance by eliminating the need to access another system or database for directory data. Overall, the diagram illustrates a streamlined ETL process optimizing data flow and performance."><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Staging Snapshot Process.jpg" alt="Flowchart showing Directory data moving from source to staging, then through the Snapshot Utility. Child Count ETL reuses organization data from snapshot tables instead of the source directory system."><figcaption></figcaption></figure>
 
 1. In the Source-to-Staging\_Directory ETL, the Snapshot Utility could be embedded to run automatically to create a copy of all Directory data.
 2. The Snapshot Utility will run automatically and create/update backup copies of the Staging tables in the Source schema.

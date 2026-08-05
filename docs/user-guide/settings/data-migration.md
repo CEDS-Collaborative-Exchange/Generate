@@ -5,42 +5,42 @@
 * After logging into the system, click on the gear icon.
 * Navigate to Data Migration (previously referred to as Data Store).
 
-<figure><img src="../../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (5).png" alt="Settings menu with the Data Migration option selected."><figcaption></figcaption></figure>
 
 * You are now on the Single Screen Migration page.
 
-<figure><img src="../../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (6).png" alt="Single Screen Migration page with migration controls and result tabs."><figcaption></figcaption></figure>
 
 #### Selecting Migration Options:
 
 * First, select the Year for which you want to run the migration.
 
-<figure><img src="../../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (8).png" alt="Migration page Year dropdown for selecting the reporting year."><figcaption></figcaption></figure>
 
 * Then, choose the Fact Type (e.g., Child Count).
 
-<figure><img src="../../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (9).png" alt="Migration page Fact Type dropdown with Child Count selected."><figcaption></figcaption></figure>
 
 * The list of available reports will filter based on the selected fact type.
   * For example, if Child Count is selected, the available E&#x44;_&#x46;acts_ reports might include 002 and 089, along with state-defined reports.
 
-<figure><img src="../../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (10).png" alt="Report list filtered after selecting the Child Count fact type."><figcaption></figcaption></figure>
 
 #### Filtering Reports:
 
 * You can filter the report list to show only E&#x44;_&#x46;acts_ reports or only state-defined reports, depending on your preference.
 
-<figure><img src="../../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (11).png" alt="Migration page report filters for EDFacts and state-defined reports."><figcaption></figcaption></figure>
 
 #### Running the Migration:
 
 * After selecting the report you want to run, click Migrate to Report Data Store.
 
-<figure><img src="../../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (12).png" alt="Migration page with the Migrate to Report Data Store button."><figcaption></figcaption></figure>
 
 * This process will automatically execute all migration steps in the background:
 
-<figure><img src="../../.gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (13).png" alt="Migration progress showing source, staging, and report data steps."><figcaption></figcaption></figure>
 
 * Step 1: Move data from the source system to the staging environment.
 * Step 2: Move data from staging into the fact and dimension tables.

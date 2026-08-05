@@ -8,6 +8,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -40,15 +41,15 @@ Generate 13.3 requires some additional steps that must be performed prior to per
 
 Prior to updating to Generate version 13.3, you will need to update the parameters in the **appSettings.json** file in **\web\config**. This file is located on the webserver where Generate was installed.
 
-In that file, there is a parameter for the metadata process named "**fsWSURL**”.  You will need to update the value for that parameter to the one below:&#x20;
+In that file, there is a parameter for the metadata process named "**fsWSURL**”. You will need to update the value for that parameter to the one below:
 
-"fsWSURL": "[https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/](https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/)"&#x20;
+"fsWSURL": "[https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/](https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/)"
 
-<figure><img src="../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1).png" alt="appSettings.json with the fsWSURL parameter set to the metadata API URL."><figcaption></figcaption></figure>
 
 ### Summary of Changes
 
-#### IDEA Reports&#x20;
+#### IDEA Reports
 
 * **Assessments (175, 178, 179)**
   * Added support for Performance Levels up to 6
@@ -57,7 +58,7 @@ In that file, there is a parameter for the metadata process named "**fsWSURL**�
 
 * **Directory (207**)
   * Added migration and submission file code for this file specification, State Appropriations for Charter Schools
-  * Special thanks to the state of New Mexico for contributing this code!&#x20;
+  * Special thanks to the state of New Mexico for contributing this code!
 * **Membership (052)**
   * Corrected the zero count logic so that rows are only created for Grades Offered at the LEA/School
 

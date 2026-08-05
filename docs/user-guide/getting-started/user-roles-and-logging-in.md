@@ -1,10 +1,10 @@
 # User Roles and Logging In
 
-Once your request has been approved and the application has been installed on your state’s website, you will be provided with access to the application by your network administrator or whoever is responsible for setting up user accounts.&#x20;
+Once your request has been approved and the application has been installed on your state’s website, you will be provided with access to the application by your network administrator or whoever is responsible for setting up user accounts.
 
 Below is a screenshot of the Home page. All resources and pages within Generate can be accessed from the **Home** page.
 
-<figure><img src="../../.gitbook/assets/image (194).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (194).png" alt="Generate Home page with navigation to application resources and features."><figcaption></figcaption></figure>
 
 ## User Roles
 
@@ -18,7 +18,7 @@ As a Generate Reviewer, you will have access to all features and functionality d
 
 ### Administrator Role
 
-As a Generate Administrator, you will have access to the same features and functionality as the Generate Reviewer. The difference is that Administrators can also access the Data Store in Settings. The Data Store provides the interface for moving the data from the state’s longitudinal data system, or another source, into the Generate Operational Data Store (ODS), and the Reporting Data Store (RDS). The Administrator role is typically assigned to technical staff with a knowledge of the state’s source systems and Extract, Transform, and Load (ETL) processes. For example, the Administrator role might be assigned to a Database Administrator, or someone responsible for processing and submitting the EDFacts files through EDPass. Anyone with the applicable knowledge and skills can be assigned to this role.&#x20;
+As a Generate Administrator, you will have access to the same features and functionality as the Generate Reviewer. The difference is that Administrators can also access the Data Store in Settings. The Data Store provides the interface for moving the data from the state’s longitudinal data system, or another source, into the Generate Operational Data Store (ODS), and the Reporting Data Store (RDS). The Administrator role is typically assigned to technical staff with a knowledge of the state’s source systems and Extract, Transform, and Load (ETL) processes. For example, the Administrator role might be assigned to a Database Administrator, or someone responsible for processing and submitting the EDFacts files through EDPass. Anyone with the applicable knowledge and skills can be assigned to this role.
 
 ## Logging In
 
@@ -30,18 +30,18 @@ To log in to Generate, follow the steps below: Note: Chrome is the preferred bro
 2. Enter your password in the **Password** field.
 3. Click the **LOG IN** button.
 
-<figure><img src="../../.gitbook/assets/image (144).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (144).png" alt="Generate login fields and the Log In button in the upper-right corner."><figcaption></figcaption></figure>
 
 {% hint style="danger" %}
 If you make a mistake entering your username or password, you’ll see the following message at the top center of the page.
 
-![](<../../.gitbook/assets/image (61).png>)
+<img src="../../.gitbook/assets/image (61).png" alt="Generate message indicating an invalid username or password." data-size="original">
 {% endhint %}
 
 {% hint style="success" %}
 If you successfully enter your username and password, your name and user role will appear at the top right corner of the page, followed by an option to log out.
 
-![](<../../.gitbook/assets/image (197).png>)
+<img src="../../.gitbook/assets/image (197).png" alt="Generate header showing the signed-in user name, role, and log out option." data-size="original">
 {% endhint %}
 
 The following pages in Generate are accessible to all users after they log in:
@@ -54,9 +54,8 @@ The following pages in Generate are accessible to all users after they log in:
 
 The **Data Population Summary**, **Standard Reports**, and **Settings** are only accessible to users that are logged in to Generate. If you attempt to access them before logging in, the following message will appear at the bottom of the page.
 
-<figure><img src="../../.gitbook/assets/image (193).png" alt=""><figcaption><p>You must be logged in to access this are of Generate.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (193).png" alt="Generate message stating that the user must log in to access the page."><figcaption><p>You must be logged in to access this are of Generate.</p></figcaption></figure>
 
 {% hint style="info" %}
 Note: you do not have to be logged in to access **Resources** or the **CIID website**.
 {% endhint %}
-

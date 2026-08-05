@@ -7,7 +7,7 @@ description: >-
 # Assessment Fact Type
 
 {% hint style="info" %}
-Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.&#x20;
+Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.
 {% endhint %}
 
 ## Overview
@@ -71,7 +71,7 @@ The following files are in pilot status or are available for piloting in Generat
 The Generate ETL Documentation Templates give a detailed breakdown of all data elements needed for each Fact Type and show how data are transformed through each stage of the data migration. After completing the CEDS alignment process these templates can be used to document data transformation notes and option set mappings. They also contain a description of the CEDS data elements needed and what they are called throughout the Generate database. The ETL Templates documentation has a detailed instruction tab to help you know how to utilize this tool effectively. If you need clarification, please reach out to your CIID TA provider.
 
 {% hint style="info" %}
-You can find the Assessment ETL Documentation Template.xlsx on the [ETL Documentation Template](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/fact-type-table/etl-documentation-templates-overview/etl-documentation-template) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-etl-mapping-assistance).&#x20;
+You can find the Assessment ETL Documentation Template.xlsx on the [ETL Documentation Template](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/fact-type-table/etl-documentation-templates-overview/etl-documentation-template) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-etl-mapping-assistance).
 {% endhint %}
 
 #### Generate Metadata
@@ -101,14 +101,14 @@ The Generate Toggle tables store information that impacts the business logic use
 
 Additionally, at the top left of the Toggle page, there is a link to an "Assessments" sub-page with information that should be reviewed and updated if needed.
 
-<figure><img src="../../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image.png" alt="Toggle page link for reviewing assessment settings."><figcaption></figcaption></figure>
 
 #### Source System Reference Data Settings
 
 [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md) is used in the Staging to RDS Migration to determine how source system option set values map to CEDS option set values. This table needs to be updated with the complete set of values for all categorical fields by school year.
 
 {% hint style="success" %}
-To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.&#x20;
+To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.
 
 You can also filter the Source System Reference Data table by `FactTypeCode` and `ReportCode` as shown below.
 
@@ -124,7 +124,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 ```
 {% endcode %}
 
-#### Source System Reference Tables Assessment Filters&#x20;
+#### Source System Reference Tables Assessment Filters
 
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields might need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md).
 
@@ -132,7 +132,7 @@ Assessment Reports ('175', '178', '179', '185', '188', '189') have filters
 
 * 000100 Used for Grade Level
 * 000126 Used for Grade Level When Assessed
-* 000174 Used for LEA Operational Status&#x20;
+* 000174 Used for LEA Operational Status
 * 000533 Used for School Operational Status
 * 001156 Used for Organization Type
 
@@ -158,9 +158,9 @@ For Assessments, this Stored Procedure is called **\[Source].\[Source-to-Staging
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/image (228).png" alt=""><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (228).png" alt="SQL Server Management Studio showing the Source-to-Staging stored procedure placeholder."><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
 
-This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.&#x20;
+This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.
 
 ```
 /****** Object:  StoredProcedure [Source].[Source-to-Staging_Assessment]    Script Date: 8/18/2025 10:12:03 AM ******/
@@ -227,7 +227,7 @@ exec [Staging].[StagingValidation_Execute] 2024,'assessment'
 exec [Staging].[StagingValidation_GetResults] 2024,'assessment'
 ```
 
-#### Staging Table Debug View Process&#x20;
+#### Staging Table Debug View Process
 
 To aid validation we developed Staging Table Debug views that join together the Staging data for a Fact Type in a standard format that can be used for Generate testing. You can utilize these views in researching specific subsets of data or specific student data. These views can be found in the debug schema and will automatically be filtered by the school year(s) selected in the Generate web application. Opening the view in SSMS will provide you with a variety of filtering options to modify the query as needed during testing. Detailed instructions on how to utilize this process to debug Staging table data can be found in the [Staging Table Validation Process](../../generate-utilities/staging-validation/staging-table-validation-process.md).
 
@@ -343,7 +343,7 @@ To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you wi
 ```
 {% endcode %}
 
-The process of migrating data to Report Tables creates a set of tables in the \[debug] schema that provide the student IDs that make up the aggregated counts. These tables are especially useful when doing file comparisons and matching work. The sample below would return the list of students making up the counts&#x20;
+The process of migrating data to Report Tables creates a set of tables in the \[debug] schema that provide the student IDs that make up the aggregated counts. These tables are especially useful when doing file comparisons and matching work. The sample below would return the list of students making up the counts
 
 ```sql
  -- simply query a corresponding table 
@@ -375,7 +375,7 @@ exec Utilities.Compare_ASSESSMENT
 ```
 {% endcode %}
 
-If you need further assistance validating your data or have data mismatches that you cannot resolve, please reach out to your TA provider for assistance.&#x20;
+If you need further assistance validating your data or have data mismatches that you cannot resolve, please reach out to your TA provider for assistance.
 
 ***
 

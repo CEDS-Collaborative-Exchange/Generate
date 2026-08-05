@@ -9,6 +9,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -29,7 +30,7 @@ layout:
 
 # Release Notes 11.1
 
-## Release Overview &#x20;
+## Release Overview
 
 Generate version 11.1 is primarily focused on the Special Education Assessment files, file specifications 175, 178, 179, 185, 188, and 189. Changes were made to update the staging and dimension tables to bring them into line with CEDS like the v11 release. The code was also modified to accommodate the changes to the file specifications for SY 2023.
 
@@ -50,7 +51,7 @@ Generate version 11.1 is primarily focused on the Special Education Assessment f
 
 **Staging.AssessmentResult**
 
-1. <mark style="color:green;">`Student_Identifier_State`</mark> was renamed to <mark style="color:green;">`StudentIdentifierState`</mark>&#x20;
+1. <mark style="color:green;">`Student_Identifier_State`</mark> was renamed to <mark style="color:green;">`StudentIdentifierState`</mark>
 2. <mark style="color:green;">`LEA_Identifier_State`</mark> will be mapped to <mark style="color:green;">`LeaIdentifierSeaAccountability`</mark>
 3. <mark style="color:green;">`School_Identifier_State`</mark> was renamed to <mark style="color:green;">`SchoolIdentifierSea`</mark>
 4. <mark style="color:green;">`AssessmentTypeAdministeredToChildrenWithDisabilities`</mark> was renamed to <mark style="color:green;">`AssessmentTypeAdministered`</mark>
@@ -82,31 +83,31 @@ Update as necessary
 
 ### Toggle
 
-1. Review your existing Toggle Assessments to ensure they are accurate for the new Assessment Types for SY 2023&#x20;
+1. Review your existing Toggle Assessments to ensure they are accurate for the new Assessment Types for SY 2023
 2. Several of the new assessments are only included in the submission file if they are used by the SEA. There are two new Toggle questions that allow you to define the assessments used in your SEA. The questions are located in the standard Toggle screen (not the Toggle Assessments link) in the Assessments section.
 
-<figure><img src="../../.gitbook/assets/Toggle update_Generate 11.1.png" alt="Screenshot of the Generate Toggle page highlighting the new questions that read, &#x22;Please indicate any of the following Lower Grade (3-8) Assessments used by your state&#x22; and &#x22;Please indicate any of the following High School (9-12) Assessments used by your state."><figcaption><p>Screenshot of the Toggle page showing the new questions added in Generate 11.1.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Toggle update_Generate 11.1.png" alt="Generate Toggle page with the lower-grade and high-school assessment questions highlighted."><figcaption><p>Screenshot of the Toggle page showing the new questions added in Generate 11.1.</p></figcaption></figure>
 
 ***
 
-### Generate Enhancements &#x20;
+### Generate Enhancements
 
-The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
-#### Type of Impact:&#x20;
+#### Type of Impact:
 
 * **Data** – the changes will improve data quality and completeness.
 * **Database** – changes to the Generate database structure.
 * **Migration** – the changes impact a data migration process.
 * **Performance** – the changes improve the performance of a data migration.
 * **Reports** - changes that impact the Reports available in Generate.
-* **Submission Files** – the changes may impact submission file(s)&#x20;
-* **Source to Staging ETL** – the changes may require modifications to the SEA’s Source to Staging ETL&#x20;
+* **Submission Files** – the changes may impact submission file(s)
+* **Source to Staging ETL** – the changes may require modifications to the SEA’s Source to Staging ETL
 * **User Interface** – the changes impact the Generate User Interface and/or migration process.
 
 {% tabs %}
 {% tab title="Assessment " %}
-<table><thead><tr><th width="100">Report</th><th width="355">Approved Change</th><th width="130">Reference #</th><th>Impact<select><option value="fbe965b476924b13ab5479b093710231" label="Data" color="blue"></option><option value="d898e13cec774763adf933ebb1e40cd3" label="User Interface" color="blue"></option><option value="ca7fff020e8e4ce9b160fbfcd91228ce" label="Source to Staging ETL" color="blue"></option><option value="892c127e59fd40aba19bdc2a71a2afa6" label="Performance" color="blue"></option><option value="d688277c85c84925b526fff766b842b4" label="Migration" color="blue"></option><option value="2f8f5db01dbd49d2b6ff4b13a08b6086" label="Submission Files" color="blue"></option><option value="e1c892e2c22949129daf6e6b3d90a95c" label="Database" color="blue"></option></select></th></tr></thead><tbody><tr><td><p>FS175 </p><p>FS178 </p><p>FS179 </p><p>FS185 </p><p>FS188 </p><p>FS189 </p></td><td><p>Assessment files 175, 178, 179 not producing zero counts. </p><p></p><p>Assessment Files (175, 178, 179, 185, 188, 189) - No Records to Display Create Report data produces no record. </p><p></p><p>Assessment Zero Counts not considering the Participation Status/Grade Level/Subject </p><p></p><p>Assessment Files Technical changes FS175, FS178, FS179, FS185, FS188, FS189 - Metadata &#x26; Reports Functionality </p><p></p><p>Assessment Staging-to-RDS changes FS175, FS178, FS179, FS185, FS188, FS189 </p></td><td><p>CIID-4740 </p><p>CIID-4921 </p><p>CIID-5260 </p><p>CIID-5704 <br>CIID-5905 </p></td><td><span data-option="fbe965b476924b13ab5479b093710231">Data</span></td></tr></tbody></table>
+<table><thead><tr><th width="100">Report</th><th width="355">Approved Change</th><th width="130">Reference #</th><th>Impact<select><option value="fbe965b476924b13ab5479b093710231" label="Data" color="blue"></option><option value="d898e13cec774763adf933ebb1e40cd3" label="User Interface" color="blue"></option><option value="ca7fff020e8e4ce9b160fbfcd91228ce" label="Source to Staging ETL" color="blue"></option><option value="892c127e59fd40aba19bdc2a71a2afa6" label="Performance" color="blue"></option><option value="d688277c85c84925b526fff766b842b4" label="Migration" color="blue"></option><option value="2f8f5db01dbd49d2b6ff4b13a08b6086" label="Submission Files" color="blue"></option><option value="e1c892e2c22949129daf6e6b3d90a95c" label="Database" color="blue"></option></select></th></tr></thead><tbody><tr><td><p>FS175</p><p>FS178</p><p>FS179</p><p>FS185</p><p>FS188</p><p>FS189</p></td><td><p>Assessment files 175, 178, 179 not producing zero counts.</p><p>Assessment Files (175, 178, 179, 185, 188, 189) - No Records to Display Create Report data produces no record.</p><p>Assessment Zero Counts not considering the Participation Status/Grade Level/Subject</p><p>Assessment Files Technical changes FS175, FS178, FS179, FS185, FS188, FS189 - Metadata &#x26; Reports Functionality</p><p>Assessment Staging-to-RDS changes FS175, FS178, FS179, FS185, FS188, FS189</p></td><td><p>CIID-4740</p><p>CIID-4921</p><p>CIID-5260</p><p>CIID-5704<br>CIID-5905</p></td><td><span data-option="fbe965b476924b13ab5479b093710231">Data</span></td></tr></tbody></table>
 {% endtab %}
 
 {% tab title="Child Count" %}
@@ -126,18 +127,16 @@ The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
 Generate Enhancements 11.1 Excel document download
 {% endfile %}
 
-### Upgrade Procedure&#x20;
+### Upgrade Procedure
 
 No changes have been made to the Generate upgrade procedure for this release. Follow the standard Generate upgrade process to install version 11.1.
 
-### Compatible Systems &#x20;
+### Compatible Systems
 
-Generate was tested on the following operating systems and browsers: &#x20;
+Generate was tested on the following operating systems and browsers:
 
 * [x] Windows 10 Pro
 * [x] Google Chrome, Version 68 0.3440.106 (Official Build) (64-bit) and Firefox Quantum 61.01 (64 bit)
-
-
 
 ***
 

@@ -20,11 +20,11 @@ If you need to validate the data, have run the File Comparison Utility and found
 
 Open SQL Server Management Studio (SSMS) (or whatever tool you use to do your SQL database work). Then open your Generate database (which may be named differently), expand “Programmability,” then expand “Stored Procedures.”
 
-<figure><img src="../../../.gitbook/assets/Programmability Image.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Programmability Image.jpg" alt="SQL Server Management Studio Object Explorer with Stored Procedures expanded."><figcaption></figcaption></figure>
 
 Scroll down to the stored procedure RDS.Create\_ReportData, right-click on it, then click on ‘**Execute Stored Procedure**.’ (Note: This stored procedure is used for all student-level EDFacts reports. For organization level EDFacts reports, follow the same steps but start with the stored procedure RDS.Create\_OrganizationReportData.
 
-<figure><img src="../../../.gitbook/assets/Execute Stored Procedure Image.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Execute Stored Procedure Image.jpg" alt="RDS.Create_ReportData context menu with Execute Stored Procedure selected."><figcaption></figcaption></figure>
 
 After executing, a dialog box will open with three parameters that need to be populated.
 
@@ -32,7 +32,7 @@ After executing, a dialog box will open with three parameters that need to be po
 Organization level EDFacts reports will only have two parameters: @reportCode and @RunAsTest. They are also implemented as described below.
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/RDS.Create_ReportData.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/RDS.Create_ReportData.jpg" alt="Execute Procedure dialog with report migration parameters."><figcaption></figcaption></figure>
 
 **@reportCode**
 
@@ -48,7 +48,7 @@ The third parameter is @RunAsTest. This is a bit (Y/N) field. Normally, this sto
 
 Once you’ve entered the appropriate values, click ‘OK.’ The following will display.
 
-<figure><img src="../../../.gitbook/assets/Run Stored Procedure as Test Messages.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Run Stored Procedure as Test Messages.jpg" alt="SQL Server Management Studio results showing generated report migration code."><figcaption></figcaption></figure>
 
 In the results panel at the bottom of the screen, click on the ‘Messages’ tab.
 
@@ -94,7 +94,7 @@ At the bottom of the code block there are two sections that you need to pay atte
 Note: This is the actual code that is used in the report migration so if you don’t comment it out while you’re troubleshooting, you will replace the report totals each time you run it.
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/Block of Code - Format.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Block of Code - Format.jpg" alt="Report migration code with Create Debugging Tables and insert sections."><figcaption></figcaption></figure>
 
 Once you have commented out the ‘Create Debugging Tables’ and ‘insert,’ you can manipulate the SQL code as necessary to get the information you need. It will not impact any ‘live’ data, so you can modify it, run parts of it, etc.
 
@@ -104,7 +104,7 @@ Once you have commented out the ‘Create Debugging Tables’ and ‘insert,’ 
 
 **Executing the Script**
 
-Next, execute the entire set of code (there is no need to highlight anything) using the _**Execute**_ button in the SSMS ribbon (or by pressing F5). This will create all the temp tables that are referenced in the joins and allow you to use the code in a way that best suits your needs. Examples of these temp tables are: #cat\_RACE and #cat\_SEX. These temp tables are joined with other tables to get the data for the #categoryset temp table. 
+Next, execute the entire set of code (there is no need to highlight anything) using the _**Execute**_ button in the SSMS ribbon (or by pressing F5). This will create all the temp tables that are referenced in the joins and allow you to use the code in a way that best suits your needs. Examples of these temp tables are: #cat\_RACE and #cat\_SEX. These temp tables are joined with other tables to get the data for the #categoryset temp table.
 
 {% hint style="success" %}
 **The following information is a breakdown of what these blocks of code look like:**
@@ -124,7 +124,7 @@ The next section of the code may vary slightly depending on the file specificati
 
 All the code, regardless of the file specification, will then query the metadata to get the appropriate values for the category set that was selected. There will be a block of code (like the example below) that retrieves all the data and moves that data into temp tables to be used in the joins.
 
-<figure><img src="../../../.gitbook/assets/Metadata Block.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Metadata Block.jpg" alt="Report migration metadata block that creates temporary tables."><figcaption></figcaption></figure>
 
 **Select Block**
 
@@ -140,7 +140,7 @@ A good place to start is the inner join to a subquery aliased as ‘rules.’
 **Note:** Some files may create a temp table at the top of the code named #RULES. That table replaces what we are about to describe next, but you can troubleshoot it in the same way.
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/Actual Counts query Image.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Actual Counts query Image.jpg" alt="Report migration rules subquery."><figcaption></figcaption></figure>
 
 This query isolates the students that are going to be included from the Fact table and also applies the exclusionary logic required by the file specification. If you want to execute this block to evaluate the set of students it returns, you will first need to manually set the two variables ‘@dimSchoolYearId’ and ‘@dimFactTypeId.’ The values needed are at the very top of the code that was pasted in. Just replace the variable name with the appropriate number, highlight the block of code, and execute it. In this example, you would replace @dimSchoolYearId with ‘25’ and @dimFactTypeId with ‘24.’
 
@@ -203,7 +203,7 @@ This logic writes the student data to the debug tables. This does not impact whi
 
 The last part of the code to review is the actual SELECT statement at the bottom. This is the code that does the aggregation. It shows you any joins or group bys, whether the count is distinct or not, and what field is being counted for the aggregation.
 
-<figure><img src="../../../.gitbook/assets/SELECT Statement Review Image.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/SELECT Statement Review Image.jpg" alt="Report migration SELECT statement that aggregates report counts."><figcaption></figcaption></figure>
 
 ## ZERO Counts
 

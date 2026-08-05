@@ -9,7 +9,7 @@ To filter for a specific SEA, LEA, or school:
 3. The system will return the data based on your selection.
 4. To clear the filter field, delete the entries.
 
-<figure><img src="../../.gitbook/assets/UserGuide_Running Reports_image1.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/UserGuide_Running Reports_image1.png" alt="Generate report filter field for searching by SEA, LEA, school name, or ID."><figcaption></figcaption></figure>
 
 ### **Exporting Reports**
 

@@ -5,7 +5,7 @@ description: The Update page is where you can update Generate to the most recent
 # Update
 
 {% hint style="info" %}
-Generate has auto-update functionality that can be done from the Generate application. We know that in some cases states may not be able to update from the application and need an alternative. Most of these alternatives will need technical staff to perform the Generate system upgrade. We have a list of alternative ways to update generate here.&#x20;
+Generate has auto-update functionality that can be done from the Generate application. We know that in some cases states may not be able to update from the application and need an alternative. Most of these alternatives will need technical staff to perform the Generate system upgrade. We have a list of alternative ways to update generate here.
 {% endhint %}
 
 \*need to add who has access to this functionality.
@@ -19,7 +19,7 @@ To check for available updates in Generate:
 1. Click on Settings
 2. Click on Update
 
-![](<../../.gitbook/assets/image (42).png>)
+![Settings submenu with the Update option.](<../../.gitbook/assets/image (42).png>)
 
 ### Update Generate <a href="#update_generate" id="update_generate"></a>
 
@@ -29,11 +29,11 @@ _**downloaded**._ For example, if an SEA is running Generate 11.1 and wants to u
 
 If updates are not available, the “Update Generate” page will display the following message:
 
-![](<../../.gitbook/assets/image (187).png>)
+![Update Generate page displaying No Updates Available.](<../../.gitbook/assets/image (187).png>)
 
 If updates are available, they will display on the page below the header “Available to Download.” The page includes the version number, the date the version was released, a short description of what is included in the update, suggestions for backing up the database prior to running the update, and a link to the Release Notes.
 
-<figure><img src="../../.gitbook/assets/image (51).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (51).png" alt="Update Generate page listing an available update and release notes."><figcaption></figcaption></figure>
 
 \*Add that if you were notified that there was an update and you do not see it, then clear your browser cache and refresh the page. If you are still not seeing the update, please reach out to your TA.
 
@@ -44,7 +44,7 @@ Each version of Generate has accompanying release notes that are available as a 
 1. Click on the VIEW button below the Release Notes column to view the release notes.
    1. The Release Notes will open to their location on CIID’s website as a new page in your browser.
 
-![](<../../.gitbook/assets/image (26).png>)
+![Release Notes column with the View button.](<../../.gitbook/assets/image (26).png>)
 
 ### Processing Updates
 
@@ -52,7 +52,7 @@ The process below outlines the steps you need to take to update the application 
 
 1. To download the updates, click on the DOWNLOAD NEXT UPDATE button at the bottom center of the Update Generate page.
 
-![](<../../.gitbook/assets/image (174).png>)
+![Download Next Update button on the Update Generate page.](<../../.gitbook/assets/image (174).png>)
 
 A new page will display that has two sections:
 
@@ -60,7 +60,7 @@ A new page will display that has two sections:
 
 > **Downloaded and Ready to Apply:** Automatically displays the oldest version first which must be run **before** any other versions can be processed.
 
-<figure><img src="../../.gitbook/assets/image (164).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (164).png" alt="Update page showing Available for Download and Downloaded and Ready to Apply sections."><figcaption></figcaption></figure>
 
 1. To quit the update process, click **DELETE UPDATE**.
    1. The system will return the user to the “Update Generate” page.
@@ -68,7 +68,7 @@ A new page will display that has two sections:
 
 When **APPLY UPDATE** is selected, a popup window will display the following message:
 
-![](<../../.gitbook/assets/image (168).png>)
+![Apply Update confirmation dialog with OK and Cancel buttons.](<../../.gitbook/assets/image (168).png>)
 
 1. If you do not want to proceed with the update, click **CANCEL**.
    1. This will close the message and return you to the previous page.
@@ -77,15 +77,15 @@ When **APPLY UPDATE** is selected, a popup window will display the following mes
 
 When **OK** is selected, the following message will display while the update is processing.
 
-![](<../../.gitbook/assets/image (170).png>)
+![Update Generate page showing the update in progress.](<../../.gitbook/assets/image (170).png>)
 
 When the system has completed the update, the page will automatically refresh and the next version that is available for updating will display in the “**Available to Download**” section.
 
-<figure><img src="../../.gitbook/assets/image (68).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (68).png" alt="Update page showing the next available update after processing."><figcaption></figcaption></figure>
 
 1. Click “**DOWNLOAD NEXT UPDATE**” to process the next update.
 
-<figure><img src="../../.gitbook/assets/image (117).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (117).png" alt="Downloaded update with Apply Update and Delete Update buttons."><figcaption></figcaption></figure>
 
 1. To quit the update process, click **DELETE UPDATE**.
    1. The system will return the user to the “Update Generate” page.
@@ -93,7 +93,7 @@ When the system has completed the update, the page will automatically refresh an
 
 A popup window with the following message will display.
 
-![](<../../.gitbook/assets/image (184).png>)
+![Apply Update confirmation dialog for the next update.](<../../.gitbook/assets/image (184).png>)
 
 1. If you do not want to proceed with the update, click **CANCEL**.
    1. This will close the message and return you to the previous page.
@@ -102,8 +102,8 @@ A popup window with the following message will display.
 
 When **OK** is selected, the following message will display while the update is processing.
 
-![](<../../.gitbook/assets/image (35).png>)
+![Update Generate page showing the next update in progress.](<../../.gitbook/assets/image (35).png>)
 
 When the page refreshes and there are no additional updates to apply, the page will display “**No Updates Available**” as shown below.
 
-![](<../../.gitbook/assets/image (38).png>)
+![Update Generate page displaying No Updates Available.](<../../.gitbook/assets/image (38).png>)

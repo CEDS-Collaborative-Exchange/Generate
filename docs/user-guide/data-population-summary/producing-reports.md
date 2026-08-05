@@ -10,24 +10,24 @@ The following sections describe how to run and use each report in the Data Popul
 
 You can run the Data Population Summary reports by SEA, LEA, or school level as shown below:
 
-<figure><img src="../../.gitbook/assets/Picture4.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Picture4.png" alt="Data Population Summary level options for SEA, LEAs, and schools."><figcaption></figcaption></figure>
 
 #### To run a report by LEA level:
 
 1. Click on the **LEAS** button.
 
-![](<../../.gitbook/assets/UserGuide\_Producing Report\_image2.png>)
+![Data Population Summary with the LEAs level selected.](<../../.gitbook/assets/UserGuide_Producing Report_image2.png>)
 
 {% hint style="success" %}
 * The page will display an aggregated report of student counts by LEAs. This report also includes a statewide total.
-* LEAs will be listed in alphabetical order by name.&#x20;
+* LEAs will be listed in alphabetical order by name.
 {% endhint %}
 
 #### To run a report by School level:
 
 1. Click on the **SCHOOLS** button.
 
-![](<../../.gitbook/assets/UserGuide\_Producing Report\_image3.png>)
+![Data Population Summary with the Schools level selected.](<../../.gitbook/assets/UserGuide_Producing Report_image3.png>)
 
 {% hint style="success" %}
 * The page will display an aggregated report of student counts by school. This report also includes a statewide total.
@@ -42,7 +42,7 @@ There is no correlation between LEA and School selection. Selecting SCHOOLS incl
 
 The Data Population Summary Home page defaults to the most recent year. The dropdown menu is based on data in the DimDates database table. The data within that table drive the years that are displayed on the dropdown list.
 
-![](<../../.gitbook/assets/UserGuide\_Producing Report\_image4.png>)
+![Data Population Summary year dropdown.](<../../.gitbook/assets/UserGuide_Producing Report_image4.png>)
 
 #### To select a different year:
 
@@ -58,4 +58,4 @@ Each report has a filter field that lets you view the data for a certain LEA or 
 3. The system will return the data based on your selection.
 4. To clear the filter field, delete the entries.
 
-<figure><img src="../../.gitbook/assets/UserGuide_Producing Report_image5.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/UserGuide_Producing Report_image5.png" alt="Data Population Summary filter field."><figcaption></figcaption></figure>

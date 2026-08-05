@@ -22,7 +22,7 @@ After applying the Generate 13.2 update and running the automated metadata proce
 3. The sql code for this update will be displayed in the window
 4. Either highlight the code and copy (CTRL-C) - or - from the right side of the header row click the COPY RAW FILE option
 
-<img src="../../../.gitbook/assets/image (1) (1).png" alt="" data-size="original">
+<img src="../../../.gitbook/assets/image (1) (1).png" alt="GitHub file page with the Copy Raw File option." data-size="original">
 
 5. Paste that code into Sql Server Management Studio (SSMS) or whatever tool you use to manage sql for Generate
 6. Execute the code
@@ -49,24 +49,20 @@ A hot fix addresses an issue in an existing feature that is not functioning as e
 
 * We added some additional filtering to the zero count logic to ensure that zero count rows were only created for LEAs/Schools that offered the grade level ‘PK’
 
-
-
 There is an additional update to the specific metadata for files 033 and 129. The File Description which is used to create the header row had an incorrect value. There is a sql script that corrects those File Description values.
-
-
 
 **Instructions for Applying the Updates**
 
-1. The updates are contained in a zip file.&#x20;
-2. Unzip the file and you should have 3 individual files.&#x20;
-3. In Sql Server Management Studio (SSMS) or whatever tool you use to connect to the Generate database, open the 3 files.&#x20;
-   1. Function (Get\_CountSQL)&#x20;
-   2. Stored Procedure (Create\_ReportData\_ZeroCounts),&#x20;
+1. The updates are contained in a zip file.
+2. Unzip the file and you should have 3 individual files.
+3. In Sql Server Management Studio (SSMS) or whatever tool you use to connect to the Generate database, open the 3 files.
+   1. Function (Get\_CountSQL)
+   2. Stored Procedure (Create\_ReportData\_ZeroCounts),
    3. 2 sql Updates Statements
 4. In each case, need to execute them by either clicking the **Execute button** in the ribbon or hitting **F5**.
-5. You can then close those tabs in SSMS.&#x20;
-6. If you’ve already migrated 033 and/or 052 data you will need to run the report migration.&#x20;
-   1. If you use the Generate UI you can migrate those 2 files from the Membership fact type which will complete a full migration at all levels.&#x20;
+5. You can then close those tabs in SSMS.
+6. If you’ve already migrated 033 and/or 052 data you will need to run the report migration.
+   1. If you use the Generate UI you can migrate those 2 files from the Membership fact type which will complete a full migration at all levels.
    2. If you migrate from the back-end you only need to execute the report migration for those 2 files.
 {% endhint %}
 
@@ -88,7 +84,7 @@ After applying the Generate 13.2 update and running the automated metadata proce
 3. The sql code for this update will be displayed in the window
 4. Either highlight the code and copy (CTRL-C) - or - from the right side of the header row click the COPY RAW FILE option
 
-<img src="../../../.gitbook/assets/image (1) (1).png" alt="" data-size="original">
+<img src="../../../.gitbook/assets/image (1) (1).png" alt="GitHub file page with the Copy Raw File option." data-size="original">
 
 5. Paste that code into Sql Server Management Studio (SSMS) or whatever tool you use to manage sql for Generate
 6. Execute the code

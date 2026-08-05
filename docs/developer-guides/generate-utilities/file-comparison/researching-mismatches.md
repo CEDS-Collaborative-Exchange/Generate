@@ -12,10 +12,10 @@ When a column in the 029 comparison table does not match, follow these suggested
 
 #### Record is missing from the Generate file:
 
-1. Verify that the organization exists in `Staging.K12Organization` table.&#x20;
+1. Verify that the organization exists in `Staging.K12Organization` table.
 
 {% hint style="danger" %}
-If the record <mark style="color:red;">**DOES NOT**</mark> exist in the staging table, then check the logic in the ETL to determine why the record was not loaded into Generate.&#x20;
+If the record <mark style="color:red;">**DOES NOT**</mark> exist in the staging table, then check the logic in the ETL to determine why the record was not loaded into Generate.
 {% endhint %}
 
 {% hint style="success" %}
@@ -38,7 +38,7 @@ If the record <mark style="color:green;">**DOES**</mark> exist in the staging ta
 
 #### Generate value differs from the Legacy value
 
-1. Look at the data for the organization in the Staging.K12Organization table to verify that the value matches what the Generate migration process produced.&#x20;
+1. Look at the data for the organization in the Staging.K12Organization table to verify that the value matches what the Generate migration process produced.
 
 {% hint style="danger" %}
 If the value <mark style="color:red;">**DOES NOT**</mark> match what was produced after the data was migrated through Generate, contact Generate technical support.
@@ -78,7 +78,7 @@ When the Generate Amount is less than the Legacy Amount, this indicates that:
    1. `select count(distinct Student_Identifier_State) from Staging.K12Enrollment`
    2. If the total count in Staging is less than the count in the Legacy file, then check the ETL logic to determine why not all students were loaded into Generate.
 
-#### Total count in Staging equals or exceeds the Legacy count,&#x20;
+#### Total count in Staging equals or exceeds the Legacy count,
 
 When the total count in Staging equals or exceeds the Legacy count then check that the student exists in all Staging tables used by the file specification. Depending on the file specification, these tables could include:
 
@@ -93,7 +93,7 @@ When the total count in Staging equals or exceeds the Legacy count then check th
    * In **Staging.K12Enrollment**, the student has value for School\_Identifier\_State and/or LEA\_Identifier\_State
    * In **Staging.K12Enrollment**, the EnrollmentEntryDate is within the school year and the EnrollmentExitDate is within the school year or is NULL
 2. The student has a value for HispanicOrLatinoEthnicity (1 or 0)
-3. All columns that map to Staging.SourceSystemReferenceData must have a value that corresponds to an InputCode value in Staging.SourceSystemReferenceData.  These columns include:
+3. All columns that map to Staging.SourceSystemReferenceData must have a value that corresponds to an InputCode value in Staging.SourceSystemReferenceData. These columns include:
    * Sex
    * ExitOrWithdrawalType
    * GradeLevel
@@ -103,10 +103,10 @@ When the total count in Staging equals or exceeds the Legacy count then check th
 
 #### Record is missing from the Generate file,
 
-Verify that the organization exists in `Staging.K12Organization table`.&#x20;
+Verify that the organization exists in `Staging.K12Organization table`.
 
 {% hint style="danger" %}
-If the record <mark style="color:red;">**DOES NOT**</mark> exist in the staging table, then check the logic in the ETL to determine why the record was not loaded into Generate.&#x20;
+If the record <mark style="color:red;">**DOES NOT**</mark> exist in the staging table, then check the logic in the ETL to determine why the record was not loaded into Generate.
 {% endhint %}
 
 {% hint style="success" %}
@@ -131,17 +131,17 @@ If the record <mark style="color:green;">DOES</mark> exist in the staging table,
 
 ### Using Debug Tables
 
-When a migration is run in Generate to move data from the Staging area into the Report tables, Generate creates a series of “debug” tables with the student Ids used in the final counts.  All these tables are in the Generate database in the debug schema.
+When a migration is run in Generate to move data from the Staging area into the Report tables, Generate creates a series of “debug” tables with the student Ids used in the final counts. All these tables are in the Generate database in the debug schema.
 
-<figure><img src="../../../.gitbook/assets/image (213).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (213).png" alt="SQL Server Object Explorer showing Generate debug tables for EDFacts report migrations."><figcaption></figcaption></figure>
 
-You can query the appropriate table to see the list of students that make up the Generate count.&#x20;
+You can query the appropriate table to see the list of students that make up the Generate count.
 
 {% hint style="info" %}
 For example, let us say the SEA C002 Comparison results table shows a mismatch on a record where the `AgeID` = 10 and the `EdEnvironmentID` = RC39. The `LegacyAmount` might show 35, but the `GenerateAmount` might show 19.
 {% endhint %}
 
-The debug tables are named according to the Report Level, Category Set, and the subtotal columns.  Look for the table name that starts with “`debug.002_SEA_`” and includes the description for “Age” and “Education Environment” in the table name. Then query that table with the appropriate filters to see the list of students that made up the count produced by Generate.
+The debug tables are named according to the Report Level, Category Set, and the subtotal columns. Look for the table name that starts with “`debug.002_SEA_`” and includes the description for “Age” and “Education Environment” in the table name. Then query that table with the appropriate filters to see the list of students that made up the count produced by Generate.
 
 {% code overflow="wrap" %}
 ```sql

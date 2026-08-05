@@ -14,9 +14,7 @@ Generate 5.2 is preconfigured with validation rules designed mostly for Director
 
 The staging validation process is comprised of four components (two tables and two stored procedures) as shown in Figure 1 below.
 
-![Figure 1 - Staging Validation Components (orange items)](<../../../.gitbook/assets/0 (3).png>)
-
-
+![Diagram of Staging Validation components, with new process items highlighted in orange.](<../../../.gitbook/assets/0 (3).png>)
 
 #### Staging Validation Rules Table
 
@@ -45,7 +43,7 @@ The initial ruleset has four distinct types of validation: No Records, Null Valu
 * **Bad Value** - The value for a field did not meet specific criteria
 * **Option Not Mapped** – A codeset value wasn’t mapped in SourceSystemReferenceData
 
-![This is an example of the Staging Validation Rules table](<../../../.gitbook/assets/1 (1).png>)
+![Example rows in the Staging Validation Rules table.](<../../../.gitbook/assets/1 (1).png>)
 
 ### Executing the Validation Process
 
@@ -54,7 +52,7 @@ To run the new process manually from SSMS, execute the following SQL statement, 
 exec \[Staging].\[ValidateStagingData] @SchoolYear = 2022, @ReportGroupOrCodeParm = 'ChildCount'
 
 **@SchoolYear** = School Year that matches the data loaded into the staging tables\
-&#xNAN;**@ReportGroupOrCodeParm** = The EDFacts report number or GroupName, i.e. ‘C002’ or ‘ChildCount’ which will execute the specific set of rules associated with the report or group.
+\&#xNAN;**@ReportGroupOrCodeParm** = The EDFacts report number or GroupName, i.e. ‘C002’ or ‘ChildCount’ which will execute the specific set of rules associated with the report or group.
 
 This will populate the Staging Validation Results table.
 
@@ -71,7 +69,7 @@ exec [Staging].[ValidateStagingData_GetResults] @SchoolYear = 2022, @ReportGroup
 {% endcode %}
 
 **@SchoolYear** = School Year that matches the data loaded into the staging tables\
-&#xNAN;**@ReportGroupOrCodeParm** = The E&#x44;_&#x46;acts_ report number or GroupName, i.e. ‘C002’ or ‘ChildCount’ which will execute the specific set of rules associated with the report or group.
+\&#xNAN;**@ReportGroupOrCodeParm** = The E&#x44;_&#x46;acts_ report number or GroupName, i.e. ‘C002’ or ‘ChildCount’ which will execute the specific set of rules associated with the report or group.
 
 {% hint style="info" %}
 There is in an optional parameter, @IncludeHistory=1, which will include results from all previous Validations for the school year and report group.
@@ -79,13 +77,13 @@ There is in an optional parameter, @IncludeHistory=1, which will include results
 
 Below are the results of running the _**`ValidateStagingData_GetResults`**_ procedure:
 
-<figure><img src="../../../.gitbook/assets/Picture1.png" alt=""><figcaption><p>Results of running the <em><strong><code>ValidateStagingData_GetResults</code></strong></em> procedure</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Picture1.png" alt="SQL Server results from the ValidateStagingData_GetResults procedure."><figcaption><p>Results of running the <em><strong><code>ValidateStagingData_GetResults</code></strong></em> procedure</p></figcaption></figure>
 
 The results table includes a column named “**ShowRecordsSQL**”. The contents of this column for particular row can be pasted into a SQL Query window and executed to see a list of records that caused the validation error.
 
 For example, in validation Id 36 above, where 7 records failed validation, executing the **ShowRecordsSQL** would return the following:
 
-![](<../../../.gitbook/assets/3 (1).png>)
+![SQL Server query results listing student records with validation errors.](<../../../.gitbook/assets/3 (1).png>)
 
 This shows a list of students in staging that were marked as IDEA but did not have an IDEA Status Start Date or Primary Disability Type value. This is a very useful feature to streamline ETL troubleshooting.
 

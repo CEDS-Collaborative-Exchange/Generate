@@ -6,7 +6,7 @@ Generate is a web application that includes a Home page, menu bars, shortcuts to
 
 To accommodate user preferences, the pages and resources within Generate can be accessed from several locations, as shown below. The functionality for each option is explained in the sections that follow.
 
-<figure><img src="../../.gitbook/assets/image (195).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (195).png" alt="Generate Home page showing the menu bar and report shortcuts."><figcaption></figcaption></figure>
 
 ### Menu Bar <a href="#menu_bar" id="menu_bar"></a>
 
@@ -31,7 +31,7 @@ The graphics on the right side of the Home page are shortcuts to:
 
 The graphics in the center of the Home page are shortcuts to:
 
-![](<../../.gitbook/assets/image (162).png>)
+![Home page report shortcuts for EDFacts, SPP/APR, and the Reports Library.](<../../.gitbook/assets/image (162).png>)
 
 * View E&#x44;_&#x46;acts_ Submission Reports
 * View SPP/APR Submission Reports
@@ -41,7 +41,7 @@ The graphics in the center of the Home page are shortcuts to:
 
 A twenty-minute timeout clock is displayed in the upper right-hand corner of the page under your username.
 
-![](<../../.gitbook/assets/image (188).png>)
+![Session timeout clock below the signed-in user name.](<../../.gitbook/assets/image (188).png>)
 
 * The timeout clock starts to count down as soon as you log into Generate.
 * When the timeout clock reaches five minutes, the following notification will display:
@@ -53,10 +53,8 @@ A twenty-minute timeout clock is displayed in the upper right-hand corner of the
 
 ![System time out message that reads, "You have been Logged Out. You have been logged out due to inactivity."](<../../.gitbook/assets/image (154).png>)
 
-
-
 You will need to log back in to Generate. Once you have logged in, a notification message will display that says your previous session has been found. To navigate to the place, you were before the system timed out, click “Yes.” To return to the Home page, click “No.” Note: whether the system logged you out because you were idle, or you intentionally logged out of the system, the “Previous Session Found” message will display.
 
-![](<../../.gitbook/assets/image (178).png>)
+![Previous Session Found dialog with Yes and No options.](<../../.gitbook/assets/image (178).png>)
 
 ###

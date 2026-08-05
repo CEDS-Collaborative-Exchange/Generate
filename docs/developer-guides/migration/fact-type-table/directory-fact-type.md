@@ -80,7 +80,7 @@ The following files are in pilot status or are available for piloting in Generat
 The Generate ETL Documentation Templates give a detailed breakdown of all data elements needed for each Fact Type and show how data are transformed through each stage of the data migration. After completing the CEDS alignment process these templates can be used to document data transformation notes and option set mappings. They also contain a description of the CEDS data elements needed and what they are called throughout the Generate database. The ETL Templates documentation has a detailed instruction tab to help you know how to utilize this tool effectively. If you need clarification, please reach out to your CIID TA provider.
 
 {% hint style="info" %}
-You can find the Directory ETL Documentation Template.xlsx on the [ETL Documentation Template](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/fact-type-table/etl-documentation-templates-overview/etl-documentation-template) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-etl-mapping-assistance).&#x20;
+You can find the Directory ETL Documentation Template.xlsx on the [ETL Documentation Template](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/fact-type-table/etl-documentation-templates-overview/etl-documentation-template) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-etl-mapping-assistance).
 {% endhint %}
 
 #### Generate Metadata
@@ -124,7 +124,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data).
 
 {% hint style="success" %}
-To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.&#x20;
+To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.
 
 You can also filter the Source System Reference Data table by `FactTypeCode` and `ReportCode` as shown below.
 
@@ -161,9 +161,9 @@ The Generate database has a stored procedure for each Fact Type which is empty i
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/image (228).png" alt=""><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (228).png" alt="SQL Server Management Studio showing the Source-to-Staging stored procedure placeholder."><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
 
-This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.&#x20;
+This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.
 
 ```
 /****** Object:  StoredProcedure [Source].[Source-to-Staging_Directory]    Script Date: 8/18/2025 10:12:03 AM ******/
@@ -186,7 +186,7 @@ GO
 
 {% tabs %}
 {% tab title="Manually" %}
-**Migrating Source to Staging**    &#x20;
+**Migrating Source to Staging**
 
 Migrating Source to StagingThe Source to Staging code can be run from SQL Server Management Studio (SSMS) by passing in the current school year as a parameter. Generate uses the end school year. For example, 2023-24 would be specified as '2024'.
 
@@ -217,7 +217,7 @@ Once data has been migrated to the Staging tables there are two Generate tools t
 
 #### Staging Validation Utility
 
-Generate has a [Staging Validation Process](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-validation) which can be called at the Fact Type or E&#x44;_&#x46;acts_ file level.&#x20;
+Generate has a [Staging Validation Process](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-validation) which can be called at the Fact Type or E&#x44;_&#x46;acts_ file level.
 
 {% hint style="success" %}
 The following is an example code snippet of how to call these Stored Procedures by the Directory Fact Type.
@@ -230,7 +230,7 @@ exec [Staging].[StagingValidation_GetResults] 2024,'directory'
 
 #### Staging Table Debug View Process
 
-To aid validation we developed Staging Table Debug views that join together the Staging data for a Fact Type in a standard format that can be used for Generate testing. You can utilize these views in researching specific subsets of data or specific student data. These views can be found in the debug schema and will automatically be filtered by the school year(s) selected in the Generate web application. Opening the view in SSMS will provide you with a variety of filtering options to modify the query as needed during testing. Detailed instructions on how to utilize this process to debug Staging table data can be found in the [Staging Table Validation Process](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-validation/staging-table-validation-process).&#x20;
+To aid validation we developed Staging Table Debug views that join together the Staging data for a Fact Type in a standard format that can be used for Generate testing. You can utilize these views in researching specific subsets of data or specific student data. These views can be found in the debug schema and will automatically be filtered by the school year(s) selected in the Generate web application. Opening the view in SSMS will provide you with a variety of filtering options to modify the query as needed during testing. Detailed instructions on how to utilize this process to debug Staging table data can be found in the [Staging Table Validation Process](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-validation/staging-table-validation-process).
 
 {% hint style="success" %}
 The following is an example code snippet of how to select the Directory Staging Table Debug views:
@@ -302,7 +302,7 @@ Once data has been migrated to the Staging tables the Fact Table Debug View can 
 
 #### Fact Table Debug Views
 
-The Directory Fact Table Debug views join together the CEDS Data Warehouse data for this Fact Type in a standard format that is used for Generate testing. These views will automatically be filtered by the school year(s) selected in the Generate web application and stored in the `RDS.DimSchoolYearDataMigrationTypes` table. However, opening the view in SSMS will provide you with a variety of filtering options to modify this query as needed during testing.&#x20;
+The Directory Fact Table Debug views join together the CEDS Data Warehouse data for this Fact Type in a standard format that is used for Generate testing. These views will automatically be filtered by the school year(s) selected in the Generate web application and stored in the `RDS.DimSchoolYearDataMigrationTypes` table. However, opening the view in SSMS will provide you with a variety of filtering options to modify this query as needed during testing.
 
 Detailed instructions on how to utilize this process to debug Fact Table data can be found in the [Fact Type Table Validation Process](../../generate-utilities/fact-type-table-validation-process.md) guide.
 
