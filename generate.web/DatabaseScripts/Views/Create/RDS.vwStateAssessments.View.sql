@@ -1,9 +1,12 @@
-﻿CREATE VIEW RDS.vwStateAssessments
+﻿
+
+CREATE VIEW [RDS].[vwStateAssessments]
   AS 
   
     SELECT 
         f.SchoolYearId
       , f.K12StudentId
+	  , f.K12Student_CurrentId
       , f.SeaId
       , f.LeaId
 	  , ISNULL(lea.LeaIdentifierSea, 'MISSING') as LeaIdentifierSea
@@ -12,7 +15,6 @@
 	  , f.AssessmentId
 	  , f.AssessmentRegistrationId
 	  , f.AssessmentPerformanceLevelId
-	  , f.FactK12StudentAssessmentAccommodationId
       , f.K12DemographicId
       , f.GradeLevelWhenAssessedId
       , f.IdeaStatusId
@@ -27,13 +29,11 @@
 	  , race.RaceId
       , f.FactK12StudentAssessmentId
       , f.AssessmentCount
-	  , f.AssessmentResultScoreValueRawScore
 	  , ISNULL(proficiency.ProficiencyStatus, 'MISSING') as ProficiencyStatus
     FROM rds.FactK12StudentAssessments f
 	inner join rds.DimLeas lea on f.LeaId = lea.DimLeaID
 	inner join rds.DimK12Schools sch on f.K12SchoolId = sch.DimK12SchoolId
 	left join (select distinct FactK12StudentAssessmentId, RaceId from rds.BridgeK12StudentAssessmentRaces) race on f.FactK12StudentAssessmentId = race.FactK12StudentAssessmentId
-	left join rds.BridgeK12StudentAssessmentAccommodations accomodations on f.FactK12StudentAssessmentAccommodationId = accomodations.FactK12StudentAssessmentAccommodationId
 	left join (
 			select distinct  fact.K12StudentId,  fact.SchoolYearId, fact.AssessmentPerformanceLevelId,
 			case 
