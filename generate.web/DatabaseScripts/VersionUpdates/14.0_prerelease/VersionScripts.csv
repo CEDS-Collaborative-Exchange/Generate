@@ -22,6 +22,8 @@ Views\\Drop,Debug.vwGraduationRate_StagingTables.View.sql,0
 Views\\Create,Debug.vwGraduationRate_StagingTables.View.sql,0
 Views\\Drop,Debug.vwImmigrant_StagingTables.View.sql,0
 Views\\Create,Debug.vwImmigrant_StagingTables.View.sql,0
+Views\\Drop,Debug.vwMembership_StagingTables.View.sql,0
+Views\\Create,Debug.vwMembership_StagingTables.View.sql,0
 Views\\Drop,Debug.vwExiting_StagingTables.View.sql,0
 Views\\Create,Debug.vwExiting_StagingTables.View.sql,0
 Views\\Drop,Debug.vwDiscipline_StagingTables.View.sql,0
@@ -46,6 +48,8 @@ Views\\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
 Views\\Create,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
 Views\\Drop,RDS.vwDimPsEnrollmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimPsEnrollmentStatuses.View.sql,0
+StoredProcedures\\Drop,Utilities.CompareRecordsAcrossMigrations.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.CompareRecordsAcrossMigrations.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_ReportData_ZeroCounts.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData_ZeroCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql,0
