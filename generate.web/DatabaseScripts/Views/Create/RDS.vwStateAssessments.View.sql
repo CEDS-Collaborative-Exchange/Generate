@@ -6,6 +6,7 @@ CREATE VIEW [RDS].[vwStateAssessments]
     SELECT 
         f.SchoolYearId
       , f.K12StudentId
+	  , f.K12Student_CurrentId
       , f.SeaId
       , f.LeaId
 	  , ISNULL(lea.LeaIdentifierSea, 'MISSING') as LeaIdentifierSea
@@ -28,7 +29,6 @@ CREATE VIEW [RDS].[vwStateAssessments]
 	  , race.RaceId
       , f.FactK12StudentAssessmentId
       , f.AssessmentCount
-	  , f.AssessmentResultScoreValueRawScore
 	  , ISNULL(proficiency.ProficiencyStatus, 'MISSING') as ProficiencyStatus
     FROM rds.FactK12StudentAssessments f
 	inner join rds.DimLeas lea on f.LeaId = lea.DimLeaID
