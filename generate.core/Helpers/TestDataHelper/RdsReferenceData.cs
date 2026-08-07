@@ -1,5 +1,4 @@
-﻿using generate.core.Helpers.ReferenceData;
-using generate.core.Models.IDS;
+﻿using generate.core.Models.IDS;
 using generate.core.Models.RDS;
 using System;
 using System.Collections.Generic;
@@ -61,6 +60,7 @@ namespace generate.core.Helpers.TestDataHelper
 
         public RdsReferenceData()
         {
+#if false
             #region Data
 
 
@@ -108,7 +108,7 @@ namespace generate.core.Helpers.TestDataHelper
             this.RefSchoolOperationalStatuses = RefOperationalStatusHelper.GetData().Where(s => s.RefOperationalStatusTypeId == 2).ToList();
 
             #endregion
-
+#endif
         }
 
     }
