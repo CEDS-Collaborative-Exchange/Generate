@@ -2531,7 +2531,7 @@ BEGIN
 						on fact.AssessmentId = assmnt.DimAssessmentId
 					inner join rds.DimAssessmentRegistrations rdar 
 						on fact.AssessmentRegistrationId = rdar.DimAssessmentRegistrationId
-					inner join APP.ToggleAssessments tgglAssmnt 
+					left join APP.ToggleAssessments tgglAssmnt 
 						on tgglAssmnt.Grade = CAT_GradeLevel.GradeLevelCode 
 						and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 						and tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode			
