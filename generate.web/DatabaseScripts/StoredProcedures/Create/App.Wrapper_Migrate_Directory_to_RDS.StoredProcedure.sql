@@ -16,36 +16,42 @@ BEGIN
 		--Populate DimSeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 1 of 6 - Staging-to-DimSeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 1 of 7 - Staging-to-DimSeas')
 
 			exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
 
 		--Populate DimLeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 2 of 6 - Staging-to-DimLeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 2 of 7 - Staging-to-DimLeas')
 
 			exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
 
 		--Populate DimK12Schools
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 3 of 6 - Staging-to-DimK12Schools')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 3 of 7 - Staging-to-DimK12Schools')
 
 		exec [Staging].[Staging-to-DimK12Schools] NULL, 0
 
+		--Populate BridgeGradeLevels for both LEA and School
+			--write out message to DataMigrationHistories
+			insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 4 of 7 - Staging-to-BridgeOrganizationGradeLevels')
+
+		exec [Staging].[Staging-to-BridgeOrganizationGradeLevels] NULL, 0
 	
 		--Populate Charter Authorizer	
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 4 of 6 - Staging-to-DimCharterSchoolAuthorizers')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 5 of 7 - Staging-to-DimCharterSchoolAuthorizers')
 
 		exec Staging.[Staging-to-DimCharterSchoolAuthorizers] 
 
 		--Populate Charter Management Organizations
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 5 of 6 - Staging-to-DimCharterSchoolManagementOrganizations')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 6 of 7 - Staging-to-DimCharterSchoolManagementOrganizations')
 
 			exec Staging.[Staging-to-DimCharterSchoolManagementOrganizations] 
 
@@ -53,7 +59,7 @@ BEGIN
 		--Populate the Fact table
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 6 of 6 - Staging-to-FactOrganizationCounts')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 7 of 7 - Staging-to-FactOrganizationCounts')
 
 			--remove the cursor if a previous migraton stopped/failed
 			if cursor_status('global','selectedYears_cursor') >= -1

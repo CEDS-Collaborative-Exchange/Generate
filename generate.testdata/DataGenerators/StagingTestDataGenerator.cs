@@ -815,6 +815,7 @@ namespace generate.testdata.DataGenerators
                     OrganizationGradeOffered k12schoolGradeOffered = new OrganizationGradeOffered()
                     {
                         OrganizationIdentifier = o.SchoolIdentifierSea,
+                        OrganizationType = "K12School",
                         GradeOffered = gradeLevel.Code,
                         RecordStartDateTime = o.Lea_RecordStartDateTime,
                         RecordEndDateTime = o.Lea_RecordEndDateTime,
