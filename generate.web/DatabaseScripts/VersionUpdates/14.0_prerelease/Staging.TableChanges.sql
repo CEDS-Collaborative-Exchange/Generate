@@ -1304,7 +1304,7 @@ END;
     CREATE TABLE Staging.OrganizationGradeOffered (
 		Id int IDENTITY(1,1) NOT NULL,
 		OrganizationIdentifier nvarchar(50) NULL,
-		OrganizationType nvarchar(3) NULL,
+		OrganizationType nvarchar(10) NULL,
 		GradeOffered varchar(100) NULL,
 		SchoolYear smallint NULL,
 		RecordStartDateTime datetime NULL,
