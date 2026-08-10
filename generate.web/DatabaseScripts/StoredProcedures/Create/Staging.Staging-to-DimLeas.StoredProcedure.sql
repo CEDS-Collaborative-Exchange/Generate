@@ -348,7 +348,7 @@ BEGIN
 		AND lea.RecordStartDateTime = upd.RecordStartDateTime
 	WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 
-/* NOTE: Population of the BridgeLeaGradeLevels is done in Staging-to-DimK12Schools */
+/* NOTE: Population of the BridgeLeaGradeLevels is now done in Staging-to-BridgeOrganizationGradeLevels */
 
 	--Cleanup
 	DROP TABLE #organizationTypes

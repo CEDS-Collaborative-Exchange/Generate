@@ -1216,6 +1216,208 @@ BEGIN
     DROP COLUMN AccommodationType;
 END;
 
+-------------------------------------------------
+--Staging.OrganizationGradeOffered add new column
+-------------------------------------------------
+
+--drop and recreate the extended properties using the new ontology references
+
+	--OrganizationIdentifier		
+    IF EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'OrganizationIdentifier' )
+    BEGIN
+		EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+	END
+
+	--RecordStartDateTime		
+    IF EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'RecordStartDateTime' )
+    BEGIN
+		EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+	END
+
+	--RecordEndDateTime		
+    IF EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'RecordEndDateTime' )
+    BEGIN
+		EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+	END
+
+	--DataCollectionName
+    IF EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'DataCollectionName' )
+    BEGIN
+		EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+		EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+	END
+
+--Drop and recreate to add OrganizationType after OrganizationIdentifier
+
+    IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Staging' AND TABLE_NAME = 'OrganizationGradeOffered')
+    BEGIN
+        DROP TABLE [Staging].[OrganizationGradeOffered]
+    END
+
+    CREATE TABLE Staging.OrganizationGradeOffered (
+		Id int IDENTITY(1,1) NOT NULL,
+		OrganizationIdentifier nvarchar(50) NULL,
+		OrganizationType nvarchar(3) NULL,
+		GradeOffered varchar(100) NULL,
+		SchoolYear smallint NULL,
+		RecordStartDateTime datetime NULL,
+		RecordEndDateTime datetime NULL,
+		DataCollectionName nvarchar(100) NULL,
+		RunDateTime datetime NULL,
+	CONSTRAINT [PK_OrganizationGradeOffered] PRIMARY KEY CLUSTERED (
+		[Id] ASC
+		) WITH (
+			PAD_INDEX = OFF
+			, STATISTICS_NORECOMPUTE = ON
+			, IGNORE_DUP_KEY = OFF
+			, ALLOW_ROW_LOCKS = ON
+			, ALLOW_PAGE_LOCKS = ON
+			, FILLFACTOR = 100
+			, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF
+			, DATA_COMPRESSION = PAGE
+			) ON [PRIMARY]
+	) ON [PRIMARY]
+
+--add the extended properties with ontology reference where available
+
+	--OrganizationIdentifier
+    IF NOT EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'OrganizationIdentifier' )
+    BEGIN
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A unique number or alphanumeric code assigned to an organization by a school, school system, a state, or other agency or entity.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Organization Identifier' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P600502' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/classes/O/C200252/P600502' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+		EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationIdentifier'
+	END
+
+	--OrganizationType
+    IF NOT EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'OrganizationType' )
+    BEGIN
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The type of educational organization or entity.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationType'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Organization Type' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationType'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P001156' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationType'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/classes/O/C200239/P001156' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationType'
+		EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'OrganizationType'
+	END
+
+
+	--RecordStartDateTime		
+    IF NOT EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'RecordStartDateTime' )
+    BEGIN
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The start date and, optionally, time that a record is active as used to support version control.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Record Start Date Time' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P001917' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/classes/A/C200257/P001917' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+		EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+	END
+
+	--RecordEndDateTime		
+    IF NOT EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'RecordEndDateTime' )
+    BEGIN
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The end date and, optionally, time that a record is active as used to support version control.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Record End Date Time' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P001918' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/classes/A/C200257/P001918' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+		EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+	END
+
+	--DataCollectionName
+    IF NOT EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'OrganizationGradeOffered' AND c.name = 'DataCollectionName' )
+    BEGIN
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A human readable name used to identify the data within the collection.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Data Collection Name' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P201003' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+		EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/classes/A/C200410/P201003' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+		EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationGradeOffered', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+	END
+
 -- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'LeaIdentifierSea') IS NOT NULL
 -- BEGIN
 --     ALTER TABLE Staging.SchoolPerformanceIndicators

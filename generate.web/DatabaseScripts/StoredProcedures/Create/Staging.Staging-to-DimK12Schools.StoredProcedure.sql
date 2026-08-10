@@ -472,7 +472,9 @@ BEGIN
 		AND school.RecordStartDateTime = upd.RecordStartDateTime
 	WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 
+/* NOTE: Population of the BridgeSchoolGradeLevels is now done in Staging-to-BridgeOrganizationGradeLevels */
 
+/*
 -- School Grade Levels
 	CREATE TABLE #gradeLevels (
 		DimK12SchoolId INT
@@ -536,9 +538,9 @@ BEGIN
 			src.DimLeaID
 			, src.DimGradeLevelId
 		);
+*/
 
 	DROP TABLE #K12Schools
-	DROP TABLE #gradeLevels
 	DROP TABLE #organizationTypes
 	DROP TABLE #organizationLocationTypes
 

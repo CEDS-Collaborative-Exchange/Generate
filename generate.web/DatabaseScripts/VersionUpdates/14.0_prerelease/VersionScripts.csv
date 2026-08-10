@@ -56,6 +56,12 @@ StoredProcedures\\Drop,RDS.Create_ReportData_ZeroCounts.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData_ZeroCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Empty_RDS.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-BridgeOrganizationGradeLevels.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-BridgeOrganizationGradeLevels.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentEnrollments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentEnrollments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12AccessibleEducationMaterialAssignments.StoredProcedure.sql,0
@@ -96,6 +102,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.Stor
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql,0
 TestCases,App.FS002_TestCase.StoredProcedure.sql,0
 TestCases,App.FS005_TestCase.StoredProcedure.sql,0
 TestCases,App.FS006_TestCase.StoredProcedure.sql,0
