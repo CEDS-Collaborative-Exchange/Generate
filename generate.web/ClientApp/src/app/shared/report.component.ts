@@ -41,6 +41,7 @@ declare let componentHandler: any;
 export class ReportComponent implements AfterViewInit, OnInit {
 
     public errorMessage: string;
+    public isLoading: boolean = true;
     private subscriptions: Subscription[] = [];
     metadataStatus: MetadataStatus[];
     private metadataStatusMessage: string;
@@ -269,6 +270,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     initializeReportsPage() {
         if (this.reportType !== undefined) {
+            this.isLoading = true;
 
             forkJoin(
                 this._generateReportService.getReports(this.reportType),
@@ -290,17 +292,21 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
                 if (status.toUpperCase() === 'PROCESSING') {
                     this.errorMessage = 'Metadata is currently being processed. Allow the metadata process to finish before viewing reports.';
+                    this.isLoading = false;
                 }
                 else if (status.toUpperCase() === 'FAILED') {
                     this.errorMessage = 'Metadata process failed. Please successfully migrate the metadata before viewing reports.';
+                    this.isLoading = false;
                 }
                 else if (this.currentMigrationStatus.reportMigrationStatusCode === 'processing') {
 
                     this.errorMessage = 'A migration is in progress. Allow the current migration to finish before viewing reports.';
+                    this.isLoading = false;
                 }
                 else if (this.currentMigrationStatus.reportMigrationStatusCode !== 'success') {
 
                     this.errorMessage = 'The migration must be run prior to viewing reports.';
+                    this.isLoading = false;
                 }
                 else {
 
@@ -336,10 +342,14 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
                     this.reportswithGradeFilter = '';
                     this.errorMessage = null;
+                    this.isLoading = false;
 
 
                 }
 
+            }, error => {
+                this.isLoading = false;
+                this.errorMessage = <any>error;
             });
 
 
@@ -350,6 +360,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     initializeStateReportsPage() {
         if (this.reportType !== undefined) {
+            this.isLoading = true;
 
             this.subscriptions.push(this._dataMigrationService.currentMigrationStatus()
                 .subscribe(data => {
@@ -359,10 +370,12 @@ export class ReportComponent implements AfterViewInit, OnInit {
                     if (this.currentMigrationStatus.reportMigrationStatusCode === 'processing') {
 
                         this.errorMessage = 'A migration is in progress. Allow the current migration to finish before viewing reports.';
+                        this.isLoading = false;
                     }
                     else if (this.currentMigrationStatus.reportMigrationStatusCode !== 'success') {
 
                         this.errorMessage = 'The migration must be run prior to viewing reports.';
+                        this.isLoading = false;
                     }
                     else {
 
@@ -392,6 +405,9 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
                     }
 
+                }, error => {
+                    this.isLoading = false;
+                    this.errorMessage = <any>error;
                 }));
 
         }
@@ -399,15 +415,21 @@ export class ReportComponent implements AfterViewInit, OnInit {
     }
 
     getReportYears(newParameters: GenerateReportParametersDto) {
+        this.isLoading = true;
 
         this._generateReportService.getSubmissionYearss(newParameters.reportCode, this.reportType)
             .subscribe(years => {
                 this.submissionYears = years;
+                this.isLoading = false;
+            }, error => {
+                this.isLoading = false;
+                this.errorMessage = <any>error;
             })
 
     }
 
     getReport(newParameters: GenerateReportParametersDto) {
+        this.isLoading = true;
 
         forkJoin(
             this._generateReportService.getReportByCodeAndYear(this.reportType, newParameters.reportCode, newParameters.reportYear),
@@ -514,9 +536,13 @@ export class ReportComponent implements AfterViewInit, OnInit {
             }
 
             this.reportParameters = newParameters;
+            this.isLoading = false;
 
 
 
+        }, error => {
+            this.isLoading = false;
+            this.errorMessage = <any>error;
         });
 
 
@@ -524,6 +550,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
 
     getStateReport(newParameters: GenerateReportParametersDto) {
+        this.isLoading = true;
 
         forkJoin(
             this._generateReportService.getReportByCodes(this.reportType, newParameters.reportCode),
@@ -629,9 +656,13 @@ export class ReportComponent implements AfterViewInit, OnInit {
             this.setQueryString(newParameters);
 
             this.reportParameters = newParameters;
+            this.isLoading = false;
 
 
 
+        }, error => {
+            this.isLoading = false;
+            this.errorMessage = <any>error;
         });
 
 
