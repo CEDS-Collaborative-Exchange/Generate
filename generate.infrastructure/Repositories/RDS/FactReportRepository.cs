@@ -555,100 +555,143 @@ namespace generate.infrastructure.Repositories.RDS
         private IQueryable<FactK12StudentAssessmentReport> AggregateFactAssessmentCount(IQueryable<FactK12StudentAssessment> facts, List<ToggleAssessment> toggleAssessments, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
         {
             var categoryFlags = GetAssessmentCategoryFlags(categories);
+            var filteredFacts = ApplyAssessmentFilters(facts, reportLevel, categoryFlags);
+            var joinedFacts = JoinAssessmentFacts(filteredFacts, toggleAssessments);
 
+            return joinedFacts
+                .GroupBy(x => CreateAssessmentGroupKey(x.Fact, x.ToggleAssessment, reportLevel, categoryFlags))
+                .GroupBy(x => x.Key)
+                .Select(g => CreateAssessmentReport(g.Key, reportCode, reportLevel, reportYear, categorySetCode, categories, tableTypeAbbrv, g.Count()))
+                .AsQueryable();
+        }
+
+        private IQueryable<FactK12StudentAssessment> ApplyAssessmentFilters(IQueryable<FactK12StudentAssessment> facts, string reportLevel, AssessmentCategoryFlags categoryFlags)
+        {
             facts = ApplyAssessmentReportLevelFilter(facts, reportLevel);
-            if (categoryFlags.IncludeRace)
-                facts = facts.Where(x => x.DimRace.DimFactType.FactTypeCode == "submission");
 
-            var joinedFacts = facts
+            if (categoryFlags.IncludeRace)
+            {
+                facts = facts.Where(x => x.DimRace.DimFactType.FactTypeCode == "submission");
+            }
+
+            return facts;
+        }
+
+        private IEnumerable<AssessmentFactMatch> JoinAssessmentFacts(IQueryable<FactK12StudentAssessment> facts, List<ToggleAssessment> toggleAssessments)
+        {
+            return facts
                 .ToList()
                 .Join(toggleAssessments,
-                    t1 => new
+                    fact => new
                     {
-                        Grade = t1.DimGradeLevel.GradeLevelEdFactsCode,
-                        Subject = t1.DimAssessment.AssessmentSubjectEdFactsCode,
-                        AssessmentTypeCode = t1.DimAssessment.AssessmentTypeEdFactsCode
+                        Grade = fact.DimGradeLevel.GradeLevelEdFactsCode,
+                        Subject = fact.DimAssessment.AssessmentSubjectEdFactsCode,
+                        AssessmentTypeCode = fact.DimAssessment.AssessmentTypeEdFactsCode
                     },
-                    t2 => new
+                    toggleAssessment => new
                     {
-                        t2.Grade,
-                        t2.Subject,
-                        t2.AssessmentTypeCode
+                        toggleAssessment.Grade,
+                        toggleAssessment.Subject,
+                        toggleAssessment.AssessmentTypeCode
                     },
-                    (t1, t2) => new { t1, t2 }
-                )
+                    (fact, toggleAssessment) => new AssessmentFactMatch
+                    {
+                        Fact = fact,
+                        ToggleAssessment = toggleAssessment
+                    })
                 .ToList();
+        }
 
-            var groupedFacts = joinedFacts
-                .GroupBy(x => new
-                {
-                    x.t1.K12StudentId,
-                    StateCode = x.t1.DimLea.StateAbbreviationCode,
-                    StateANSICode = x.t1.DimLea.StateAnsiCode,
-                    StateName = x.t1.DimLea.StateAbbreviationDescription,
-                    OrganizationNcesId = GetAssessmentOrgNcesId(x.t1, reportLevel),
-                    OrganizationStateId = GetAssessmentOrgStateId(x.t1, reportLevel),
-                    OrganizationName = GetAssessmentOrgName(x.t1, reportLevel),
-                    ParentOrganizationStateId = GetAssessmentParentStateId(x.t1, reportLevel),
-                    ASSESSMENTSUBJECT = categoryFlags.IncludeSubject ? x.t1.DimAssessment.AssessmentSubjectEdFactsCode : null,
-                    GRADELEVEL = categoryFlags.IncludeGradeLevel ? x.t1.DimGradeLevel.GradeLevelEdFactsCode : null,
-                    IDEAINDICATOR = categoryFlags.IncludeIdea ? x.t1.DimIdeaStatus.IdeaIndicatorEdFactsCode : null,
-                    ECODISSTATUS = categoryFlags.IncludeEcoDis ? x.t1.DimDemographic.EconomicDisadvantageStatusEdFactsCode : null,
-                    LEPSTATUS = categoryFlags.IncludeLepStatus ? x.t1.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
-                    MIGRANTSTATUS = categoryFlags.IncludeMigrant ? x.t1.DimDemographic.MigrantStatusEdFactsCode : null,
-                    RACE = categoryFlags.IncludeRace ? x.t1.DimRace.RaceCode : null,
-                    TITLE1SCHOOLSTATUS = categoryFlags.IncludeTitleI ? x.t1.DimTitle1Status.TitleISchoolStatusEdFactsCode : null,
-                    PROFICIENCYSTATUS = categoryFlags.IncludeProficiency ? GetAssessmentProficiencyStatus(x.t1, x.t2) : null
-                })
-                .GroupBy(x => new
-                {
-                    x.Key.StateCode,
-                    x.Key.StateANSICode,
-                    x.Key.StateName,
-                    x.Key.OrganizationName,
-                    x.Key.OrganizationNcesId,
-                    x.Key.OrganizationStateId,
-                    x.Key.ParentOrganizationStateId,
-                    x.Key.ASSESSMENTSUBJECT,
-                    x.Key.GRADELEVEL,
-                    x.Key.IDEAINDICATOR,
-                    x.Key.ECODISSTATUS,
-                    x.Key.LEPSTATUS,
-                    x.Key.MIGRANTSTATUS,
-                    x.Key.RACE,
-                    x.Key.TITLE1SCHOOLSTATUS,
-                    x.Key.PROFICIENCYSTATUS
-                })
-                .Select(g => new FactK12StudentAssessmentReport
-                {
-                    ReportCode = reportCode,
-                    ReportLevel = reportLevel,
-                    ReportYear = reportYear,
-                    TableTypeAbbrv = tableTypeAbbrv,
-                    Categories = categories,
-                    CategorySetCode = categorySetCode,
-                    StateCode = g.Key.StateCode,
-                    StateANSICode = g.Key.StateANSICode,
-                    StateName = g.Key.StateName,
-                    OrganizationName = g.Key.OrganizationName,
-                    OrganizationNcesId = g.Key.OrganizationNcesId,
-                    OrganizationStateId = g.Key.OrganizationStateId,
-                    ParentOrganizationStateId = g.Key.ParentOrganizationStateId,
-                    ASSESSMENTSUBJECT = g.Key.ASSESSMENTSUBJECT,
-                    GRADELEVEL = g.Key.GRADELEVEL,
-                    IDEAINDICATOR = g.Key.IDEAINDICATOR,
-                    ECODISSTATUS = g.Key.ECODISSTATUS,
-                    LEPSTATUS = g.Key.LEPSTATUS,
-                    MIGRANTSTATUS = g.Key.MIGRANTSTATUS,
-                    RACE = g.Key.RACE,
-                    TITLEISCHOOLSTATUS = g.Key.TITLE1SCHOOLSTATUS,
-                    PROFICIENCYSTATUS = g.Key.PROFICIENCYSTATUS,
-                    TotalIndicator = "N",
-                    AssessmentCount = g.Count()
-                })
-                .AsQueryable();
+        private AssessmentGroupKey CreateAssessmentGroupKey(FactK12StudentAssessment fact, ToggleAssessment toggleAssessment, string reportLevel, AssessmentCategoryFlags categoryFlags)
+        {
+            var groupKey = new AssessmentGroupKey
+            {
+                StateCode = fact.DimLea.StateAbbreviationCode,
+                StateANSICode = fact.DimLea.StateAnsiCode,
+                StateName = fact.DimLea.StateAbbreviationDescription,
+                OrganizationNcesId = GetAssessmentOrgNcesId(fact, reportLevel),
+                OrganizationStateId = GetAssessmentOrgStateId(fact, reportLevel),
+                OrganizationName = GetAssessmentOrgName(fact, reportLevel),
+                ParentOrganizationStateId = GetAssessmentParentStateId(fact, reportLevel)
+            };
 
-            return groupedFacts;
+            if (categoryFlags.IncludeSubject)
+                groupKey.ASSESSMENTSUBJECT = fact.DimAssessment.AssessmentSubjectEdFactsCode;
+            if (categoryFlags.IncludeGradeLevel)
+                groupKey.GRADELEVEL = fact.DimGradeLevel.GradeLevelEdFactsCode;
+            if (categoryFlags.IncludeIdea)
+                groupKey.IDEAINDICATOR = fact.DimIdeaStatus.IdeaIndicatorEdFactsCode;
+            if (categoryFlags.IncludeEcoDis)
+                groupKey.ECODISSTATUS = fact.DimDemographic.EconomicDisadvantageStatusEdFactsCode;
+            if (categoryFlags.IncludeLepStatus)
+                groupKey.LEPSTATUS = fact.DimDemographic.EnglishLearnerStatusEdFactsCode;
+            if (categoryFlags.IncludeMigrant)
+                groupKey.MIGRANTSTATUS = fact.DimDemographic.MigrantStatusEdFactsCode;
+            if (categoryFlags.IncludeRace)
+                groupKey.RACE = fact.DimRace.RaceCode;
+            if (categoryFlags.IncludeTitleI)
+                groupKey.TITLE1SCHOOLSTATUS = fact.DimTitle1Status.TitleISchoolStatusEdFactsCode;
+            if (categoryFlags.IncludeProficiency)
+                groupKey.PROFICIENCYSTATUS = GetAssessmentProficiencyStatus(fact, toggleAssessment);
+
+            return groupKey;
+        }
+
+        private FactK12StudentAssessmentReport CreateAssessmentReport(AssessmentGroupKey groupKey, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv, int assessmentCount)
+        {
+            return new FactK12StudentAssessmentReport
+            {
+                ReportCode = reportCode,
+                ReportLevel = reportLevel,
+                ReportYear = reportYear,
+                TableTypeAbbrv = tableTypeAbbrv,
+                Categories = categories,
+                CategorySetCode = categorySetCode,
+                StateCode = groupKey.StateCode,
+                StateANSICode = groupKey.StateANSICode,
+                StateName = groupKey.StateName,
+                OrganizationName = groupKey.OrganizationName,
+                OrganizationNcesId = groupKey.OrganizationNcesId,
+                OrganizationStateId = groupKey.OrganizationStateId,
+                ParentOrganizationStateId = groupKey.ParentOrganizationStateId,
+                ASSESSMENTSUBJECT = groupKey.ASSESSMENTSUBJECT,
+                GRADELEVEL = groupKey.GRADELEVEL,
+                IDEAINDICATOR = groupKey.IDEAINDICATOR,
+                ECODISSTATUS = groupKey.ECODISSTATUS,
+                LEPSTATUS = groupKey.LEPSTATUS,
+                MIGRANTSTATUS = groupKey.MIGRANTSTATUS,
+                RACE = groupKey.RACE,
+                TITLEISCHOOLSTATUS = groupKey.TITLE1SCHOOLSTATUS,
+                PROFICIENCYSTATUS = groupKey.PROFICIENCYSTATUS,
+                TotalIndicator = "N",
+                AssessmentCount = assessmentCount
+            };
+        }
+
+        private sealed class AssessmentFactMatch
+        {
+            public FactK12StudentAssessment Fact { get; set; } = null!;
+            public ToggleAssessment ToggleAssessment { get; set; } = null!;
+        }
+
+        private sealed record AssessmentGroupKey
+        {
+            public string StateCode { get; set; } = string.Empty;
+            public string StateANSICode { get; set; } = string.Empty;
+            public string StateName { get; set; } = string.Empty;
+            public string OrganizationName { get; set; } = string.Empty;
+            public string OrganizationNcesId { get; set; } = string.Empty;
+            public string OrganizationStateId { get; set; } = string.Empty;
+            public string? ParentOrganizationStateId { get; set; }
+            public string? ASSESSMENTSUBJECT { get; set; }
+            public string? GRADELEVEL { get; set; }
+            public string? IDEAINDICATOR { get; set; }
+            public string? ECODISSTATUS { get; set; }
+            public string? LEPSTATUS { get; set; }
+            public string? MIGRANTSTATUS { get; set; }
+            public string? RACE { get; set; }
+            public string? TITLE1SCHOOLSTATUS { get; set; }
+            public string? PROFICIENCYSTATUS { get; set; }
         }
 
         private static AssessmentCategoryFlags GetAssessmentCategoryFlags(string categories) => new()
