@@ -11,215 +11,215 @@ namespace generate.core.Helpers.TestDataHelper
     public class IdsReferenceData
     {
         #region Data
-        public List<RefK12responsibilityType> RefK12responsibilityTypes { get; private set; }
-        public List<RefSex> RefSexes { get; private set; }
-        public List<RefPersonStatusType> RefPersonStatusTypes { get; private set; }
-        public List<RefDisabilityType> RefDisabilityTypes { get; private set; }
-        public List<RefHomelessNighttimeResidence> RefHomelessNighttimeResidences { get; private set; }
-        public List<RefLanguage> RefLanguages { get; private set; }
-        public List<RefLanguageUseType> RefLanguageUseTypes { get; private set; }
-        public List<RefRace> RefRaces { get; private set; }
+        public List<RefK12responsibilityType> RefK12responsibilityTypes { get; }
+        public List<RefSex> RefSexes { get; }
+        public List<RefPersonStatusType> RefPersonStatusTypes { get; }
+        public List<RefDisabilityType> RefDisabilityTypes { get; }
+        public List<RefHomelessNighttimeResidence> RefHomelessNighttimeResidences { get; }
+        public List<RefLanguage> RefLanguages { get; }
+        public List<RefLanguageUseType> RefLanguageUseTypes { get; }
+        public List<RefRace> RefRaces { get; }
 
-        public List<RefPersonalInformationVerification> RefPersonalInformationVerifications { get; private set; }
-        public List<RefPersonIdentifierType> RefPersonIdentifierTypes { get; private set; }
-        public List<RefPersonIdentificationSystem> RefPersonIdentificationSystems { get; private set; }
-        public List<RefProgramExitReason> RefProgramExitReasons { get; private set; }
-        public List<RefIdeaeducationalEnvironmentEc> RefIdeaeducationalEnvironmentEcs { get; private set; }
-
-
-        public List<RefSpecialEducationExitReason> RefSpecialEducationExitReasons { get; private set; }
-        public List<RefMepServiceType> RefMepServiceTypes { get; private set; }
-        public List<RefCteNonTraditionalGenderStatus> RefCteNonTraditionalGenderStatuses { get; private set; }
-        public List<RefEmployedWhileEnrolled> RefEmployedWhileEnrolleds { get; private set; }
-        public List<RefEmployedAfterExit> RefEmployedAfterExits { get; private set; }
-        public List<RefNeglectedProgramType> RefNeglectedProgramTypes { get; private set; }
-        public List<RefAcademicCareerAndTechnicalOutcomesInProgram> RefAcademicCareerAndTechnicalOutcomesInPrograms { get; private set; }
-        public List<RefAcademicCareerAndTechnicalOutcomesExitedProgram> RefAcademicCareerAndTechnicalOutcomesExitedPrograms { get; private set; }
-        public List<RefTitleIiiaccountability> RefTitleIiiaccountabilities { get; private set; }
-        public List<RefWfProgramParticipation> RefWfProgramParticipations { get; private set; }
-
-        public List<RefDisciplinaryActionTaken> RefDisciplinaryActionTakens { get; private set; }
-        public List<RefDisciplineReason> RefDisciplineReasons { get; private set; }
-        public List<RefDisciplineLengthDifferenceReason> RefDisciplineLengthDifferenceReasons { get; private set; }
-        public List<RefIdeainterimRemoval> RefIdeainterimRemovals { get; private set; }
-        public List<RefIdeainterimRemovalReason> RefIdeainterimRemovalReasons { get; private set; }
-        public List<RefDisciplineMethodOfCwd> RefDisciplineMethodOfCwds { get; private set; }
-        public List<RefWeaponType> RefWeaponTypes { get; private set; }
-        public List<RefDisciplineMethodFirearms> RefDisciplineMethodFirearms { get; private set; }
-        public List<RefIdeadisciplineMethodFirearm> RefIdeadisciplineMethodFirearms { get; private set; }
-        public List<RefIncidentBehavior> RefIncidentBehaviors { get; private set; }
-        public List<RefFirearmType> RefFirearmTypes { get; private set; }
-        public List<RefIdeaeducationalEnvironmentSchoolAge> RefIdeaeducationalEnvironmentSchoolAges { get; private set; }
-        public List<RefProfessionalTechnicalCredentialType> RefProfessionalTechnicalCredentialTypes { get; private set; }
-
-        public List<RefGradeLevelType> RefGradeLevelTypes { get; private set; }
-        public List<RefGradeLevel> RefGradeLevels { get; private set; }
-
-        public List<RefFoodServiceEligibility> RefFoodServiceEligibilities { get; private set; }
-
-        public List<RefHighSchoolDiplomaType> RefHighSchoolDiplomaTypes { get; private set; }
-        public List<RefPsEnrollmentAction> RefPsEnrollmentActions { get; private set; }
-        public List<RefProgressLevel> RefProgressLevels { get; private set; }
-
-        public List<AssessmentPerformanceLevel> PerformanceLevels { get; private set; }
-        public List<RefScoreMetricType> RefScoreMetricTypes { get; private set; }
-        public List<RefAssessmentReasonNotCompleting> RefAssessmentReasonNotCompletings { get; private set; }
-        public List<RefAssessmentReasonNotTested> RefAssessmentReasonNotTested { get; private set; }
-        public List<RefAssessmentParticipationIndicator> RefAssessmentParticipationIndicators { get; private set; }
-
-        public List<RefParticipationType> RefParticipationTypes { get; private set; }
-
-        public List<RefOrganizationType> RefOrganizationTypes { get; private set; }
-
-        public List<RefOrganizationElementType> RefOrganizationElementTypes { get; private set; }
-        public List<RefSchoolType> RefSchoolTypes { get; private set; }
-        public List<RefOrganizationLocationType> RefOrganizationLocationTypes { get; private set; }
-        public List<RefOrganizationIdentifierType> RefOrganizationIdentifierTypes { get; private set; }
-        public List<RefOrganizationIdentificationSystem> RefOrganizationIdentificationSystems { get; private set; }
-        public List<RefSessionType> RefSessionTypes { get; private set; }
-
-        public List<RefReapAlternativeFundingStatus> RefReapAlternativeFundingStatuses { get; private set; }
-        public List<RefFederalProgramFundingAllocationType> RefFederalProgramFundingAllocationTypes { get; private set; }
-
-        public List<RefGunFreeSchoolsActReportingStatus> RefGunFreeSchoolsActReportingStatuses { get; private set; }
+        public List<RefPersonalInformationVerification> RefPersonalInformationVerifications { get; }
+        public List<RefPersonIdentifierType> RefPersonIdentifierTypes { get; }
+        public List<RefPersonIdentificationSystem> RefPersonIdentificationSystems { get;}
+        public List<RefProgramExitReason> RefProgramExitReasons { get;}
+        public List<RefIdeaeducationalEnvironmentEc> RefIdeaeducationalEnvironmentEcs { get;}
 
 
-        public List<RefHighSchoolGraduationRateIndicator> RefHighSchoolGraduationRateIndicators { get; private set; }
-        public List<RefReconstitutedStatus> RefReconstitutedStatuses { get; private set; }
-        public List<RefCteGraduationRateInclusion> RefCteGraduationRateInclusions { get; private set; }
-        public List<RefAmaoAttainmentStatus> RefAmaoAttainmentStatuses { get; private set; }
+        public List<RefSpecialEducationExitReason> RefSpecialEducationExitReasons { get;}
+        public List<RefMepServiceType> RefMepServiceTypes { get; }
+        public List<RefCteNonTraditionalGenderStatus> RefCteNonTraditionalGenderStatuses { get;}
+        public List<RefEmployedWhileEnrolled> RefEmployedWhileEnrolleds { get;}
+        public List<RefEmployedAfterExit> RefEmployedAfterExits { get;}
+        public List<RefNeglectedProgramType> RefNeglectedProgramTypes { get;}
+        public List<RefAcademicCareerAndTechnicalOutcomesInProgram> RefAcademicCareerAndTechnicalOutcomesInPrograms { get; }
+        public List<RefAcademicCareerAndTechnicalOutcomesExitedProgram> RefAcademicCareerAndTechnicalOutcomesExitedPrograms { get; }
+        public List<RefTitleIiiaccountability> RefTitleIiiaccountabilities { get; }
+        public List<RefWfProgramParticipation> RefWfProgramParticipations { get; }
 
-        public List<RefStatePovertyDesignation> RefStatePovertyDesignations { get; private set; }
+        public List<RefDisciplinaryActionTaken> RefDisciplinaryActionTakens { get; }
+        public List<RefDisciplineReason> RefDisciplineReasons { get; }
+        public List<RefDisciplineLengthDifferenceReason> RefDisciplineLengthDifferenceReasons { get; }
+        public List<RefIdeainterimRemoval> RefIdeainterimRemovals { get; }
+        public List<RefIdeainterimRemovalReason> RefIdeainterimRemovalReasons { get; }
+        public List<RefDisciplineMethodOfCwd> RefDisciplineMethodOfCwds { get; }
+        public List<RefWeaponType> RefWeaponTypes { get; }
+        public List<RefDisciplineMethodFirearms> RefDisciplineMethodFirearms { get; }
+        public List<RefIdeadisciplineMethodFirearm> RefIdeadisciplineMethodFirearms { get; }
+        public List<RefIncidentBehavior> RefIncidentBehaviors { get; }
+        public List<RefFirearmType> RefFirearmTypes { get; }
+        public List<RefIdeaeducationalEnvironmentSchoolAge> RefIdeaeducationalEnvironmentSchoolAges { get; }
+        public List<RefProfessionalTechnicalCredentialType> RefProfessionalTechnicalCredentialTypes { get; }
 
-        public List<RefSchoolImprovementStatus> RefSchoolImprovementStatuses { get; private set; }
-        public List<RefSchoolImprovementFunds> RefSchoolImprovementFunds { get; private set; }
+        public List<RefGradeLevelType> RefGradeLevelTypes { get;}
+        public List<RefGradeLevel> RefGradeLevels { get; }
 
-        public List<RefOrganizationIndicator> RefOrganizationIndicators { get; private set; }
+        public List<RefFoodServiceEligibility> RefFoodServiceEligibilities { get; }
+
+        public List<RefHighSchoolDiplomaType> RefHighSchoolDiplomaTypes { get;}
+        public List<RefPsEnrollmentAction> RefPsEnrollmentActions { get; }
+        public List<RefProgressLevel> RefProgressLevels { get; }
+
+        public List<AssessmentPerformanceLevel> PerformanceLevels { get; }
+        public List<RefScoreMetricType> RefScoreMetricTypes { get; }
+        public List<RefAssessmentReasonNotCompleting> RefAssessmentReasonNotCompletings { get; }
+        public List<RefAssessmentReasonNotTested> RefAssessmentReasonNotTested { get; }
+        public List<RefAssessmentParticipationIndicator> RefAssessmentParticipationIndicators { get; }
+
+        public List<RefParticipationType> RefParticipationTypes { get; }
+
+        public List<RefOrganizationType> RefOrganizationTypes { get; }
+
+        public List<RefOrganizationElementType> RefOrganizationElementTypes { get; }
+        public List<RefSchoolType> RefSchoolTypes { get; }
+        public List<RefOrganizationLocationType> RefOrganizationLocationTypes { get; }
+        public List<RefOrganizationIdentifierType> RefOrganizationIdentifierTypes { get; }
+        public List<RefOrganizationIdentificationSystem> RefOrganizationIdentificationSystems { get; }
+        public List<RefSessionType> RefSessionTypes { get; }
+
+        public List<RefReapAlternativeFundingStatus> RefReapAlternativeFundingStatuses { get; }
+        public List<RefFederalProgramFundingAllocationType> RefFederalProgramFundingAllocationTypes { get; }
+
+        public List<RefGunFreeSchoolsActReportingStatus> RefGunFreeSchoolsActReportingStatuses { get; }
+
+
+        public List<RefHighSchoolGraduationRateIndicator> RefHighSchoolGraduationRateIndicators { get; }
+        public List<RefReconstitutedStatus> RefReconstitutedStatuses { get; }
+        public List<RefCteGraduationRateInclusion> RefCteGraduationRateInclusions { get; }
+        public List<RefAmaoAttainmentStatus> RefAmaoAttainmentStatuses { get; }
+
+        public List<RefStatePovertyDesignation> RefStatePovertyDesignations { get;}
+
+        public List<RefSchoolImprovementStatus> RefSchoolImprovementStatuses { get;}
+        public List<RefSchoolImprovementFunds> RefSchoolImprovementFunds { get; }
+
+        public List<RefOrganizationIndicator> RefOrganizationIndicators { get;}
 
 
         
-        public List<RefTitleIschoolStatus> RefTitleIschoolStatuses { get; private set; }
-        public List<RefVirtualSchoolStatus> RefVirtualSchoolStatuses { get; private set; }
-        public List<RefMagnetSpecialProgram> RefMagnetSpecialPrograms { get; private set; }
-        public List<RefNSLPStatus> RefNSLPStatuses { get; private set; }
-        public List<RefSchoolDangerousStatus> RefSchoolDangerousStatuses { get; private set; }
-        public List<RefProgressAchievingEnglishLanguageProficiencyIndicatorStatus> RefProgressAchievingEnglishLanguageProficiencyIndicatorStatuses { get; private set; }
-        public List<RefComprehensiveAndTargetedSupport> RefComprehensiveAndTargetedSupports { get; private set; }
-        public List<RefComprehensiveSupport> RefComprehensiveSupports { get; private set; }
-        public List<RefTargetedSupport> RefTargetedSupports { get; private set; }
-        public List<RefComprehensiveSupportImprovement> RefComprehensiveSupportImprovements { get; private set; }
-        public List<RefTargetedSupportImprovement> RefTargetedSupportImprovements { get; private set; }
-        public List<RefAdditionalTargetedSupport> RefAdditionalTargetedSupportImprovements { get; private set; }        
-        public List<RefIndicatorStatusType> RefIndicatorStatusTypes { get; private set; }
-        public List<RefIndicatorStatusSubgroupType> RefIndicatorStatusSubgroupTypes { get; private set; }
-        public List<RefIndicatorStateDefinedStatus> RefIndicatorStateDefinedStatuses { get; private set; }
-        public List<string> MajorRacialEthnicGroups { get; private set; }
-        public List<string> IndicatorStatuses { get; private set; }
-        public List<RefIndicatorStatusCustomType> RefIndicatorStatusCustomTypes { get; private set; }
+        public List<RefTitleIschoolStatus> RefTitleIschoolStatuses { get;  }
+        public List<RefVirtualSchoolStatus> RefVirtualSchoolStatuses { get;  }
+        public List<RefMagnetSpecialProgram> RefMagnetSpecialPrograms { get;  }
+        public List<RefNSLPStatus> RefNSLPStatuses { get;  }
+        public List<RefSchoolDangerousStatus> RefSchoolDangerousStatuses { get;  }
+        public List<RefProgressAchievingEnglishLanguageProficiencyIndicatorStatus> RefProgressAchievingEnglishLanguageProficiencyIndicatorStatuses { get;  }
+        public List<RefComprehensiveAndTargetedSupport> RefComprehensiveAndTargetedSupports { get;  }
+        public List<RefComprehensiveSupport> RefComprehensiveSupports { get;  }
+        public List<RefTargetedSupport> RefTargetedSupports { get;  }
+        public List<RefComprehensiveSupportImprovement> RefComprehensiveSupportImprovements { get;  }
+        public List<RefTargetedSupportImprovement> RefTargetedSupportImprovements { get;  }
+        public List<RefAdditionalTargetedSupport> RefAdditionalTargetedSupportImprovements { get;  }        
+        public List<RefIndicatorStatusType> RefIndicatorStatusTypes { get;  }
+        public List<RefIndicatorStatusSubgroupType> RefIndicatorStatusSubgroupTypes { get;  }
+        public List<RefIndicatorStateDefinedStatus> RefIndicatorStateDefinedStatuses { get;  }
+        public List<string> MajorRacialEthnicGroups { get;  }
+        public List<string> IndicatorStatuses { get;  }
+        public List<RefIndicatorStatusCustomType> RefIndicatorStatusCustomTypes { get;  }
 
-        public List<RefAcademicSubject> RefAcademicSubjects { get; private set; }
-        public List<AssessmentPerformanceLevel> AssessmentPerformanceLevels { get; private set; }
-        public List<RefAssessmentTypeChildrenWithDisabilities> RefAssessmentTypeChildrenWithDisabilities { get; private set; }
-        public List<RefAssessmentTypeAdministeredToEnglishLearners> RefAssessmentTypeAdministeredToEnglishLearners { get; private set; }
+        public List<RefAcademicSubject> RefAcademicSubjects { get;  }
+        public List<AssessmentPerformanceLevel> AssessmentPerformanceLevels { get;  }
+        public List<RefAssessmentTypeChildrenWithDisabilities> RefAssessmentTypeChildrenWithDisabilities { get;  }
+        public List<RefAssessmentTypeAdministeredToEnglishLearners> RefAssessmentTypeAdministeredToEnglishLearners { get;  }
 
-        public List<RefState> RefStates { get; private set; }
-        public List<RefStateAnsicode> RefStateAnsicodes { get; private set; }
+        public List<RefState> RefStates { get;  }
+        public List<RefStateAnsicode> RefStateAnsicodes { get;  }
 
-        public List<RefLeaType> RefLeaTypes { get; private set; }
+        public List<RefLeaType> RefLeaTypes { get;  }
 
-        public List<RefK12leaTitleIsupportService> RefK12leaTitleIsupportServices { get; private set; }
-
-
-        public List<RefTitleIinstructionalServices> RefTitleIinstructionalServices { get; private set; }
-        public List<RefTitleIprogramType> RefTitleIprogramTypes { get; private set; }
-        public List<RefMepProjectType> RefMepProjectTypes { get; private set; }
-
-        public List<RefTitleIiilanguageInstructionProgramType> RefTitleIiilanguageInstructionProgramTypes { get; private set; }
-
-        public List<RefOperationalStatusType> RefOperationalStatusTypes { get; private set; }
-        public List<RefOperationalStatus> RefOperationalStatuses { get; private set; }
-
-        public List<RefProgramType> RefProgramTypes { get; private set; }
+        public List<RefK12leaTitleIsupportService> RefK12leaTitleIsupportServices { get;  }
 
 
-        public List<RefSpecialEducationAgeGroupTaught> RefSpecialEducationAgeGroupTaughts { get; private set; }
-        public List<RefSpecialEducationStaffCategory> RefSpecialEducationStaffCategories { get; private set; }
-        public List<RefClassroomPositionType> RefClassroomPositionTypes { get; private set; }
-        public List<RefK12staffClassification> RefK12staffClassifications { get; private set; }
+        public List<RefTitleIinstructionalServices> RefTitleIinstructionalServices { get;  }
+        public List<RefTitleIprogramType> RefTitleIprogramTypes { get;  }
+        public List<RefMepProjectType> RefMepProjectTypes { get;  }
 
-        public List<RefTitleIprogramStaffCategory> RefTitleIprogramStaffCategories { get; private set; }
-        public List<RefUnexperiencedStatus> RefUnexperiencedStatuses { get; private set; }
-        public List<RefOutOfFieldStatus> RefOutOfFieldStatuses { get; private set; }
-        public List<RefEmergencyOrProvisionalCredentialStatus> RefEmergencyOrProvisionalCredentialStatuses { get; private set; }
+        public List<RefTitleIiilanguageInstructionProgramType> RefTitleIiilanguageInstructionProgramTypes { get;  }
 
-        public List<RefAeCertificationType> RefAeCertificationTypes { get; private set; }
-        public List<RefCredentialType> RefCredentialTypes { get; private set; }
-        public List<RefParaprofessionalQualification> RefParaprofessionalQualifications { get; private set; }
+        public List<RefOperationalStatusType> RefOperationalStatusTypes { get;  }
+        public List<RefOperationalStatus> RefOperationalStatuses { get;  }
 
-        public List<RefCharterLeaStatus> RefCharterLeaStatuses { get; private set; }
+        public List<RefProgramType> RefProgramTypes { get;  }
 
-        public List<RefCharterSchoolAuthorizerType> RefCharterSchoolAuthorizerTypes { get; private set; }
-        public List<RefCharterSchoolManagementOrganizationType> RefCharterSchoolManagementOrganizationTypes { get; private set; }
-        public List<RefExitOrWithdrawalType> RefExitOrWithdrawalTypes { get; private set; }
-        public List<RefStateAppropriationMethod> RefStateAppropriationMethods { get; private set; }
-        public List<RefOrganizationRelationship> RefOrganizationRelationships { get; private set; }
-        public List<RefInstitutionTelephoneType> RefInstitutionTelephoneTypes { get; private set; }
+
+        public List<RefSpecialEducationAgeGroupTaught> RefSpecialEducationAgeGroupTaughts { get;  }
+        public List<RefSpecialEducationStaffCategory> RefSpecialEducationStaffCategories { get;  }
+        public List<RefClassroomPositionType> RefClassroomPositionTypes { get;  }
+        public List<RefK12staffClassification> RefK12staffClassifications { get;  }
+
+        public List<RefTitleIprogramStaffCategory> RefTitleIprogramStaffCategories { get;  }
+        public List<RefUnexperiencedStatus> RefUnexperiencedStatuses { get;  }
+        public List<RefOutOfFieldStatus> RefOutOfFieldStatuses { get;  }
+        public List<RefEmergencyOrProvisionalCredentialStatus> RefEmergencyOrProvisionalCredentialStatuses { get;  }
+
+        public List<RefAeCertificationType> RefAeCertificationTypes { get;  }
+        public List<RefCredentialType> RefCredentialTypes { get;  }
+        public List<RefParaprofessionalQualification> RefParaprofessionalQualifications { get;  }
+
+        public List<RefCharterLeaStatus> RefCharterLeaStatuses { get;  }
+
+        public List<RefCharterSchoolAuthorizerType> RefCharterSchoolAuthorizerTypes { get;  }
+        public List<RefCharterSchoolManagementOrganizationType> RefCharterSchoolManagementOrganizationTypes { get;  }
+        public List<RefExitOrWithdrawalType> RefExitOrWithdrawalTypes { get;  }
+        public List<RefStateAppropriationMethod> RefStateAppropriationMethods { get;  }
+        public List<RefOrganizationRelationship> RefOrganizationRelationships { get;  }
+        public List<RefInstitutionTelephoneType> RefInstitutionTelephoneTypes { get;  }
 
         #endregion
 
         // Ids
-        public int FundingResponsibilityTypeId { get; private set; }
-        public int AttendanceResponsibilityTypeId { get; private set; }
-        public int IepResponsibilityTypeId { get; private set; }
-        public int StateIssuedId { get; private set; }
-        public int StudentIdentifierTypeId { get; private set; }
-        public int StaffIdentifierTypeId { get; private set; }
-        public int PersonIdentifierTypeId { get; private set; }
-        public int StudentSchoolIdentificationSystemId { get; private set; }
-        public int StudentStateIdentificationSystemId { get; private set; }
-        public int StaffSchoolIdentificationSystemId { get; private set; }
-        public int StaffStateIdentificationSystemId { get; private set; }
-        public int PersonSchoolIdentificationSystemId { get; private set; }
-        public int PersonStateIdentificationSystemId { get; private set; }
+        public int FundingResponsibilityTypeId { get;  }
+        public int AttendanceResponsibilityTypeId { get;  }
+        public int IepResponsibilityTypeId { get;  }
+        public int StateIssuedId { get;  }
+        public int StudentIdentifierTypeId { get;  }
+        public int StaffIdentifierTypeId { get;  }
+        public int PersonIdentifierTypeId { get;  }
+        public int StudentSchoolIdentificationSystemId { get;  }
+        public int StudentStateIdentificationSystemId { get;  }
+        public int StaffSchoolIdentificationSystemId { get;  }
+        public int StaffStateIdentificationSystemId { get;  }
+        public int PersonSchoolIdentificationSystemId { get;  }
+        public int PersonStateIdentificationSystemId { get;  }
 
-        public IEnumerable<int> EntryGradeLevelIds { get; private set; }
-        public IEnumerable<int> ExitGradeLevelIds { get; private set; }
-        public IEnumerable<int> GradesOfferedIds { get; private set; }
+        public IEnumerable<int> EntryGradeLevelIds { get;  }
+        public IEnumerable<int> ExitGradeLevelIds { get;  }
+        public IEnumerable<int> GradesOfferedIds { get;  }
 
-        public int RefScoreMetricTypeId { get; private set; }
-        public string RefScoreMetricType { get; private set; }
+        public int RefScoreMetricTypeId { get;  }
+        public string RefScoreMetricType { get;  }
 
-        public int EcoDisStatusTypeId { get; private set; }
-        public int HomelessStatusTypeId { get; private set; }
-        public int HomlessUnaccompaniedYouthStatusTypeId { get; private set; }
-        public int LepStatusTypeId { get; private set; }
-        public int PerkinsLepStatusTypeId { get; private set; }
-        public int MigrantStatusTypeId { get; private set; }
-        public int SpecialEdStatusTypeId { get; private set; }
-        public int ImmigrantTitleIIIStatusTypeId { get; private set; }
-        public int GedParticipationTypeId { get; private set; }
-        public int FullSchoolYearTypeId { get; private set; }
+        public int EcoDisStatusTypeId { get;  }
+        public int HomelessStatusTypeId { get;  }
+        public int HomlessUnaccompaniedYouthStatusTypeId { get;  }
+        public int LepStatusTypeId { get;  }
+        public int PerkinsLepStatusTypeId { get;  }
+        public int MigrantStatusTypeId { get;  }
+        public int SpecialEdStatusTypeId { get;  }
+        public int ImmigrantTitleIIIStatusTypeId { get;  }
+        public int GedParticipationTypeId { get;  }
+        public int FullSchoolYearTypeId { get;  }
 
-        public int GradesOfferedTypeId { get; private set; }
-        public int EntryGradeLevelTypeId { get; private set; }
-        public int ExitGradeLevelTypeId { get; private set; }
+        public int GradesOfferedTypeId { get;  }
+        public int EntryGradeLevelTypeId { get;  }
+        public int ExitGradeLevelTypeId { get;  }
 
-        public int OrganizationElementTypeId { get; private set; }
-        public int SchoolOrganizationTypeId { get; private set; }
+        public int OrganizationElementTypeId { get;  }
+        public int SchoolOrganizationTypeId { get;  }
 
-        public int ProgramRefOrganizationTypeId { get; private set; }
+        public int ProgramRefOrganizationTypeId { get;  }
 
-        public int SpecialEdProgramTypeId { get; private set; }
-        public int LepProgramTypeId { get; private set; }
-        public int FosterCareProgramTypeId { get; private set; }
-        public int ImmigrantEducationProgramTypeId { get; private set; }
-        public int MigrantEducationProgramTypeId { get; private set; }
-        public int CteProgramTypeId { get; private set; }
-        public int NeglectedProgramTypeId { get; private set; }
-        public int HomelessProgramTypeId { get; private set; }
+        public int SpecialEdProgramTypeId { get;  }
+        public int LepProgramTypeId { get;  }
+        public int FosterCareProgramTypeId { get;  }
+        public int ImmigrantEducationProgramTypeId { get;  }
+        public int MigrantEducationProgramTypeId { get;  }
+        public int CteProgramTypeId { get;  }
+        public int NeglectedProgramTypeId { get;  }
+        public int HomelessProgramTypeId { get;  }
 
-        public int ParaProfessionalId { get; private set; }
-        public int SpecialEdTeacherId { get; private set; }
+        public int ParaProfessionalId { get;  }
+        public int SpecialEdTeacherId { get;  }
 
 
         public IdsReferenceData()

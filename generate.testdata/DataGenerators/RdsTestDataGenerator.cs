@@ -538,262 +538,262 @@ namespace generate.testdata.DataGenerators
         private RdsTestDataObject CreateOrganizations(RdsTestDataObject testData, int quantityOfStudents)
         {
             Random rnd = this.GlobalRandom;
-
-            // Reference Data
-
             var placeNames = _testDataHelper.ListofPlaceNames();
             var schoolTypes = _testDataHelper.ListofSchoolNameTypes();
 
-            // Add missing
-
-            var dimSea = new DimSea()
-            {
-                DimSeaId = -1,
-                SeaName = "MISSING"
-            };
-            testData.DimSeas.Add(dimSea);
-            this.AllDimSeas.Add(dimSea);
-
-            var dimLea = new DimLea()
-            {
-                DimLeaID = -1,
-                LeaName = "MISSING"
-            };
-            testData.DimLeas.Add(dimLea);
-            this.AllDimLeas.Add(dimLea);
-
-            var dimSchool = new DimK12School()
-            {
-                DimK12SchoolId = -1,
-                NameOfInstitution = "MISSING"
-            };
-            testData.DimSchools.Add(dimSchool);
-            this.AllDimSchools.Add(dimSchool);
-
+            AddMissingOrganizationRecords(testData);
 
             int quantityOfSeas = _testDataProfile.QuantityOfSeas;
             int averageStudentsPerLea = _testDataHelper.GetRandomIntInRange(rnd, _testDataProfile.MinimumAverageStudentsPerLea, _testDataProfile.MaximumAverageStudentsPerLea);
             int quantityOfLeas = (int)Math.Ceiling((decimal)quantityOfStudents / (decimal)averageStudentsPerLea);
-            
+
             for (int seaCounter = 0; seaCounter < quantityOfSeas; seaCounter++)
             {
                 var state = _testDataHelper.GetRandomObject<RefState>(rnd, this.RdsReferenceData.RefStates);
-                var seaName = _testDataHelper.GetK12SeaName(state.Description);
-                var refStateAnsicode = this.RdsReferenceData.RefStateAnsicodes.FirstOrDefault(x => x.StateName == state.Description);
-                var seaOrganizationId = -1;
-                if (refStateAnsicode != null)
-                {
-                    seaOrganizationId = int.Parse(refStateAnsicode.Code);
-                }
-                var streetNumberAndName = _testDataHelper.GetRandomIntInRange(rnd, 1, 20000) + " " + _testDataHelper.GetStreetName(rnd, this.PlaceNames, this.StreetTypes);
-                var postalCode = _testDataHelper.GetRandomIntInRange(rnd, 10000, 90000).ToString();
-                var city = _testDataHelper.GetCityName(rnd, this.PlaceNames);
-                var website = "https://www." + _testDataHelper.MakeAcronym(dimSea.SeaName).ToLower() + ".org";
-                var telephone = _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700);
-                var startDate = _testDataHelper.GetRandomDate(rnd, 10);
-
-                dimSea = new DimSea()
-                {
-                    DimSeaId = this.SetAndGetMaxId("DimSeas"),
-                    SeaName = seaName,
-                    SeaOrganizationId = seaOrganizationId,
-                    StateAnsiCode = refStateAnsicode.Code,
-                    StateAbbreviationCode = state.Code,
-                    SeaIdentifierState = seaOrganizationId.ToString(),
-                    StateAbbreviationDescription = state.Description,
-                    MailingAddressStreet = streetNumberAndName,
-                    MailingAddressCity = city,
-                    MailingAddressState = dimSea.StateAbbreviationCode,
-                    MailingAddressPostalCode = postalCode,
-                    PhysicalAddressStreet = streetNumberAndName,
-                    PhysicalAddressCity = city,
-                    PhysicalAddressState = dimSea.StateAbbreviationCode,
-                    PhysicalAddressPostalCode = postalCode,
-                    Website = website,
-                    Telephone = telephone,
-                    RecordStartDateTime = startDate
-
-                };
-                testData.DimSeas.Add(dimSea);
-                this.AllDimSeas.Add(dimSea);
+                var sea = CreateSeaRecord(testData, rnd, state, placeNames);
 
                 for (int leaCounter = 0; leaCounter < quantityOfLeas; leaCounter++)
                 {
-                    var leaName = _testDataHelper.GetK12LeaName(rnd, placeNames);
-                    var leaOrganizationId = _testDataHelper.GetRandomIntInRange(rnd, 1000, 9999);
+                    var lea = CreateLeaRecord(testData, rnd, state, placeNames, sea);
+                    AddLeaToCollections(testData, lea);
 
-                    // Ensure leaOrganizationId is not already used
-                    //while (this.AllDimLeas.Any(x => x.LeaOrganizationId == leaOrganizationId))
-                    //{
-                    //    leaOrganizationId = _testDataHelper.GetRandomIntInRange(rnd, 1000, 9999);
-                    //}
-
-
-                    var leaNcesId = refStateAnsicode.Code + leaOrganizationId.ToString().PadLeft(5, '0');
-                    var leaEffectiveDate = _testDataHelper.GetRandomDateInRange(rnd, new DateTime(1920, 1, 1), DateTime.Now.AddYears(-5));
-                    var isSupervisoryUnion = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IsSupervisoryUnionDistribution);
-                    var isReportedFederally = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IsReportedFederallyDistribution);
-                    var leaHasNcesId = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LeaHasNcesIdDistribution);
-                    streetNumberAndName = _testDataHelper.GetRandomIntInRange(rnd, 1, 20000) + " " + _testDataHelper.GetStreetName(rnd, this.PlaceNames, this.StreetTypes);
-                    postalCode = _testDataHelper.GetRandomIntInRange(rnd, 10000, 90000).ToString();
-                    city = _testDataHelper.GetCityName(rnd, this.PlaceNames);
-                    website = "https://www." + _testDataHelper.MakeAcronym(dimLea.LeaName).ToLower() + ".org";
-                    telephone = _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700);
-                    var refLeaType = _testDataHelper.GetRandomObject<RefLeaType>(rnd, this.RdsReferenceData.RefLeaTypes);
-                    var isCharterLea = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IsCharterSchoolDistribution);
-                    var leaoperationalStatus = _testDataHelper.GetRandomObject<RefOperationalStatus>(rnd, this.RdsReferenceData.RefLeaOperationalStatuses);
-                    startDate = _testDataHelper.GetRandomDate(rnd, 10);
-
-                    string supervisoryUnionNumber = null;
-                    if (isSupervisoryUnion)
-                    {
-                        supervisoryUnionNumber = _testDataHelper.GetRandomIntInRange(rnd, 100, 999).ToString();
-                    }
-
-                    if (!leaHasNcesId)
-                    {
-                        leaNcesId = null;
-                    }
-
-                    dimLea = new DimLea()
-                    {
-                        DimLeaID = this.SetAndGetMaxId("DimLeas"),
-                        StateAbbreviationCode = state.Code,
-                        StateAbbreviationDescription = state.Description,
-                        StateAnsiCode = seaOrganizationId.ToString(),
-                        //SeaOrganizationId = seaOrganizationId,
-                        SeaName = state.Description + " Department of Education",
-                        SeaIdentifierState = seaOrganizationId.ToString(),
-                        LeaName = leaName,
-                        //LeaOrganizationId = leaOrganizationId,
-                        LeaIdentifierNces = leaNcesId,
-                        LeaIdentifierState = leaOrganizationId.ToString(),
-                        LeaSupervisoryUnionIdentificationNumber = supervisoryUnionNumber,
-                        ReportedFederally = isReportedFederally,
-                        OperationalStatusEffectiveDate = leaEffectiveDate,
-                        PriorLeaIdentifierState = leaHasNcesId ? leaOrganizationId.ToString() : null,
-                        MailingAddressStreet = streetNumberAndName,
-                        MailingAddressCity = city,
-                        MailingAddressState = dimSea.StateAbbreviationCode,
-                        MailingAddressPostalCode = postalCode,
-                        OutOfStateIndicator = dimLea.StateAbbreviationCode != dimSea.StateAbbreviationCode,
-                        PhysicalAddressStreet = streetNumberAndName,
-                        PhysicalAddressCity = city,
-                        PhysicalAddressState = dimSea.StateAbbreviationCode,
-                        PhysicalAddressPostalCode = postalCode,
-                        Website = website,
-                        Telephone = telephone,
-                        LeaTypeId = refLeaType.RefLeaTypeId,
-                        LeaTypeCode = refLeaType.Code,
-                        LeaTypeDescription = refLeaType.Description,
-                        LeaTypeEdFactsCode = refLeaType.Code,
-                        LeaOperationalStatus = leaoperationalStatus.Code,
-                        LeaOperationalStatusEdFactsCode = leaoperationalStatus.RefOperationalStatusId.ToString(),
-                        RecordStartDateTime = startDate
-                    };
-                    testData.DimLeas.Add(dimLea);
-                    this.AllDimLeas.Add(dimLea);
-                    this.TotalLeasCreated++;
-
-                    string leaGeographicType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LeaGeographicDistribution);
-                    int numberOfSchoolsInLea = _testDataHelper.GetRandomIntInRange(rnd, _testDataProfile.MinimumSchoolsPerLeaRural, _testDataProfile.MaximumSchoolsPerLeaRural);
-                    if (leaGeographicType == "Urban")
-                    {
-                        numberOfSchoolsInLea = _testDataHelper.GetRandomIntInRange(rnd, _testDataProfile.MinimumSchoolsPerLeaUrban, _testDataProfile.MaximumSchoolsPerLeaUrban);
-                    }
-
+                    int numberOfSchoolsInLea = GetNumberOfSchoolsInLea(rnd);
                     for (int schoolCounter = 0; schoolCounter < numberOfSchoolsInLea; schoolCounter++)
                     {
-                        var schoolOrganizationId = _testDataHelper.GetRandomIntInRange(rnd, 100000, 999999);
-
-                        //while (this.AllDimSchools.Any(x => x.SchoolOrganizationId == schoolOrganizationId))
-                        //{
-                        //    schoolOrganizationId = _testDataHelper.GetRandomIntInRange(rnd, 100000, 999999);
-                        //}
-
-                        var schoolNcesId = refStateAnsicode.Code + schoolOrganizationId.ToString().PadLeft(8, '0');
-                        var schoolEffectiveDate = _testDataHelper.GetRandomDateInRange(rnd, new DateTime(1920, 1, 1), DateTime.Now.AddYears(-5));
-                        var schoolHasNcesId = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.SchoolHasNcesIdDistribution);
-                        streetNumberAndName = _testDataHelper.GetRandomIntInRange(rnd, 1, 20000) + " " + _testDataHelper.GetStreetName(rnd, this.PlaceNames, this.StreetTypes);
-                        postalCode = _testDataHelper.GetRandomIntInRange(rnd, 10000, 90000).ToString();
-                        city = _testDataHelper.GetCityName(rnd, this.PlaceNames);
-                        website = "https://www." + _testDataHelper.MakeAcronym(dimSchool.NameOfInstitution).ToLower() + ".org";
-                        telephone = _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700);
-                        var refSchoolType = _testDataHelper.GetRandomObject<RefSchoolType>(rnd, this.RdsReferenceData.RefSchoolTypes);
-                        var schoolOperationalStatus = _testDataHelper.GetRandomObject<RefOperationalStatus>(rnd, this.RdsReferenceData.RefSchoolOperationalStatuses);
-                        startDate = _testDataHelper.GetRandomDate(rnd, 10);
-
-                        bool isCharterSchool = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IsCharterSchoolDistribution);
-
-                        if (!schoolHasNcesId)
-                        {
-                            schoolNcesId = null;
-                        }
-
-                        dimSchool = new DimK12School()
-                        {
-                            DimK12SchoolId = this.SetAndGetMaxId("DimSchools"),
-                            StateAbbreviationCode = state.Code,
-                            StateAbbreviationDescription = state.Description,
-                            StateAnsiCode = seaOrganizationId.ToString(),
-                            //SeaOrganizationId = seaOrganizationId,
-                            SeaName = state.Description + " Department of Education",
-                            SeaIdentifierState = seaOrganizationId.ToString(),
-                            //LeaOrganizationId = leaOrganizationId,
-                            LeaIdentifierNces = leaNcesId,
-                            LeaIdentifierState = leaOrganizationId.ToString(),
-                            LeaName = leaName,
-                            //SchoolOrganizationId = schoolOrganizationId,
-                            SchoolIdentifierNces = leaNcesId + schoolNcesId,
-                            SchoolIdentifierState = schoolOrganizationId.ToString(),
-                            NameOfInstitution = _testDataHelper.GetK12SchoolName(rnd, placeNames, schoolTypes),
-                            PriorLeaIdentifierState = leaOrganizationId.ToString(),
-                            PriorSchoolIdentifierState = schoolOrganizationId.ToString(),      
-                            ReportedFederally = isReportedFederally,
-                            OperationalStatusEffectiveDate = schoolEffectiveDate,
-                            CharterSchoolIndicator = isCharterSchool,
-                            MailingAddressStreet = streetNumberAndName,
-                            MailingAddressCity = city,
-                            MailingAddressState = dimSea.StateAbbreviationCode,
-                            MailingAddressPostalCode = postalCode,
-                            OutOfStateIndicator = dimSchool.StateAbbreviationCode != dimSea.StateAbbreviationCode,
-                            PhysicalAddressStreet = streetNumberAndName,
-                            PhysicalAddressCity = city,
-                            PhysicalAddressState = dimSea.StateAbbreviationCode,
-                            PhysicalAddressPostalCode = postalCode,
-                            Website = website,
-                            Telephone = telephone,
-                            LeaTypeId = refLeaType.RefLeaTypeId,
-                            LeaTypeCode = refLeaType.Code,
-                            LeaTypeDescription = refLeaType.Description,
-                            LeaTypeEdFactsCode = refLeaType.Code,
-                            SchoolTypeId = refSchoolType.RefSchoolTypeId,
-                            SchoolTypeCode = refSchoolType.Code,
-                            SchoolTypeDescription = refSchoolType.Description,
-                            SchoolTypeEdFactsCode = refSchoolType.Code,
-                            SchoolOperationalStatus = schoolOperationalStatus.Code,
-                            SchoolOperationalStatusEdFactsCode = schoolOperationalStatus.RefOperationalStatusId.ToString(),
-                            RecordStartDateTime = startDate
-                        };
-
-                        if (isCharterSchool)
-                        {
-                            dimSchool.CharterSchoolContractIdNumber = "ct" + _testDataHelper.GetRandomIntInRange(rnd, 1, 1000).ToString();
-                            dimSchool.CharterSchoolContractApprovalDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Now.AddYears(-10), DateTime.Now).ToShortDateString();
-                            dimSchool.CharterSchoolContractRenewalDate = _testDataHelper.GetRandomDateAfter(rnd, DateTime.Now, 720).ToShortDateString();
-                            dimSchool.CharterSchoolAuthorizerIdPrimary = _testDataHelper.GetRandomIntInRange(rnd, 100000, 999999).ToString();
-                            dimSchool.CharterSchoolAuthorizerIdSecondary = _testDataHelper.GetRandomIntInRange(rnd, 100000, 999999).ToString();
-                        }
-
-                        testData.DimSchools.Add(dimSchool);
-                        this.AllDimSchools.Add(dimSchool);
-                        this.TotalSchoolsCreated++;
+                        var school = CreateSchoolRecord(testData, rnd, state, placeNames, schoolTypes, sea, lea);
+                        ApplyCharterSchoolValuesIfNeeded(school, rnd);
+                        AddSchoolToCollections(testData, school);
                     }
                 }
             }
 
             return testData;
+        }
 
+        private void AddMissingOrganizationRecords(RdsTestDataObject testData)
+        {
+            var dimSea = new DimSea() { DimSeaId = -1, SeaName = "MISSING" };
+            testData.DimSeas.Add(dimSea);
+            this.AllDimSeas.Add(dimSea);
+
+            var dimLea = new DimLea() { DimLeaID = -1, LeaName = "MISSING" };
+            testData.DimLeas.Add(dimLea);
+            this.AllDimLeas.Add(dimLea);
+
+            var dimSchool = new DimK12School() { DimK12SchoolId = -1, NameOfInstitution = "MISSING" };
+            testData.DimSchools.Add(dimSchool);
+            this.AllDimSchools.Add(dimSchool);
+        }
+
+        private DimSea CreateSeaRecord(RdsTestDataObject testData, Random rnd, RefState state, List<string> placeNames)
+        {
+            var refStateAnsicode = this.RdsReferenceData.RefStateAnsicodes.FirstOrDefault(x => x.StateName == state.Description);
+            var seaOrganizationId = refStateAnsicode != null ? int.Parse(refStateAnsicode.Code) : -1;
+            var streetNumberAndName = _testDataHelper.GetRandomIntInRange(rnd, 1, 20000) + " " + _testDataHelper.GetStreetName(rnd, this.PlaceNames, this.StreetTypes);
+            var postalCode = _testDataHelper.GetRandomIntInRange(rnd, 10000, 90000).ToString();
+            var city = _testDataHelper.GetCityName(rnd, this.PlaceNames);
+            var website = "https://www." + _testDataHelper.MakeAcronym(state.Description).ToLower() + ".org";
+            var telephone = _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700);
+            var startDate = _testDataHelper.GetRandomDate(rnd, 10);
+            var dimSea = new DimSea()
+            {
+                DimSeaId = this.SetAndGetMaxId("DimSeas"),
+                SeaName = _testDataHelper.GetK12SeaName(state.Description),
+                SeaOrganizationId = seaOrganizationId,
+                StateAnsiCode = refStateAnsicode?.Code ?? string.Empty,
+                StateAbbreviationCode = state.Code,
+                SeaIdentifierState = seaOrganizationId.ToString(),
+                StateAbbreviationDescription = state.Description,
+                MailingAddressStreet = streetNumberAndName,
+                MailingAddressCity = city,
+                MailingAddressState = state.Code,
+                MailingAddressPostalCode = postalCode,
+                PhysicalAddressStreet = streetNumberAndName,
+                PhysicalAddressCity = city,
+                PhysicalAddressState = state.Code,
+                PhysicalAddressPostalCode = postalCode,
+                Website = website,
+                Telephone = telephone,
+                RecordStartDateTime = startDate
+            };
+
+            testData.DimSeas.Add(dimSea);
+            this.AllDimSeas.Add(dimSea);
+            return dimSea;
+        }
+
+        private DimLea CreateLeaRecord(RdsTestDataObject testData, Random rnd, RefState state, List<string> placeNames, DimSea sea)
+        {
+            var refStateAnsicode = this.RdsReferenceData.RefStateAnsicodes.FirstOrDefault(x => x.StateName == state.Description);
+            var seaOrganizationId = refStateAnsicode != null ? int.Parse(refStateAnsicode.Code) : -1;
+            var leaName = _testDataHelper.GetK12LeaName(rnd, placeNames);
+            var leaOrganizationId = _testDataHelper.GetRandomIntInRange(rnd, 1000, 9999);
+            var leaNcesId = refStateAnsicode != null ? refStateAnsicode.Code + leaOrganizationId.ToString().PadLeft(5, '0') : null;
+            var leaEffectiveDate = _testDataHelper.GetRandomDateInRange(rnd, new DateTime(1920, 1, 1), DateTime.Now.AddYears(-5));
+            var isSupervisoryUnion = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IsSupervisoryUnionDistribution);
+            var isReportedFederally = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IsReportedFederallyDistribution);
+            var leaHasNcesId = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LeaHasNcesIdDistribution);
+            var streetNumberAndName = _testDataHelper.GetRandomIntInRange(rnd, 1, 20000) + " " + _testDataHelper.GetStreetName(rnd, this.PlaceNames, this.StreetTypes);
+            var postalCode = _testDataHelper.GetRandomIntInRange(rnd, 10000, 90000).ToString();
+            var city = _testDataHelper.GetCityName(rnd, this.PlaceNames);
+            var website = "https://www." + _testDataHelper.MakeAcronym(leaName).ToLower() + ".org";
+            var telephone = _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700);
+            var refLeaType = _testDataHelper.GetRandomObject<RefLeaType>(rnd, this.RdsReferenceData.RefLeaTypes);
+            var leaOperationalStatus = _testDataHelper.GetRandomObject<RefOperationalStatus>(rnd, this.RdsReferenceData.RefLeaOperationalStatuses);
+            var startDate = _testDataHelper.GetRandomDate(rnd, 10);
+            string supervisoryUnionNumber = isSupervisoryUnion ? _testDataHelper.GetRandomIntInRange(rnd, 100, 999).ToString() : null;
+
+            if (!leaHasNcesId)
+            {
+                leaNcesId = null;
+            }
+
+            var dimLea = new DimLea()
+            {
+                DimLeaID = this.SetAndGetMaxId("DimLeas"),
+                StateAbbreviationCode = state.Code,
+                StateAbbreviationDescription = state.Description,
+                StateAnsiCode = seaOrganizationId.ToString(),
+                SeaName = state.Description + " Department of Education",
+                SeaIdentifierState = seaOrganizationId.ToString(),
+                LeaName = leaName,
+                LeaIdentifierNces = leaNcesId,
+                LeaIdentifierState = leaOrganizationId.ToString(),
+                LeaSupervisoryUnionIdentificationNumber = supervisoryUnionNumber,
+                ReportedFederally = isReportedFederally,
+                OperationalStatusEffectiveDate = leaEffectiveDate,
+                PriorLeaIdentifierState = leaHasNcesId ? leaOrganizationId.ToString() : null,
+                MailingAddressStreet = streetNumberAndName,
+                MailingAddressCity = city,
+                MailingAddressState = sea.StateAbbreviationCode,
+                MailingAddressPostalCode = postalCode,
+                OutOfStateIndicator = sea.StateAbbreviationCode != state.Code,
+                PhysicalAddressStreet = streetNumberAndName,
+                PhysicalAddressCity = city,
+                PhysicalAddressState = sea.StateAbbreviationCode,
+                PhysicalAddressPostalCode = postalCode,
+                Website = website,
+                Telephone = telephone,
+                LeaTypeId = refLeaType.RefLeaTypeId,
+                LeaTypeCode = refLeaType.Code,
+                LeaTypeDescription = refLeaType.Description,
+                LeaTypeEdFactsCode = refLeaType.Code,
+                LeaOperationalStatus = leaOperationalStatus.Code,
+                LeaOperationalStatusEdFactsCode = leaOperationalStatus.RefOperationalStatusId.ToString(),
+                RecordStartDateTime = startDate
+            };
+
+            return dimLea;
+        }
+
+        private int GetNumberOfSchoolsInLea(Random rnd)
+        {
+            string leaGeographicType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LeaGeographicDistribution);
+            int numberOfSchoolsInLea = _testDataHelper.GetRandomIntInRange(rnd, _testDataProfile.MinimumSchoolsPerLeaRural, _testDataProfile.MaximumSchoolsPerLeaRural);
+
+            if (leaGeographicType == "Urban")
+            {
+                numberOfSchoolsInLea = _testDataHelper.GetRandomIntInRange(rnd, _testDataProfile.MinimumSchoolsPerLeaUrban, _testDataProfile.MaximumSchoolsPerLeaUrban);
+            }
+
+            return numberOfSchoolsInLea;
+        }
+
+        private DimK12School CreateSchoolRecord(RdsTestDataObject testData, Random rnd, RefState state, List<string> placeNames, List<string> schoolTypes, DimSea sea, DimLea lea)
+        {
+            var refStateAnsicode = this.RdsReferenceData.RefStateAnsicodes.FirstOrDefault(x => x.StateName == state.Description);
+            var seaOrganizationId = refStateAnsicode != null ? int.Parse(refStateAnsicode.Code) : -1;
+            var schoolOrganizationId = _testDataHelper.GetRandomIntInRange(rnd, 100000, 999999);
+            var schoolNcesId = refStateAnsicode != null ? refStateAnsicode.Code + schoolOrganizationId.ToString().PadLeft(8, '0') : null;
+            var schoolEffectiveDate = _testDataHelper.GetRandomDateInRange(rnd, new DateTime(1920, 1, 1), DateTime.Now.AddYears(-5));
+            var schoolHasNcesId = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.SchoolHasNcesIdDistribution);
+            var streetNumberAndName = _testDataHelper.GetRandomIntInRange(rnd, 1, 20000) + " " + _testDataHelper.GetStreetName(rnd, this.PlaceNames, this.StreetTypes);
+            var postalCode = _testDataHelper.GetRandomIntInRange(rnd, 10000, 90000).ToString();
+            var city = _testDataHelper.GetCityName(rnd, this.PlaceNames);
+            var website = "https://www." + _testDataHelper.MakeAcronym(lea.LeaName).ToLower() + ".org";
+            var telephone = _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700) + "-" + _testDataHelper.GetRandomIntInRange(rnd, 100, 700);
+            var refSchoolType = _testDataHelper.GetRandomObject<RefSchoolType>(rnd, this.RdsReferenceData.RefSchoolTypes);
+            var schoolOperationalStatus = _testDataHelper.GetRandomObject<RefOperationalStatus>(rnd, this.RdsReferenceData.RefSchoolOperationalStatuses);
+            var startDate = _testDataHelper.GetRandomDate(rnd, 10);
+            bool isCharterSchool = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IsCharterSchoolDistribution) == true;
+
+            if (!schoolHasNcesId)
+            {
+                schoolNcesId = null;
+            }
+
+            var dimSchool = new DimK12School()
+            {
+                DimK12SchoolId = this.SetAndGetMaxId("DimSchools"),
+                StateAbbreviationCode = state.Code,
+                StateAbbreviationDescription = state.Description,
+                StateAnsiCode = seaOrganizationId.ToString(),
+                SeaName = state.Description + " Department of Education",
+                SeaIdentifierState = seaOrganizationId.ToString(),
+                LeaIdentifierNces = lea.LeaIdentifierNces,
+                LeaIdentifierState = lea.LeaIdentifierState,
+                LeaName = lea.LeaName,
+                SchoolIdentifierNces = lea.LeaIdentifierNces + schoolNcesId,
+                SchoolIdentifierState = schoolOrganizationId.ToString(),
+                NameOfInstitution = _testDataHelper.GetK12SchoolName(rnd, placeNames, schoolTypes),
+                PriorLeaIdentifierState = lea.LeaIdentifierState,
+                PriorSchoolIdentifierState = schoolOrganizationId.ToString(),
+                ReportedFederally = lea.ReportedFederally,
+                OperationalStatusEffectiveDate = schoolEffectiveDate,
+                CharterSchoolIndicator = isCharterSchool,
+                MailingAddressStreet = streetNumberAndName,
+                MailingAddressCity = city,
+                MailingAddressState = sea.StateAbbreviationCode,
+                MailingAddressPostalCode = postalCode,
+                OutOfStateIndicator = sea.StateAbbreviationCode != state.Code,
+                PhysicalAddressStreet = streetNumberAndName,
+                PhysicalAddressCity = city,
+                PhysicalAddressState = sea.StateAbbreviationCode,
+                PhysicalAddressPostalCode = postalCode,
+                Website = website,
+                Telephone = telephone,
+                LeaTypeId = lea.LeaTypeId,
+                LeaTypeCode = lea.LeaTypeCode,
+                LeaTypeDescription = lea.LeaTypeDescription,
+                LeaTypeEdFactsCode = lea.LeaTypeEdFactsCode,
+                SchoolTypeId = refSchoolType.RefSchoolTypeId,
+                SchoolTypeCode = refSchoolType.Code,
+                SchoolTypeDescription = refSchoolType.Description,
+                SchoolTypeEdFactsCode = refSchoolType.Code,
+                SchoolOperationalStatus = schoolOperationalStatus.Code,
+                SchoolOperationalStatusEdFactsCode = schoolOperationalStatus.RefOperationalStatusId.ToString(),
+                RecordStartDateTime = startDate
+            };
+
+            return dimSchool;
+        }
+
+        private void ApplyCharterSchoolValuesIfNeeded(DimK12School dimSchool, Random rnd)
+        {
+            if (dimSchool.CharterSchoolIndicator != true)
+            {
+                return;
+            }
+
+            dimSchool.CharterSchoolContractIdNumber = "ct" + _testDataHelper.GetRandomIntInRange(rnd, 1, 1000).ToString();
+            dimSchool.CharterSchoolContractApprovalDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Now.AddYears(-10), DateTime.Now).ToShortDateString();
+            dimSchool.CharterSchoolContractRenewalDate = _testDataHelper.GetRandomDateAfter(rnd, DateTime.Now, 720).ToShortDateString();
+            dimSchool.CharterSchoolAuthorizerIdPrimary = _testDataHelper.GetRandomIntInRange(rnd, 100000, 999999).ToString();
+            dimSchool.CharterSchoolAuthorizerIdSecondary = _testDataHelper.GetRandomIntInRange(rnd, 100000, 999999).ToString();
+        }
+
+        private void AddLeaToCollections(RdsTestDataObject testData, DimLea dimLea)
+        {
+            testData.DimLeas.Add(dimLea);
+            this.AllDimLeas.Add(dimLea);
+            this.TotalLeasCreated++;
+        }
+
+        private void AddSchoolToCollections(RdsTestDataObject testData, DimK12School dimSchool)
+        {
+            testData.DimSchools.Add(dimSchool);
+            this.AllDimSchools.Add(dimSchool);
+            this.TotalSchoolsCreated++;
         }
 
         private RdsTestDataObject CreateDimStudents(RdsTestDataObject testData, int quantityOfStudents)
