@@ -9,7 +9,11 @@ import {
     CedsElementMatch,
     CedsOptionSetValue,
     EtlMap,
+    EtlMapGuidance,
+    EtlMapJoin,
     EtlMapSave,
+    EtlMapSource,
+    EtlMapSourceSchema,
     FactType,
     EtlSourceElementMapping,
     EtlSourceElementMappingResult,
@@ -91,6 +95,57 @@ export class EtlSourceMappingService extends BaseService {
             );
     }
 
+    getMapSources(etlMapId: number): Observable<EtlMapSource[]> {
+        return this.http.get<EtlMapSource[]>(this._apiUrl + '/maps/' + etlMapId + '/sources', { observe: 'response' })
+            .pipe(
+                map(resp => resp.body),
+                tap(() => this.log('fetched map sources')),
+                catchError(this.handleError)
+            );
+    }
+
+    saveMapSource(etlMapId: number, source: EtlMapSource): Observable<EtlMapSource> {
+        return this.http.post<EtlMapSource>(this._apiUrl + '/maps/' + etlMapId + '/sources', source, { observe: 'response' })
+            .pipe(
+                map(resp => resp.body),
+                tap(() => this.log('saved map source')),
+                catchError(this.handleError)
+            );
+    }
+
+    deleteMapSource(etlMapSourceId: number): Observable<any> {
+        return this.http.delete(this._apiUrl + '/maps/sources/' + etlMapSourceId, { observe: 'response' })
+            .pipe(
+                tap(() => this.log('deleted map source')),
+                catchError(this.handleError)
+            );
+    }
+
+    getMapJoins(etlMapId: number): Observable<EtlMapJoin[]> {
+        return this.http.get<EtlMapJoin[]>(this._apiUrl + '/maps/' + etlMapId + '/joins', { observe: 'response' })
+            .pipe(map(resp => resp.body), tap(() => this.log('fetched map joins')), catchError(this.handleError));
+    }
+
+    saveMapJoin(etlMapId: number, join: EtlMapJoin): Observable<EtlMapJoin> {
+        return this.http.post<EtlMapJoin>(this._apiUrl + '/maps/' + etlMapId + '/joins', join, { observe: 'response' })
+            .pipe(map(resp => resp.body), tap(() => this.log('saved map join')), catchError(this.handleError));
+    }
+
+    deleteMapJoin(etlMapJoinId: number): Observable<any> {
+        return this.http.delete(this._apiUrl + '/maps/joins/' + etlMapJoinId, { observe: 'response' })
+            .pipe(tap(() => this.log('deleted map join')), catchError(this.handleError));
+    }
+
+    getMapSourceSchema(etlMapId: number): Observable<EtlMapSourceSchema[]> {
+        return this.http.get<EtlMapSourceSchema[]>(this._apiUrl + '/maps/' + etlMapId + '/source-schema', { observe: 'response' })
+            .pipe(map(resp => resp.body), tap(() => this.log('fetched map source schema')), catchError(this.handleError));
+    }
+
+    saveMapGuidance(etlMapId: number, guidance: EtlMapGuidance): Observable<EtlMap> {
+        return this.http.put<EtlMap>(this._apiUrl + '/maps/' + etlMapId + '/guidance', guidance, { observe: 'response' })
+            .pipe(map(resp => resp.body), tap(() => this.log('saved map guidance')), catchError(this.handleError));
+    }
+
     upload(upload: EtlSourceMappingUpload): Observable<EtlSourceElementMappingResult[]> {
         return this.http.post<EtlSourceElementMappingResult[]>(this._apiUrl + '/upload', upload, { observe: 'response' })
             .pipe(
@@ -132,6 +187,18 @@ export class EtlSourceMappingService extends BaseService {
             .pipe(
                 map(resp => resp.body),
                 tap(() => this.log('updated element mapping')),
+                catchError(this.handleError)
+            );
+    }
+
+    // The full candidate set of Staging Table.Column targets the mapping's CEDS element expands to, so the
+    // UI can offer removed columns for add-back. (Narrowing to the best match(es) happens automatically on
+    // upload; this exposes what can be re-added.)
+    getStagingCandidates(etlSourceElementMappingId: number): Observable<string[]> {
+        return this.http.get<string[]>(this._apiUrl + '/' + etlSourceElementMappingId + '/staging-candidates', { observe: 'response' })
+            .pipe(
+                map(resp => resp.body || []),
+                tap(() => this.log('loaded staging candidates')),
                 catchError(this.handleError)
             );
     }

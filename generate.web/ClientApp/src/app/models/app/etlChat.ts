@@ -36,6 +36,26 @@ export interface EtlChatSessionCreate {
     schoolYear?: number;
 }
 
+export interface EtlChatStatus {
+    session: EtlChatSession;
+    isRunning: boolean;
+}
+
+export interface EtlMappingCoverage {
+    etlMapId: number;
+    factTypeCode: string;
+    reportCodes: string;
+    resolved: boolean;          // false = no fact type / requirements to check against
+    isReady: boolean;           // true = every required Staging table (+ NOT NULL business columns) is mapped
+    requiredTableCount: number;
+    mappedRequiredTableCount: number;
+    requiredTables: string[];
+    missingTables: string[];
+    missingRequiredColumns: string[];
+    coveredTables: string[];
+    summary: string;
+}
+
 export interface EtlChatIterationResult {
     etlChatSessionId: number;
     outcome: string;       // AwaitingInput | Passed | Failed | PhaseComplete | MaxLoopsReached | Error

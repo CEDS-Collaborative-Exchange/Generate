@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { forkJoin } from 'rxjs';
 
 import * as XLSX from '../../lib/xlsx-js-style/xlsx.js';
 
 import { EtlSourceMappingService } from '../services/app/etlSourceMapping.service';
+import { EtlChatService } from '../services/app/etlChat.service';
+import { EtlMappingCoverage } from '../models/app/etlChat';
 import {
   CedsElementCatalog,
   CedsOptionSetValue,
   EtlMap,
   EtlMapFileSpec,
+  EtlMapJoin,
+  EtlMapSource,
+  EtlMapSourceSchema,
   EtlSourceElementMapping,
   EtlSourceElementUpload,
   EtlSourceMappingUpload,
@@ -48,6 +54,22 @@ export class EtlMappingComponent implements OnInit {
   selectedMap: EtlMap = null;
   mapNameInput = '';
 
+  // Source datasets registered to the selected map (a file spec may draw from several).
+  sources: EtlMapSource[] = [];
+  editingSource: EtlMapSource = null;   // the row being added/edited (null = form closed)
+  unregisteredSources: string[] = [];   // source tables in the mappings but not in the registry
+
+  // How the map's source tables join to one another (structured), plus free-text AI guidance.
+  mapJoins: EtlMapJoin[] = [];
+  editingJoin: EtlMapJoin = null;
+  sourceSchema: EtlMapSourceSchema[] = [];   // source objects + their columns, for join dropdowns
+  joinInstructions = '';                     // free-text join description (map level)
+  processingNotes = '';                      // free-text filtering/processing guidance (map level)
+  guidanceSaved = false;
+
+  // Readiness: does the map cover the Staging tables the target file spec's migration requires?
+  coverage: EtlMappingCoverage = null;
+
   // Map add/edit editor
   editingMapId: number = null;   // null = editor closed, 0 = new map, >0 = editing that map
   editorName = '';
@@ -59,6 +81,11 @@ export class EtlMappingComponent implements OnInit {
 
   mappings: EtlSourceElementMapping[] = [];
   cedsElements: CedsElementCatalog[] = [];
+
+  // Staging tables anchored by a discrete 1-to-1 mapping. Ubiquitous CEDS elements (School/Student
+  // Identifier, School Year, …) fan out to every staging table that has that column; we only surface
+  // destinations for these "active" tables so the grid — and the LLM feed — stay focused.
+  activeStagingTables = new Set<string>();
 
   isLoading = false;
   isUploading = false;
@@ -89,10 +116,13 @@ export class EtlMappingComponent implements OnInit {
 
   expandedElementId: number = null;
   pickerElementId: number = null;
+  notesOpenFor: number = null;   // row whose transformation-notes editor is expanded
   pickerFilter = '';
   optionSetCache: { [globalId: string]: CedsOptionSetValue[] } = {};
 
-  constructor(private etlSourceMappingService: EtlSourceMappingService) { }
+  constructor(
+    private etlSourceMappingService: EtlSourceMappingService,
+    private etlChatService: EtlChatService) { }
 
   ngOnInit() {
     this.loadMaps();
@@ -229,14 +259,232 @@ export class EtlMappingComponent implements OnInit {
     this.expandedElementId = null;
     this.pickerElementId = null;
     this.statusMessage = '';
+    this.joinInstructions = etlMap.joinInstructions || '';
+    this.processingNotes = etlMap.processingNotes || '';
+    this.guidanceSaved = false;
     this.loadMappings();
+    this.loadSources();
+    this.loadCoverage();
+    this.loadJoins();
+    this.loadSourceSchema();
   }
 
   backToMaps() {
     this.selectedMap = null;
     this.mappings = [];
+    this.sources = [];
+    this.editingSource = null;
+    this.unregisteredSources = [];
+    this.coverage = null;
+    this.mapJoins = [];
+    this.editingJoin = null;
+    this.sourceSchema = [];
+    this.joinInstructions = '';
+    this.processingNotes = '';
     this.statusMessage = '';
     this.loadMaps();
+  }
+
+  // ---- Table joins + free-text AI guidance ----
+
+  loadJoins() {
+    if (!this.selectedMap) { return; }
+    this.etlSourceMappingService.getMapJoins(this.selectedMap.etlMapId).subscribe({
+      next: j => this.mapJoins = j || [],
+      error: () => this.statusMessage = 'Unable to load the table joins.'
+    });
+  }
+
+  loadSourceSchema() {
+    if (!this.selectedMap) { return; }
+    this.etlSourceMappingService.getMapSourceSchema(this.selectedMap.etlMapId).subscribe({
+      next: s => this.sourceSchema = s || [],
+      error: () => this.sourceSchema = []
+    });
+  }
+
+  // Columns available for a chosen source object (drives the join column dropdowns).
+  columnsFor(sourceObject: string): string[] {
+    const s = this.sourceSchema.find(x => x.sourceObject === sourceObject);
+    return s ? s.columns : [];
+  }
+
+  newJoin() {
+    const first = this.sourceSchema[0] ? this.sourceSchema[0].sourceObject : '';
+    const second = this.sourceSchema[1] ? this.sourceSchema[1].sourceObject : first;
+    this.editingJoin = {
+      etlMapJoinId: 0,
+      etlMapId: this.selectedMap ? this.selectedMap.etlMapId : null,
+      leftSourceObject: first,
+      leftColumn: '',
+      rightSourceObject: second,
+      rightColumn: '',
+      joinType: 'LEFT',
+      sortOrder: 0
+    };
+  }
+
+  editJoin(join: EtlMapJoin) {
+    this.editingJoin = { ...join };
+  }
+
+  cancelJoin() {
+    this.editingJoin = null;
+  }
+
+  saveJoin() {
+    if (!this.selectedMap || !this.editingJoin) { return; }
+    const j = this.editingJoin;
+    if (!j.leftSourceObject || !j.rightSourceObject || !j.leftColumn || !j.rightColumn) {
+      this.statusMessage = 'A join needs both tables and both columns.';
+      return;
+    }
+    this.etlSourceMappingService.saveMapJoin(this.selectedMap.etlMapId, j).subscribe({
+      next: () => { this.editingJoin = null; this.statusMessage = 'Join saved.'; this.loadJoins(); },
+      error: () => this.statusMessage = 'The join could not be saved.'
+    });
+  }
+
+  deleteJoin(join: EtlMapJoin) {
+    if (!window.confirm('Remove this join?')) { return; }
+    this.etlSourceMappingService.deleteMapJoin(join.etlMapJoinId).subscribe({
+      next: () => { this.statusMessage = 'Join removed.'; this.loadJoins(); },
+      error: () => this.statusMessage = 'The join could not be removed.'
+    });
+  }
+
+  saveGuidance() {
+    if (!this.selectedMap) { return; }
+    this.etlSourceMappingService.saveMapGuidance(this.selectedMap.etlMapId, {
+      joinInstructions: this.joinInstructions,
+      processingNotes: this.processingNotes
+    }).subscribe({
+      next: saved => {
+        this.guidanceSaved = true;
+        if (this.selectedMap) {
+          this.selectedMap.joinInstructions = this.joinInstructions;
+          this.selectedMap.processingNotes = this.processingNotes;
+        }
+        this.statusMessage = 'AI guidance saved.';
+      },
+      error: () => this.statusMessage = 'The guidance could not be saved.'
+    });
+  }
+
+  // Readiness for an end-to-end migration: are all the Staging tables the file spec needs mapped?
+  loadCoverage() {
+    if (!this.selectedMap) { this.coverage = null; return; }
+    this.etlChatService.getCoverage(this.selectedMap.etlMapId).subscribe({
+      next: c => this.coverage = c,
+      error: () => this.coverage = null
+    });
+  }
+
+  // ---- Source datasets (multi-source per map) ----
+
+  loadSources() {
+    if (!this.selectedMap) { return; }
+    this.etlSourceMappingService.getMapSources(this.selectedMap.etlMapId).subscribe({
+      next: s => { this.sources = s || []; this.recomputeUnregisteredSources(); },
+      error: () => this.statusMessage = 'Unable to load the map sources.'
+    });
+  }
+
+  // Distinct source objects (schema.table) the uploaded element mappings reference. Blank table names
+  // (derived/system elements) are ignored.
+  private mappedSourceObjects(): string[] {
+    const seen = new Set<string>();
+    const objects: string[] = [];
+    for (const m of this.mappings) {
+      if (!m.sourceTableName || !m.sourceTableName.trim()) { continue; }
+      const schema = m.sourceSchemaName && m.sourceSchemaName.trim() ? m.sourceSchemaName.trim() + '.' : '';
+      const obj = schema + m.sourceTableName.trim();
+      const key = obj.toLowerCase();
+      if (!seen.has(key)) { seen.add(key); objects.push(obj); }
+    }
+    return objects;
+  }
+
+  // Source tables used by the mappings but NOT registered in the Source Datasets table. Every uploaded
+  // source table should be registered so the map, join builder, and AI ETL Developer stay in sync.
+  recomputeUnregisteredSources() {
+    const registered = new Set((this.sources || [])
+      .map(s => (s.sourceObject || '').trim().toLowerCase())
+      .filter(o => o.length > 0));
+    this.unregisteredSources = this.mappedSourceObjects().filter(o => !registered.has(o.toLowerCase()));
+  }
+
+  // One-click fix: register every mapped-but-unregistered source table as a Source Dataset.
+  registerMissingSources() {
+    if (!this.selectedMap || this.unregisteredSources.length === 0) { return; }
+    const mapId = this.selectedMap.etlMapId;
+    const pending = this.unregisteredSources.map(obj => {
+      const table = obj.indexOf('.') >= 0 ? obj.substring(obj.lastIndexOf('.') + 1) : obj;
+      return this.etlSourceMappingService.saveMapSource(mapId, {
+        etlMapSourceId: 0, etlMapId: mapId,
+        sourceName: table, sourceConnection: '', sourceObject: obj, notes: ''
+      });
+    });
+    forkJoin(pending).subscribe({
+      next: () => { this.statusMessage = 'Registered ' + pending.length + ' source dataset(s).'; this.loadSources(); this.loadSourceSchema(); },
+      error: () => this.statusMessage = 'Some sources could not be registered.'
+    });
+  }
+
+  newSource() {
+    this.editingSource = {
+      etlMapSourceId: 0,
+      etlMapId: this.selectedMap ? this.selectedMap.etlMapId : null,
+      sourceName: '',
+      sourceConnection: '',
+      sourceObject: '',
+      notes: ''
+    };
+  }
+
+  editSource(source: EtlMapSource) {
+    this.editingSource = { ...source };
+  }
+
+  cancelSource() {
+    this.editingSource = null;
+  }
+
+  saveSource() {
+    if (!this.selectedMap || !this.editingSource) { return; }
+    const obj = (this.editingSource.sourceObject || '').trim();
+    if (!obj) {
+      this.statusMessage = 'A source object (schema.table / view / query) is required.';
+      return;
+    }
+    // Prevent duplicates: a source object may be registered only once per map.
+    const dup = this.sources.find(s =>
+      s.etlMapSourceId !== this.editingSource.etlMapSourceId &&
+      (s.sourceObject || '').trim().toLowerCase() === obj.toLowerCase());
+    if (dup) {
+      this.statusMessage = `"${obj}" is already registered as a source dataset on this map.`;
+      return;
+    }
+    this.etlSourceMappingService.saveMapSource(this.selectedMap.etlMapId, this.editingSource).subscribe({
+      next: () => {
+        this.editingSource = null;
+        this.statusMessage = 'Source saved — auto-mapping its columns…';
+        this.loadSources();
+        // Saving a source runs the automapper server-side for its columns, so reload the mappings table
+        // (and the source-object dropdowns) to surface the newly auto-generated rows.
+        this.loadMappings();
+        this.loadSourceSchema();
+      },
+      error: () => this.statusMessage = 'The source could not be saved.'
+    });
+  }
+
+  deleteSource(source: EtlMapSource) {
+    if (!window.confirm('Remove the source "' + (source.sourceName || source.sourceObject) + '" from this map?')) { return; }
+    this.etlSourceMappingService.deleteMapSource(source.etlMapSourceId).subscribe({
+      next: () => { this.statusMessage = 'Source removed.'; this.loadSources(); },
+      error: () => this.statusMessage = 'The source could not be removed.'
+    });
   }
 
   deleteMap(etlMap: EtlMap) {
@@ -266,6 +514,8 @@ export class EtlMappingComponent implements OnInit {
     this.etlSourceMappingService.getAll(this.selectedMap.etlMapId).subscribe({
       next: mappings => {
         this.mappings = mappings || [];
+        this.recomputeActiveStagingTables();
+        this.recomputeUnregisteredSources();
         this.isLoading = false;
       },
       error: () => {
@@ -273,6 +523,101 @@ export class EtlMappingComponent implements OnInit {
         this.statusMessage = 'Unable to load the current mappings.';
       }
     });
+  }
+
+  // Parse a "Table.Col; Table2.Col2; …" value into normalized Table.Column pairs (strip Staging. prefix).
+  private parseStagingPairs(stagingTableColumns: string): string[] {
+    if (!stagingTableColumns) { return []; }
+    return stagingTableColumns.split(';')
+      .map(p => p.trim())
+      .filter(p => p.length > 0)
+      .map(p => p.toLowerCase().startsWith('staging.') ? p.substring('staging.'.length) : p)
+      .filter(p => p.indexOf('.') > 0);
+  }
+
+  private tableOf(pair: string): string {
+    const dot = pair.indexOf('.');
+    return (dot > 0 ? pair.substring(0, dot) : pair).trim();
+  }
+
+  // Active tables = those a mapping targets 1-to-1 (its destinations resolve to exactly one table).
+  private recomputeActiveStagingTables() {
+    const active = new Set<string>();
+    for (const m of this.mappings) {
+      const pairs = this.parseStagingPairs(m.stagingTableColumns);
+      if (pairs.length === 0) { continue; }
+      const tables = Array.from(new Set(pairs.map(p => this.tableOf(p).toLowerCase())));
+      if (tables.length === 1) { active.add(tables[0]); }
+    }
+    this.activeStagingTables = active;
+  }
+
+  // Filter a mapping's Staging target pairs to what should actually be shown/fed to the LLM:
+  //   (1) tables REQUIRED by the file spec (from coverage), and (2) ACTIVE tables (anchored by a discrete
+  // 1-to-1 mapping). Each filter is skipped only when its set is unknown/empty, so a brand-new automap
+  // (no coverage yet, nothing active) still shows the raw fan-out rather than blanking.
+  private filterStagingPairs(pairs: string[]): string[] {
+    let kept = pairs;
+    const required = (this.coverage && this.coverage.resolved ? (this.coverage.requiredTables || []) : [])
+      .map(t => t.toLowerCase());
+    if (required.length > 0) {
+      const req = new Set(required);
+      kept = kept.filter(p => req.has(this.tableOf(p).toLowerCase()));
+    }
+    if (this.activeStagingTables.size > 0) {
+      kept = kept.filter(p => this.activeStagingTables.has(this.tableOf(p).toLowerCase()));
+    }
+    return kept;
+  }
+
+  // The destination string to SHOW for a mapping: fan-out pruned to required ∩ active tables.
+  displayStaging(mapping: EtlSourceElementMapping): string {
+    return this.filterStagingPairs(this.parseStagingPairs(mapping.stagingTableColumns)).join('; ');
+  }
+
+  // The Staging target columns for a mapping, as individually-removable Table.Column chips (same filter).
+  stagingPairs(mapping: EtlSourceElementMapping): string[] {
+    return this.filterStagingPairs(this.parseStagingPairs(mapping.stagingTableColumns));
+  }
+
+  // Remove one auto-mapped Staging target column and persist the pruned set with the map.
+  deleteStagingColumn(mapping: EtlSourceElementMapping, pair: string) {
+    const remaining = this.parseStagingPairs(mapping.stagingTableColumns).filter(p => p !== pair);
+    this.updateElement(mapping, { stagingTableColumns: remaining });
+  }
+
+  // --- Add-back: re-add a Staging target column that was removed by mistake ---
+  // The full candidate pool (every column the CEDS element expands to), lazily fetched per mapping.
+  stagingCandidateCache: { [mappingId: number]: string[] } = {};
+  stagingAddOpenFor: number | null = null;
+
+  // Toggle the "add target" panel for a mapping; fetch its candidate pool on first open.
+  toggleStagingAdd(mapping: EtlSourceElementMapping) {
+    if (this.stagingAddOpenFor === mapping.etlSourceElementMappingId) {
+      this.stagingAddOpenFor = null;
+      return;
+    }
+    this.stagingAddOpenFor = mapping.etlSourceElementMappingId;
+    if (!this.stagingCandidateCache[mapping.etlSourceElementMappingId]) {
+      this.etlSourceMappingService.getStagingCandidates(mapping.etlSourceElementMappingId).subscribe({
+        next: candidates => this.stagingCandidateCache[mapping.etlSourceElementMappingId] = this.parseStagingPairs((candidates || []).join('; ')),
+        error: () => this.statusMessage = 'Unable to load the Staging target candidates.'
+      });
+    }
+  }
+
+  // Candidate columns NOT currently selected — the ones offered for add-back.
+  availableStagingColumns(mapping: EtlSourceElementMapping): string[] {
+    const all = this.stagingCandidateCache[mapping.etlSourceElementMappingId] || [];
+    const selected = new Set(this.parseStagingPairs(mapping.stagingTableColumns));
+    return all.filter(p => !selected.has(p));
+  }
+
+  // Re-add a removed Staging target column and persist the expanded set with the map.
+  addStagingColumn(mapping: EtlSourceElementMapping, pair: string) {
+    const next = this.parseStagingPairs(mapping.stagingTableColumns);
+    if (!next.includes(pair)) { next.push(pair); }
+    this.updateElement(mapping, { stagingTableColumns: next });
   }
 
   loadCedsElements() {
@@ -569,10 +914,35 @@ export class EtlMappingComponent implements OnInit {
   pickCedsElement(mapping: EtlSourceElementMapping, cedsElement: CedsElementCatalog) {
     this.pickerElementId = null;
     delete this.optionSetCache[cedsElement.cedsElementGlobalId];
+    // The Staging target set is re-derived server-side for the new element, so drop this mapping's cached
+    // candidate pool (it belonged to the OLD element) and close its add-back panel — otherwise "+ add"
+    // would offer the previous element's columns.
+    delete this.stagingCandidateCache[mapping.etlSourceElementMappingId];
+    if (this.stagingAddOpenFor === mapping.etlSourceElementMappingId) { this.stagingAddOpenFor = null; }
     this.updateElement(mapping, { mappingStatus: 'Accepted', cedsElementGlobalId: cedsElement.cedsElementGlobalId });
   }
 
+  // Per-row transformation-notes editor (hidden by default). Holds free-text transformation rules the
+  // AI ETL Developer reads (the prompt injects it as "transform:" for that element).
+  toggleNotes(mapping: EtlSourceElementMapping) {
+    this.notesOpenFor = this.notesOpenFor === mapping.etlSourceElementMappingId
+      ? null
+      : mapping.etlSourceElementMappingId;
+  }
+
+  saveMappingNotes(mapping: EtlSourceElementMapping) {
+    this.updateElement(mapping, {
+      transformationRules: mapping.transformationRules,
+      notes: mapping.notes
+    });
+    this.statusMessage = 'Transformation notes saved.';
+    this.notesOpenFor = null;
+  }
+
   private updateElement(mapping: EtlSourceElementMapping, update: any) {
+    // The Staging candidate pool depends on the CEDS element / Not-in-CEDS state, so invalidate the
+    // cached pool for this mapping — it will re-fetch (with the right candidates) next time it's opened.
+    delete this.stagingCandidateCache[mapping.etlSourceElementMappingId];
     this.etlSourceMappingService.updateElementMapping(mapping.etlSourceElementMappingId, update).subscribe({
       next: updated => this.replaceElementRow(updated),
       error: () => this.statusMessage = 'The mapping update failed.'
@@ -596,6 +966,7 @@ export class EtlMappingComponent implements OnInit {
     } else {
       this.loadMappings();
     }
+    this.recomputeActiveStagingTables();
   }
 
   // -------------------- Option set review --------------------

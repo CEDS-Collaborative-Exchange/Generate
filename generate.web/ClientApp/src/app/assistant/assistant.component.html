@@ -1,0 +1,58 @@
+<div class="assistant">
+  <div class="assistant__topbar">
+    <h1 class="assistant__title">SQL Assistant</h1>
+    <span class="assistant__subtext">Ask questions or have the model write &amp; update T-SQL. Not tied to an ETL Checklist.</span>
+  </div>
+
+  <div class="assistant__body">
+    <!-- Sessions sidebar -->
+    <nav class="assistant__sidebar" aria-label="Chats">
+      <div class="assistant__sidebar-head">
+        <h2 class="assistant__sidebar-title">Chats</h2>
+        <button type="button" class="assistant__btn assistant__btn--primary assistant__btn--sm" (click)="newSession()">
+          <span aria-hidden="true">＋</span> New
+        </button>
+      </div>
+      <ul class="assistant__session-list" role="list">
+        <li *ngFor="let s of sessions" class="assistant__session-item">
+          <button type="button" class="assistant__session"
+                  [class.is-active]="selectedSession && selectedSession.assistantSessionId === s.assistantSessionId"
+                  (click)="openSession(s)">
+            <span class="assistant__session-title">{{ s.title }}</span>
+          </button>
+          <button type="button" class="assistant__icon-btn" (click)="deleteSession(s, $event)"
+                  [attr.aria-label]="'Delete chat ' + s.title">🗑</button>
+        </li>
+        <li *ngIf="sessions.length === 0" class="assistant__side-empty">
+          No chats yet. Click <strong>＋ New</strong> or just type below.
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Chat pane -->
+    <main class="assistant__main">
+      <div class="assistant__messages" aria-live="polite">
+        <div *ngFor="let m of messages"
+             class="assistant__msg"
+             [class.assistant__msg--user]="m.role === 'user'"
+             [class.assistant__msg--assistant]="m.role !== 'user'">
+          <div class="assistant__msg-role">{{ m.role === 'user' ? 'You' : 'Assistant' }}</div>
+          <div class="assistant__msg-content">{{ m.content }}</div>
+        </div>
+        <div *ngIf="messages.length === 0" class="assistant__empty">
+          Start the conversation — e.g. "Roll App.RDS.Create_ReportData to school year 2027" or "How do I…".
+        </div>
+        <div *ngIf="isThinking" class="assistant__thinking">Assistant is thinking…</div>
+      </div>
+
+      <div *ngIf="statusMessage" class="assistant__status">{{ statusMessage }}</div>
+
+      <div class="assistant__composer">
+        <textarea [(ngModel)]="draft" (keydown)="onKeydown($event)" rows="2"
+                  placeholder="Message the SQL assistant…  (Enter to send, Shift+Enter for a new line)"></textarea>
+        <button type="button" class="assistant__btn assistant__btn--primary" (click)="send()"
+                [disabled]="isThinking || !draft.trim()">Send</button>
+      </div>
+    </main>
+  </div>
+</div>

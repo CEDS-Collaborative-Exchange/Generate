@@ -120,12 +120,12 @@ AS
 						OR cs.CategorySetCode LIKE 'ST%' THEN 'Y'
 					ELSE 'N'
 				  END + ''' as TotalIndicator, ' 
-				  + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(DimensionFieldName + 'EDFactsCode', ','), '') + ',' END + '
+				  + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG('RDS.Get_TranslatedReportCategoryCode(' + CHAR(39) + @ReportCode + CHAR(39) + ',' + CHAR(39) + c.CategoryCode + CHAR(39) + ',' + DimensionFieldName + 'EDFactsCode)', ','), '') + ',' END + '
 			count(' + CASE @IsDistinctCount WHEN 1 THEN 'DISTINCT' ELSE '' END + ' cs.' + @IdentifierToCount + ')
 		FROM rds.vw' + @FactTypeCode + '_FactTable_' + @ReportCode + ' cs 
 		' + CASE 
 				WHEN CategorySetCode IS NOT NULL AND cs.CategorySetCode <> 'TOT' 
-					THEN 'JOIN PermittedValues pv ON ' + STRING_AGG('cs.' + D.DimensionFieldName + 'EdFactsCode = pv.' + c.CategoryCode, ' AND ')
+					THEN 'JOIN PermittedValues pv ON ' + STRING_AGG('RDS.Get_TranslatedReportCategoryCode(' + CHAR(39) + @ReportCode + CHAR(39) + ',' + CHAR(39) + c.CategoryCode + CHAR(39) + ',cs.' + D.DimensionFieldName + 'EdFactsCode) = pv.' + c.CategoryCode, ' AND ')
 				ELSE ''
 			END + '
 		' + CASE aol.LevelCode 
@@ -149,7 +149,7 @@ AS
 				WHEN 'LEA' THEN 'LeaOrganizationName' 
 				WHEN 'SCH' THEN 'NameOfInstitution'			
 			END  + '
-			'  + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN '' ELSE ',' + ISNULL(STRING_AGG(DimensionFieldName + 'EdFactsCode', ','), '')  END + '
+			'  + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN '' ELSE ',' + ISNULL(STRING_AGG('RDS.Get_TranslatedReportCategoryCode(' + CHAR(39) + @ReportCode + CHAR(39) + ',' + CHAR(39) + c.CategoryCode + CHAR(39) + ',' + DimensionFieldName + 'EdFactsCode)', ','), '')  END + '
 			
 			'
 	FROM app.GenerateReports gr

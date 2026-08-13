@@ -55,6 +55,8 @@ namespace generate.core.Dtos.App
         public int EtlMapId { get; set; }
         public string MapName { get; set; }
         public string UploadFileName { get; set; }
+        public string JoinInstructions { get; set; }
+        public string ProcessingNotes { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime? ModifiedDate { get; set; }
@@ -62,6 +64,22 @@ namespace generate.core.Dtos.App
         public int ElementCount { get; set; }
         public int MappedElementCount { get; set; }
         public List<EtlMapFileSpecDto> FileSpecs { get; set; }
+    }
+
+    /// <summary>Save payload for a map's free-text AI guidance (join description + processing notes).</summary>
+    public class EtlMapGuidanceDto
+    {
+        public string JoinInstructions { get; set; }
+        public string ProcessingNotes { get; set; }
+        public string ModifiedBy { get; set; }
+    }
+
+    /// <summary>One source object of a map with its column list, for the join-builder dropdowns.</summary>
+    public class EtlMapSourceSchemaDto
+    {
+        public string SourceObject { get; set; }
+        public string SourceName { get; set; }
+        public List<string> Columns { get; set; } = new List<string>();
     }
 
     /// <summary>
@@ -157,6 +175,10 @@ namespace generate.core.Dtos.App
         public string SelectionCriteria { get; set; }
         public string TransformationRules { get; set; }
         public string Notes { get; set; }
+        // Reviewer-curated Staging target columns (Table.Column). When non-null it REPLACES the
+        // auto-derived set, so a reviewer can prune the over-broad list a shared CEDS element expands to
+        // (e.g. a StatusStartDate element that otherwise fans out to every PersonStatus *_StatusStartDate).
+        public List<string> StagingTableColumns { get; set; }
         public string ModifiedBy { get; set; }
     }
 

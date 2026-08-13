@@ -5,10 +5,11 @@ import { SharedModule } from '../shared/shared.module';
 import { EtlChatRoutingModule } from './etl-chat-routing.module';
 import { EtlChatComponent } from './etl-chat.component';
 import { EtlChatService } from '../services/app/etlChat.service';
+import { EtlSourceMappingService } from '../services/app/etlSourceMapping.service';
 
 @NgModule({
   imports: [SharedModule, EtlChatRoutingModule, FormsModule],
   declarations: [EtlChatComponent],
-  providers: [EtlChatService]
+  providers: [EtlChatService, EtlSourceMappingService]
 })
 export class EtlChatModule { }

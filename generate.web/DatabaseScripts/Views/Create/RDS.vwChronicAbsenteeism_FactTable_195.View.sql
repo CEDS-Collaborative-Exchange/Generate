@@ -27,7 +27,10 @@ AS
 			, f.[HomelessnessStatusEdFactsCode]
 			, f.[IdeaIndicatorEdFactsCode]
 			, f.[RaceEdFactsCode]
-			, f.[Section504StatusEdFactsCode]
+			-- 14.1: FS195 DISABSTATUS504 expects 'DISAB504STAT' (dim code is SECTION504/NONSECTION504);
+			-- mirrors RDS.Get_CountSQL's per-report translation, ported to the new view-based path.
+			, CASE WHEN f.[Section504StatusEdFactsCode] = 'SECTION504' THEN 'DISAB504STAT'
+				ELSE 'MISSING' END AS [Section504StatusEdFactsCode]
 			, f.[SexEdFactsCode]
 	FROM [debug].[vwChronicAbsenteeism_FactTable] f
 	WHERE SchoolOperationalStatus IN ('Open','New')

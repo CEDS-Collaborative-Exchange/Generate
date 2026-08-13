@@ -37,6 +37,8 @@ export interface EtlMap {
     etlMapId: number;
     mapName: string;
     uploadFileName: string;
+    joinInstructions?: string;
+    processingNotes?: string;
     createdDate: string;
     createdBy: string;
     modifiedDate: string;
@@ -44,6 +46,39 @@ export interface EtlMap {
     elementCount: number;
     mappedElementCount: number;
     fileSpecs: Array<EtlMapFileSpec>;
+}
+
+export interface EtlMapJoin {
+    etlMapJoinId: number;
+    etlMapId: number;
+    leftSourceObject: string;
+    leftColumn: string;
+    rightSourceObject: string;
+    rightColumn: string;
+    joinType: string;      // INNER | LEFT | RIGHT | FULL
+    sortOrder: number;
+}
+
+export interface EtlMapSourceSchema {
+    sourceObject: string;
+    sourceName: string;
+    columns: string[];
+}
+
+export interface EtlMapGuidance {
+    joinInstructions: string;
+    processingNotes: string;
+}
+
+export interface EtlMapSource {
+    etlMapSourceId: number;
+    etlMapId: number;
+    sourceName: string;
+    sourceConnection: string;
+    sourceObject: string;
+    notes: string;
+    createdDate?: string;
+    modifiedDate?: string;
 }
 
 export interface EtlSourceElementMapping {
@@ -142,6 +177,9 @@ export interface EtlSourceElementMappingUpdate {
     selectionCriteria?: string;
     transformationRules?: string;
     notes?: string;
+    // Reviewer-curated Staging target columns (Table.Column). Non-null REPLACES the auto-derived set,
+    // so pruning an over-broad shared-element expansion persists with the map.
+    stagingTableColumns?: string[];
     modifiedBy?: string;
 }
 

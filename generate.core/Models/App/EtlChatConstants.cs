@@ -47,6 +47,7 @@ namespace generate.core.Models.App
         public const string StagingLoad = "StagingLoad";         // 2: LLM builds & runs Source->Staging
         public const string StagingValidate = "StagingValidate"; // 2: StagingValidation_Execute/GetResults
         public const string RdsMigrate = "RdsMigrate";           // 3: Wrapper_Migrate_<FactType>_to_RDS
+        public const string RdsValidate = "RdsValidate";         // 3: fact/dim record-count + orphan checks
         public const string ReportMigrate = "ReportMigrate";     // 4: lock + Empty_Reports + create_reports
         public const string ReportValidate = "ReportValidate";   // 4: FS<xxx>_TestCase + compare
         public const string Done = "Done";

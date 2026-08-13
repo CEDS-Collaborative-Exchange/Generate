@@ -20,7 +20,8 @@ AS
 		, drace.RaceEdFactsCode							AS Race
 		, dhs.HomelessnessStatusEdFactsCode				AS HomelessnessStatus
 		, dis.IdeaIndicatorEdFactsCode					AS IdeaIndicator
-		, dds.Section504StatusEdFactsCode				AS Section504Status
+		, CASE WHEN dds.Section504StatusEdFactsCode = 'SECTION504' THEN 'DISAB504STAT'
+			ELSE 'MISSING' END							AS Section504Status  -- 14.1: FS195 DISABSTATUS504 expects 'DISAB504STAT' (mirrors Get_CountSQL). Dim code is SECTION504/NONSECTION504.
 		, deds.EconomicDisadvantageStatusEdFactsCode	AS EconomicDisadvantageStatus
 		, dels.EnglishLearnerStatusEdFactsCode			AS EnglishLearnerStatus
 

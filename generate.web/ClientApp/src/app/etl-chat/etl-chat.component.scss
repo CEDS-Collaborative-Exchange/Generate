@@ -1,128 +1,324 @@
+// AI ETL Developer — chat experience.
+// Colours chosen for WCAG AA contrast (>= 4.5:1 for body text, >= 3:1 for large text/UI).
+
 .etl-chat {
-  padding: 16px 24px;
+  // Palette
+  $ink:        #1b2733;   // primary text  (on white: ~14:1)
+  $ink-soft:   #46586b;   // secondary text (on white: ~7:1)
+  $line:       #d3dbe3;
+  $surface:    #ffffff;
+  $surface-2:  #f3f6f9;
+  $surface-3:  #e9eef3;
+  $brand:      #14508c;   // white on brand: ~7:1
+  $brand-dark: #0f3d6c;
+  $focus:      #1a73e8;
 
-  &__title { margin-bottom: 4px; }
-  &__intro { max-width: 900px; margin-bottom: 12px; }
+  display: flex;
+  flex-direction: column;
+  color: $ink;
+  font-size: 14px;
+  line-height: 1.5;
 
-  &__status {
-    margin: 8px 0;
-    padding: 8px 12px;
-    background-color: #eef4fa;
-    border-left: 4px solid #33739e;
-  }
+  * { box-sizing: border-box; }
 
-  &__toolbar { margin-bottom: 12px; }
-
-  &__new {
-    max-width: 700px;
-    padding: 12px 16px;
-    background-color: #f7f9fb;
-    border: 1px solid #dde5ec;
+  // Accessible focus ring for every interactive element.
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid $focus;
+    outline-offset: 2px;
     border-radius: 4px;
-    margin-bottom: 16px;
   }
 
-  &__field {
+  &__visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+    white-space: nowrap; border: 0;
+  }
+
+  // ---- Top bar / breadcrumb ----
+  &__topbar {
+    padding: 12px 4px 14px;
+    border-bottom: 1px solid $line;
+  }
+  &__crumbs {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    font-size: 13px; color: $ink-soft;
+  }
+  &__crumb-link {
+    color: $brand; text-decoration: none; font-weight: 600;
+    &:hover { text-decoration: underline; }
+  }
+  &__crumb-sep { color: #9aa7b4; }
+  &__crumb--current { color: $ink; font-weight: 700; }
+  &__tagline {
+    margin: 8px 0 0; max-width: 900px; color: $ink-soft; font-size: 13px;
+  }
+
+  // ---- Body: sidebar + main ----
+  &__body {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-
-    label { min-width: 260px; font-weight: bold; }
-    input { flex: 1; padding: 5px 8px; border: 1px solid #bbb; border-radius: 3px; }
+    gap: 16px;
+    min-height: 72vh;
+    padding-top: 14px;
   }
 
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; }
-    th { background-color: #33739e; color: #fff; }
+  // ---- Sidebar ----
+  &__sidebar {
+    flex: 0 0 280px;
+    display: flex; flex-direction: column;
+    border: 1px solid $line; border-radius: 10px;
+    background: $surface-2;
+    overflow: hidden;
   }
-  &__row { cursor: pointer; }
-  &__row:hover { background-color: #f2f6fa; }
+  &__sidebar-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 12px; border-bottom: 1px solid $line;
+  }
+  &__sidebar-title { margin: 0; font-size: 15px; font-weight: 700; }
 
-  &__empty { padding: 20px; text-align: center; color: #666; }
-  &__subtext { font-size: 12px; color: #666; }
+  &__session-list { list-style: none; margin: 0; padding: 8px; overflow-y: auto; flex: 1; }
+  &__session-item { display: flex; align-items: stretch; gap: 4px; margin-bottom: 6px; }
 
-  &__badge {
-    display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: bold;
-    background-color: #ececec; color: #444;
-    &--Active { background-color: #fff8e1; color: #8d6e00; }
-    &--AwaitingInput { background-color: #e3ecf3; color: #33739e; }
-    &--Completed { background-color: #e6f4ea; color: #1e7d34; }
-    &--Failed { background-color: #fdecea; color: #c62828; }
+  &__session {
+    flex: 1; text-align: left; cursor: pointer;
+    display: grid; grid-template-columns: 1fr auto; gap: 2px 8px;
+    padding: 10px 12px; border: 1px solid $line; border-radius: 8px;
+    background: $surface; color: $ink;
+    &:hover { border-color: #a9bccd; background: #fbfdff; }
+    &.is-active { border-color: $brand; box-shadow: inset 0 0 0 1px $brand; background: #eef4fb; }
+  }
+  &__session-name { font-weight: 600; grid-column: 1; }
+  &__session-meta { grid-column: 1 / -1; font-size: 12px; color: $ink-soft; }
+
+  &__side-empty { padding: 16px 12px; color: $ink-soft; font-size: 13px; }
+
+  &__icon-btn {
+    border: 1px solid transparent; background: transparent; cursor: pointer;
+    border-radius: 8px; padding: 0 8px; color: $ink-soft; font-size: 15px;
+    &:hover { background: #fdece9; color: #b02a1c; }
   }
 
-  &__session-header {
-    display: flex; align-items: center; gap: 12px; margin: 8px 0 12px;
-    h3 { margin: 0; }
+  // ---- New-session form ----
+  &__new { padding: 12px; border-bottom: 1px solid $line; background: $surface; }
+  &__field { display: flex; flex-direction: column; margin-bottom: 10px; }
+  &__field label { font-size: 12px; font-weight: 600; color: $ink-soft; margin-bottom: 4px; }
+  &__field input {
+    padding: 8px 10px; border: 1px solid $line; border-radius: 6px; font-size: 14px; color: $ink; background: #fff;
+  }
+  &__field-note { margin: 0 0 10px; font-size: 12px; color: $ink-soft; line-height: 1.4; }
+  &__link-btn {
+    align-self: flex-start; background: none; border: none; padding: 0; cursor: pointer;
+    font-size: 12px; font-weight: 600; color: $brand;
+    &:hover { text-decoration: underline; }
+    &:focus-visible { outline: 2px solid $focus; outline-offset: 2px; }
+  }
+  &__new-actions { display: flex; gap: 8px; }
+
+  // ---- Main pane ----
+  &__main {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    border: 1px solid $line; border-radius: 10px; background: $surface;
+    overflow: hidden;
   }
 
+  &__placeholder {
+    margin: auto; text-align: center; padding: 40px 20px; max-width: 460px; color: $ink-soft;
+    h2 { color: $ink; margin: 12px 0 6px; }
+  }
+  &__placeholder-badge {
+    width: 56px; height: 56px; border-radius: 50%; margin: 0 auto;
+    display: grid; place-items: center; font-weight: 800; color: #fff; background: $brand;
+    letter-spacing: .5px;
+  }
+
+  // ---- Session header + stepper ----
+  &__session-header { padding: 14px 16px; border-bottom: 1px solid $line; background: $surface-2; }
+  &__session-titleline { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  &__session-h { margin: 0; font-size: 17px; font-weight: 700; flex: 0 1 auto; }
+  &__back { margin-right: 2px; }
+  &__run { margin-left: auto; }
+  &__session-sub { margin: 6px 0 12px; font-size: 13px; color: $ink-soft; }
+
+  &__stepper {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: 4px 2px;
+  }
+  &__step {
+    display: flex; align-items: center; gap: 6px;
+    flex: 1 1 auto; min-width: 120px; position: relative; padding: 2px 0;
+    font-size: 12px; color: $ink-soft;
+    &:not(:last-child)::after {
+      content: ""; flex: 1; height: 2px; margin: 0 6px; background: $line; border-radius: 2px;
+    }
+  }
+  &__step-dot {
+    flex: 0 0 auto;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 12px; font-weight: 700;
+    background: $surface-3; color: $ink-soft; border: 2px solid $line;
+  }
+  &__step-label { white-space: nowrap; }
+  &__step--done {
+    color: #1e7d34;
+    .etl-chat__step-dot { background: #1e7d34; color: #fff; border-color: #1e7d34; }
+    &::after { background: #1e7d34; }
+  }
+  &__step--active {
+    color: $brand-dark; font-weight: 700;
+    .etl-chat__step-dot { background: $brand; color: #fff; border-color: $brand; }
+  }
+
+  // ---- Status banner ----
+  &__banner {
+    margin: 10px 16px 0; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    border: 1px solid;
+    &--info    { background: #eef4fb; border-color: #b9d2ec; color: #0f3d6c; }
+    &--success { background: #e8f6ec; border-color: #a9d9b6; color: #14632a; }
+    &--error   { background: #fdecea; border-color: #f0b3ab; color: #8a221a; }
+  }
+
+  // ---- Transcript ----
+  &__transcript-wrap { position: relative; flex: 1; display: flex; min-height: 0; }
   &__transcript {
-    max-height: 60vh;
-    overflow-y: auto;
-    border: 1px solid #dde5ec;
-    border-radius: 4px;
-    padding: 12px;
-    background-color: #fbfcfd;
+    flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px;
+    scroll-behavior: smooth;
+  }
+  &__scroll-btn {
+    position: absolute; right: 18px; bottom: 14px; z-index: 2;
+    width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+    border: 1px solid $brand-dark; background: $brand; color: #fff;
+    font-size: 20px; line-height: 1; display: grid; place-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    &:hover { background: $brand-dark; }
   }
 
-  &__msg {
-    margin-bottom: 12px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    max-width: 90%;
-
-    &--user { background-color: #e3ecf3; margin-left: auto; }
-    &--assistant { background-color: #f1f3f4; }
-    &--tool { background-color: #f7f3e8; font-family: monospace; }
+  &__msg { display: flex; gap: 10px; align-items: flex-start; max-width: 92%; }
+  &__avatar {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 11px; font-weight: 800; color: #fff;
   }
-  &__msg-meta { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: capitalize; }
-  &__msg-body { white-space: pre-wrap; }
-
-  &__sql {
-    margin: 0;
-    padding: 8px;
-    background-color: #1e2a33;
-    color: #d6e2ea;
-    border-radius: 4px;
-    overflow-x: auto;
-    font-size: 12px;
+  &__bubble {
+    border-radius: 12px; padding: 8px 12px; background: $surface-2; border: 1px solid $line;
+    min-width: 0;
+  }
+  &__bubble-head {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+    font-size: 11px; color: $ink-soft;
+  }
+  &__who { font-weight: 700; color: $ink; }
+  &__tag {
+    text-transform: uppercase; letter-spacing: .4px; font-weight: 700; font-size: 10px;
+    background: $surface-3; color: $ink-soft; padding: 1px 6px; border-radius: 10px;
+  }
+  &__loop { font-size: 10px; }
+  &__time { margin-left: auto; }
+  &__copy {
+    border: 1px solid $line; background: #fff; color: $brand; cursor: pointer;
+    border-radius: 6px; padding: 1px 8px; font-size: 11px; font-weight: 600;
+    &:hover { background: #eef4fb; }
+  }
+  &__text { white-space: pre-wrap; word-break: break-word; color: $ink; }
+  &__code {
+    margin: 0; padding: 10px 12px; border-radius: 8px;
+    background: #0f1b26; color: #e6edf3;
+    overflow-x: auto; font-size: 12.5px; line-height: 1.45;
+    font-family: "Cascadia Code", Consolas, "SF Mono", Menlo, monospace;
     white-space: pre;
   }
 
+  // Assistant (left)
+  &__msg--assistant {
+    align-self: flex-start;
+    .etl-chat__avatar { background: $brand; }
+  }
+  // User (right)
+  &__msg--user {
+    align-self: flex-end; flex-direction: row-reverse;
+    .etl-chat__avatar { background: #5a6b7b; }
+    .etl-chat__bubble { background: $brand; border-color: $brand-dark; }
+    .etl-chat__who, .etl-chat__text, .etl-chat__time, .etl-chat__loop { color: #fff; }
+    .etl-chat__tag { background: rgba(255,255,255,.22); color: #fff; }
+  }
+  // Tool / system (full width, technical)
+  &__msg--tool {
+    align-self: stretch; max-width: 100%;
+    .etl-chat__avatar { background: #5a6b7b; }
+    .etl-chat__bubble { background: #f7f9fb; width: 100%; }
+  }
+
+  // Message-type accents
+  &__bubble--status  { background: #f2f5f8; }
+  &__bubble--error   { background: #fdecea; border-color: #f0b3ab; .etl-chat__text { color: #8a221a; } }
+  &__bubble--question{ background: #fff8e1; border-color: #e6cf7a; .etl-chat__text { color: #5c4400; } }
+
+  // Typing indicator
+  &__typing {
+    display: inline-flex; gap: 5px; align-items: center; padding: 8px 4px;
+    span {
+      width: 8px; height: 8px; border-radius: 50%; background: #9aa7b4;
+      animation: etl-chat-bounce 1.1s infinite ease-in-out both;
+      &:nth-child(1) { animation-delay: -0.30s; }
+      &:nth-child(2) { animation-delay: -0.15s; }
+    }
+  }
+
+  &__main-empty { margin: auto; text-align: center; color: $ink-soft; }
+
+  // ---- Composer ----
   &__composer {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-
-    input { flex: 1; padding: 8px 10px; border: 1px solid #bbb; border-radius: 3px; }
+    display: flex; gap: 8px; align-items: flex-end;
+    padding: 12px 16px; border-top: 1px solid $line; background: $surface-2;
+  }
+  &__input {
+    flex: 1; resize: vertical; min-height: 42px; max-height: 180px;
+    padding: 10px 12px; border: 1px solid $line; border-radius: 8px;
+    font: inherit; color: $ink; background: #fff;
   }
 
-  &__live {
-    margin-top: 8px;
-    padding: 4px 8px;
-    font-size: 12px;
-    color: #2e7d32;
-    font-style: italic;
+  // ---- Buttons ----
+  &__btn {
+    cursor: pointer; border-radius: 8px; font-weight: 700; font-size: 14px;
+    padding: 9px 16px; border: 1px solid transparent; line-height: 1.1;
+    &:disabled { opacity: .55; cursor: not-allowed; }
+    &--sm { padding: 6px 10px; font-size: 13px; }
+    &--primary { background: $brand; color: #fff; border-color: $brand-dark; &:hover:not(:disabled) { background: $brand-dark; } }
+    &--ghost { background: transparent; color: $brand; border-color: $line; &:hover:not(:disabled) { background: #eef4fb; } }
+    &--stop { background: #b02a1c; color: #fff; border-color: #8a221a; &:hover:not(:disabled) { background: #8a221a; } }
+  }
+  &__send { align-self: stretch; }
 
-    animation: etl-chat-pulse 1.2s ease-in-out infinite;
+  // ---- Status badges ----
+  &__badge {
+    display: inline-block; padding: 2px 9px; border-radius: 11px;
+    font-size: 11px; font-weight: 700; white-space: nowrap;
+    background: $surface-3; color: $ink;
+    &--Active        { background: #e4eefb; color: #0f3d6c; }
+    &--AwaitingInput { background: #fcefcf; color: #6b4e00; }
+    &--Completed     { background: #e0f2e6; color: #14632a; }
+    &--Failed        { background: #fbe0dc; color: #8a221a; }
   }
 
-  &__phase {
-    display: inline-block;
-    padding: 2px 8px;
-    margin-left: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #1a4d7a;
-    background-color: #e3f0fb;
-    border-radius: 10px;
+  // ---- Responsive ----
+  @media (max-width: 860px) {
+    &__body { flex-direction: column; min-height: 0; }
+    &__sidebar { flex: 0 0 auto; max-height: 320px; }
+    &__main { min-height: 60vh; }
+    &__msg { max-width: 100%; }
   }
 }
 
-@keyframes etl-chat-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+@keyframes etl-chat-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: .5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+// Respect users who prefer reduced motion.
+@media (prefers-reduced-motion: reduce) {
+  .etl-chat__transcript { scroll-behavior: auto; }
+  .etl-chat__typing span { animation: none; }
 }

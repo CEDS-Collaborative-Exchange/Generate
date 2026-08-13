@@ -667,6 +667,9 @@ namespace generate.infrastructure.Contexts
                 entity
                    .Property(x => x.UploadFileName)
                    .HasMaxLength(260);
+
+                entity.Property(x => x.JoinInstructions).HasColumnType("nvarchar(max)");
+                entity.Property(x => x.ProcessingNotes).HasColumnType("nvarchar(max)");
             });
 
             // EtlMapFileSpec (CIID-9029 - map to EDFacts file spec / fact type associations)
@@ -688,6 +691,39 @@ namespace generate.infrastructure.Contexts
                 entity
                     .HasOne(pt => pt.EtlMap)
                     .WithMany(t => t.EtlMapFileSpecs)
+                    .HasForeignKey(pt => pt.EtlMapId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // EtlMapSource (CIID-9061 - source datasets registered to a map; multi-source per file spec)
+            modelBuilder.Entity<EtlMapSource>(entity =>
+            {
+                entity.ToTable("EtlMapSource");
+                entity.HasKey(x => x.EtlMapSourceId);
+                entity.Property(x => x.SourceName).HasMaxLength(200);
+                entity.Property(x => x.SourceConnection).HasMaxLength(1000);
+                entity.Property(x => x.SourceObject).HasMaxLength(500);
+                entity.Property(x => x.Notes).HasColumnType("nvarchar(max)");
+                entity
+                    .HasOne(pt => pt.EtlMap)
+                    .WithMany()
+                    .HasForeignKey(pt => pt.EtlMapId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // EtlMapJoin (CIID-9061 - structured join conditions between a map's source objects)
+            modelBuilder.Entity<EtlMapJoin>(entity =>
+            {
+                entity.ToTable("EtlMapJoin");
+                entity.HasKey(x => x.EtlMapJoinId);
+                entity.Property(x => x.LeftSourceObject).HasMaxLength(500);
+                entity.Property(x => x.LeftColumn).HasMaxLength(200);
+                entity.Property(x => x.RightSourceObject).HasMaxLength(500);
+                entity.Property(x => x.RightColumn).HasMaxLength(200);
+                entity.Property(x => x.JoinType).HasMaxLength(20);
+                entity
+                    .HasOne(pt => pt.EtlMap)
+                    .WithMany()
                     .HasForeignKey(pt => pt.EtlMapId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -725,6 +761,28 @@ namespace generate.infrastructure.Contexts
                     .HasOne(pt => pt.EtlChatSession)
                     .WithMany(t => t.EtlChatMessages)
                     .HasForeignKey(pt => pt.EtlChatSessionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // AssistantSession / AssistantMessage (CIID-9061 - general assistant chat, not tied to a map)
+            modelBuilder.Entity<AssistantSession>(entity =>
+            {
+                entity.ToTable("AssistantSession");
+                entity.HasKey(x => x.AssistantSessionId);
+                entity.Property(x => x.Title).HasMaxLength(200);
+                entity.Property(x => x.Status).HasMaxLength(40);
+            });
+
+            modelBuilder.Entity<AssistantMessage>(entity =>
+            {
+                entity.ToTable("AssistantMessage");
+                entity.HasKey(x => x.AssistantMessageId);
+                entity.Property(x => x.Role).HasMaxLength(20);
+                entity.Property(x => x.Content).HasColumnType("nvarchar(max)");
+                entity
+                    .HasOne(pt => pt.AssistantSession)
+                    .WithMany(t => t.AssistantMessages)
+                    .HasForeignKey(pt => pt.AssistantSessionId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -1452,8 +1510,12 @@ namespace generate.infrastructure.Contexts
         public DbSet<EtlMetadata> EtlMetadata { get; set; }
         public DbSet<EtlMap> EtlMaps { get; set; }
         public DbSet<EtlMapFileSpec> EtlMapFileSpecs { get; set; }
+        public DbSet<EtlMapSource> EtlMapSources { get; set; }
+        public DbSet<EtlMapJoin> EtlMapJoins { get; set; }
         public DbSet<EtlChatSession> EtlChatSessions { get; set; }
         public DbSet<EtlChatMessage> EtlChatMessages { get; set; }
+        public DbSet<AssistantSession> AssistantSessions { get; set; }
+        public DbSet<AssistantMessage> AssistantMessages { get; set; }
         public DbSet<EtlSourceElementMapping> EtlSourceElementMappings { get; set; }
         public DbSet<EtlSourceOptionSetMapping> EtlSourceOptionSetMappings { get; set; }
 

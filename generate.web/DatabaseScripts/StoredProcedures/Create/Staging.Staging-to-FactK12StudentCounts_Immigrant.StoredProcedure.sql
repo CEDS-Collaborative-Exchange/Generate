@@ -108,7 +108,7 @@ BEGIN
 			, @FactTypeId												FactTypeId							
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId							
 			, -1 														AgeId									
-			, ISNULL(rdr.DimRaceId, -1)									RaceId								
+			, -1									RaceId  -- 14.1: this proc has no rdr race join (FS165 Immigrant has no race breakout); was ISNULL(rdr.DimRaceId,-1) -> unbound alias
 			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId						
 			, 1															StudentCount							
 			, ISNULL(rds.DimSeaId, -1)									SEAId									

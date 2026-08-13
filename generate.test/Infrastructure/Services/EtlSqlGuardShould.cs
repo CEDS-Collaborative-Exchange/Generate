@@ -39,10 +39,20 @@ namespace generate.test.Infrastructure.Services
         }
 
         [Fact]
-        public void RejectUnscopedDeleteButAllowScopedReload()
+        public void AllowUnconstrainedDeleteWithinStaging()
         {
-            Assert.NotNull(EtlSqlGuard.ValidateEtl("DELETE FROM Staging.K12Enrollment; INSERT INTO Staging.K12Enrollment (Sex) SELECT Gender FROM Source.t"));
+            // Unscoped DELETE within Staging is allowed (no WHERE clause required).
+            Assert.Null(EtlSqlGuard.ValidateEtl("DELETE FROM Staging.K12Enrollment; INSERT INTO Staging.K12Enrollment (Sex) SELECT Gender FROM Source.t"));
+            // A scoped reload is also fine.
             Assert.Null(EtlSqlGuard.ValidateEtl("DELETE FROM Staging.K12Enrollment WHERE SchoolYear = 2026; INSERT INTO Staging.K12Enrollment (SchoolYear, Sex) SELECT 2026, Gender FROM Source.t"));
+        }
+
+        [Fact]
+        public void RejectDeleteOrWriteOutsideStaging()
+        {
+            // Even with a Staging reference present, a write targeting another schema is rejected.
+            Assert.NotNull(EtlSqlGuard.ValidateEtl("DELETE FROM dbo.K12Enrollment; INSERT INTO Staging.K12Enrollment (Sex) SELECT Gender FROM Source.t"));
+            Assert.NotNull(EtlSqlGuard.ValidateEtl("UPDATE rds.DimK12Schools SET x = 1; INSERT INTO Staging.K12Enrollment (Sex) SELECT Gender FROM Source.t"));
         }
 
         [Fact]

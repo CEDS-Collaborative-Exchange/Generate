@@ -63,12 +63,15 @@ namespace generate.infrastructure.Services
                 messages = messages.Select(m => new { role = m.Role, content = m.Content ?? string.Empty }).ToArray()
             };
 
-            // Two guards: a hard overall cap, and an idle timeout that only fires when the model
-            // produces NO output for _idleTimeout. The idle timer is reset on every streamed line,
-            // so a model that is slowly-but-steadily streaming an answer is never killed mid-generation.
+            // Two guards: a hard overall cap (_timeout, the configured TimeoutSeconds), and an idle timeout
+            // that fires when the model produces NO output for _idleTimeout. The idle timer stays DISARMED
+            // until the first token arrives — otherwise the initial model load (which can take minutes for a
+            // large model on CPU, with no output yet) would trip it. During load, only the overall cap
+            // applies. Once streaming starts, every line resets the idle timer, so a slow-but-steady stream
+            // is never killed mid-generation.
             using var http = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
             using var overallCts = new CancellationTokenSource(_timeout);
-            using var idleCts = new CancellationTokenSource(_idleTimeout);
+            using var idleCts = new CancellationTokenSource(Timeout.InfiniteTimeSpan); // armed on first output
             using var linked = CancellationTokenSource.CreateLinkedTokenSource(overallCts.Token, idleCts.Token);
 
             using var request = new HttpRequestMessage(HttpMethod.Post, $"{_url}/api/chat")
@@ -83,11 +86,11 @@ namespace generate.infrastructure.Services
             }
             catch (OperationCanceledException) when (overallCts.IsCancellationRequested)
             {
-                throw new TimeoutException($"Ollama did not respond within {_timeout.TotalSeconds:N0}s (model '{Model}').");
+                throw new TimeoutException($"Ollama did not respond within the configured {_timeout.TotalSeconds:N0}s cap while loading/answering with model '{Model}'. Raise Ollama:TimeoutSeconds if the model needs longer to load.");
             }
             catch (OperationCanceledException)
             {
-                throw new TimeoutException($"Ollama produced no output for {_idleTimeout.TotalSeconds:N0}s while loading model '{Model}'.");
+                throw new TimeoutException($"Ollama request was cancelled before any response (model '{Model}').");
             }
 
             if (!response.IsSuccessStatusCode)

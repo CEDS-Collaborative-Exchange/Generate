@@ -21,6 +21,16 @@ namespace generate.core.Interfaces.Services
         EtlChatSession PostUserMessage(int etlChatSessionId, EtlChatUserMessageDto message);
 
         /// <summary>
+        /// Readiness check for a map: does its element mapping cover every Staging table/column the
+        /// target file spec's end-to-end migration requires? Lets the UI (and the session preflight)
+        /// flag missing required Staging tables BEFORE a session is run to no avail.
+        /// </summary>
+        EtlMappingCoverageDto ComputeCoverage(int etlMapId);
+
+        /// <summary>Marks a session paused after the user stopped the background run.</summary>
+        void NotifyStopped(int etlChatSessionId);
+
+        /// <summary>
         /// Runs one iteration: prompts the model, and if it returns SQL, executes the ETL and its
         /// tests, comparing source vs Staging counts. Returns the outcome; the caller loops while
         /// CanContinue is true (up to MaxLoops).

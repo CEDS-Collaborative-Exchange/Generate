@@ -48,6 +48,32 @@ BEGIN
 		ON [App].[EtlMapFileSpec] ([EtlMapId] ASC)
 END
 
+IF OBJECT_ID('App.EtlMapSource', 'U') IS NULL
+BEGIN
+	-- Source datasets registered to a map (CIID-9061). A single file spec often draws from several
+	-- source systems; each row is one source table/view/query the alignment mappings + generated ETL
+	-- pull from. The AI ETL Developer joins these on shared business keys into the Staging tables.
+	CREATE TABLE [App].[EtlMapSource] (
+		[EtlMapSourceId] [int] IDENTITY(1,1) NOT NULL,
+		[EtlMapId] [int] NOT NULL,
+		[SourceName] [nvarchar](200) NULL,          -- alias, e.g. "SIS_Enrollment", "SpEd", "Race"
+		[SourceConnection] [nvarchar](1000) NULL,   -- server/database/schema or connection descriptor
+		[SourceObject] [nvarchar](500) NULL,        -- schema.table / view / query the ETL reads from
+		[Notes] [nvarchar](max) NULL,               -- join hints, filters, caveats
+		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_EtlMapSource_CreatedDate] DEFAULT (GETDATE()),
+		[CreatedBy] [nvarchar](100) NULL,
+		[ModifiedDate] [datetime] NULL,
+		[ModifiedBy] [nvarchar](100) NULL,
+		CONSTRAINT [PK_EtlMapSource] PRIMARY KEY CLUSTERED ([EtlMapSourceId] ASC)
+			WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY],
+		CONSTRAINT [FK_EtlMapSource_EtlMap] FOREIGN KEY ([EtlMapId])
+			REFERENCES [App].[EtlMap] ([EtlMapId]) ON DELETE CASCADE
+	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+	CREATE NONCLUSTERED INDEX [IX_EtlMapSource_EtlMapId]
+		ON [App].[EtlMapSource] ([EtlMapId] ASC)
+END
+
 IF OBJECT_ID('App.EtlSourceElementMapping', 'U') IS NULL
 BEGIN
 	CREATE TABLE [App].[EtlSourceElementMapping] (
@@ -239,4 +265,72 @@ AS
 		AND CAST(gid.value AS varchar(100)) LIKE ''[0-9]%''
 ')
 
+-- Map-level free-text guidance for the AI ETL Developer (CIID-9061): natural-language join description
+-- and map-wide filtering/complex-processing notes. Both are fed verbatim into the LLM prompt.
+IF COL_LENGTH('App.EtlMap', 'JoinInstructions') IS NULL
+	ALTER TABLE [App].[EtlMap] ADD [JoinInstructions] [nvarchar](max) NULL
+IF COL_LENGTH('App.EtlMap', 'ProcessingNotes') IS NULL
+	ALTER TABLE [App].[EtlMap] ADD [ProcessingNotes] [nvarchar](max) NULL
+
+IF OBJECT_ID('App.EtlMapJoin', 'U') IS NULL
+BEGIN
+	-- Structured join conditions between a map's source objects (CIID-9061). Each row is one equality
+	-- condition Left.Column = Right.Column; a composite join is several rows for the same table pair
+	-- (ordered by SortOrder). The AI ETL Developer renders these as explicit JOINs so it never has to
+	-- guess how the sources relate (the cause of the "Invalid column name" retry loop on multi-source maps).
+	CREATE TABLE [App].[EtlMapJoin] (
+		[EtlMapJoinId] [int] IDENTITY(1,1) NOT NULL,
+		[EtlMapId] [int] NOT NULL,
+		[LeftSourceObject] [nvarchar](500) NULL,    -- e.g. Source.MembershipExtract2026
+		[LeftColumn] [nvarchar](200) NULL,
+		[RightSourceObject] [nvarchar](500) NULL,   -- e.g. Source.PersonStatusExtract2026
+		[RightColumn] [nvarchar](200) NULL,
+		[JoinType] [nvarchar](20) NULL,             -- INNER / LEFT / RIGHT / FULL (defaults to LEFT)
+		[SortOrder] [int] NOT NULL CONSTRAINT [DF_EtlMapJoin_SortOrder] DEFAULT (0),
+		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_EtlMapJoin_CreatedDate] DEFAULT (GETDATE()),
+		[CreatedBy] [nvarchar](100) NULL,
+		[ModifiedDate] [datetime] NULL,
+		[ModifiedBy] [nvarchar](100) NULL,
+		CONSTRAINT [PK_EtlMapJoin] PRIMARY KEY CLUSTERED ([EtlMapJoinId] ASC)
+			WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY],
+		CONSTRAINT [FK_EtlMapJoin_EtlMap] FOREIGN KEY ([EtlMapId])
+			REFERENCES [App].[EtlMap] ([EtlMapId]) ON DELETE CASCADE
+	) ON [PRIMARY]
+
+	CREATE NONCLUSTERED INDEX [IX_EtlMapJoin_EtlMapId]
+		ON [App].[EtlMapJoin] ([EtlMapId] ASC)
+END
+
 print 'App.TableChanges.sql executed for 14.0.'
+
+-- General-purpose AI assistant chat (CIID-9061): sessions NOT tied to an ETL map. A place to ask
+-- questions or have the LLM write/update T-SQL (e.g. rolling a stored procedure to a new school year).
+IF OBJECT_ID('App.AssistantSession', 'U') IS NULL
+BEGIN
+	CREATE TABLE [App].[AssistantSession] (
+		[AssistantSessionId] [int] IDENTITY(1,1) NOT NULL,
+		[Title] [nvarchar](200) NULL,
+		[Status] [nvarchar](40) NULL,            -- Active | AwaitingInput
+		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_AssistantSession_CreatedDate] DEFAULT (GETDATE()),
+		[CreatedBy] [nvarchar](100) NULL,
+		[ModifiedDate] [datetime] NULL,
+		[ModifiedBy] [nvarchar](100) NULL,
+		CONSTRAINT [PK_AssistantSession] PRIMARY KEY CLUSTERED ([AssistantSessionId] ASC)
+	) ON [PRIMARY]
+END
+
+IF OBJECT_ID('App.AssistantMessage', 'U') IS NULL
+BEGIN
+	CREATE TABLE [App].[AssistantMessage] (
+		[AssistantMessageId] [int] IDENTITY(1,1) NOT NULL,
+		[AssistantSessionId] [int] NOT NULL,
+		[Role] [nvarchar](20) NULL,              -- user | assistant | system
+		[Content] [nvarchar](max) NULL,
+		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_AssistantMessage_CreatedDate] DEFAULT (GETDATE()),
+		CONSTRAINT [PK_AssistantMessage] PRIMARY KEY CLUSTERED ([AssistantMessageId] ASC),
+		CONSTRAINT [FK_AssistantMessage_AssistantSession] FOREIGN KEY ([AssistantSessionId])
+			REFERENCES [App].[AssistantSession] ([AssistantSessionId]) ON DELETE CASCADE
+	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+	CREATE NONCLUSTERED INDEX [IX_AssistantMessage_SessionId] ON [App].[AssistantMessage] ([AssistantSessionId] ASC)
+END

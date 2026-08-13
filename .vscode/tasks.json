@@ -2,11 +2,13 @@
     "version": "2.0.0",
     "tasks": [
         {
-            // Builds the backend with the repo-pinned .NET 10 SDK (installed user-locally,
-            // since the machine-wide SDK is 9.x and global.json pins 10.0.203)
+            // Builds the backend (generate.web) with the user-local .NET 10 SDK
+            // (machine-wide SDK is 9.x; global.json pins 10.x). Building generate.web
+            // also builds ClientApp on first run via the csproj DebugEnsureNodeEnv target,
+            // so Node 22.20 is placed on PATH for that child npm process.
             "label": "build-backend",
             "type": "process",
-            "command": "${env:LOCALAPPDATA}\\Microsoft\\dotnet\\dotnet.exe",
+            "command": "${env:USERPROFILE}\\.dotnet\\dotnet.exe",
             "args": [
                 "build",
                 "${workspaceFolder}/generate.web/generate.web.csproj",
@@ -15,7 +17,8 @@
             ],
             "options": {
                 "env": {
-                    "DOTNET_ROOT": "${env:LOCALAPPDATA}\\Microsoft\\dotnet"
+                    "DOTNET_ROOT": "${env:USERPROFILE}\\.dotnet",
+                    "PATH": "${env:USERPROFILE}\\.dotnet;${env:LOCALAPPDATA}\\node-v22.20.0-win-x64;${env:PATH}"
                 }
             },
             "problemMatcher": "$msCompile",
@@ -23,6 +26,26 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            // Builds the background worker (generate.background) with the user-local .NET 10 SDK.
+            "label": "build-background",
+            "type": "process",
+            "command": "${env:USERPROFILE}\\.dotnet\\dotnet.exe",
+            "args": [
+                "build",
+                "${workspaceFolder}/generate.background/generate.background.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "options": {
+                "env": {
+                    "DOTNET_ROOT": "${env:USERPROFILE}\\.dotnet",
+                    "PATH": "${env:USERPROFILE}\\.dotnet;${env:PATH}"
+                }
+            },
+            "problemMatcher": "$msCompile",
+            "group": "build"
         },
         {
             // Optional: run the Angular dev server standalone on http://localhost:4200

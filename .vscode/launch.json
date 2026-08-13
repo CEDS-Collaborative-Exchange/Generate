@@ -1,13 +1,15 @@
 {
+    // F5 → pick "Generate: Full stack" (compound). It launches:
+    //   1. generate.web  — the ASP.NET Core backend. In Development its SPA middleware
+    //      (Program.cs: app.UseSpa → spa.UseAngularCliServer("start")) starts the Angular
+    //      dev server itself by running "npm start" in ClientApp, so the WEB config also
+    //      runs the ANGULAR app. First page load waits for ng serve's initial build.
+    //   2. generate.background — the Hangfire worker app (processes migrations/jobs).
+    // Both are net10.0 and resolved against the user-local .NET 10 (machine-wide is 9.x).
     "version": "0.2.0",
     "configurations": [
         {
-            // F5: launches the ASP.NET Core backend, which in Development also starts the
-            // Angular dev server itself (Program.cs UseSpa -> UseAngularCliServer runs
-            // "npm start" in ClientApp on a dynamic port and proxies / to it), so this one
-            // configuration runs BOTH apps. First page load waits until ng serve finishes
-            // its initial build (SPA startup timeout is 6 minutes).
-            "name": "Generate (backend + Angular)",
+            "name": "Generate: Web (backend + Angular)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-backend",
@@ -17,11 +19,11 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ASPNETCORE_URLS": "https://localhost:44312;http://localhost:54731",
-                // Resolve the user-local .NET 10 runtime (machine-wide install is 9.x)
-                "DOTNET_ROOT": "${env:LOCALAPPDATA}\\Microsoft\\dotnet",
-                // Put user-local Node 22.20 first so the SPA middleware's "npm start"
-                // child process satisfies Angular CLI 20's Node >= 22.12 requirement
-                "PATH": "${env:LOCALAPPDATA}\\node-v22.20.0-win-x64;${env:LOCALAPPDATA}\\Microsoft\\dotnet;${env:PATH}"
+                // user-local .NET 10 runtime (repo global.json pins 10.x; machine-wide is 9.x)
+                "DOTNET_ROOT": "${env:USERPROFILE}\\.dotnet",
+                // Prepend user-local Node 22.20 so the SPA middleware's child "npm start"
+                // meets Angular CLI 20's Node >= 22.12 requirement (global node is 22.11, too old).
+                "PATH": "${env:USERPROFILE}\\.dotnet;${env:LOCALAPPDATA}\\node-v22.20.0-win-x64;${env:PATH}"
             },
             "serverReadyAction": {
                 "action": "openExternally",
@@ -29,6 +31,33 @@
             },
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Generate: Background (Hangfire worker)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-background",
+            "program": "${workspaceFolder}/generate.background/bin/Debug/net10.0/generate.background.exe",
+            "cwd": "${workspaceFolder}/generate.background",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:9000",
+                "DOTNET_ROOT": "${env:USERPROFILE}\\.dotnet",
+                "PATH": "${env:USERPROFILE}\\.dotnet;${env:PATH}"
+            },
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Generate: Full stack (Web + Background + Angular)",
+            "configurations": [
+                "Generate: Web (backend + Angular)",
+                "Generate: Background (Hangfire worker)"
+            ],
+            "stopAll": true
         }
     ]
 }

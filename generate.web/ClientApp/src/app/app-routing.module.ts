@@ -48,6 +48,12 @@ import { AboutComponent } from './about/about.component';
                 loadChildren: () => import('./etl-chat/etl-chat.module').then(m => m.EtlChatModule),
                 canActivate: [LoginGuard]
             },
+            // General-purpose SQL assistant chat (CIID-9061) — not tied to an ETL map
+            {
+                path: 'assistant',
+                loadChildren: () => import('./assistant/assistant.module').then(m => m.AssistantModule),
+                canActivate: [LoginGuard]
+            },
             { path: '**', component: AppNotFoundComponent }
 
         ])

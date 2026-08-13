@@ -164,14 +164,14 @@ BEGIN
 			and ske.LeaIdentifierSeaAccountability = eco.LeaIdentifierSeaAccountability
 			and ske.SchoolIdentifierSea = eco.SchoolIdentifierSea
 			AND ((eco.EconomicDisadvantage_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (eco.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(eco.EconomicDisadvantage_StatusEndDate, GETDATE()) > @ReportingStartDate))
+				OR (eco.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(eco.EconomicDisadvantage_StatusExitDate, GETDATE()) > @ReportingStartDate))
 
 		left join staging.PersonStatus migrant
 			on ske.StudentIdentifierState = migrant.StudentIdentifierState
 			and ske.LeaIdentifierSeaAccountability = migrant.LeaIdentifierSeaAccountability
 			and ske.SchoolIdentifierSea = migrant.SchoolIdentifierSea
 			AND ((migrant.Migrant_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (migrant.Migrant_StatusStartDate < @ReportingStartDate AND ISNULL(migrant.Migrant_StatusEndDate, GETDATE()) > @ReportingStartDate))
+				OR (migrant.Migrant_StatusStartDate < @ReportingStartDate AND ISNULL(migrant.Migrant_StatusExitDate, GETDATE()) > @ReportingStartDate))
 
 	--homelessness
 		LEFT JOIN Staging.PersonStatus homeless 
@@ -180,7 +180,7 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(homeless.SchoolIdentifierSea, '')
 			AND homeless.HomelessnessStatus = 1
 			AND ((homeless.Homelessness_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusEndDate, GETDATE()) > @ReportingStartDate))
+				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusExitDate, GETDATE()) > @ReportingStartDate))
 
 
 		where

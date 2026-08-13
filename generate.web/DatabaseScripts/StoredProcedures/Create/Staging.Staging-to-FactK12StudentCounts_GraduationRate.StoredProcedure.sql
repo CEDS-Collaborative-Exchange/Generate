@@ -259,7 +259,7 @@ I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension do
 */
 	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs
-			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
+			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(TRY_CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)  -- 14.1: map col holds literal 'MISSING'; TRY_CAST avoids the conversion error
 			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
 			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
 			AND rdhs.HomelessServicedIndicatorCode = 'MISSING'

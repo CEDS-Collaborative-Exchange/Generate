@@ -1,5 +1,7 @@
 VersionUpdates\\14.0_prerelease,Restore 13.3.sql,0
 VersionUpdates\\14.0_prerelease,App.TableChanges.sql,0
+VersionUpdates\\14.0_prerelease,App.GenerateStagingColumns.FixColumnNames.sql,0
+VersionUpdates\\14.0_prerelease,App.EtlMetadata.FixStagingColumnNames.sql,0
 VersionUpdates\\14.0_prerelease,Staging.NewTables.sql,0
 VersionUpdates\\14.0_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\14.0_prerelease,Staging.Indexes.sql,0

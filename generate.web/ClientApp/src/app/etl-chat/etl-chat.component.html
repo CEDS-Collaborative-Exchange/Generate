@@ -1,78 +1,196 @@
-<div class="etl-chat">
-  <h2 class="etl-chat__title">AI ETL Developer</h2>
-  <p class="etl-chat__intro">
-    The assistant builds SQL that loads your source into the mapped Staging tables, then tests it and
-    loops until the source and Staging row counts match (or the max loop count is hit). Answer its
-    questions in the box below to refine the work.
-  </p>
+<div class="etl-chat" role="region" aria-label="AI ETL Developer">
 
-  <div *ngIf="statusMessage" class="etl-chat__status">{{ statusMessage }}</div>
+  <!-- Breadcrumb / title bar -->
+  <header class="etl-chat__topbar">
+    <nav class="etl-chat__crumbs" aria-label="Breadcrumb">
+      <a routerLink="/etl-mapping" class="etl-chat__crumb-link">ETL Maps</a>
+      <span class="etl-chat__crumb-sep" aria-hidden="true">›</span>
+      <span class="etl-chat__crumb">{{ mapName || 'Map #' + mapId }}</span>
+      <span class="etl-chat__crumb-sep" aria-hidden="true">›</span>
+      <span class="etl-chat__crumb etl-chat__crumb--current" aria-current="page">AI ETL Developer</span>
+    </nav>
+    <p class="etl-chat__tagline">
+      Build the Source&nbsp;→&nbsp;Staging load, then let the assistant run staging validation, the
+      warehouse migration, report generation, and the official test — automatically, until the numbers
+      validate or it hits a problem.
+    </p>
+  </header>
 
-  <!-- Session list -->
-  <div *ngIf="!selectedSession">
-    <div class="etl-chat__toolbar">
-      <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
-              (click)="showNewForm = !showNewForm">New Session</button>
-    </div>
+  <div class="etl-chat__body">
 
-    <div *ngIf="showNewForm" class="etl-chat__new">
-      <div class="etl-chat__field"><label>Session name</label><input type="text" [(ngModel)]="newName" placeholder="e.g. Load PARCC results" /></div>
-      <div class="etl-chat__field"><label>Source connection / server.database.schema</label><input type="text" [(ngModel)]="newSourceConnection" placeholder="e.g. StateSIS on SRV01, or a linked server" /></div>
-      <div class="etl-chat__field"><label>Source object (table / view / query)</label><input type="text" [(ngModel)]="newSourceObject" placeholder="e.g. dbo.ALLTESTS_PARCC_LAL" /></div>
-      <div class="etl-chat__field"><label>School year (end year, e.g. 2026)</label><input type="number" min="2000" [(ngModel)]="newSchoolYear" placeholder="defaults to the selected migration year" /></div>
-      <div class="etl-chat__field"><label>Max loops</label><input type="number" min="1" [(ngModel)]="newMaxLoops" /></div>
-      <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)="createSession()">Create</button>
-      <button type="button" class="mdl-button mdl-js-button" (click)="showNewForm = false">Cancel</button>
-    </div>
-
-    <div *ngIf="sessions.length === 0" class="etl-chat__empty">No ETL chat sessions for this map yet.</div>
-
-    <table *ngIf="sessions.length > 0" class="etl-chat__table">
-      <thead>
-        <tr><th>Session</th><th>Source</th><th>Status</th><th>Loops</th><th>Updated</th><th></th></tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let s of sessions" (click)="openSession(s)" class="etl-chat__row">
-          <td><strong>{{ s.sessionName }}</strong></td>
-          <td>{{ s.sourceObject }}</td>
-          <td><span class="etl-chat__badge etl-chat__badge--{{ s.status }}">{{ s.status }}</span></td>
-          <td>{{ s.currentLoop }}/{{ s.maxLoops }}</td>
-          <td>{{ (s.modifiedDate || s.createdDate) | date:'short' }}</td>
-          <td><button type="button" class="mdl-button mdl-js-button" (click)="deleteSession(s, $event)">Delete</button></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Transcript -->
-  <div *ngIf="selectedSession" class="etl-chat__session">
-    <div class="etl-chat__session-header">
-      <button type="button" class="mdl-button mdl-js-button" (click)="backToSessions()">&larr; Sessions</button>
-      <h3>{{ selectedSession.sessionName }}</h3>
-      <span class="etl-chat__badge etl-chat__badge--{{ selectedSession.status }}">{{ selectedSession.status }}</span>
-      <span *ngIf="selectedSession.currentPhase && selectedSession.currentPhase !== 'Done'" class="etl-chat__phase">{{ phaseLabel(selectedSession.currentPhase) }}</span>
-      <span class="etl-chat__subtext">loop {{ selectedSession.currentLoop }}/{{ selectedSession.maxLoops }} · source: {{ selectedSession.sourceObject || '—' }}</span>
-      <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
-              (click)="run()" [disabled]="isRunning">{{ isRunning ? 'Running…' : 'Run' }}</button>
-    </div>
-
-    <div class="etl-chat__transcript" #transcript>
-      <div *ngFor="let m of messages" class="etl-chat__msg" [ngClass]="roleClass(m)">
-        <div class="etl-chat__msg-meta">
-          {{ m.role }}<span *ngIf="m.messageType !== 'chat'"> · {{ m.messageType }}</span>
-          <span *ngIf="m.iterationNumber"> · loop {{ m.iterationNumber }}</span>
-        </div>
-        <pre *ngIf="isSql(m)" class="etl-chat__sql">{{ m.content }}</pre>
-        <div *ngIf="!isSql(m)" class="etl-chat__msg-body">{{ m.content }}</div>
+    <!-- Sessions sidebar -->
+    <nav class="etl-chat__sidebar" aria-label="Chat sessions">
+      <div class="etl-chat__sidebar-head">
+        <h2 class="etl-chat__sidebar-title">Sessions</h2>
+        <button type="button" class="etl-chat__btn etl-chat__btn--primary etl-chat__btn--sm"
+                (click)="showNewForm = !showNewForm" [attr.aria-expanded]="showNewForm" aria-controls="newSessionForm">
+          <span aria-hidden="true">＋</span> New
+        </button>
       </div>
-      <div *ngIf="isRunning" class="etl-chat__live">● live — streaming progress…</div>
-      <div *ngIf="messages.length === 0 && !isRunning" class="etl-chat__empty">No messages yet. Click Run to begin.</div>
-    </div>
 
-    <div class="etl-chat__composer">
-      <input type="text" [(ngModel)]="userInput" (keyup.enter)="send()"
-             placeholder="Answer the assistant's questions or add guidance, then press Enter…" />
-      <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="send()">Send</button>
-    </div>
+      <form id="newSessionForm" *ngIf="showNewForm" class="etl-chat__new" (ngSubmit)="createSession()">
+        <div class="etl-chat__field">
+          <label for="ns-name">Session name</label>
+          <input id="ns-name" type="text" [(ngModel)]="newName" name="newName" required
+                 placeholder="e.g. Load FS089 2026" />
+        </div>
+        <p class="etl-chat__field-note">
+          The source table is taken automatically from this map's ETL Mapping — no need to enter it.
+        </p>
+        <div class="etl-chat__field">
+          <button type="button" class="etl-chat__link-btn"
+                  (click)="showAdvanced = !showAdvanced" [attr.aria-expanded]="showAdvanced">
+            {{ showAdvanced ? '− Hide advanced' : '+ Advanced (override source)' }}
+          </button>
+        </div>
+        <div class="etl-chat__field" *ngIf="showAdvanced">
+          <label for="ns-src">Source object override (optional)</label>
+          <input id="ns-src" type="text" [(ngModel)]="newSourceObject" name="newSourceObject"
+                 placeholder="Leave blank to use the mapped source; set only for a custom table/view/query" />
+        </div>
+        <div class="etl-chat__field">
+          <label for="ns-year">School year (end year)</label>
+          <input id="ns-year" type="number" min="2000" [(ngModel)]="newSchoolYear" name="newSchoolYear"
+                 placeholder="defaults to the selected migration year" />
+        </div>
+        <div class="etl-chat__field">
+          <label for="ns-loops">Max loops</label>
+          <input id="ns-loops" type="number" min="1" [(ngModel)]="newMaxLoops" name="newMaxLoops" />
+        </div>
+        <div class="etl-chat__new-actions">
+          <button type="submit" class="etl-chat__btn etl-chat__btn--primary etl-chat__btn--sm">Create</button>
+          <button type="button" class="etl-chat__btn etl-chat__btn--ghost etl-chat__btn--sm" (click)="showNewForm = false">Cancel</button>
+        </div>
+      </form>
+
+      <ul class="etl-chat__session-list" role="list">
+        <li *ngFor="let s of sessions; trackBy: trackBySessionId" class="etl-chat__session-item">
+          <button type="button" class="etl-chat__session"
+                  [class.is-active]="selectedSession && selectedSession.etlChatSessionId === s.etlChatSessionId"
+                  [attr.aria-current]="selectedSession && selectedSession.etlChatSessionId === s.etlChatSessionId ? 'true' : null"
+                  (click)="openSession(s)">
+            <span class="etl-chat__session-name">{{ s.sessionName }}</span>
+            <span class="etl-chat__badge etl-chat__badge--{{ s.status }}">{{ statusLabel(s.status) }}</span>
+            <span class="etl-chat__session-meta">{{ s.sourceObject || 'no source set' }} · loop {{ s.currentLoop }}/{{ s.maxLoops }}</span>
+          </button>
+          <button type="button" class="etl-chat__icon-btn" (click)="deleteSession(s, $event)"
+                  [attr.aria-label]="'Delete session ' + s.sessionName">
+            <span aria-hidden="true">🗑</span>
+          </button>
+        </li>
+        <li *ngIf="sessions.length === 0" class="etl-chat__side-empty">
+          No sessions yet. Click <strong>＋ New</strong> to start one.
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main pane -->
+    <main class="etl-chat__main" aria-live="off">
+
+      <!-- Placeholder when nothing is selected -->
+      <div *ngIf="!selectedSession" class="etl-chat__placeholder">
+        <div class="etl-chat__placeholder-badge" aria-hidden="true">AI</div>
+        <h2>Pick a session to get going</h2>
+        <p>Select a session on the left, or create a new one to load a source into the mapped Staging tables and validate it end-to-end.</p>
+      </div>
+
+      <ng-container *ngIf="selectedSession">
+        <!-- Session header + progress stepper -->
+        <header class="etl-chat__session-header">
+          <div class="etl-chat__session-titleline">
+            <button type="button" class="etl-chat__btn etl-chat__btn--ghost etl-chat__btn--sm etl-chat__back"
+                    (click)="backToSessions()">
+              <span aria-hidden="true">←</span> Sessions
+            </button>
+            <h2 class="etl-chat__session-h">{{ selectedSession.sessionName }}</h2>
+            <span class="etl-chat__badge etl-chat__badge--{{ selectedSession.status }}">{{ statusLabel(selectedSession.status) }}</span>
+            <button *ngIf="!isRunning" type="button" class="etl-chat__btn etl-chat__btn--primary etl-chat__run"
+                    (click)="run()">
+              Run
+            </button>
+            <button *ngIf="isRunning" type="button" class="etl-chat__btn etl-chat__btn--stop etl-chat__run"
+                    (click)="stop()" [disabled]="stopping">
+              <span aria-hidden="true">■</span> {{ stopping ? 'Stopping…' : 'Stop' }}
+            </button>
+          </div>
+
+          <p class="etl-chat__session-sub">
+            Source: <strong>{{ selectedSession.sourceObject || '—' }}</strong>
+            <span *ngIf="selectedSession.schoolYear"> · SY {{ selectedSession.schoolYear }}</span>
+            · loop {{ selectedSession.currentLoop }}/{{ selectedSession.maxLoops }}
+          </p>
+
+          <ol class="etl-chat__stepper" aria-label="End-to-end progress">
+            <li *ngFor="let st of steps; let i = index" class="etl-chat__step etl-chat__step--{{ stepState(i) }}"
+                [attr.aria-current]="stepState(i) === 'active' ? 'step' : null">
+              <span class="etl-chat__step-dot" aria-hidden="true">
+                <span *ngIf="stepState(i) === 'done'">✓</span>
+                <span *ngIf="stepState(i) !== 'done'">{{ i + 1 }}</span>
+              </span>
+              <span class="etl-chat__step-label">{{ st.label }}</span>
+              <span class="etl-chat__visually-hidden" *ngIf="stepState(i) === 'done'"> (complete)</span>
+              <span class="etl-chat__visually-hidden" *ngIf="stepState(i) === 'active'"> (in progress)</span>
+            </li>
+          </ol>
+        </header>
+
+        <!-- Live status banner -->
+        <div *ngIf="statusMessage" class="etl-chat__banner etl-chat__banner--{{ statusKind }}" role="status">
+          {{ statusMessage }}
+        </div>
+
+        <!-- Transcript -->
+        <div class="etl-chat__transcript-wrap">
+        <div class="etl-chat__transcript" #transcript (scroll)="onTranscriptScroll()"
+             role="log" aria-live="polite" aria-label="Conversation transcript">
+          <article *ngFor="let m of messages; trackBy: trackByMessageId" class="etl-chat__msg" [ngClass]="roleClass(m)">
+            <div class="etl-chat__avatar" aria-hidden="true">{{ avatarText(m) }}</div>
+            <div class="etl-chat__bubble"
+                 [class.etl-chat__bubble--mono]="isMono(m)"
+                 [class.etl-chat__bubble--error]="isError(m)"
+                 [class.etl-chat__bubble--question]="isQuestion(m)"
+                 [class.etl-chat__bubble--status]="isStatus(m)">
+              <div class="etl-chat__bubble-head">
+                <span class="etl-chat__who">{{ roleLabel(m) }}</span>
+                <span *ngIf="messageTypeLabel(m)" class="etl-chat__tag">{{ messageTypeLabel(m) }}</span>
+                <span *ngIf="m.iterationNumber" class="etl-chat__loop">loop {{ m.iterationNumber }}</span>
+                <span class="etl-chat__time">{{ formatDateTime(m.createdDate) }}</span>
+                <button *ngIf="isMono(m)" type="button" class="etl-chat__copy" (click)="copyMessage(m)"
+                        [attr.aria-label]="'Copy ' + messageTypeLabel(m) + ' to clipboard'">
+                  {{ copiedMessageId === m.etlChatMessageId ? 'Copied ✓' : 'Copy' }}
+                </button>
+              </div>
+              <pre *ngIf="isMono(m)" class="etl-chat__code">{{ m.content }}</pre>
+              <div *ngIf="!isMono(m)" class="etl-chat__text">{{ m.content }}</div>
+            </div>
+          </article>
+
+          <div *ngIf="isRunning" class="etl-chat__typing" role="status" aria-label="The assistant is working">
+            <span></span><span></span><span></span>
+          </div>
+
+          <div *ngIf="messages.length === 0 && !isRunning" class="etl-chat__main-empty">
+            <p>No messages yet.</p>
+            <p>Type <strong>“Go!”</strong> below, or click <strong>Run</strong>, to begin the end-to-end load and validation.</p>
+          </div>
+        </div>
+          <button *ngIf="showScrollButton" type="button" class="etl-chat__scroll-btn"
+                  (click)="scrollToBottom()" aria-label="Jump to latest message">
+            <span aria-hidden="true">↓</span>
+          </button>
+        </div>
+
+        <!-- Composer -->
+        <form class="etl-chat__composer" (ngSubmit)="send()">
+          <label for="etlChatInput" class="etl-chat__visually-hidden">Message the assistant</label>
+          <textarea id="etlChatInput" class="etl-chat__input" [(ngModel)]="userInput" name="userInput"
+                    rows="1" (keydown)="onComposerKeydown($event)"
+                    placeholder="Answer the assistant's questions or add guidance, then press Enter (Shift+Enter for a new line)…"></textarea>
+          <button type="submit" class="etl-chat__btn etl-chat__btn--primary etl-chat__send" [disabled]="!userInput.trim()">
+            Send
+          </button>
+        </form>
+      </ng-container>
+    </main>
   </div>
 </div>

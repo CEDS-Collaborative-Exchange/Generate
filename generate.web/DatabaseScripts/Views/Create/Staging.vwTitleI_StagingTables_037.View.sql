@@ -9,7 +9,8 @@ AS
 		, s.LEAIdentifierSeaAccountability
 		, s.SchoolIdentifierSea
 		, dels.EnglishLearnerStatusEdFactsCode			AS EnglishLearnerStatus
-		, dhs.HomelessnessStatusEdFactsCode				AS HomelessnessStatus
+		, CASE WHEN dhs.HomelessnessStatusEdFactsCode = 'HOMELSENRL' THEN 'H'
+			ELSE dhs.HomelessnessStatusEdFactsCode END	AS HomelessnessStatus  -- 14.1: FS037 'HOMELESS' category expects 'H' (mirrors Get_CountSQL)
 		, dis.IdeaIndicatorEdFactsCode					AS IdeaIndicator
 		, dms.MigrantStatusEdFactsCode					AS MigrantStatus
 		, drace.RaceEdFactsCode							AS Race

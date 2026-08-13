@@ -1,253 +1,265 @@
+// ETL Checklist — CEDS Mapping. Shares the AI ETL Developer design language.
+// Colours chosen for WCAG AA contrast (>= 4.5:1 body text, >= 3:1 large text / UI).
+
 .etl-mapping {
-  padding: 16px 24px;
+  // Palette
+  $ink:        #1b2733;
+  $ink-soft:   #46586b;
+  $line:       #d3dbe3;
+  $surface:    #ffffff;
+  $surface-2:  #f3f6f9;
+  $surface-3:  #e9eef3;
+  $brand:      #14508c;
+  $brand-dark: #0f3d6c;
+  $focus:      #1a73e8;
 
-  &__title {
-    margin-bottom: 4px;
-  }
+  padding: 12px 20px 32px;
+  color: $ink;
+  font-size: 14px;
+  line-height: 1.5;
 
-  &__intro {
-    margin-bottom: 16px;
-    max-width: 900px;
-  }
+  * { box-sizing: border-box; }
 
-  &__toolbar {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-    align-items: center;
-
-    .etl-mapping__upload-button {
-      cursor: pointer;
-    }
-  }
-
-  &__map-name {
-    padding: 6px 10px;
-    border: 1px solid #bbb;
-    border-radius: 3px;
-    min-width: 280px;
-  }
-
-  &__list-toolbar {
-    margin-bottom: 12px;
-  }
-
-  &__editor {
-    margin: 8px 0 16px;
-    padding: 12px 16px;
-    background-color: #f7f9fb;
-    border: 1px solid #dde5ec;
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  label:focus-within {
+    outline: 3px solid $focus;
+    outline-offset: 2px;
     border-radius: 4px;
-    max-width: 900px;
-
-    h3 {
-      margin: 0 0 8px;
-    }
   }
 
+  // ---- Header ----
+  &__topbar { padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid $line; }
+  &__crumbs { display: flex; gap: 6px; align-items: center; font-size: 13px; color: $ink-soft; margin-bottom: 8px; }
+  &__crumb-link { color: $brand; text-decoration: none; font-weight: 600; &:hover { text-decoration: underline; } }
+  &__crumb-sep { color: #9aa7b4; }
+  &__crumb--current { color: $ink; font-weight: 700; }
+
+  &__title { margin: 0 0 4px; font-size: 20px; font-weight: 800; }
+  &__intro { margin: 0; max-width: 900px; color: $ink-soft; }
+
+  // ---- Toolbar / inputs ----
+  &__toolbar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  &__map-name {
+    padding: 9px 12px; border: 1px solid $line; border-radius: 8px; min-width: 280px; font: inherit; color: $ink; background: #fff;
+  }
+  &__list-toolbar { margin-bottom: 14px; }
+
+  input[type="text"], input[type="number"], select, textarea {
+    font: inherit; color: $ink; background: #fff;
+    border: 1px solid $line; border-radius: 8px; padding: 8px 10px;
+  }
+
+  // ---- Cards (editor, requirements) ----
+  &__editor, &__requirements {
+    margin: 8px 0 18px; padding: 16px; background: $surface-2;
+    border: 1px solid $line; border-radius: 10px; max-width: 1100px;
+    h3 { margin: 0 0 12px; font-size: 15px; font-weight: 700; }
+  }
   &__editor-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-
-    label {
-      font-weight: bold;
-      min-width: 140px;
-    }
-
-    input,
-    select {
-      padding: 5px 8px;
-      border: 1px solid #bbb;
-      border-radius: 3px;
-    }
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+    label { font-weight: 700; min-width: 140px; color: $ink-soft; }
   }
 
   &__chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 2px 10px;
-    background-color: #e3ecf3;
-    border: 1px solid #b8cede;
-    border-radius: 12px;
-    font-size: 13px;
-
-    a {
-      text-decoration: none;
-      font-weight: bold;
-      color: #7a2020;
-    }
+    display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px;
+    background: $surface-3; border: 1px solid #b8cede; border-radius: 12px; font-size: 13px; font-weight: 600;
+    a { text-decoration: none; font-weight: 800; color: #8a221a; &:hover { color: #b02a1c; } }
   }
 
+  // ---- Staging target cell: removable Table.Column chips + add-back action ----
+  &__staging-cell { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 6px; max-width: 100%; }
+  // Long "Table.Column" names must wrap INSIDE the chip so it stays within the cell and never overlaps the
+  // next column (which hid the × delete button). align-items:flex-start keeps the × at the first line.
+  &__chip--staging { font-weight: 500; max-width: 100%; align-items: flex-start; }
+  &__chip-label { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+  &__chip-x {
+    flex: 0 0 auto; border: none; background: none; cursor: pointer; padding: 0 0 0 2px; line-height: 1.2;
+    font-size: 15px; font-weight: 800; color: #8a221a;
+    &:hover { color: #b02a1c; }
+  }
+  &__staging-add {
+    border: 1px dashed #8aa6bd; background: none; cursor: pointer; border-radius: 10px;
+    padding: 2px 8px; font-size: 12px; font-weight: 600; color: #2a5f86;
+    &:hover { background: $surface-3; }
+  }
+  &__staging-addpanel {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 6px;
+    padding: 6px 8px; background: $surface-2; border: 1px dashed #b8cede; border-radius: 8px;
+  }
+  &__chip--add {
+    cursor: pointer; font-weight: 500; color: #2a5f86; max-width: 100%;
+    overflow-wrap: anywhere; word-break: break-word; text-align: left;
+    &:hover { background: $surface-3; border-color: #8aa6bd; }
+  }
+
+  // ---- Selected-map header ----
   &__map-header {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin: 8px 0 12px;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin: 8px 0 14px; padding: 12px 14px; background: $surface-2; border: 1px solid $line; border-radius: 10px;
+    h3 { margin: 0; font-size: 17px; font-weight: 700; }
+  }
 
-    h3 {
-      margin: 0;
+  // ---- Per-row transformation notes editor ----
+  &__notesrow {
+    background: $surface-2; border-top: 1px solid $line;
+    padding: 12px 14px !important;
+  }
+  &__notes-label { display: block; font-size: 12px; font-weight: 600; color: $ink-soft; margin-bottom: 6px; }
+  &__notes-textarea {
+    width: 100%; font: inherit; color: $ink; background: #fff; border: 1px solid $line; border-radius: 8px;
+    padding: 8px 10px; resize: vertical; box-sizing: border-box;
+  }
+  &__notesrow-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+  // ---- Migration readiness banner ----
+  &__readiness {
+    margin: 8px 0; padding: 12px 14px; border-radius: 10px; max-width: 1100px;
+    border: 1px solid $line;
+    &--ok   { background: #e9f6ee; border-color: #accdb8; }
+    &--warn { background: #fdf3e6; border-color: #e6c58f; }
+  }
+  &__readiness-head {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    strong { font-size: 14px; color: $ink; }
+  }
+  &__readiness-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%; font-weight: 800; font-size: 13px; color: #fff;
+    .etl-mapping__readiness--ok & { background: #2e7d46; }
+    .etl-mapping__readiness--warn & { background: #b5771a; }
+  }
+  &__readiness-body {
+    margin-top: 8px; display: flex; flex-direction: column; gap: 6px;
+    .etl-mapping__chip { margin: 0 6px 4px 0; }
+  }
+  &__readiness-label { font-size: 12px; font-weight: 700; color: $ink-soft; margin-right: 6px; }
+
+  // ---- Source datasets (multi-source per map) ----
+  &__sources {
+    margin: 8px 0 16px; padding: 12px 14px; background: $surface-2;
+    border: 1px solid $line; border-radius: 10px; max-width: 1100px;
+  }
+  &__sources-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    h4 { margin: 0; font-size: 15px; font-weight: 700; color: $ink; }
+  }
+  &__sources-table {
+    width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 8px;
+    border: 1px solid $line; border-radius: 8px; overflow: hidden; background: #fff;
+    th, td { border-bottom: 1px solid $line; padding: 7px 10px; text-align: left; vertical-align: top; font-size: 13px; }
+    thead th { background: $surface-3; color: $ink; font-weight: 700; font-size: 12px; }
+    tbody tr:last-child td { border-bottom: none; }
+  }
+  &__sources-actions {
+    white-space: nowrap;
+    a { text-decoration: none; font-weight: 700; color: $brand; margin-right: 10px;
+        &:hover { color: $brand-dark; } &:last-child { color: #8a221a; margin-right: 0; } }
+  }
+  &__source-form {
+    margin-top: 10px; padding: 12px; background: #fff; border: 1px solid $line; border-radius: 8px;
+  }
+  &__source-form-row {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;
+    label { flex: 1 1 320px; display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: $ink-soft; }
+    input, select { font: inherit; color: $ink; background: #fff; border: 1px solid $line; border-radius: 8px; padding: 8px 10px; }
+  }
+  &__source-form-actions { display: flex; gap: 8px; align-items: center; }
+
+  &__guidance {
+    margin-top: 10px;
+    label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: $ink-soft; }
+    textarea {
+      font: inherit; color: $ink; background: #fff; border: 1px solid $line; border-radius: 8px;
+      padding: 8px 10px; width: 100%; resize: vertical; margin-bottom: 8px;
     }
   }
 
+  // ---- Messages / banners ----
   &__message {
-    margin: 8px 0;
-    padding: 8px 12px;
-    background-color: #eef4fa;
-    border-left: 4px solid #33739e;
-
-    &--error {
-      background-color: #fdecea;
-      border-left-color: #c62828;
-    }
+    margin: 10px 0; padding: 10px 12px; border-radius: 8px; font-weight: 600; font-size: 13px;
+    background: #eef4fb; border: 1px solid #b9d2ec; color: #0f3d6c;
+    &--error { background: #fdecea; border-color: #f0b3ab; color: #8a221a; }
   }
 
-  &__requirements {
-    margin: 8px 0 16px;
-    padding: 12px 16px;
-    background-color: #f7f9fb;
-    border: 1px solid #dde5ec;
-    border-radius: 4px;
-    max-width: 1100px;
-
-    h3 {
-      margin: 0 0 8px;
+  // ---- Requirements table ----
+  &__requirements-table, &__table, &__options-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border: 1px solid $line; border-radius: 10px; overflow: hidden; background: #fff;
+    th, td { border-bottom: 1px solid $line; padding: 9px 12px; text-align: left; vertical-align: top; }
+    thead th {
+      background: $brand; color: #fff; font-weight: 700; font-size: 12.5px;
+      letter-spacing: .2px; border-bottom: none; position: sticky; top: 0;
     }
-
-    ul {
-      margin: 0 0 12px;
-      padding-left: 20px;
-
-      li {
-        margin-bottom: 4px;
-      }
-    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fafcfe; }
+    tbody tr:hover { background: #eef4fb; }
   }
+  &__requirements-table { th, td { font-size: 13px; } }
 
-  &__requirements-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 8px;
-
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 6px 8px;
-      text-align: left;
-      vertical-align: top;
-      font-size: 13px;
-    }
-
-    th {
-      background-color: #33739e;
-      color: #fff;
-    }
-  }
+  // Horizontal scroll for wide tables on small screens.
+  &__table-wrap { overflow-x: auto; border-radius: 10px; }
 
   &__empty {
-    padding: 24px;
-    text-align: center;
-    color: #666;
+    padding: 28px; text-align: center; color: $ink-soft;
+    background: $surface-2; border: 1px dashed $line; border-radius: 10px;
   }
 
-  &__table,
-  &__options-table {
-    width: 100%;
-    border-collapse: collapse;
+  &__definition { max-width: 320px; color: $ink-soft; }
+  &__subtext { font-size: 12px; color: $ink-soft; }
+  &__actions { white-space: nowrap; button { margin-right: 4px; } }
 
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 8px 10px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      background-color: #33739e;
-      color: #fff;
-    }
-  }
-
-  &__definition {
-    max-width: 320px;
-  }
-
-  &__subtext {
-    font-size: 12px;
-    color: #666;
-  }
-
-  &__actions {
-    white-space: nowrap;
-
-    button {
-      margin-right: 4px;
-    }
-  }
-
+  // ---- Status badges ----
   &__status {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: bold;
-
-    &--accepted {
-      background-color: #e6f4ea;
-      color: #1e7d34;
-    }
-
-    &--suggested {
-      background-color: #fff8e1;
-      color: #8d6e00;
-    }
-
-    &--rejected {
-      background-color: #fdecea;
-      color: #c62828;
-    }
-
-    &--notinceds {
-      background-color: #ececec;
-      color: #444;
-    }
-
-    &--unmapped {
-      background-color: #ececec;
-      color: #888;
-    }
+    display: inline-block; padding: 2px 9px; border-radius: 11px; font-size: 11px; font-weight: 700;
+    &--accepted  { background: #e0f2e6; color: #14632a; }
+    &--suggested { background: #fcefcf; color: #6b4e00; }
+    &--rejected  { background: #fbe0dc; color: #8a221a; }
+    &--notinceds { background: $surface-3; color: #34414d; }
+    &--unmapped  { background: $surface-3; color: #5c6b78; }
   }
 
+  // ---- CEDS element picker ----
   &__picker {
     margin-top: 8px;
-
-    input {
-      width: 100%;
-      padding: 4px 6px;
-      margin-bottom: 4px;
-    }
-
+    input { width: 100%; margin-bottom: 6px; }
     ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      max-height: 220px;
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      background: #fff;
-
-      li {
-        padding: 4px 8px;
-        border-bottom: 1px solid #eee;
-      }
+      list-style: none; margin: 0; padding: 0; max-height: 220px; overflow-y: auto;
+      border: 1px solid $line; border-radius: 8px; background: #fff;
+      li { padding: 6px 10px; border-bottom: 1px solid $surface-3; &:last-child { border-bottom: none; } }
+      a { color: $brand; text-decoration: none; &:hover { text-decoration: underline; } }
     }
   }
 
-  &__options {
-    background-color: #f7f9fb;
+  &__options { background: $surface-2; }
+  &__options-table { border-radius: 8px; margin: 4px 0; }
+
+  a[href], a[routerLink] { color: $brand; }
+
+  // ---- Buttons: give the existing MDL markup the new look (scoped, no HTML churn) ----
+  .mdl-button {
+    text-transform: none; font-weight: 700; font-size: 13px; letter-spacing: 0;
+    border-radius: 8px; height: auto; min-height: 34px; padding: 7px 14px; line-height: 1.1;
+    color: $brand;
+    &:disabled { opacity: .5; }
+  }
+  .mdl-button--raised { background: #fff; border: 1px solid $line; box-shadow: none; color: $brand;
+    &:hover:not(:disabled) { background: #eef4fb; } }
+  .mdl-button--colored, .mdl-button--raised.mdl-button--colored {
+    background: $brand; color: #fff; border: 1px solid $brand-dark; box-shadow: none;
+    &:hover:not(:disabled) { background: $brand-dark; }
+  }
+  .mdl-button--primary { color: $brand; }
+  a.mdl-button { display: inline-flex; align-items: center; text-decoration: none; }
+
+  &__upload-button { cursor: pointer; }
+
+  // ---- Responsive ----
+  @media (max-width: 860px) {
+    padding: 12px;
+    &__table, &__requirements-table { display: block; overflow-x: auto; white-space: nowrap; }
+    &__definition { max-width: none; white-space: normal; }
   }
 }

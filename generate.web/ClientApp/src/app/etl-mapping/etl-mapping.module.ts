@@ -12,6 +12,7 @@ import { EtlMappingComponent } from './etl-mapping.component';
 
 // Services
 import { EtlSourceMappingService } from '../services/app/etlSourceMapping.service';
+import { EtlChatService } from '../services/app/etlChat.service';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { EtlSourceMappingService } from '../services/app/etlSourceMapping.servic
     EtlMappingComponent
   ],
   providers: [
-    EtlSourceMappingService
+    EtlSourceMappingService,
+    EtlChatService
   ]
 })
 export class EtlMappingModule { }

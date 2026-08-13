@@ -14,16 +14,26 @@ namespace generate.web.Controllers.Api.App
     public class EtlChatController : Controller
     {
         private readonly IEtlChatService _etlChatService;
+        private readonly IEtlChatRunner _etlChatRunner;
 
-        public EtlChatController(IEtlChatService etlChatService)
+        public EtlChatController(IEtlChatService etlChatService, IEtlChatRunner etlChatRunner)
         {
             _etlChatService = etlChatService;
+            _etlChatRunner = etlChatRunner;
         }
 
         [HttpGet("maps/{mapId}/sessions")]
         public JsonResult GetSessions(int mapId)
         {
             return Json(_etlChatService.GetSessions(mapId));
+        }
+
+        /// <summary>Readiness check for a map: does its mapping cover the Staging tables/columns the target
+        /// file spec's end-to-end migration needs? Lets the UI warn before a session is started to no avail.</summary>
+        [HttpGet("maps/{mapId}/coverage")]
+        public JsonResult GetCoverage(int mapId)
+        {
+            return Json(_etlChatService.ComputeCoverage(mapId));
         }
 
         [HttpPost("sessions")]
@@ -45,6 +55,41 @@ namespace generate.web.Controllers.Api.App
         {
             var session = _etlChatService.GetSession(id);
             return session == null ? (IActionResult)NotFound() : Json(session);
+        }
+
+        /// <summary>Session state plus whether a background run is currently active — used by the UI to
+        /// reconnect and show the working indicator after the user returns to the page.</summary>
+        [HttpGet("sessions/{id}/status")]
+        public IActionResult GetStatus(int id)
+        {
+            var session = _etlChatService.GetSession(id);
+            if (session == null)
+            {
+                return NotFound();
+            }
+            return Json(new { session, isRunning = _etlChatRunner.IsRunning(id) });
+        }
+
+        /// <summary>Starts (or resumes) the background phase loop for a session. Returns immediately;
+        /// the loop keeps running server-side even if the user leaves the page.</summary>
+        [HttpPost("sessions/{id}/run")]
+        public IActionResult Run(int id)
+        {
+            var session = _etlChatService.GetSession(id);
+            if (session == null)
+            {
+                return NotFound();
+            }
+            _etlChatRunner.Start(id);
+            return Json(new { started = true, isRunning = _etlChatRunner.IsRunning(id) });
+        }
+
+        /// <summary>Requests the background run to stop after the current step finishes.</summary>
+        [HttpPost("sessions/{id}/stop")]
+        public IActionResult Stop(int id)
+        {
+            _etlChatRunner.Stop(id);
+            return Json(new { stopped = true, isRunning = _etlChatRunner.IsRunning(id) });
         }
 
         [HttpGet("sessions/{id}/messages")]

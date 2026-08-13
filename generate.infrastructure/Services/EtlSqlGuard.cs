@@ -36,11 +36,17 @@ namespace generate.infrastructure.Services
             {
                 return "does not target the Staging schema.";
             }
-            // Guard against accidental mass deletes/updates: any DELETE/UPDATE must be scoped by WHERE.
-            if ((Regex.IsMatch(lower, @"\bdelete\b") || Regex.IsMatch(lower, @"\bupdate\b")) &&
-                !Regex.IsMatch(lower, @"\bwhere\b"))
+            // DELETEs may be unconstrained (no WHERE required), but EVERY schema-qualified write target
+            // — DELETE/UPDATE/INSERT/MERGE — must be in the Staging schema. Temp tables (#..) and
+            // unqualified targets are allowed.
+            foreach (Match m in Regex.Matches(lower,
+                @"\b(?:delete\s+(?:from\s+)?|update\s+|insert\s+into\s+|merge\s+(?:into\s+)?)\[?([a-z0-9_]+)\]?\s*\."))
             {
-                return "contains an unscoped DELETE/UPDATE (a WHERE clause is required).";
+                string schema = m.Groups[1].Value;
+                if (schema != "staging")
+                {
+                    return $"writes must target the Staging schema (found a write to '{schema}').";
+                }
             }
             return null;
         }
@@ -57,6 +63,33 @@ namespace generate.infrastructure.Services
                 if (Regex.IsMatch(lower, $@"\b{kw}\b"))
                 {
                     return $"test must be read-only (found '{kw}').";
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Validates a read-only inspection query (e.g. against INFORMATION_SCHEMA or sys catalog views):
+        /// must be a single SELECT/WITH with no writes, DDL, or EXEC. Returns an error, or null when allowed.
+        /// </summary>
+        public static string ValidateReadOnly(string sql)
+        {
+            string lower = (sql ?? "").ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(lower))
+            {
+                return "empty query";
+            }
+            // Read-only inspection may open with DECLARE/SET/comments before the SELECT — only the absence
+            // of writes/DDL/EXEC matters. It must, however, contain a SELECT.
+            if (!Regex.IsMatch(lower, @"\bselect\b"))
+            {
+                return "lookup must contain a read-only SELECT.";
+            }
+            foreach (var kw in new[] { "insert", "update", "delete", "merge", "drop", "alter", "truncate", "create", "exec", "grant", "revoke", "backup", "restore" })
+            {
+                if (Regex.IsMatch(lower, $@"\b{kw}\b"))
+                {
+                    return $"lookup must be read-only (found '{kw}').";
                 }
             }
             return null;

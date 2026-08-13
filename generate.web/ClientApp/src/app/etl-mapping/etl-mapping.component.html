@@ -1,9 +1,19 @@
 <div class="etl-mapping">
-  <h2 class="etl-mapping__title">ETL Checklist &mdash; CEDS Mapping</h2>
-  <p class="etl-mapping__intro">
-    Upload your data dictionary (.csv or .xlsx) to automatically map its elements and option set values to CEDS.
-    Review each suggestion, accept or override it, then export the completed ETL Checklist.
-  </p>
+  <header class="etl-mapping__topbar">
+    <nav class="etl-mapping__crumbs" aria-label="Breadcrumb">
+      <ng-container *ngIf="selectedMap">
+        <a href="javascript:void(0)" class="etl-mapping__crumb-link" (click)="backToMaps()">ETL Maps</a>
+        <span class="etl-mapping__crumb-sep" aria-hidden="true">›</span>
+        <span class="etl-mapping__crumb--current" aria-current="page">{{ selectedMap.mapName }}</span>
+      </ng-container>
+      <span *ngIf="!selectedMap" class="etl-mapping__crumb--current" aria-current="page">ETL Maps</span>
+    </nav>
+    <h2 class="etl-mapping__title">ETL Checklist &mdash; CEDS Mapping</h2>
+    <p class="etl-mapping__intro">
+      Upload your data dictionary (.csv or .xlsx) to automatically map its elements and option set values to CEDS.
+      Review each suggestion, accept or override it, then export the completed ETL Checklist.
+    </p>
+  </header>
 
   <div class="etl-mapping__toolbar">
     <input type="text" class="etl-mapping__map-name" placeholder="Map name (defaults to file name)"
@@ -165,6 +175,229 @@
     <span class="etl-mapping__subtext">Uploading a file now adds its elements to this map.</span>
   </div>
 
+  <!-- Source datasets: a single file spec often draws from several source objects. The AI ETL
+       Developer injects every registered source's schema/sample when it builds the load. -->
+  <!-- Readiness: can this map actually complete an end-to-end migration for its file spec? -->
+  <div *ngIf="selectedMap && coverage && coverage.resolved"
+       class="etl-mapping__readiness"
+       [class.etl-mapping__readiness--ok]="coverage.isReady"
+       [class.etl-mapping__readiness--warn]="!coverage.isReady">
+    <div class="etl-mapping__readiness-head">
+      <span class="etl-mapping__readiness-icon">{{ coverage.isReady ? '✓' : '!' }}</span>
+      <strong *ngIf="coverage.isReady">Ready for migration</strong>
+      <strong *ngIf="!coverage.isReady">Not ready — required Staging data is unmapped</strong>
+      <span class="etl-mapping__subtext">
+        {{ coverage.mappedRequiredTableCount }} of {{ coverage.requiredTableCount }} required Staging tables mapped
+        <span *ngIf="coverage.factTypeCode"> &middot; {{ coverage.factTypeCode }}</span>
+      </span>
+    </div>
+    <div *ngIf="!coverage.isReady" class="etl-mapping__readiness-body">
+      <div *ngIf="coverage.missingTables.length > 0">
+        <span class="etl-mapping__readiness-label">Unmapped required tables:</span>
+        <span class="etl-mapping__chip" *ngFor="let t of coverage.missingTables">Staging.{{ t }}</span>
+      </div>
+      <div *ngIf="coverage.missingRequiredColumns.length > 0">
+        <span class="etl-mapping__readiness-label">Unmapped NOT NULL columns:</span>
+        <span class="etl-mapping__chip" *ngFor="let c of coverage.missingRequiredColumns">Staging.{{ c }}</span>
+      </div>
+      <p class="etl-mapping__subtext">
+        Add a source below and map its elements to these Staging targets. Until then, the AI ETL
+        Developer can load what's mapped, but the report migration can't complete.
+      </p>
+    </div>
+  </div>
+
+  <div *ngIf="selectedMap" class="etl-mapping__sources">
+    <div class="etl-mapping__sources-head">
+      <h4>Source Datasets</h4>
+      <button type="button" class="mdl-button mdl-js-button mdl-button--raised"
+              *ngIf="!editingSource" (click)="newSource()">Add Source</button>
+    </div>
+    <p class="etl-mapping__subtext">
+      Register each source table, view, or query this map draws from. The AI ETL Developer maps and
+      loads all of them into Staging.
+    </p>
+
+    <!-- Every source table referenced by the uploaded mappings must be registered here, or the map,
+         join builder, and AI ETL Developer fall out of sync. Warn (and offer a one-click fix) if not. -->
+    <div *ngIf="unregisteredSources.length > 0" class="etl-mapping__readiness etl-mapping__readiness--warn">
+      <div class="etl-mapping__readiness-head">
+        <span class="etl-mapping__readiness-icon">!</span>
+        <strong>{{ unregisteredSources.length }} source table(s) in the mappings are not registered</strong>
+      </div>
+      <div class="etl-mapping__readiness-body">
+        <div>
+          <span class="etl-mapping__readiness-label">Unregistered:</span>
+          <span class="etl-mapping__chip" *ngFor="let o of unregisteredSources">{{ o }}</span>
+        </div>
+        <p class="etl-mapping__subtext">
+          The uploaded data dictionary references these tables, but they aren't in Source Datasets. Register
+          them so joins and the AI ETL Developer see every source.
+        </p>
+        <div class="etl-mapping__source-form-actions">
+          <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                  (click)="registerMissingSources()">Register missing source(s)</button>
+        </div>
+      </div>
+    </div>
+
+    <table *ngIf="sources.length > 0" class="etl-mapping__sources-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Source Object</th>
+          <th>Connection</th>
+          <th>Notes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of sources">
+          <td>{{ s.sourceName || '—' }}</td>
+          <td>{{ s.sourceObject }}</td>
+          <td>{{ s.sourceConnection || '(default)' }}</td>
+          <td>{{ s.notes }}</td>
+          <td class="etl-mapping__sources-actions">
+            <a href="javascript:void(0)" (click)="editSource(s)">Edit</a>
+            <a href="javascript:void(0)" (click)="deleteSource(s)">Remove</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="sources.length === 0 && !editingSource" class="etl-mapping__subtext">
+      No sources registered yet.
+    </div>
+
+    <div *ngIf="editingSource" class="etl-mapping__source-form">
+      <div class="etl-mapping__source-form-row">
+        <label>Name
+          <input type="text" [(ngModel)]="editingSource.sourceName"
+                 placeholder="Friendly name (e.g. Enrollment extract)" />
+        </label>
+        <label>Source Object*
+          <input type="text" [(ngModel)]="editingSource.sourceObject"
+                 placeholder="schema.table, view, or query" />
+        </label>
+      </div>
+      <div class="etl-mapping__source-form-row">
+        <label>Connection
+          <input type="text" [(ngModel)]="editingSource.sourceConnection"
+                 placeholder="Blank = default source connection" />
+        </label>
+        <label>Notes
+          <input type="text" [(ngModel)]="editingSource.notes" placeholder="Optional" />
+        </label>
+      </div>
+      <div class="etl-mapping__source-form-actions">
+        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                (click)="saveSource()">Save</button>
+        <button type="button" class="mdl-button mdl-js-button" (click)="cancelSource()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table joins: tell the AI ETL Developer exactly how the sources relate, so it never guesses join
+       columns. Each row is one condition (left.col = right.col); add several rows for a composite key. -->
+  <div *ngIf="selectedMap && sourceSchema.length > 1" class="etl-mapping__sources">
+    <div class="etl-mapping__sources-head">
+      <h4>Table Joins</h4>
+      <button type="button" class="mdl-button mdl-js-button mdl-button--raised"
+              *ngIf="!editingJoin" (click)="newJoin()">Add Join</button>
+    </div>
+    <p class="etl-mapping__subtext">
+      Define how the source tables join. Each row is one condition — for a composite key, add one row per
+      column pair (same tables &amp; type). The AI ETL Developer uses these joins verbatim.
+    </p>
+
+    <table *ngIf="mapJoins.length > 0" class="etl-mapping__sources-table">
+      <thead>
+        <tr><th>Type</th><th>Left table.column</th><th>Right table.column</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let j of mapJoins">
+          <td>{{ j.joinType }}</td>
+          <td>{{ j.leftSourceObject }}.<strong>{{ j.leftColumn }}</strong></td>
+          <td>{{ j.rightSourceObject }}.<strong>{{ j.rightColumn }}</strong></td>
+          <td class="etl-mapping__sources-actions">
+            <a href="javascript:void(0)" (click)="editJoin(j)">Edit</a>
+            <a href="javascript:void(0)" (click)="deleteJoin(j)">Remove</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="mapJoins.length === 0 && !editingJoin" class="etl-mapping__subtext">No joins defined yet.</div>
+
+    <div *ngIf="editingJoin" class="etl-mapping__source-form">
+      <div class="etl-mapping__source-form-row">
+        <label>Join type
+          <select [(ngModel)]="editingJoin.joinType" name="joinType">
+            <option value="LEFT">LEFT</option>
+            <option value="INNER">INNER</option>
+            <option value="RIGHT">RIGHT</option>
+            <option value="FULL">FULL</option>
+          </select>
+        </label>
+      </div>
+      <div class="etl-mapping__source-form-row">
+        <label>Left table
+          <select [(ngModel)]="editingJoin.leftSourceObject" name="leftObj">
+            <option *ngFor="let s of sourceSchema" [value]="s.sourceObject">{{ s.sourceName }} ({{ s.sourceObject }})</option>
+          </select>
+        </label>
+        <label>Left column
+          <select [(ngModel)]="editingJoin.leftColumn" name="leftCol">
+            <option value="">— column —</option>
+            <option *ngFor="let c of columnsFor(editingJoin.leftSourceObject)" [value]="c">{{ c }}</option>
+          </select>
+        </label>
+      </div>
+      <div class="etl-mapping__source-form-row">
+        <label>Right table
+          <select [(ngModel)]="editingJoin.rightSourceObject" name="rightObj">
+            <option *ngFor="let s of sourceSchema" [value]="s.sourceObject">{{ s.sourceName }} ({{ s.sourceObject }})</option>
+          </select>
+        </label>
+        <label>Right column
+          <select [(ngModel)]="editingJoin.rightColumn" name="rightCol">
+            <option value="">— column —</option>
+            <option *ngFor="let c of columnsFor(editingJoin.rightSourceObject)" [value]="c">{{ c }}</option>
+          </select>
+        </label>
+      </div>
+      <div class="etl-mapping__source-form-actions">
+        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                (click)="saveJoin()">Save</button>
+        <button type="button" class="mdl-button mdl-js-button" (click)="cancelJoin()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="etl-mapping__guidance">
+      <label>Join notes (free text — for anything the grid can't express)
+        <textarea rows="2" [(ngModel)]="joinInstructions" name="joinInstructions"
+                  placeholder="e.g. Left-join PersonStatus on student id; a student with no status row still counts."></textarea>
+      </label>
+    </div>
+  </div>
+
+  <!-- Map-level processing/filtering guidance for the AI ETL Developer. -->
+  <div *ngIf="selectedMap" class="etl-mapping__sources">
+    <div class="etl-mapping__sources-head"><h4>Processing &amp; Filtering Notes</h4></div>
+    <p class="etl-mapping__subtext">
+      Describe any filtering or complex processing needed to produce the correct dataset before it loads
+      into Staging (e.g. only active enrollments, dedupe rules, derived flags). Fed to the AI ETL Developer.
+    </p>
+    <div class="etl-mapping__guidance">
+      <textarea rows="3" [(ngModel)]="processingNotes" name="processingNotes"
+                placeholder="e.g. Exclude withdrawals before the count date; keep the latest enrollment per student."></textarea>
+      <div class="etl-mapping__source-form-actions">
+        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                (click)="saveGuidance()">Save AI Guidance</button>
+        <span *ngIf="guidanceSaved" class="etl-mapping__subtext">Saved.</span>
+      </div>
+    </div>
+  </div>
+
   <div *ngIf="selectedMap && !isLoading && mappings.length === 0" class="etl-mapping__empty">
     This map has no elements.
   </div>
@@ -213,8 +446,29 @@
             </div>
           </td>
           <td class="etl-mapping__definition">
-            <span *ngIf="mapping.stagingTableColumns">{{ mapping.stagingTableColumns }}</span>
-            <span *ngIf="!mapping.stagingTableColumns" class="etl-mapping__subtext">&mdash;</span>
+            <div class="etl-mapping__staging-cell">
+              <span class="etl-mapping__chip etl-mapping__chip--staging" *ngFor="let pair of stagingPairs(mapping)">
+                <span class="etl-mapping__chip-label">{{ pair }}</span>
+                <button type="button" class="etl-mapping__chip-x" title="Remove this Staging target column"
+                        (click)="deleteStagingColumn(mapping, pair)">&times;</button>
+              </span>
+              <span *ngIf="stagingPairs(mapping).length === 0" class="etl-mapping__subtext">&mdash;</span>
+              <button type="button" class="etl-mapping__staging-add"
+                      title="Add a Staging target column (CEDS targets, or non-CEDS columns when the element is Not in CEDS)"
+                      (click)="toggleStagingAdd(mapping)">+ add</button>
+            </div>
+            <div class="etl-mapping__staging-addpanel"
+                 *ngIf="stagingAddOpenFor === mapping.etlSourceElementMappingId">
+              <ng-container *ngIf="availableStagingColumns(mapping).length > 0; else noMoreStaging">
+                <span class="etl-mapping__subtext">Add back:</span>
+                <button type="button" class="etl-mapping__chip etl-mapping__chip--add"
+                        *ngFor="let pair of availableStagingColumns(mapping)"
+                        (click)="addStagingColumn(mapping, pair)" title="Add this Staging target column">+ {{ pair }}</button>
+              </ng-container>
+              <ng-template #noMoreStaging>
+                <span class="etl-mapping__subtext">All candidate columns for this element are already selected.</span>
+              </ng-template>
+            </div>
           </td>
           <td>{{ confidencePercent(mapping.matchConfidence) }}</td>
           <td><span class="etl-mapping__status" [ngClass]="statusClass(mapping.mappingStatus)">{{ mapping.mappingStatus }}</span></td>
@@ -226,6 +480,11 @@
             <button type="button" class="mdl-button mdl-js-button" (click)="openPicker(mapping)">Change</button>
             <button type="button" class="mdl-button mdl-js-button" (click)="markNotInCeds(mapping)"
                     [disabled]="mapping.mappingStatus === 'NotInCeds'">Not in CEDS</button>
+            <button type="button" class="mdl-button mdl-js-button" (click)="toggleNotes(mapping)"
+                    title="Transformation notes &amp; rules for the AI ETL Developer">
+              {{ notesOpenFor === mapping.etlSourceElementMappingId ? 'Hide rules' : 'Rules' }}<span
+                *ngIf="mapping.transformationRules && mapping.transformationRules.trim()" aria-hidden="true"> &bull;</span>
+            </button>
           </td>
           <td>
             <button *ngIf="mapping.etlSourceOptionSetMappings && mapping.etlSourceOptionSetMappings.length > 0"
@@ -235,6 +494,25 @@
             </button>
             <span *ngIf="!mapping.etlSourceOptionSetMappings || mapping.etlSourceOptionSetMappings.length === 0"
                   class="etl-mapping__subtext">&mdash;</span>
+          </td>
+        </tr>
+
+        <!-- Hidden-by-default per-row transformation notes / rules for the AI ETL Developer. -->
+        <tr *ngIf="notesOpenFor === mapping.etlSourceElementMappingId">
+          <td colspan="8" class="etl-mapping__notesrow">
+            <label class="etl-mapping__notes-label" [attr.for]="'tr-' + mapping.etlSourceElementMappingId">
+              Transformation notes &amp; rules for <strong>{{ mapping.sourceElementName }}</strong> — how to
+              derive, clean, convert, or filter this element. Fed to the AI ETL Developer when it writes the ETL.
+            </label>
+            <textarea [attr.id]="'tr-' + mapping.etlSourceElementMappingId" rows="3"
+                      class="etl-mapping__notes-textarea"
+                      [(ngModel)]="mapping.transformationRules"
+                      placeholder="e.g. Trim leading zeros; CASE WHEN Flg='Y' THEN 1 ELSE 0; keep only rows where Status='A'; COALESCE(ExitDt, WdrawDt); source stores MM/DD/YYYY&hellip;"></textarea>
+            <div class="etl-mapping__notesrow-actions">
+              <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                      (click)="saveMappingNotes(mapping)">Save</button>
+              <button type="button" class="mdl-button mdl-js-button" (click)="toggleNotes(mapping)">Cancel</button>
+            </div>
           </td>
         </tr>
 

@@ -22,7 +22,11 @@ AS
 		  	, a.[SchoolTypeCode]
 			-- 14.1: FS037 breaks out by EL / Homelessness / IDEA Indicator / Migrant / Race
 			, a.[EnglishLearnerStatusEdFactsCode]
-			, a.[HomelessnessStatusEdFactsCode]
+			-- 14.1: FS037 homeless category 'HOMELESS' expects permitted value 'H' (not the dim's
+			-- 'HOMELSENRL'). Mirrors RDS.Get_CountSQL's per-report translation (when homeless -> 'H',
+			-- else keep the code). Ported to the new view-based path.
+			, CASE WHEN a.[HomelessnessStatusEdFactsCode] = 'HOMELSENRL' THEN 'H'
+				ELSE a.[HomelessnessStatusEdFactsCode] END			AS [HomelessnessStatusEdFactsCode]
 			, a.[IdeaIndicatorEdFactsCode]
 			, a.[MigrantStatusEdFactsCode]
 			, a.[RaceEdFactsCode]

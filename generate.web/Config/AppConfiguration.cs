@@ -125,6 +125,12 @@ namespace generate.web.Config
             // AI ETL developer chatbot (CIID-9061): local Ollama model + looping ETL development
             services.AddScoped<IOllamaClient, OllamaClient>();
             services.AddScoped<IEtlChatService, EtlChatService>();
+            // Background runner (singleton) drives the phase loop server-side so it keeps running
+            // after the user leaves the page.
+            services.AddSingleton<IEtlChatRunner, EtlChatRunner>();
+
+            // General-purpose assistant chat (CIID-9061): free-form sessions not tied to an ETL map.
+            services.AddScoped<IAssistantChatService, AssistantChatService>();
         }
 
 
