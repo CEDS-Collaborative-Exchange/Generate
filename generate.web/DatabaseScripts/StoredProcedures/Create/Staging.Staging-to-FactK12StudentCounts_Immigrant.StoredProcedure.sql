@@ -109,7 +109,7 @@ BEGIN
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId							
 			, -1 														AgeId									
 			, -1									RaceId  -- 14.1: this proc has no rdr race join (FS165 Immigrant has no race breakout); was ISNULL(rdr.DimRaceId,-1) -> unbound alias
-			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId						
+			, -1									K12DemographicId  -- 14.1: this proc has no rdkd demographic join (FS165 Immigrant's only category is MEPFUNDSSTATUS - no age/sex/race breakout); was ISNULL(rdkd.DimK12DemographicId,-1) -> unbound alias that aborted the whole fact load
 			, 1															StudentCount							
 			, ISNULL(rds.DimSeaId, -1)									SEAId									
 			, -1														IEUId									
