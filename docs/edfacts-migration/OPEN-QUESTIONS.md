@@ -281,6 +281,67 @@ you want the 5 branch-less codes (180/181/210/211/212) developed in this push or
 
 ---
 
+## Q11 (scope decision) — The CTE family (7 specs) has **no fact-load path at all**
+
+`FS082, FS083, FS154, FS155, FS156, FS158, FS169` can never populate today. Evidence:
+
+- `App.Wrapper_Migrate_CTE_to_RDS` calls `rds.Migrate_DimK12Students`, `rds.Migrate_DimSeas`,
+  `rds.Migrate_DimLeas`, `rds.Migrate_DimK12Schools`, `rds.Migrate_StudentCounts` — **all five exist as
+  repo files but none are deployed.** (`rds.Empty_RDS` is the only one deployed.)
+- Every *other* fact family's wrapper uses the modern `Staging.[Staging-to-*]` pattern, and those procs
+  *are* deployed. CTE is the lone holdout on a deprecated proc family.
+- **There is no `Staging.Staging-to-FactK12StudentCounts_CTE` proc anywhere** — not in the repo, not in
+  the DB.
+- `RDS.FactK12StudentCounts` has **zero** rows for fact type `cte` **in any year**.
+
+So this isn't a deployment gap or a config gap — the CTE fact load was never built on the current
+architecture. That's ~7 of the 94 needing real development.
+
+**Question:** Build `Staging-to-FactK12StudentCounts_CTE` (modelled on the NeglectedOrDelinquent proc) in
+this push, or scope CTE out for now? I'd want your call before writing a new fact-load proc — it's
+substantive new ETL, not a fix.
+
+---
+
+## Q12 — Systemic repo ↔ database drift (deployed objects behind source control)
+
+Repeatedly this session, a "bug" turned out to be **the DB running older code than the repo**:
+
+| object | state found |
+|---|---|
+| `App.FS032/FS033/FS212_TestCase` | deployed 2025-05-14, files 2025-08-28 |
+| `App.FS052/FS194_TestCase` | deployed versions still had errors already fixed in the files |
+| `Staging.Staging-to-FactK12StudentCounts_Immigrant` | deployed still had the unbound `rdr.DimRaceId` I fixed earlier this session |
+| `RDS.vwChronicAbsenteeism_FactTable_195` | deployed missing the `DISAB504STAT` translation |
+
+I redeployed each of the above. But this means **any red result must be re-checked against a freshly
+deployed object before it's believed** — and some of the remaining "defects" (e.g. the graduationrate
+`Incorrect syntax near ')'`) may simply be stale deployments too.
+
+**Question:** Is there a canonical "deploy the whole `DatabaseScripts` tree to the dev DB" step I should be
+running (the version-update process) before each test sweep? If so I'll run it and re-baseline. If not,
+I'd recommend adding one — this drift has cost real diagnostic time and produced at least three false leads.
+
+---
+
+## Q13 — Three specs have no production wiring; one is explicitly retired
+
+From a full read of `RDS.Create_Reports` (the authoritative dispatcher):
+
+- **`FS180`, `FS181`** (N-or-D outcomes in-program / exited) — **no branch anywhere** in
+  `Create_Reports`. Not marked retired; simply never built. Their fact type is `neglectedordelinquent`
+  (confirmed via `App.TableTypes`: `LEANDINPROG`/`SEANDINPROG`, `LEANDEXIT`/`SEANDEXIT`), so they'd ride the
+  same healthy pipeline as the passing 218-221.
+- **`FS210`** (Title III EL) — no branch either. It *is* catalogued in `App.SqlUnitTest` (id 45) but has
+  **zero recorded results ever**. Worse, `RDS.vwAssessment_FactTable_210` contains **Neglected-or-Delinquent
+  logic**, not Title III — a copy/paste artifact that must be rebuilt if 210 moves to the new path.
+- **`FS204`** — the call exists in `Create_Reports` but is **commented out with `-- This report is
+  retired`**. Recommend dropping it from the 94 target (making it 93).
+
+**Question:** Build 180/181/210, or scope them out? And confirm FS204 comes off the list.
+
+---
+
 ## Q9 — Test-result counts are inflated by duplicate `App.SqlUnitTest` registrations
 
 `App.SqlUnitTest` has **17 duplicate rows** for `FS143_UnitTestCase` (`SqlUnitTestId` 8, 10-22, 29, 31, 33),
