@@ -8,6 +8,53 @@ Brain task: `6cafe950`. Branch `feature/finish-generate`. Data year **2027**.
 
 ---
 
+## 🔴 Q0 (CRITICAL, found 2026-08-14) — The AI ETL Developer destroys the e2e test-data baseline
+
+**This is the single biggest finding of the session and it invalidated a swathe of test results.**
+
+The AI ETL Developer (ETL chat, CIID-9061) emits staging loads shaped as:
+
+```sql
+DELETE FROM Staging.<Table> WHERE SchoolYear = @SchoolYear;
+INSERT INTO Staging.<Table> (...) SELECT ... FROM <the session's bespoke source>;
+```
+
+Run against the shared Generate DB, that is destructive in **two** ways:
+
+1. **INSERT succeeds but is tiny.** `Staging.K12Enrollment` for **SchoolYear 2026** went from **10,031 generated rows → 600 rows / 300 students**, every one an `NJ1000001`-style id from `Source.MembershipExtract2026` (map 8, the FS052 membership test map).
+2. **DELETE succeeds, INSERT fails → pure deletion.** `Staging.K12Enrollment` for **SchoolYear 2027** was wiped **entirely (0 rows)** — consistent with a session that hit the bit-conversion error loop after its DELETE had already committed.
+
+Sibling tables were untouched (`Staging.Discipline` 2025/26/27 = 24,068 / 24,068 / 33,996; `PersonStatus` = 10,031 / 10,031 / 10,023), so staging became **internally inconsistent**: the enrollment backbone gone while every child table kept full cohorts.
+
+**Impact.** Every `FSxxx_TestCase` expected side that joins `Staging.K12Enrollment` on SchoolYear collapses to zero. Proven step-by-step for FS005 — the predicate `ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)` takes **5,336 surviving students → 0**:
+
+| step | predicate added | distinct students |
+|---|---|---|
+| 0 | base joins | 7,496 |
+| 1 | `+ sppse.IDEAIndicator = 1` | 7,446 |
+| 2 | `+ idea.IdeaDisabilityTypeCode IS NOT NULL` | 7,446 |
+| 3 | `+ sd.IdeaInterimRemoval IN ('REMDW_1','REMHO_1')` | 5,336 |
+| **4** | **`+ ske.Schoolyear = @SchoolYear`** | **0** |
+
+That single fact explains discipline FS005/006/007/088/143/144 all reporting "NO TEST RESULTS," and likely contributed to other expected-side-empty results. Reports/facts were **not** affected — they were built before the destruction.
+
+**Already done:** restored the baseline by re-running the deterministic generator
+(`generate.console testdata staging 1000 10000 sql 2027 3 non-ceds execute`, seed 1000 → identical
+data to what the RDS facts were built from). The test procs are **correct** and must not be changed —
+their `K12Enrollment` join mirrors the production ETL
+(`Staging-to-FactK12StudentDisciplines`, lines 273-274).
+
+**Question:** How do you want the ETL chat isolated so this cannot recur? Options:
+- **(A)** Point the AI ETL Developer at a dedicated sandbox DB / restorable snapshot (my recommendation).
+- **(B)** Scope its generated `DELETE` to the session's own source keys (e.g. the LEA/school ids present
+  in its source) instead of the whole `SchoolYear`.
+- **(C)** Run its loads inside a transaction that rolls back unless the INSERT succeeds — this alone
+  would have prevented the 2027 total wipe.
+
+I'd do **(A) + (C)**: (C) is a cheap, high-value guard regardless of where it runs.
+
+---
+
 ## Q1 (BLOCKER, highest value) — How should the 38 unregistered specs be registered in `App.EtlMetadata`?
 
 **What I found.** `App.EtlMetadata` is **not** a file-spec registry. It is a **CEDS element → destination mapping**
@@ -92,25 +139,45 @@ official SY2026-27 file-spec list, I'll reconcile against it to be certain nothi
 
 ---
 
-## Q3 (approval needed) — Vetted IDEA staff SEA totals look wrong. May I fix?
+## Q3 ✅ RESOLVED-DIAGNOSIS (approval needed to apply) — staff SEA is a **TEST** bug, not a report bug
 
-`FS070/FS099/FS112` fail **only at SEA level**, with expected far below actual:
+**Good news: the report is correct.** My earlier hypothesis (report double-counting) was **wrong** —
+diagnosed and disproved.
 
-| test case | expected | actual |
-|---|---|---|
-| TOT SEA Match All | 2 | 226 |
-| ST2 SEA (AGE5KTO21) | 1 | 155 |
-| ST1 SEA (SPEDTCHFULCRT_1) | 2 | 130 |
+`FS070/FS099/FS112` fail only at SEA level (TOT SEA expected 2 vs actual 226). Root cause is in the
+**test proc**, `App.FS070_TestCase` line 118 (FS099 lines 125-126, FS112 line 125):
 
-LEA-level rows **pass** (2 vs 2, 1 vs 1). The actual/expected ratio ≈ the LEA count, which suggests the
-report **sums a per-LEA fan-out into the SEA total** while the test counts distinct staff once.
+```sql
+AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime
+                        AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
+```
 
-This matters beyond the test: **if the report is wrong, Generate would submit inflated SEA staff totals to
-ED.** But staff is in your vetted family ("spec ed child count, staff, spec exit, assessments … don't
-change their logic without asking"), so I have an agent diagnosing **read-only** and will not touch it.
+For SY2027 `@ChildCountDate` = **2026-10-01**, but the test runs *today* (2026-08-14). For every still-open
+org (`LEA_RecordEndDateTime IS NULL` — 2,696 rows / 337 LEAs) the window becomes
+`10/01/2026 BETWEEN start AND 08/14/2026` → **false**. Only **1 of 152 LEAs** ("LEAPKOnly", which has an
+explicit end date) survives — hence expected=2.
 
-**Question:** If the diagnosis confirms a real report-side defect (not a test artifact), do I have approval
-to fix the SEA aggregation in the vetted staff path?
+The production ETL does it correctly (`Staging-to-FactK12StaffCounts` line 26/127/131/134): it falls back to
+`staging.GetFiscalYearEndDate(@SchoolYear)` = 2027-06-30, not wall-clock. The report's 226 was independently
+reconstructed from `RDS.FactK12StaffCounts` and is internally consistent (CSA buckets 45+85+26+70 = 226;
+ST1 130+96 = 226; ST2 71+155 = 226). **No inflated submission risk.**
+
+Note the LEA-level rows "pass" only because they too compare that single surviving LEA — they weren't
+validating anything.
+
+**This is systemic.** The same `ISNULL(<end date>, GETDATE())` time-bomb appears **33 times across 8 test
+procs**: FS002 (5), FS032 (3), FS040 (7), FS070 (2), FS089 (5), FS099 (2), FS112 (2), FS17x (7). It
+silently mis-scopes any test run before its own count date — which is likely a major contributor to the
+childcount/dropout/assessment discrepancies too.
+
+**Proposed fix (mirrors production, no report logic touched):** declare
+`@SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)` and replace every `GETDATE()` date-window fallback
+with it.
+
+**Question:** FS032/FS040 are **not** in your vetted list so I can fix those now — but FS002, FS089, FS070,
+FS099, FS112 and FS17x **are** vetted. Approval to apply this `GETDATE() → @SYEndDate` fix to the vetted
+test procs? (It changes only test-harness date scoping, not spec/report logic.) **Expect a re-baseline** —
+once tests exercise all 152 LEAs instead of 1, currently-"passing" rows may reveal real discrepancies.
 
 ---
 
@@ -181,6 +248,69 @@ repeatable work well suited to the `etl-validator` / test-authoring agents.
 tests for already-registered specs, or (c) drive breadth first (one smoke-level test per spec across all 94,
 then deepen)? My recommendation: **(a) then (c)** — fixing failures protects submission correctness, and a
 breadth pass tells us the true size of the remaining gap.
+
+---
+
+## Q8 (biggest remaining gap) — 49 active codes produced **zero** 2027 rows; 4 families have real SQL defects
+
+Audit of every active 3-digit report code against all six report tables found **49 with no 2027 rows at
+all**. Splitting them by whether `RDS.Create_Reports` even has a branch for them:
+
+- **44 have a branch** → they were simply never generated (a *run* gap, not a development gap).
+- **5 have NO branch → need development:** `FS180, FS181, FS210, FS211, FS212`.
+
+I then generated the 44 (locking only those codes, so it was purely additive — nothing existing was
+touched). **15 now populate**, including FS035 (9,220), FS039 (44,280), FS103, FS129, FS130, FS131, FS163,
+FS170, FS190, FS193, FS197, FS198, FS206, FS207, FS223.
+
+**4 families aborted on real defects in *active, in-scope* report SQL** (these are not retired codes —
+I had excluded those):
+
+| family | error | affects |
+|---|---|---|
+| graduationrate | `Incorrect syntax near ')'` | FS150, FS151 |
+| migranteducationprogram | `The multi-part identifier "da.AgeCode" could not be bound` | FS121, FS126, FS145 |
+| cte | `Invalid object name 'rds.DimEnrollmentStatuses'` | FS082, FS083, FS154-158, FS169 |
+| assessment | `Invalid column name 'DimStudentId'` | FS113, FS125, FS137-139, FS142, FS224, FS225 |
+
+That's ~20 specs blocked behind 4 discrete SQL bugs — high leverage: fixing 4 defects could unblock a fifth
+of the 94.
+
+**Question:** Priority to fix these 4 (my recommendation — best ratio of effort to specs unblocked), and do
+you want the 5 branch-less codes (180/181/210/211/212) developed in this push or deferred?
+
+---
+
+## Q9 — Test-result counts are inflated by duplicate `App.SqlUnitTest` registrations
+
+`App.SqlUnitTest` has **17 duplicate rows** for `FS143_UnitTestCase` (`SqlUnitTestId` 8, 10-22, 29, 31, 33),
+oldest from 2022-11-04. The test procs do:
+
+```sql
+IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = @UnitTestName) INSERT ...
+ELSE SELECT @SqlUnitTestId = SqlUnitTestId FROM App.SqlUnitTest WHERE UnitTestName = @UnitTestName
+```
+
+With duplicates present this picks an arbitrary id (no `TOP 1`/`ORDER BY`), and the cleanup
+`DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId` clears only that one id —
+orphaning the rest. So the reported "FS143 = 0 pass / 105,320 fail" is **~105,319 stale 2022-2023 rows plus
+1 real row from the current run**. The real current FS143 result is a single row:
+`TOT SEA Match All, expected 0, actual 9,215`.
+
+Any scorecard that aggregates by `UnitTestName` (mine did) over-reports. **Fix:** dedupe `App.SqlUnitTest`
+and/or scope result queries to the latest `SqlUnitTestId` per name.
+
+**Question:** OK to dedupe `App.SqlUnitTest` and add `TOP 1 ... ORDER BY SqlUnitTestId DESC` to the lookup?
+
+---
+
+## Q10 — `FS212_TestCase` is written against a dropped schema
+
+`dbo.FS212_TestCase` references **`rds.FactOrganizationCountReports`**, which no longer exists. Current
+tables are `RDS.FactOrganizationCounts` / `RDS.ReportEDFactsOrganizationCounts`. It needs a rewrite, not a
+redeploy. (It also lives in `dbo`, not `App` — see the issue log.)
+
+**Question:** Rewrite FS212 against the current schema as part of this push, or defer with 180/181/210/211?
 
 ---
 
