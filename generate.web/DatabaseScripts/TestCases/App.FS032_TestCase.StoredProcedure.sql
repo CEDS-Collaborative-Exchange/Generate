@@ -1,4 +1,4 @@
-CREATE PROCEDURE [App].[FS032_TestCase]	
+﻿CREATE PROCEDURE [App].[FS032_TestCase]	
 	@SchoolYear SMALLINT
 AS
 BEGIN
@@ -52,6 +52,14 @@ BEGIN
 		@CategorySet varchar(5) = '',
 		@ReportLevel varchar(5) = ''
  
+	-- Open-ended org/dim records (RecordEndDateTime IS NULL) mean "open through the reporting school
+	-- year". Fall back to the school year's END, exactly as the production ETL does
+	-- (Staging.Staging-to-Fact* uses staging.GetFiscalYearEndDate(@SchoolYear)). Using GETDATE() here
+	-- silently voided every window whenever the test ran BEFORE the dates under test - e.g. testing
+	-- SY2027 on 2026-08-14 made `2026-09-05 BETWEEN start AND 2026-08-14` false for every open record,
+	-- collapsing the expected side to zero.
+	DECLARE @SYEndDateFallback DATE = staging.GetFiscalYearEndDate(@SchoolYear)
+
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
 	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = @UnitTestName) 
@@ -127,14 +135,14 @@ BEGIN
 			and ske.LeaIdentifierSeaAccountability = sps.LeaIdentifierSeaAccountability
 			and ske.SchoolIdentifierSea = sps.SchoolIdentifierSea
 		JOIN RDS.DimSeas rds
-			ON vsd.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+			ON vsd.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDateFallback)
 		JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDateFallback)
 
 		JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDateFallback)
 
 		where ske.ExitOrWithdrawalType = '01927'
 

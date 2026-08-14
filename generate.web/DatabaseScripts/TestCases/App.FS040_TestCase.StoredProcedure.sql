@@ -1,4 +1,4 @@
-create PROCEDURE [App].[FS040_TestCase]	
+﻿create PROCEDURE [App].[FS040_TestCase]	
 --declare	
 @SchoolYear SMALLINT
 --= 2023
@@ -93,6 +93,12 @@ BEGIN
 		DECLARE @ReportingStartDate Date = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-10-01'AS DATE)
 		DECLARE @ReportingEndDate Date = CAST(CAST(@SchoolYear AS CHAR(4)) + '-09-30'AS DATE)
 
+		-- Open-ended records (end/exit date IS NULL) mean "still open through the reporting window".
+		-- Fall back to the school-year / reporting-window END like the production ETL does, NOT GETDATE():
+		-- wall-clock silently voided every window when the test ran before the dates under test (testing
+		-- SY2027 on 2026-08-14 made `2026-09-05 BETWEEN start AND 2026-08-14` false), zeroing the expected side.
+		DECLARE @SYEndDateFallback DATE = staging.GetFiscalYearEndDate(@SchoolYear)
+
 		--DROP TABLE #staging 
 		IF OBJECT_ID('tempdb..#staging') IS NOT NULL
 		DROP TABLE #staging
@@ -141,14 +147,14 @@ BEGIN
 			and vsd.EnrollmentEntryDate = ske.EnrollmentEntryDate
 
 		JOIN RDS.DimSeas rds
-			ON vsd.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+			ON vsd.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDateFallback)
 		JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDateFallback)
 
 		JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDateFallback)
 
 		--JOIN RDS.vwDimK12AcademicAwardStatuses AAS
 		--	on AAS.SchoolYear = ske.SchoolYear
@@ -164,14 +170,14 @@ BEGIN
 			and ske.LeaIdentifierSeaAccountability = eco.LeaIdentifierSeaAccountability
 			and ske.SchoolIdentifierSea = eco.SchoolIdentifierSea
 			AND ((eco.EconomicDisadvantage_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (eco.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(eco.EconomicDisadvantage_StatusExitDate, GETDATE()) > @ReportingStartDate))
+				OR (eco.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(eco.EconomicDisadvantage_StatusExitDate, @ReportingEndDate) > @ReportingStartDate))
 
 		left join staging.PersonStatus migrant
 			on ske.StudentIdentifierState = migrant.StudentIdentifierState
 			and ske.LeaIdentifierSeaAccountability = migrant.LeaIdentifierSeaAccountability
 			and ske.SchoolIdentifierSea = migrant.SchoolIdentifierSea
 			AND ((migrant.Migrant_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (migrant.Migrant_StatusStartDate < @ReportingStartDate AND ISNULL(migrant.Migrant_StatusExitDate, GETDATE()) > @ReportingStartDate))
+				OR (migrant.Migrant_StatusStartDate < @ReportingStartDate AND ISNULL(migrant.Migrant_StatusExitDate, @ReportingEndDate) > @ReportingStartDate))
 
 	--homelessness
 		LEFT JOIN Staging.PersonStatus homeless 
@@ -180,12 +186,12 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(homeless.SchoolIdentifierSea, '')
 			AND homeless.HomelessnessStatus = 1
 			AND ((homeless.Homelessness_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusExitDate, GETDATE()) > @ReportingStartDate))
+				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusExitDate, @ReportingEndDate) > @ReportingStartDate))
 
 
 		where
 		((ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) > @ReportingStartDate))
+				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, @ReportingEndDate) > @ReportingStartDate))
 			AND ske.HighSchoolDiplomaType is not null
 
 
