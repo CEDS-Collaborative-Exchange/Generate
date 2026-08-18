@@ -4,7 +4,6 @@ import { Component, Input, Renderer2, ElementRef, SimpleChange, ViewEncapsulatio
 import { GenerateReportDataDto } from '../../../models/app/generateReportDataDto';
 import { GenerateReportParametersDto } from '../../../models/app/generateReportParametersDto';
 import { CategoryOptionDto } from '../../../models/app/categoryOptionDto';
-import 'node_modules/pivottable/dist/pivot.js';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 //import ReportDebugInformationComponent
