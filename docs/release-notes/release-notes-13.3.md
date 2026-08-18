@@ -45,7 +45,7 @@ In that file, there is a parameter for the metadata process named "**fsWSURL**â€
 
 "fsWSURL": "[https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/](https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/)"
 
-<figure><img src="../.gitbook/assets/image (3) (1).png" alt="appSettings.json with the fsWSURL parameter set to the metadata API URL."><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1).png" alt="appSettings.json with the fsWSURL parameter set to the metadata API URL."><figcaption><p>fsWSURL metadata API setting.</p></figcaption></figure>
 
 ### Summary of Changes
 
@@ -88,3 +88,5 @@ Tickets are available in the CEDS-Collaborative-Exchange.
 ### **Generate Office Hour**
 
 {% embed url="https://www.youtube.com/watch?v=4JhGOudE-yU" %}
+Generate 13.3 Office Hour recording
+{% endembed %}

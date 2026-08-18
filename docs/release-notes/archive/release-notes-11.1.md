@@ -86,7 +86,7 @@ Update as necessary
 1. Review your existing Toggle Assessments to ensure they are accurate for the new Assessment Types for SY 2023
 2. Several of the new assessments are only included in the submission file if they are used by the SEA. There are two new Toggle questions that allow you to define the assessments used in your SEA. The questions are located in the standard Toggle screen (not the Toggle Assessments link) in the Assessments section.
 
-<figure><img src="../../.gitbook/assets/Toggle update_Generate 11.1.png" alt="Generate Toggle page with the lower-grade and high-school assessment questions highlighted."><figcaption><p>Screenshot of the Toggle page showing the new questions added in Generate 11.1.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Toggle update_Generate 11.1.png" alt="Generate Toggle page with the lower-grade and high-school assessment questions highlighted."><figcaption><p>Assessment question toggles.</p></figcaption></figure>
 
 ***
 

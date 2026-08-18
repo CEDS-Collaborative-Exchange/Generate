@@ -8,6 +8,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -111,4 +112,5 @@ Tickets are available in the CEDS-Collaborative-Exchange.
 ## **Generate Office Hours**
 
 {% embed url="https://www.youtube.com/watch?v=wI0VEcunIOg" %}
-
+Generate 13.2 Office Hour recording
+{% endembed %}

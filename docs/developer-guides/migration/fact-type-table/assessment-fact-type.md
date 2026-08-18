@@ -101,7 +101,7 @@ The Generate Toggle tables store information that impacts the business logic use
 
 Additionally, at the top left of the Toggle page, there is a link to an "Assessments" sub-page with information that should be reviewed and updated if needed.
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="Toggle page link for reviewing assessment settings."><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image.png" alt="Toggle page link for reviewing assessment settings."><figcaption><p>Select the Assessments link to review assessment-specific Toggle settings.</p></figcaption></figure>
 
 #### Source System Reference Data Settings
 

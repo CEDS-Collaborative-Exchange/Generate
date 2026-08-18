@@ -6,7 +6,9 @@ icon: globe-pointer
 
 To access the various resources in Generate, click on the word “Resources” from either the top menu bar or from the toolbar on the right, as shown in the screenshots below, respectively, from left to right.
 
-![Generate top menu with the Resources option.](<../.gitbook/assets/image (143).png>) ![Generate toolbar with the Resources option.](<../.gitbook/assets/image (145).png>)
+<figure><img src="../.gitbook/assets/image (143).png" alt="Generate top menu with the Resources option."><figcaption><p>Resources top-menu option.</p></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (145).png" alt="Generate toolbar with the Resources option."><figcaption><p>Resources toolbar option.</p></figcaption></figure>
 
 ### **User Guide**
 
@@ -20,7 +22,7 @@ If you have a question about Generate and want to ask a member of the CIID team 
 
 The CEDS Data Model, Align, and Connect tools are resources used by Generate. If you have a question about a CEDS map, data element, or a Connection, click on “<mark style="color:green;">**CEDS Support**</mark>” from the Resources submenu and the CEDS “Request Assistance” page will open in a new browser window.
 
-<figure><img src="../.gitbook/assets/image (191).png" alt="CEDS Request Assistance page."><figcaption><p>CEDS Support page</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (191).png" alt="CEDS Request Assistance page."><figcaption><p>CEDS assistance request form.</p></figcaption></figure>
 
 ### **ED**_**Facts**_**&#x20;Support**
 
@@ -38,4 +40,4 @@ If you want to know what version of Generate your state is using, click on “Ab
 
 If you want to review the release notes for any version of Generate, go to “**Resources > About**,” and click on the link to **Release Notes**.
 
-![Resources menu with the About Generate and Release Notes options.](<../.gitbook/assets/image (142).png>)
+<figure><img src="../.gitbook/assets/image (142).png" alt="Resources menu with the About Generate and Release Notes options."><figcaption><p>About Generate and Release Notes options.</p></figcaption></figure>

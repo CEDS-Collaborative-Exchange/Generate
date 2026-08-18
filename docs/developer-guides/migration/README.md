@@ -8,7 +8,7 @@ icon: person-to-portal
 
 The Generate SQL Server database contains a set of stored procedures and data layers for transforming data into the final “Reports Tables” layer used by the web-based application to create E&#x44;_&#x46;acts_ reports.
 
-<figure><img src="../../.gitbook/assets/image (199).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (199).png" alt="Generate data migration overview diagram showing data moving from SEA source systems through Staging Tables, the CEDS Data Warehouse, the CEDS Semantic Layer, and Report Tables used by the Generate web application."><figcaption><p>Generate moves source data through staging, warehouse, semantic, and reporting layers.</p></figcaption></figure>
 
 ### Data Layers
 
@@ -18,17 +18,17 @@ The Generate SQL Server database contains a set of stored procedures and data la
 
 All Generate data migrations are accomplished by running SQL Server Stored Procedures. They can be run either from the Generate Web-based application “Data Store” pages or directly through SQL Server. Running from the Web-based application is recommended, especially when running Data Warehouse and Report Migration steps. Code-snippets below are included as examples of how to run Generate ETL Stored Procedures from SQL Server Management Studio (SSMS). Reach out to your technical assistance (TA) provider if any questions arise.
 
-<table><thead><tr><th width="199"></th><th>SEA Source to   Staging Migration </th><th>Data Warehouse   Migration </th><th>Report Migration </th></tr></thead><tbody><tr><td><p>Generate Web- based application (user interface)</p><p>Button</p></td><td>Staging Migration</td><td>RDS Migration</td><td>Report Migration</td></tr><tr><td>Source Schema</td><td><p>SEA Source</p><p>Schema</p></td><td>Generate.Staging</td><td><p>Generate.RDS (Dimension</p><p>and Fact tables)</p></td></tr><tr><td><p>Destination</p><p>Schema</p></td><td>Generate.Staging</td><td>Generate.RDS</td><td><p>Generate.RDS (Report</p><p>tables)</p></td></tr></tbody></table>
+<table><thead><tr><th width="199"></th><th>SEA Source to Staging Migration</th><th>Data Warehouse Migration</th><th>Report Migration</th></tr></thead><tbody><tr><td><p>Generate Web- based application (user interface)</p><p>Button</p></td><td>Staging Migration</td><td>RDS Migration</td><td>Report Migration</td></tr><tr><td>Source Schema</td><td><p>SEA Source</p><p>Schema</p></td><td>Generate.Staging</td><td><p>Generate.RDS (Dimension</p><p>and Fact tables)</p></td></tr><tr><td><p>Destination</p><p>Schema</p></td><td>Generate.Staging</td><td>Generate.RDS</td><td><p>Generate.RDS (Report</p><p>tables)</p></td></tr></tbody></table>
 
 #### SEA Source to Staging
 
-<figure><img src="../../.gitbook/assets/image (200).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (200).png" alt="SEA Source to Staging migration diagram showing source system data transformed by domain-specific stored procedures and loaded into Generate Staging Tables."><figcaption><p>SEA source data is transformed and loaded into Generate Staging Tables.</p></figcaption></figure>
 
-These procedures migrate data from the _**SEA Source Systems**_ to the Generate _**Staging Tables**_. The approach to creating these stored procedures is to create a single stored procedure for each domain (such as Child Count, Discipline, Exiting, etc.) that migrates data for that domain into the staging tables. By default, Generate has empty template scripts available by data domain (example: `Source.[Source-to-Staging_ChildCount]`) which have a record in the `App.DataMigrationTasks`table.&#x20;
+These procedures migrate data from the _**SEA Source Systems**_ to the Generate _**Staging Tables**_. The approach to creating these stored procedures is to create a single stored procedure for each domain (such as Child Count, Discipline, Exiting, etc.) that migrates data for that domain into the staging tables. By default, Generate has empty template scripts available by data domain (example: `Source.[Source-to-Staging_ChildCount]`) which have a record in the `App.DataMigrationTasks`table.
 
-These stored procedures can be run from the Generate Web Application using the Staging Data Migration option.&#x20;
+These stored procedures can be run from the Generate Web Application using the Staging Data Migration option.
 
-The Generate Web Application “[Data Store](../../user-guide/settings/data-store.md)” migration pages use the `App.DataMigrationTasks`table to determine what stored procedures can be run from the web interface. Using one of these template scripts is recommended for new SEA Source to Staging ETL because no updates to `App.DataMigrationTasks`records is needed to migrate using one of these stored procedures. These stored procedures can be run from the Generate Web Application using the Staging  Migration option.&#x20;
+The Generate Web Application “[Data Store](../../user-guide/settings/data-store.md)” migration pages use the `App.DataMigrationTasks`table to determine what stored procedures can be run from the web interface. Using one of these template scripts is recommended for new SEA Source to Staging ETL because no updates to `App.DataMigrationTasks`records is needed to migrate using one of these stored procedures. These stored procedures can be run from the Generate Web Application using the Staging Migration option.
 
 Reference the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074)[ ](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074)for each domain to get a list of the tables/fields that need to be populated to create this ETL.
 
@@ -38,9 +38,9 @@ These stored procedures have a school year parameter that should be passed in if
 
 #### Data Warehouse Migration <a href="#data_warehouse_migration" id="data_warehouse_migration"></a>
 
-<figure><img src="../../.gitbook/assets/image (201).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (201).png" alt="Data Warehouse migration diagram showing Generate Staging data processed through wrapper scripts and stored procedures into CEDS Data Warehouse dimension and fact tables."><figcaption><p>Wrapper scripts migrate staging data into CEDS warehouse dimension and fact tables.</p></figcaption></figure>
 
-These procedures migrate data from the _**CEDS Staging Environment**_  to the _**CEDS Data Warehouse**_.
+These procedures migrate data from the _**CEDS Staging Environment**_ to the _**CEDS Data Warehouse**_.
 
 Starting in Generate version 3.7, wrapper scripts are available for each domain of data that is run at this stage. These wrapper scripts can be selected from the Generate web application or run from the SQL Server database. The wrapper scripts follow this naming convention:
 
@@ -58,7 +58,7 @@ The wrapper scripts call a set of stored procedures used at this stage:
 >
 > **\[Staging].\[Staging-to-DimCharterSchoolManagementOrganizations]**
 >
-> **\[Staging].\[Staging-to-FactOrganizationCounts]**&#x20;
+> **\[Staging].\[Staging-to-FactOrganizationCounts]**
 
 * These stored procedures can be run from the “Data Store” page within the Generate web application using the RDS Migration option.
 
@@ -142,9 +142,9 @@ The `Staging.SourceSystemReferenceData` tables are noted below:
 | RefDisabilityType                    |
 | RefFoodServiceEligibility            |
 
-| PersonRace  |
-| ----------- |
-| RefRace     |
+| PersonRace |
+| ---------- |
+| RefRace    |
 
 | K12Enrollment                     |
 | --------------------------------- |
@@ -193,7 +193,6 @@ The Staging.StagingValidationResults table holds logs of certain errors and issu
 
 Currently, there is a process that writes to the table:
 
-1. The Stored Procedure **Staging.ValidateStagingData** can be called after each _**SEA Source to Staging Migration**_ Stored Procedure.&#x20;
+1. The Stored Procedure **Staging.ValidateStagingData** can be called after each _**SEA Source to Staging Migration**_ Stored Procedure.
 
 <table><thead><tr><th width="137.33333333333331">Error Group</th><th width="284">Description</th><th>Logged by Stored Procedure</th></tr></thead><tbody><tr><td>1</td><td>Code Execution Failure</td><td>Staging.ValidateStagingData</td></tr><tr><td>2</td><td>Table Did Not Populate</td><td>Staging.ValidateStagingData</td></tr><tr><td>3</td><td>Field Required Not Populated</td><td>Staging.ValidateStagingData</td></tr><tr><td>4</td><td>Source Value Not In CEDS Option Set Mapping</td><td>Staging.ValidateStagingData</td></tr></tbody></table>
-

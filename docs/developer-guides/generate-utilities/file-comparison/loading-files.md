@@ -64,27 +64,27 @@ If BPC is not enabled on your server, you will need to import the file into the 
    1. Uncheck the Column Names in the first row.
    2. Click on Advanced in the left navigation and follow step 5.
 
-<figure><img src="../../../.gitbook/assets/Wizard step 4.jpg" alt="SQL Server Import Wizard with Flat File Source selected."><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Wizard step 4.jpg" alt="SQL Server Import and Export Wizard Data Source page with Flat File Source selected and the legacy file location configured."><figcaption><p>Select the legacy flat-file source.</p></figcaption></figure>
 
 5. For the columns that are or could be longer than 50 characters, change the Output column width to 100. (You can select preview in the left menu to see what fields might be longer than 50) Websites and names are known for being too long.
 
-<figure><img src="../../../.gitbook/assets/Wizard step 5.jpg" alt="SQL Server Import Wizard advanced settings with output column widths."><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Wizard step 5.jpg" alt="SQL Server Import and Export Wizard Advanced page showing output column-width settings for the imported file."><figcaption><p>Set output column widths.</p></figcaption></figure>
 
 6. Select Next and select SQL Server Native Client 11.0 and select the server and database.
 
-<figure><img src="../../../.gitbook/assets/Wizard step 6.jpg" alt="SQL Server Import Wizard destination connection settings."><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Wizard step 6.jpg" alt="SQL Server Import and Export Wizard Destination page showing SQL Server Native Client connection settings."><figcaption><p>Configure the SQL Server destination.</p></figcaption></figure>
 
 7. Select Next and type the schema name in to the Destination field and use the dropdown to find the table and replace the file name.
 
-<figure><img src="../../../.gitbook/assets/Wizard step 7 (002).jpg" alt="SQL Server Import Wizard destination table selection."><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Wizard step 7 (002).jpg" alt="SQL Server Import and Export Wizard destination table selector showing the schema and target-table dropdown."><figcaption><p>Select the destination table.</p></figcaption></figure>
 
-<figure><img src="../../../.gitbook/assets/Wizard step 7b.jpg" alt="SQL Server Import Wizard destination table field."><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Wizard step 7b.jpg" alt="SQL Server Import and Export Wizard Destination field where the target schema and table name are entered."><figcaption><p>Enter the destination table.</p></figcaption></figure>
 
 8. Once you have selected the Destination table, select the Edit Mappings button and map the destination fields in order of the Destination dropdown.
 
-<figure><img src="../../../.gitbook/assets/Wizard step 8 (002).jpg" alt="SQL Server Import Wizard with the Edit Mappings button."><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Wizard step 8 (002).jpg" alt="SQL Server Import and Export Wizard page with the Edit Mappings button for reviewing destination fields."><figcaption><p>Open field mappings.</p></figcaption></figure>
 
-<figure><img src="../../../.gitbook/assets/Wizard step 8b.jpg" alt="SQL Server Import Wizard column mappings."><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Wizard step 8b.jpg" alt="SQL Server Import and Export Wizard Column Mappings dialog showing source columns mapped to destination columns."><figcaption><p>Map source and destination columns.</p></figcaption></figure>
 
 9. Select Ok, Next, then select Finish and the data will load into the table. If you get errors, it is usually a length issue. The error will tell you the issue and the Column and row that had the issue.
 

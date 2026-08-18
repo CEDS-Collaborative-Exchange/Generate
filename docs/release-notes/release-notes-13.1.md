@@ -9,29 +9,29 @@ coverY: 0
 
 Release Overview
 
-Generate version 13.1 focuses on IDEA Reports, Non-IDEA Reports, User Interface, General Changes (Migrations, Generate utilities, ETL Documentation Templates).&#x20;
+Generate version 13.1 focuses on IDEA Reports, Non-IDEA Reports, User Interface, General Changes (Migrations, Generate utilities, ETL Documentation Templates).
 
 ### Summary of Changes
 
 #### IDEA Reports
 
-* Assessments **(**&#x31;75, 178, 179, 185, 188, 18&#x39;**)**&#x20;
+* Assessments **(**&#x31;75, 178, 179, 185, 188, 18&#x39;**)**
   * Removed an old version of the debug views that is no longer valid
   * Renamed the Source-to-Staging\_Assessment stored procedure to match the Fact Type name
-  * Corrected an issue with zero counts incorrectly being included at the LEA/SCH level.&#x20;
+  * Corrected an issue with zero counts incorrectly being included at the LEA/SCH level.
   * Corrected an issue that was preventing the appropriate zero counts at the SEA level separated by the Grade Level groups
   * Corrected an issue in the submission file that was not including the Total Indicator for the zero count rows
 
 #### Non-IDEA Reports
 
 * Homeless **(**&#x31;18, 19&#x34;**)**
-  * Updated the logic in Get\_CountSQL to correctly return the unduplicated counts required by the file spec for students with multiple enrollments.&#x20;
+  * Updated the logic in Get\_CountSQL to correctly return the unduplicated counts required by the file spec for students with multiple enrollments.
   * Added School Year as a join condition in the Staging-to-RDS migration to the view for DimHomelessnessStatuses
   * Added the Homeless Serviced Indicator to the Staging debug view
-* **Neglected or Delinquent (**&#x31;19, 127, 218, 219, 220, 22&#x31;**)**&#x20;
+* **Neglected or Delinquent (**&#x31;19, 127, 218, 219, 220, 22&#x31;**)**
   * Refined the migration code to improve performance.
-* **School Performance Indicators (**&#x31;99, 200, 201, 202, 20&#x35;**)**&#x20;
-  * Worked with Mississippi to add a new Fact Type (SchoolPerformanceIndicators) modified the infrastructure that supports the migration process for this group of files including:&#x20;
+* **School Performance Indicators (**&#x31;99, 200, 201, 202, 20&#x35;**)**
+  * Worked with Mississippi to add a new Fact Type (SchoolPerformanceIndicators) modified the infrastructure that supports the migration process for this group of files including:
     * Stored procedures from Staging to DIM
     * Stored procedure from Staging to Fact
     * Views for Debugging
@@ -40,22 +40,22 @@ Generate version 13.1 focuses on IDEA Reports, Non-IDEA Reports, User Interface,
 
 #### User Interface Changes
 
-* **Student Details on Report page**&#x20;
-  * Added scroll bars where necessary to see all the available columns.&#x20;
-  * Addressed an issue with some reports and the Total of the Education Unit category set&#x20;
+* **Student Details on Report page**
+  * Added scroll bars where necessary to see all the available columns.
+  * Addressed an issue with some reports and the Total of the Education Unit category set
   * Added additional filtering to the Assessments popup to correctly segregate the Lower Grade and High School assessment results
 * **Logout functionality**
   * Addressed an issue a few states were experiencing where either a manual logout or a timeout logout was creating a javascript error and not logging the user out.
 * **User Accessibility**
   * Continued adding improvements to the User Interface
-* **Corrected the pagination in the Reports pages**&#x20;
+* **Corrected the pagination in the Reports pages**
   * When sorting the results at any report level and using the SEA/LEA/School Name or Identifier, the paging forward was losing the appropriate sequencing. That issue has been corrected.
 
 ### General Changes
 
-* **Migrations**&#x20;
+* **Migrations**
   * Added an additional qualifier to the population of the #dimPeople temporary table that better handles dates that start prior to the default 7/1 date.
-* **Generate utilities**&#x20;
+* **Generate utilities**
   * Added a new utility, Utilities.View\_EDFactsReportMetadata, that provides 3 views into the Generate metadata that is used in the migrations, report population, and submission file creation.
   * Updated the Compare Submission Files utility to account for the leading 'c' being removed from all file specification references
 * **ETL Documentation Templates**
@@ -70,14 +70,14 @@ Generate version 13.1 focuses on IDEA Reports, Non-IDEA Reports, User Interface,
 
 #### Generate 13.1 Release Tickets:
 
-Tickets are available in the CEDS-Collaborative-Exchange.&#x20;
+Tickets are available in the CEDS-Collaborative-Exchange.
 
 [**Click here** ](https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av13.1)**to review the Generate 13.1 Release Tickets**
-
-
 
 ***
 
 ### Generate Office Hour
 
 {% embed url="https://youtu.be/leM-Y0peAmI" %}
+Generate 13.1 Office Hour recording
+{% endembed %}

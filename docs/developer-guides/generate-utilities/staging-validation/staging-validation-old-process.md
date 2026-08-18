@@ -14,7 +14,7 @@ Generate 5.2 is preconfigured with validation rules designed mostly for Director
 
 The staging validation process is comprised of four components (two tables and two stored procedures) as shown in Figure 1 below.
 
-![Diagram of Staging Validation components, with new process items highlighted in orange.](<../../../.gitbook/assets/0 (3).png>)
+<figure><img src="../../../.gitbook/assets/0 (3).png" alt="Diagram of Staging Validation components, with new process items highlighted in orange."><figcaption><p>Staging Validation process components.</p></figcaption></figure>
 
 #### Staging Validation Rules Table
 
@@ -43,7 +43,7 @@ The initial ruleset has four distinct types of validation: No Records, Null Valu
 * **Bad Value** - The value for a field did not meet specific criteria
 * **Option Not Mapped** – A codeset value wasn’t mapped in SourceSystemReferenceData
 
-![Example rows in the Staging Validation Rules table.](<../../../.gitbook/assets/1 (1).png>)
+<figure><img src="../../../.gitbook/assets/1 (1).png" alt="Example rows in the Staging Validation Rules table."><figcaption><p>Example validation rules.</p></figcaption></figure>
 
 ### Executing the Validation Process
 
@@ -77,13 +77,13 @@ There is in an optional parameter, @IncludeHistory=1, which will include results
 
 Below are the results of running the _**`ValidateStagingData_GetResults`**_ procedure:
 
-<figure><img src="../../../.gitbook/assets/Picture1.png" alt="SQL Server results from the ValidateStagingData_GetResults procedure."><figcaption><p>Results of running the <em><strong><code>ValidateStagingData_GetResults</code></strong></em> procedure</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Picture1.png" alt="SQL Server results from the ValidateStagingData_GetResults procedure."><figcaption><p>Staging Validation results.</p></figcaption></figure>
 
 The results table includes a column named “**ShowRecordsSQL**”. The contents of this column for particular row can be pasted into a SQL Query window and executed to see a list of records that caused the validation error.
 
 For example, in validation Id 36 above, where 7 records failed validation, executing the **ShowRecordsSQL** would return the following:
 
-![SQL Server query results listing student records with validation errors.](<../../../.gitbook/assets/3 (1).png>)
+<figure><img src="../../../.gitbook/assets/3 (1).png" alt="SQL Server query results listing student records with validation errors."><figcaption><p>Records with validation errors.</p></figcaption></figure>
 
 This shows a list of students in staging that were marked as IDEA but did not have an IDEA Status Start Date or Primary Disability Type value. This is a very useful feature to streamline ETL troubleshooting.
 

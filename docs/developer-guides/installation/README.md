@@ -53,7 +53,7 @@ You can find the Application Initialization module via the Server Manager under 
 This is the only item that is required for this installation; any other items This is the only item that is required for this installation; any other items checked in the following screenshot are not necessary and may remain checked or unchecked depending on your environment.
 {% endhint %}
 
-![Graphical user interface, application, Generate](<../../.gitbook/assets/4 (1)>)
+<figure><img src="../../.gitbook/assets/4 (1)" alt="Windows Server Manager showing the Application Initialization role service under Web Server application development features."><figcaption><p>Application Initialization role service.</p></figcaption></figure>
 
 {% hint style="info" %}
 The Web Application will need to be accessible independent of the Background Application. You can achieve this by one of the following methods:
@@ -70,24 +70,24 @@ The Web Application will need to be accessible independent of the Background App
 12. Copy the “**generate.web\_x.x**” folder into a location where you want your web application files to reside.
 13. In IIS, create a website called “**generate.web**” and point the physical path to the location of the web application files. Leave the application pool set to a new pool called “**generate.web**”. Adjust the IP Address, Port, and/or Host name as needed for your environment (as mentioned in the Web Server installation steps).
 
-![Graphical user interface, application](<../../.gitbook/assets/2 (1)>)
+<figure><img src="../../.gitbook/assets/2 (1)" alt="IIS Add Website dialog for the generate.web application, showing site name, physical path, and binding settings."><figcaption><p>Create the generate.web website.</p></figcaption></figure>
 
 14. Set the application pool used by the `generate.web` website to “**No Managed Code**.”
 
-![Graphical user interface, application](<../../.gitbook/assets/3 (3)>)
+<figure><img src="../../.gitbook/assets/3 (3)" alt="IIS application pool settings showing the generate.web pool configured with No Managed Code."><figcaption><p>Set No Managed Code.</p></figcaption></figure>
 
 15. The application pool used by the Generate website needs to be run under a service account that has access to the Active Directory service. Usually, this account is a domain service account on the network. This can be changed by accessing the Advanced Settings of the newly created application pool.
 
-![Graphical user interface, table](../../.gitbook/assets/8)
+<figure><img src="../../.gitbook/assets/8" alt="IIS application pool Advanced Settings dialog showing the Process Model section and Identity setting."><figcaption><p>Application pool identity setting.</p></figcaption></figure>
 
 16. From that dialog, change the Identity setting under the Process Model section to the domain service account.
 
-![Graphical user interface, text, application](<../../.gitbook/assets/9 (3)>)
+<figure><img src="../../.gitbook/assets/9 (3)" alt="IIS Application Pool Identity dialog used to select the domain service account."><figcaption><p>Select the domain service account.</p></figcaption></figure>
 
 17. Make sure that the Application Pool Identity user account has permission to Create and Modify files in the Updates and Logs directories of the website folder.
 18. Ensure that **Anonymous Authentication** is "**Enabled"** on the website.
 
-![Graphical user interface, application](<../../.gitbook/assets/6 (2)>)
+<figure><img src="../../.gitbook/assets/6 (2)" alt="IIS Authentication feature page showing Anonymous Authentication enabled for the website."><figcaption><p>Enable Anonymous Authentication.</p></figcaption></figure>
 
 19. Open the “**appSettings.json**” file located in the “**Config**” directory of the `generate.web` application folder.
 
@@ -134,13 +134,13 @@ The SQL Connection String should be the same for all three connections.
 24. Copy the “**generate.background\_x.x**” folder into a location where you want your background application files to reside.
 25. In IIS, create a website called “**generate.background**” and physical path to the location of the background application files. Leave the application pool set to a new pool called “**generate. background**”. Adjust the IP Address, Port, and/or Host name as needed for your environment (as mentioned in the Web Server installation steps).
 
-![Graphical user interface, application](<../../.gitbook/assets/13 (1)>)
+<figure><img src="../../.gitbook/assets/13 (1)" alt="IIS Add Website dialog for the generate.background application, showing site name, physical path, and binding settings."><figcaption><p>Create the background website.</p></figcaption></figure>
 
 26. Edit the “**Advanced Settings**” of the **generate.background** website and make sure the following property is set:
 
 > **Preload Enabled** = <mark style="color:blue;">**True**</mark>
 
-![Graphical user interface, text, application, email](<../../.gitbook/assets/14 (3)>)
+<figure><img src="../../.gitbook/assets/14 (3)" alt="IIS Advanced Settings dialog for generate.background showing Preload Enabled set to True."><figcaption><p>Enable application preload.</p></figcaption></figure>
 
 27. Edit the “**Advanced Settings**” of the **generate.background** application pool and make sure the following properties are set:
 
@@ -150,7 +150,7 @@ The SQL Connection String should be the same for all three connections.
 >
 > **Idle Time-Out (minutes)** = <mark style="color:blue;">**0**</mark>
 
-![Graphical user interface, application, table](../../.gitbook/assets/15)
+<figure><img src="../../.gitbook/assets/15" alt="IIS application pool Advanced Settings showing .NET CLR Version, Start Mode, and Idle Time-Out values for generate.background."><figcaption><p>Configure the background application pool.</p></figcaption></figure>
 
 28. Make sure that the Application Pool Identity user account used by this website has permission to Create and Modify files in the Updates and Logs directories of the application folder.
 29. Ensure that **Anonymous Authentication** is "**Enabled"** on the website.
@@ -272,4 +272,4 @@ Both AD roles must be configured in the AD instance and accessible by Generate. 
 Generate is optimized for Chrome, do not use Internet Explorer.
 {% endhint %}
 
-![Graphical user interface](../../.gitbook/assets/14.jpeg)
+<figure><img src="../../.gitbook/assets/14.jpeg" alt="Generate web application opened in a browser after the IIS website starts successfully."><figcaption><p>Confirm the application loads.</p></figcaption></figure>

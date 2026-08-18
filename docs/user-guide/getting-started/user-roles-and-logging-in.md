@@ -4,7 +4,7 @@ Once your request has been approved and the application has been installed on yo
 
 Below is a screenshot of the Home page. All resources and pages within Generate can be accessed from the **Home** page.
 
-<figure><img src="../../.gitbook/assets/image (194).png" alt="Generate Home page with navigation to application resources and features."><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (194).png" alt="Generate Home page with navigation to application resources and features."><figcaption><p>Generate Home page navigation.</p></figcaption></figure>
 
 ## User Roles
 
@@ -30,18 +30,18 @@ To log in to Generate, follow the steps below: Note: Chrome is the preferred bro
 2. Enter your password in the **Password** field.
 3. Click the **LOG IN** button.
 
-<figure><img src="../../.gitbook/assets/image (144).png" alt="Generate login fields and the Log In button in the upper-right corner."><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (144).png" alt="Generate login fields and the Log In button in the upper-right corner."><figcaption><p>Generate login page.</p></figcaption></figure>
 
 {% hint style="danger" %}
 If you make a mistake entering your username or password, you’ll see the following message at the top center of the page.
 
-<img src="../../.gitbook/assets/image (61).png" alt="Generate message indicating an invalid username or password." data-size="original">
+<img src="../../.gitbook/assets/image (61).png" alt="Invalid sign-in message." data-size="original">
 {% endhint %}
 
 {% hint style="success" %}
 If you successfully enter your username and password, your name and user role will appear at the top right corner of the page, followed by an option to log out.
 
-<img src="../../.gitbook/assets/image (197).png" alt="Generate header showing the signed-in user name, role, and log out option." data-size="original">
+<img src="../../.gitbook/assets/image (197).png" alt="Signed-in user controls." data-size="original">
 {% endhint %}
 
 The following pages in Generate are accessible to all users after they log in:
@@ -54,7 +54,7 @@ The following pages in Generate are accessible to all users after they log in:
 
 The **Data Population Summary**, **Standard Reports**, and **Settings** are only accessible to users that are logged in to Generate. If you attempt to access them before logging in, the following message will appear at the bottom of the page.
 
-<figure><img src="../../.gitbook/assets/image (193).png" alt="Generate message stating that the user must log in to access the page."><figcaption><p>You must be logged in to access this are of Generate.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (193).png" alt="Generate message stating that the user must log in to access the page."><figcaption><p>Authentication required message.</p></figcaption></figure>
 
 {% hint style="info" %}
 Note: you do not have to be logged in to access **Resources** or the **CIID website**.

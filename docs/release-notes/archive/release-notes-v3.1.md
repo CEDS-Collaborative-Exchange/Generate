@@ -45,7 +45,7 @@ If you are upgrading from an earlier installation, please skip to the Update sec
 4. Execute iisreset at the command line or restart the server to pick up changes to the system PATH.
 5. Install the Application Initialization Module for IIS. You can install the Application Initialization module via the Server Manager. You can find the module under Server Roles -> Web Server -> Application Developer -> Application Initialization.
 
-![Server Manager role selection with Application Initialization selected under Web Server application development features.](<../../.gitbook/assets/4 (1)>)
+<figure><img src="../../.gitbook/assets/4 (1)" alt="Server Manager role selection with Application Initialization selected under Web Server application development features."><figcaption><p>Application Initialization role selection.</p></figcaption></figure>
 
 1. Please note, the Web Application will need to be accessible independent of the Background Application. You can achieve this by one of the following methods:
    1. Place the web application and background applications on different servers.
@@ -61,24 +61,24 @@ If you are upgrading from an earlier installation, please skip to the Update sec
 
 Adjust the IP Address, Port, and/or Host name as needed for your environment (as mentioned in the Web Server installation steps).
 
-![IIS Add Website dialog for the generate.web application with site name, physical path, and binding fields.](<../../.gitbook/assets/2 (1)>)
+<figure><img src="../../.gitbook/assets/2 (1)" alt="IIS Add Website dialog for the generate.web application with site name, physical path, and binding fields."><figcaption><p>Create the generate.web website.</p></figcaption></figure>
 
 1. Set the application pool used by the generate.web website to “No Managed Code.”
 
-![IIS application pool settings with the .NET CLR version set to No Managed Code.](<../../.gitbook/assets/3 (3)>)
+<figure><img src="../../.gitbook/assets/3 (3)" alt="IIS application pool settings with the .NET CLR version set to No Managed Code."><figcaption><p>Set No Managed Code.</p></figcaption></figure>
 
 1. The application pool used by the Generate website needs to be run under a service account that has access to the Active Directory service. Usually, this account is a domain service account on the network. This can be changed by accessing the Advanced Settings of the newly created application pool.
 
-![IIS application pool Advanced Settings dialog with the Process Model Identity setting.](<../../.gitbook/assets/4 (2)>)
+<figure><img src="../../.gitbook/assets/4 (2)" alt="IIS application pool Advanced Settings dialog with the Process Model Identity setting."><figcaption><p>Application pool identity setting.</p></figcaption></figure>
 
 1. From that dialog, change the Identity setting under the Process Model section to the domain service account.
 
-![Application Pool Identity dialog for selecting the domain service account.](../../.gitbook/assets/5)
+<figure><img src="../../.gitbook/assets/5" alt="Application Pool Identity dialog for selecting the domain service account."><figcaption><p>Select the domain service account.</p></figcaption></figure>
 
 1. Make sure that the Application Pool Identity user account has permission to Create and Modify files in the Updates and Logs directories of the website folder.
 2. Ensure that Anonymous Authentication is enabled on the website.
 
-![IIS Authentication feature showing Anonymous Authentication enabled.](<../../.gitbook/assets/6 (2)>)
+<figure><img src="../../.gitbook/assets/6 (2)" alt="IIS Authentication feature showing Anonymous Authentication enabled."><figcaption><p>Enable Anonymous Authentication.</p></figcaption></figure>
 
 1. Open the “appSettings.json” file located in the “Config” directory of the generate.web application folder. To retain proper formatting, Notepad++ is recommended over Notepad or Wordpad.
 2. Replace the values of the SQL Server Connection String keys with values appropriate for the installed environment.
@@ -103,19 +103,19 @@ The SQL Connection String should be the same for all three connections.
 2. Copy the “generate. background \_x.x” folder into a location where you want your background application files to reside.
 3. In IIS, create a website called “generate.background” and physical path to the location of the background application files. Leave the application pool set to a new pool called “generate. background”. Adjust the IP Address, Port, and/or Host name as needed for your environment (as mentioned in the Web Server installation steps).
 
-![IIS Add Website dialog for the generate.background application with site name, physical path, and binding fields.](../../.gitbook/assets/7)
+<figure><img src="../../.gitbook/assets/7" alt="IIS Add Website dialog for the generate.background application with site name, physical path, and binding fields."><figcaption><p>Create the background website.</p></figcaption></figure>
 
 1. Edit the “Advanced Settings” of the generate.background website and make sure the following property is set:
    1. Preload Enabled = True
 
-![IIS Advanced Settings dialog for the generate.background website with Preload Enabled set to True.](<../../.gitbook/assets/8 (3)>)
+<figure><img src="../../.gitbook/assets/8 (3)" alt="IIS Advanced Settings dialog for the generate.background website with Preload Enabled set to True."><figcaption><p>Enable application preload.</p></figcaption></figure>
 
 1. Edit the “Advanced Settings” of the generate.background application pool and make sure the following properties are set:
 2. .NET CLR Version = v4.0
 3. Start Mode = AlwaysRunning
 4. Idle Time-Out (minutes) = 0
 
-![IIS application pool Advanced Settings with .NET CLR Version, Start Mode, and Idle Time-Out values.](<../../.gitbook/assets/9 (2)>)
+<figure><img src="../../.gitbook/assets/9 (2)" alt="IIS application pool Advanced Settings with .NET CLR Version, Start Mode, and Idle Time-Out values."><figcaption><p>Configure the background application pool.</p></figcaption></figure>
 
 1. Make sure that the Application Pool Identity user account used by this website has permission to Create and Modify files in the Updates and Logs directories of the application folder.
 2. Ensure that Anonymous Authentication is enabled on the website.
@@ -187,13 +187,13 @@ Both AD roles must be configured in the AD instance and accessible by Generate. 
 1. Start up the web application in IIS.
 2. Open the website in a browser to confirm that it loads properly.
 
-![Generate application open in a web browser after IIS startup.](../../.gitbook/assets/11)
+<figure><img src="../../.gitbook/assets/11" alt="Generate application open in a web browser after IIS startup."><figcaption><p>Confirm the application loads.</p></figcaption></figure>
 
 ### Update <a href="#update" id="update"></a>
 
 If the current version of Generate is 3.1 or higher, updates should be performed using the Automatic Update functionality of Generate. This can be found in the Settings menu under the menu item named “Update”. This feature is available to users with the Admin role.
 
-![Generate Settings menu with the Update option available to administrators.](<../../.gitbook/assets/12 (2)>)
+<figure><img src="../../.gitbook/assets/12 (2)" alt="Generate Settings menu with the Update option available to administrators."><figcaption><p>Update option in Settings.</p></figcaption></figure>
 
 If you are upgrading from 3.0 to 3.1, or would prefer to do a manual update, please use the following instructions.
 
@@ -453,32 +453,32 @@ To install Active Directory Lightweight directory services (AD LDS) on a machine
 
 Please use the following screen shots as a guide to install AD LDS.
 
-![Server Manager Add Roles Wizard on the Before You Begin page.](../../.gitbook/assets/0.jpeg)
+<figure><img src="../../.gitbook/assets/0.jpeg" alt="Server Manager Add Roles Wizard on the Before You Begin page."><figcaption><p>Start the Add Roles Wizard.</p></figcaption></figure>
 
-![Server Manager Add Roles Wizard listing server roles, including Active Directory Lightweight Directory Services.](<../../.gitbook/assets/14 (1)>)
+<figure><img src="../../.gitbook/assets/14 (1)" alt="Server Manager Add Roles Wizard listing server roles, including Active Directory Lightweight Directory Services."><figcaption><p>Select the AD LDS role.</p></figcaption></figure>
 
-![Add Roles Wizard prompt to add required features for Active Directory Lightweight Directory Services.](../../.gitbook/assets/2.png)
+<figure><img src="../../.gitbook/assets/2.png" alt="Add Roles Wizard prompt to add required features for Active Directory Lightweight Directory Services."><figcaption><p>Add required AD LDS features.</p></figcaption></figure>
 
-![Add Roles Wizard confirmation page before installing Active Directory Lightweight Directory Services.](<../../.gitbook/assets/16 (3)>)
+<figure><img src="../../.gitbook/assets/16 (3)" alt="Add Roles Wizard confirmation page before installing Active Directory Lightweight Directory Services."><figcaption><p>Confirm the AD LDS installation.</p></figcaption></figure>
 
 *
   * Select AD LDS from the Roles and add the applicable features for the role.
 
-![Server Manager role selection with Active Directory Lightweight Directory Services selected.](<../../.gitbook/assets/17 (2)>)
+<figure><img src="../../.gitbook/assets/17 (2)" alt="Server Manager role selection with Active Directory Lightweight Directory Services selected."><figcaption><p>AD LDS role selection.</p></figcaption></figure>
 
-![Server Manager installation progress for the Active Directory Lightweight Directory Services role.](<../../.gitbook/assets/18 (2)>)
+<figure><img src="../../.gitbook/assets/18 (2)" alt="Server Manager installation progress for the Active Directory Lightweight Directory Services role."><figcaption><p>AD LDS installation progress.</p></figcaption></figure>
 
 *
   * Click Install.
   * After AD LDS is installed, please follow the below steps to set up an active directory for Generate tool.
   * From the Server Manager, click on AD LDS.
 
-![Server Manager AD LDS page with the Configuration required task.](<../../.gitbook/assets/19 (3)>)
+<figure><img src="../../.gitbook/assets/19 (3)" alt="Server Manager AD LDS page with the Configuration required task."><figcaption><p>AD LDS configuration task.</p></figcaption></figure>
 
 *
   * Click on the “Configuration required” task and click on the Action link from the Task Window to open up the Active Directory Setup Wizard.
 
-![Active Directory Lightweight Directory Services Setup Wizard opened from the Configuration required task.](../../.gitbook/assets/7.png)
+<figure><img src="../../.gitbook/assets/7.png" alt="Active Directory Lightweight Directory Services Setup Wizard opened from the Configuration required task."><figcaption><p>Open the AD LDS Setup Wizard.</p></figcaption></figure>
 
 * Click Next.
 * Select “Unique Instance” option and click Next.
