@@ -62,6 +62,10 @@ StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentEnrollments.StoredProcedure.sql,0

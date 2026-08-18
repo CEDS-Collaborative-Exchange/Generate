@@ -34,6 +34,9 @@ BEGIN
 			SET IDENTITY_INSERT RDS.DimPeople_Current off
 		END
 
+		--drop and create the temp table for the staging.K12Enrollment student records
+		DROP TABLE IF EXISTS #k12Staff
+
 		CREATE TABLE #k12Staff (
 			FirstName										NVARCHAR(75) NULL
 			, MiddleName									NVARCHAR(75) NULL
@@ -70,7 +73,7 @@ BEGIN
 		FROM Staging.K12StaffAssignment sa
 
 		MERGE rds.DimPeople AS trgt
-		USING #K12Staff AS src
+		USING #k12Staff AS src
 				ON  trgt.K12StaffStaffMemberIdentifierState = src.K12StaffStaffMemberIdentifierState
 				AND ISNULL(trgt.FirstName, '') = ISNULL(src.FirstName, '')
 				AND ISNULL(trgt.LastOrSurname, '') = ISNULL(src.LastOrSurname, '')
@@ -127,51 +130,48 @@ BEGIN
 		WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 			AND staff.RecordEndDateTime IS NULL
 
-		-- Populate DimPeople_Current with active K12 staff records
 
-		-- Insert new current K12 staff records into DimPeople_Current
-		INSERT INTO RDS.DimPeople_Current (
-			FirstName,
-			MiddleName,
-			LastOrSurname,
-			BirthDate,
-			PositionTitle,
-			K12StaffStaffMemberIdentifierState,
-			IsActiveK12Staff
+	--------------------------------
+	--DimPeople_Current
+	--------------------------------
+		--populate DimPeople_Current with active K12 student records from Staging.K12Enrollment
+		MERGE rds.DimPeople_Current AS trgt
+		USING #k12Staff AS src
+				ON  trgt.K12StaffStaffMemberIdentifierState = src.K12StaffStaffMemberIdentifierState
+				AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
+				AND trgt.IsActiveK12Staff = 1
+
+		--update matched targets, records that match on the StudentIdentifierState and BirthDate but have different name values
+		WHEN MATCHED 
+		AND EXISTS (
+			SELECT trgt.FirstName, trgt.LastOrSurname, trgt.MiddleName
+			EXCEPT
+			SELECT src.FirstName,  src.LastOrSurname,  src.MiddleName
 		)
-		SELECT 
-			rdp.FirstName,
-			rdp.MiddleName,
-			rdp.LastOrSurname,
-			rdp.BirthDate,
-			rdp.PositionTitle,
-			rdp.K12StaffStaffMemberIdentifierState,
-			rdp.IsActiveK12Staff
-		FROM RDS.DimPeople rdp
-		LEFT JOIN RDS.DimPeople_Current rdpc
-			ON rdp.K12StaffStaffMemberIdentifierState = rdpc.K12StaffStaffMemberIdentifierState
-			AND ISNULL(rdp.BirthDate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
-		WHERE rdp.IsActiveK12Staff = 1 
-		AND rdpc.DimPersonId IS NULL  -- Only new active records
-		AND rdp.RecordEndDateTime IS NULL  -- Only current/active records
-		AND rdp.DimPersonId <> -1
+		THEN UPDATE SET
+			trgt.FirstName     = src.FirstName,
+			trgt.LastOrSurname = src.LastOrSurname,
+			trgt.MiddleName    = src.MiddleName
 
-		-- Update existing records in DimPeople_Current
-		UPDATE rdpc
-		SET 
-			rdpc.FirstName = rdp.FirstName,
-			rdpc.MiddleName = rdp.MiddleName,
-			rdpc.LastOrSurname = rdp.LastOrSurname,
-			rdpc.BirthDate = rdp.BirthDate,
-			rdpc.PositionTitle = rdp.PositionTitle,
-			rdpc.IsActiveK12Staff = rdp.IsActiveK12Staff
-		FROM RDS.DimPeople_Current rdpc
-		INNER JOIN RDS.DimPeople rdp
-			ON rdpc.K12StaffStaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState
-			AND ISNULL(rdpc.BirthDate, '1900-01-01') = ISNULL(rdp.BirthDate, '1900-01-01')
-		WHERE rdp.IsActiveK12Staff = 1
-		AND rdp.RecordEndDateTime IS NULL  -- Only current/active records
-		AND rdp.DimPersonId <> -1
+		--insert non-matched targets, records exist in Source but NOT in Target
+		WHEN NOT MATCHED BY TARGET THEN
+		INSERT (
+			FirstName
+			, MiddleName
+			, LastOrSurname
+			, BirthDate
+			, K12StaffStaffMemberIdentifierState
+			, IsActiveK12Staff
+		)
+		VALUES (
+			src.FirstName
+			, src.MiddleName
+			, src.LastOrSurname
+			, src.Birthdate
+			, src.K12StaffStaffMemberIdentifierState
+			, src.IsActiveK12Staff	
+		);
+
 				
 	END TRY
 	BEGIN CATCH
