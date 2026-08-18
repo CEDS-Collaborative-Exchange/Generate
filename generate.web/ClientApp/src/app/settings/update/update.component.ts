@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { GenerateUpdateService } from '../../services/app/generate-update.service';
 import { forkJoin } from 'rxjs';
 import { UpdatePackage } from '../../models/app/update-package';
-import moment from 'moment';
 
 import { UpdateStatus } from 'src/app/models/app/update-status';
 import { AppConfig } from 'src/app/app.config';
 import { IAppConfig } from '../../models/app-config.model';
 
 declare let componentHandler: any;
+declare const moment: any;
 
 @Component({
     selector: 'generate-app-settings-update',
