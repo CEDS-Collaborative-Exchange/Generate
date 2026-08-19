@@ -386,5 +386,16 @@ redeploy. (It also lives in `dbo`, not `App` — see the issue log.)
 - **`CREATE` vs `ALTER` test procs.** Most `FSxxx_TestCase` files are `CREATE PROCEDURE` (need DROP first
   to redeploy); `FS009` is `ALTER PROCEDURE` (must NOT be dropped). Mixed convention is a footgun.
 - **`FS212_TestCase` lives in `dbo`,** not `App` — sweeps that assume `App.` silently skip it.
-- **Retired report codes carry broken SQL** (see Q6) — they should probably be deactivated or repaired so
-  a naive "lock everything" run cannot poison a family.
+- **CORRECTION (2026-08-19): the broken `Get_CountSQL` lives in ACTIVE codes, not retired ones.** I
+  originally attributed the family aborts to retired codes. Re-running with `IsActive = 1` codes *only*
+  reproduced **10 family aborts**, so the defects are in codes we actually need:
+  `childcount` (`SeaIdrules`), `exiting` + `other` (`TitleISchoolStatusEdFactsCode`),
+  `graduatescompleters` + `discipline` (`LeaIdentifierState`), `titleI` (`TitleISchoolStatusCode`),
+  `graduationrate` (`Incorrect syntax near ')'`), `migranteducationprogram`
+  (`ContinuationOfServicesReasonEdFactsCode`), `cte` (`rds.DimEnrollmentStatuses`),
+  `assessment` (`DimStudentId`). See Q8 — this is a bigger blocker than first reported.
+- **Regeneration hazard (self-inflicted, worth a guard).** `Empty_Reports` runs before `Create_Reports`,
+  so when a family aborts mid-`Create` its reports are left **emptied** — I wiped the Assessments table
+  this way. Regenerate **per-code** (lock exactly one code at a time) rather than per-family, so one
+  broken code can only empty itself. Also do not chain a test sweep directly behind a regen — they
+  deadlocked (FS116 was chosen as victim).
