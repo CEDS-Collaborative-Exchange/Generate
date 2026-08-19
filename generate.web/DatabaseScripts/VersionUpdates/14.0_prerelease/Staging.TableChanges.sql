@@ -1471,3 +1471,9 @@ END;
 --     ALTER TABLE Staging.OrganizationFederalFunding
 --     DROP COLUMN HomelessChildrenandYouthReservation;
 -- END;
+
+--------------------------------------------------
+--Updates for Staging validation rules
+--------------------------------------------------
+update staging.StagingValidationRules_ReportsXREF set enabled = 0 where StagingValidationRuleId = 109 and GenerateReportId <> 15;
+
