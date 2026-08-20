@@ -144,7 +144,10 @@ BEGIN
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDateFallback)
 
-		where ske.ExitOrWithdrawalType = '01927'
+		-- Non-ceds test data carries the source '_1' suffix on coded values (staging holds '01927_1'
+		-- while the warehouse holds the translated CEDS '01927'), so compare with the suffix stripped.
+		-- A bare = '01927' matched nothing and zeroed the expected side. Works for both data modes.
+		where replace(ske.ExitOrWithdrawalType, '_1', '') = '01927'
 
 
 

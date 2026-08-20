@@ -8,6 +8,36 @@ Brain task: `6cafe950`. Branch `feature/finish-generate`. Data year **2027**.
 
 ---
 
+## 📊 Verified state after the baseline restore (2026-08-20)
+
+**Population: 66 of 93 active codes now populate for 2027** (up from ~45). 93 = the 94 target minus the
+explicitly-retired FS204.
+
+**Every test now produces real comparisons — "NO TEST RESULTS" is gone entirely** (it was masking 6+ specs).
+The failures below are now *genuine* expected-vs-actual discrepancies, not artifacts of a corrupted baseline.
+
+| spec | pass | fail | note |
+|---|---:|---:|---|
+| FS029 | 51,848 | 0 | **green** |
+| FS040 | 1 | 0 | green (only 1 comparison — thin) |
+| FS175/178/179 | 2,067 / 1,754 / 640 | 15 / 8 / 3 | ~99% |
+| FS185/188/189 | 1,048 / 1,098 / 494 | 12 / 12 / 3 | ~99% |
+| FS052 | 9,852 | 325 | 97% |
+| FS194 | 23 | 2 | 92% |
+| FS141 | 4,641 | 1,764 | 72% |
+| FS009 | 4,248 | 5,792 | **now runs** (was blocked by the line-1501 error) |
+| FS002 / FS089 | 587 / 24 | 600 / 49 | childcount |
+| FS005/006/007/088/143/144 | 1,396 / 949 / 297 / 939 / 176 / 33 | 3,767 / 7,196 / 5,899 / 4,726 / 3,942 / 595 | discipline — alive, now measuring |
+| FS033 | 235 | 6,420 | |
+| FS118 | 1,162 | 4,252 | |
+| FS070 / FS099 / FS112 | 0 / 0 / 4 | 4 / 3 / 4 | staff — blocked on the Q3 vetted GETDATE fix |
+
+Notes: **FS052's 1,035,801 report rows are NOT inflated** — verified 1,035,801 distinct keys (legitimate
+school-level breadth). FS116 could not complete (`insufficient system memory in resource pool 'default'`) —
+an environment/resource limit, not a logic defect. FS212 still absent from `App` (see Q10).
+
+---
+
 ## 🔴 Q0 (CRITICAL, found 2026-08-14) — The AI ETL Developer destroys the e2e test-data baseline
 
 **This is the single biggest finding of the session and it invalidated a swathe of test results.**
