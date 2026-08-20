@@ -1715,8 +1715,7 @@ BEGIN
 					inner join app.Categories c on o.CategoryId = c.CategoryId
 					and c.CategoryCode = ''' +  @categoryCode + '''
 					and o.CategorySetId = ' + convert(varchar(20), @categorySetId) + '
-					where o.CategoryOptionCode <> ''NOTCOLLECT''
-					inner join app.ToggleResponses r on o.CategoryOptionCode = 
+					inner join app.ToggleResponses r on o.CategoryOptionCode =
 								case
 									when o.CategoryOptionCode = ''MISSING'' then o.CategoryOptionCode
 									else TRIM(
@@ -1725,10 +1724,11 @@ BEGIN
 												THEN TRIM(LEFT(r.ResponseValue, CHARINDEX(''-'', r.ResponseValue) - 1))
 												ELSE r.ResponseValue
 											END
-										) 
+										)
 								end
-					inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
-					where q.EmapsQuestionAbbrv = ''EDUENVSA''
+					inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId
+					where o.CategoryOptionCode <> ''NOTCOLLECT''
+					and q.EmapsQuestionAbbrv = ''EDUENVSA''
 					'
 			end
 			else if @categoryCode IN ('EDENVIDEAEC')
@@ -1740,8 +1740,7 @@ BEGIN
 					inner join app.Categories c on o.CategoryId = c.CategoryId
 					and c.CategoryCode = ''' +  @categoryCode + '''
 					and o.CategorySetId = ' + convert(varchar(20), @categorySetId) + '
-					where o.CategoryOptionCode <> ''NOTCOLLECT''
-					inner join app.ToggleResponses r on o.CategoryOptionCode = 
+					inner join app.ToggleResponses r on o.CategoryOptionCode =
 								case
 									when o.CategoryOptionCode = ''MISSING'' then o.CategoryOptionCode
 									else TRIM(
@@ -1750,10 +1749,11 @@ BEGIN
 												THEN TRIM(LEFT(r.ResponseValue, CHARINDEX(''-'', r.ResponseValue) - 1))
 												ELSE r.ResponseValue
 											END
-										) 
+										)
 								end
-					inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
-					where q.EmapsQuestionAbbrv = ''EDUENVEC''
+					inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId
+					where o.CategoryOptionCode <> ''NOTCOLLECT''
+					and q.EmapsQuestionAbbrv = ''EDUENVEC''
 					'
 			end
 			else if @categoryCode in ('DISABCATIDEA', 'DISABCATIDEAEXIT')
