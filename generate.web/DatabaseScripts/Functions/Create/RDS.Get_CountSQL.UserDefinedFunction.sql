@@ -1706,7 +1706,7 @@ BEGIN
 			end
 
 			---End New Code for c118
-			else if @categoryCode IN ('EDENVIDEAEC', 'EDENVIRIDEASA')
+			else if @categoryCode IN ('EDENVIRIDEASA')
 			begin
 				set @sqlCategoryOptions = @sqlCategoryOptions + '
 					insert into #cat_' + @reportField + '
@@ -1716,6 +1716,44 @@ BEGIN
 					and c.CategoryCode = ''' +  @categoryCode + '''
 					and o.CategorySetId = ' + convert(varchar(20), @categorySetId) + '
 					where o.CategoryOptionCode <> ''NOTCOLLECT''
+					inner join app.ToggleResponses r on o.CategoryOptionCode = 
+								case
+									when o.CategoryOptionCode = ''MISSING'' then o.CategoryOptionCode
+									else TRIM(
+											CASE
+												WHEN CHARINDEX(''-'', r.ResponseValue) > 0
+												THEN TRIM(LEFT(r.ResponseValue, CHARINDEX(''-'', r.ResponseValue) - 1))
+												ELSE r.ResponseValue
+											END
+										) 
+								end
+					inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
+					where q.EmapsQuestionAbbrv = ''EDUENVSA''
+					'
+			end
+			else if @categoryCode IN ('EDENVIDEAEC')
+			begin
+				set @sqlCategoryOptions = @sqlCategoryOptions + '
+					insert into #cat_' + @reportField + '
+					SELECT distinct o.CategoryOptionCode
+					from app.CategoryOptions o
+					inner join app.Categories c on o.CategoryId = c.CategoryId
+					and c.CategoryCode = ''' +  @categoryCode + '''
+					and o.CategorySetId = ' + convert(varchar(20), @categorySetId) + '
+					where o.CategoryOptionCode <> ''NOTCOLLECT''
+					inner join app.ToggleResponses r on o.CategoryOptionCode = 
+								case
+									when o.CategoryOptionCode = ''MISSING'' then o.CategoryOptionCode
+									else TRIM(
+											CASE
+												WHEN CHARINDEX(''-'', r.ResponseValue) > 0
+												THEN TRIM(LEFT(r.ResponseValue, CHARINDEX(''-'', r.ResponseValue) - 1))
+												ELSE r.ResponseValue
+											END
+										) 
+								end
+					inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
+					where q.EmapsQuestionAbbrv = ''EDUENVEC''
 					'
 			end
 			else if @categoryCode in ('DISABCATIDEA', 'DISABCATIDEAEXIT')
