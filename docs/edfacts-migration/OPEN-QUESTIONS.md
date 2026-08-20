@@ -28,6 +28,7 @@ The failures below are now *genuine* expected-vs-actual discrepancies, not artif
 | FS009 | 4,248 | 5,792 | **now runs** (was blocked by the line-1501 error) |
 | FS002 / FS089 | 587 / 24 | 600 / 49 | childcount |
 | FS005/006/007/088/143/144 | 1,396 / 949 / 297 / 939 / 176 / 33 | 3,767 / 7,196 / 5,899 / 4,726 / 3,942 / 595 | discipline — alive, now measuring |
+| FS032 | 12,141 | 2,758 | 82% — was 0 pass / expected-side empty until the `_1` filter fix |
 | FS033 | 235 | 6,420 | |
 | FS118 | 1,162 | 4,252 | |
 | FS070 / FS099 / FS112 | 0 / 0 / 4 | 4 / 3 / 4 | staff — blocked on the Q3 vetted GETDATE fix |
