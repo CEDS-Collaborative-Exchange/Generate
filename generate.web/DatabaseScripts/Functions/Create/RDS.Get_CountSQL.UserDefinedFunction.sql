@@ -7239,10 +7239,11 @@ BEGIN
 				end 
 
 				set @sql = @sql + '
-					where lea.DimLeaId <> -1 ' + char(10)
-					set @sql = @sql + 'and lea.RecordStartDateTime >= ''' + @CalculatedSYStartDate + '''' + char(10)
-					set @sql = @sql + 'and isnull(lea.RecordEndDateTime, ''' + @CalculatedSYEndDate + ''') <= ''' + @CalculatedSYEndDate + '''' + char(10)
-					set @sql = @sql + 'and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
+					where lea.DimLeaId <> -1 '
+					set @sql = @sql + '
+						and lea.RecordStartDateTime >= ''' + @CalculatedSYStartDate + '''
+						and isnull(lea.RecordEndDateTime, ''' + @CalculatedSYEndDate + ''') <= ''' + @CalculatedSYEndDate + '''
+						and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
 					group by 
 						lea.StateANSICode,
 						lea.StateAbbreviationCode,
@@ -7251,6 +7252,14 @@ BEGIN
 						lea.LeaIdentifierSea,
 						lea.LeaOrganizationName ' +
 						@sqlCategoryFields
+
+				--the logic above can create 0 count rows and that is not valid at the LEA level  --CIID-8752
+				if @reportCode = '009' and @reportLevel = 'lea' and @categorySetCode = 'TOT' 
+				begin
+					set @sql = @sql + '
+					having count(distinct cs.K12StudentStudentIdentifierState ) > 0
+					'
+				end
 
 			end		-- END @factReportTable = 'ReportEDFactsK12StudentCounts'
 			else
