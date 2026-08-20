@@ -2637,7 +2637,14 @@ namespace generate.infrastructure.Services
 
                     if (euLevel.IsDatacollEnabledSEA == 1)
                     {
-                        file_description = "SEA " + euLevel.FileType;
+                        if (new[] { "033", "129", "131", "132", "219", "221", "223", "225", "231", "232", "233", "234", "235", "236", "237", "238" }.Contains(fs))
+                        {
+                            file_description = euLevel.FileType;
+                        }
+                        else
+                        {
+                            file_description = "SEA " + euLevel.FileType;
+                        }
                         file_description = file_description.Length > 50 ? file_description.Substring(0, 49) : file_description;
 
                         _fs = new FileSubmission();
@@ -2717,7 +2724,14 @@ namespace generate.infrastructure.Services
 
                     if (euLevel.IsDatacollEnabledLEA == 1)
                     {
-                        file_description = "LEA " + euLevel.FileType;
+                        if (new[] { "033", "129", "131", "132", "219", "221", "223", "225", "231", "232", "233", "234", "235", "236", "237", "238" }.Contains(fs))
+                        {
+                            file_description = euLevel.FileType;
+                        }
+                        else
+                        {
+                            file_description = "LEA " + euLevel.FileType;
+                        }
                         file_description = file_description.Length > 50 ? file_description.Substring(0, 49) : file_description;
 
                         _fs = new FileSubmission();
@@ -2799,7 +2813,14 @@ namespace generate.infrastructure.Services
 
                     if (euLevel.IsDatacollEnabledSCH == 1)
                     {
-                        file_description = "SCHOOL " + euLevel.FileType;
+                        if (new[] { "033", "129", "131", "132", "219", "221", "223", "225", "231", "232", "233", "234", "235", "236", "237", "238" }.Contains(fs))
+                        {
+                            file_description = euLevel.FileType;
+                        }
+                        else
+                        {
+                            file_description = "SCHOOL " + euLevel.FileType;
+                        }
                         file_description = file_description.Length > 50 ? file_description.Substring(0, 49) : file_description;
 
                         _fs = new FileSubmission();
