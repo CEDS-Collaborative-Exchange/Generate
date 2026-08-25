@@ -14,6 +14,27 @@ RETURNS nvarchar(MAX)
 AS
 BEGIN
 
+/*
+	RDS.Get_CountSQL is a dynamic SQL builder used by report-generation procedures.
+	It returns a text batch for the requested report/year/level/category set and does
+	not execute that batch itself.  The main caller, RDS.Create_ReportData, requests
+	@sqlType = 'actual' and executes the returned SQL with sp_executesql.  Report
+	retrieval and zero-count procedures request the other @sqlType values to fill
+	report table variables with missing zero-count rows or legacy performance rows.
+
+	Important inputs:
+	- @reportCode, @reportLevel, @reportYear, @categorySetCode identify the slice.
+	- @sqlType selects the fragment to build: actual counts, zero counts,
+	  performance-level backfill, or specialized online-report zero-count shapes.
+	- @includeOrganizations controls whether the generated batch creates the
+	  #CAT_Organizations population used by zero-count cross joins.
+	- @isFileGenerator controls whether category temp tables are created once for
+	  a larger generated-file batch or inside this returned fragment.
+	- @tableTypeAbbrvs and @totalIndicators are passed in for reports whose table
+	  type/total metadata is chosen by the caller rather than derived here.
+	- @factTypeCode resolves the RDS fact type that the generated joins must filter.
+*/
+
 --For debugging
 
 --declare
@@ -368,6 +389,9 @@ BEGIN
 		s.LeaIdentifierSea as ParentOrganizationIdentifierSea'
 	end
 
+	-- Non-actual modes start by optionally building the organization universe used
+	-- for zero-count cross joins.  Actual-count mode skips this and builds facts
+	-- directly from the RDS fact tables.
 	-- not Actual sql types
 	if @sqlType = 'zero' or @sqlType = 'zero-performance' or @sqlType = 'zero-discipline' or @sqlType = 'zero-educenv' or @sqlType = 'zero-programs' 
 	begin
@@ -557,6 +581,8 @@ BEGIN
 		end
 	end
 
+	-- Actual-count mode builds the batch that inserts real counted rows into the
+	-- RDS report table.  This is the mode used by RDS.Create_ReportData.
 	-- Actual sql type
 	if @sqlType = 'actual'
 	begin
@@ -1177,6 +1203,9 @@ BEGIN
 	declare @sqlPerformanceLevelJoins as nvarchar(max)
 	set @sqlPerformanceLevelJoins = ''
 
+	-- Create category option temp tables when needed.  File-generation callers can
+	-- create these once and reuse them; other callers get table creation in this
+	-- returned fragment.
 	if(@includeOrganizations = 1)
 	begin
 		if(@isFileGenerator = 1)
@@ -1226,6 +1255,10 @@ BEGIN
 		end
 	end
 
+	-- Walk the category metadata for this report/category set.  Each cursor row
+	-- contributes one report field: the generated SQL accumulates select fields,
+	-- temp-table definitions, dimension joins, category option inserts, and group
+	-- by fields from these metadata rows.
 	-- Loop through category set  cursor
 	declare @categoryCnt as int
 	set @categoryCnt = 0			-- reset count to 0
@@ -1507,6 +1540,9 @@ BEGIN
 			DELETE FROM #cat_' + @reportField + '
 			'						
 
+		-- Populate the generated #cat_<ReportField> table for this category.  Most
+		-- categories use app.CategoryOptions, with report-specific branches for
+		-- toggles, grades, ages, assessment participation, and data-population reports.
 		-- Get Category Option Values
 		-------------------------------------
 		if @generateReportTypeCode = 'datapopulation'
@@ -1929,6 +1965,9 @@ BEGIN
 				and o.CategoryOptionCode NOT IN (''MISSING'') '
 			end
 		end		
+		-- Actual-count mode also decides how each dimension value should be returned.
+		-- Some categories are direct dimension fields; others are calculated labels or
+		-- toggle-driven mappings that must be repeated in select and group-by clauses.
 		if @sqlType = 'actual'
 		begin
 
@@ -2514,6 +2553,9 @@ BEGIN
 				set @sqlHavingClause = @sqlHavingClause + ' and ' + @sqlCategoryReturnField + ' in (select Code from #cat_' + @reportField + ')'
 			end
 
+		-- Build dimension/category joins for actual counts.  These joins constrain
+		-- facts to the generated #cat_* option tables and normalize special category
+		-- mappings such as race, grade/age buckets, assessments, and proficiency.
 		-- Build join conditions for actual counts
 			if @reportField = 'RACE' and @reportCode in ('yeartoyearremovalcount','yeartoyearexitcount') and @categorySetCode not in ('raceethnicity','raceethnic')
 			begin
@@ -2714,6 +2756,10 @@ BEGIN
 		select @categorySetCategoryList = isnull(app.Get_CategoriesByCategorySet(@categorySetId, 1, 0), '')
 
 		
+		-- Report-specific fact filters are applied after the generic category joins.
+		-- These branches enforce file-spec rules such as age ranges, IDEA status,
+		-- assessment subject, Title III participation, CTE concentrator status,
+		-- membership requirements, and reportable organization status.
 		-- Filter facts based on report
 		----------------------------------		
 		declare @reportFilterJoin as nvarchar(max)
@@ -2810,6 +2856,9 @@ BEGIN
 			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS'''
 		end
 
+		-- Some reports need additional rule sets or prefiltered temp tables before
+		-- actual aggregation.  The generated joins below are intentionally report
+		-- specific because each EDFacts file has different eligibility rules.
 		-- Filter facts based on report
 		----------------------------------
 		declare @queryFactFilter as nvarchar(max)
@@ -5383,6 +5432,10 @@ BEGIN
 
 		end
 		
+		-- Insert actual count rows into #categorySet.  The table shape differs by
+		-- target report table and by report-specific counting grain: students, staff,
+		-- incidents, assessments, disciplinary duration, cohort totals, or calculated
+		-- rates.  Later sections aggregate #categorySet into the final report table.
 		-- Insert actual count data
 		if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 		begin
@@ -6789,6 +6842,9 @@ BEGIN
 		----------------------------
 		' + @sqlRemoveMissing
 
+		-- Decide the final aggregation expression used when #categorySet is inserted
+		-- into the RDS report table.  Most reports sum the fact field, but several
+		-- files count distinct students/staff/incidents or sum staff FTE values.
 		-- Different Sum Operations
 		declare @sumOperation as nvarchar(500)
 		set @sumOperation = 'sum(isnull(' + @factField + ', 0))'
@@ -6815,6 +6871,9 @@ BEGIN
 	/***************************************
 		Create Debugging Tables
 	***************************************/
+		-- Optionally materialize debugging tables for numeric EDFacts report codes.
+		-- The generated tables capture the pre-aggregation #categorySet rows so file
+		-- investigations can trace reported totals back to student/staff identifiers.
 		--only create debug tables for the EDFacts reports
 		if (len(@reportCode) = 3 and @reportCode not like '%[^0-9]%')
 		begin
@@ -6979,6 +7038,10 @@ BEGIN
 
 		---------------------------------
 		-- Insert SQL into Fact Tables
+		-- This final actual-count section writes aggregated rows from #categorySet to
+		-- the configured RDS report table.  The SEA, LEA, and school branches differ
+		-- mostly in organization joins and identifiers; all preserve report metadata,
+		-- category values, table type, total indicator, and the selected count field.
 		---------------------------------
 
 		if @reportLevel = 'sea'
@@ -7622,6 +7685,9 @@ BEGIN
 		end
 	end
 
+	-- Legacy state assessment reports sometimes need contiguous zero rows for
+	-- performance levels that did not appear in @reportData.  This mode fills those
+	-- gaps for older non-SEA assessment reports without recalculating actual counts.
 	-----------------Contiguous Performance levels------------------------------------------------------------
 	if @sqlType = 'performanceLevels'
 	begin
@@ -7797,6 +7863,9 @@ BEGIN
 		end
 	end
 	
+	-- Generic zero-count mode cross joins organizations with category option temp
+	-- tables and inserts missing combinations into @reportData.  Follow-up delete
+	-- rules remove invalid zero rows for report-specific file-spec requirements.
 	if @sqlType = 'zero'
 	begin
 
@@ -8232,6 +8301,8 @@ BEGIN
 	declare @dynamicCategoryCondition as nvarchar(max)
 	set @dynamicCategoryCondition = ''
 
+	-- Specialized online-report zero-count modes target report-shaped temp tables
+	-- rather than the standard @reportData table used by EDFacts file generation.
 	if @sqlType = 'zero-performance' 
 	begin
 
