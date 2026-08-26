@@ -106,6 +106,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.Sto
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql,0
