@@ -242,7 +242,7 @@ BEGIN
 			AND ecodis.StudentIdentifierState							= ske.StudentIdentifierState
 			AND	ISNULL(ecodis.LEAIdentifierSeaAccountability, '')		= ISNULL(ske.LEAIdentifierSeaAccountability, '')
 			AND	ISNULL(ecodis.SchoolIdentifierSea, '')					= ISNULL(ske.SchoolIdentifierSea, '')
-			AND	@MembershipDate BETWEEN ecodis.EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, '1/1/9999')
+			AND	@MembershipDate BETWEEN ecodis.EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusExitDate, '1/1/9999')
 		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
 			ON rdeds.SchoolYear = ske.SchoolYear
 			AND ISNULL(ecodis.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(rdeds.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')

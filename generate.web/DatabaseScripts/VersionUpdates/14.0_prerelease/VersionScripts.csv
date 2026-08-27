@@ -48,6 +48,8 @@ Views\\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
 Views\\Create,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
 Views\\Drop,RDS.vwDimPsEnrollmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimPsEnrollmentStatuses.View.sql,0
+Views\\Drop,App.CategoryCodeOptionsByReportAndYear.View.sql,0
+Views\\Create,App.CategoryCodeOptionsByReportAndYear.View.sql,0
 StoredProcedures\\Drop,Utilities.CompareRecordsAcrossMigrations.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.CompareRecordsAcrossMigrations.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.GetEdFactsReportSubmissionData.StoredProcedure.sql,0
@@ -106,6 +108,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.Sto
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql,0
