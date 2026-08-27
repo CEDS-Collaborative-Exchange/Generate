@@ -7,11 +7,18 @@ NOTE: This Stored Procedure processes files: 009
 ************************************************************************/
 CREATE PROCEDURE  [Staging].[Staging-to-FactK12StudentCounts_Exiting] 
 	@SchoolYear SMALLINT
+	, @StudentIdentifierState VARCHAR(100) = NULL
+	, @DebugMode BIT = 0
 AS
 
 BEGIN
 	 --SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	IF @DebugMode = 1 AND @StudentIdentifierState IS NULL
+	BEGIN
+		THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+	END
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
 	IF OBJECT_ID(N'tempdb..#Facts') IS NOT NULL DROP TABLE #Facts
@@ -97,9 +104,12 @@ BEGIN
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'exiting'
 
-		DELETE RDS.FactK12StudentCounts
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
+		IF @DebugMode = 0
+		BEGIN
+			DELETE RDS.FactK12StudentCounts
+			WHERE SchoolYearId = @SchoolYearId
+				AND FactTypeId = @FactTypeId
+		END
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
@@ -226,6 +236,76 @@ BEGIN
 				END
 				AND rsy.SchoolYear = rdr.SchoolYear
 		WHERE sppse.ProgramParticipationExitDate IS NOT NULL		
+			AND (@DebugMode = 0 OR (sppse.StudentIdentifierState = @StudentIdentifierState AND sppse.SchoolYear = @SchoolYear))
+
+		IF @DebugMode = 1
+		BEGIN
+			SELECT
+				@StudentIdentifierState AS StudentIdentifierState
+				, sppse.Id AS ProgramParticipationSpecialEducationStagingId
+				, CASE WHEN sppse.Id IS NULL THEN 0 ELSE 1 END AS FoundInProgramParticipationSpecialEducation
+				, CASE WHEN EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = sppse.Id) THEN 1 ELSE 0 END AS MadeItIntoFacts
+				, CASE
+					WHEN sppse.Id IS NULL THEN 'Staging.ProgramParticipationSpecialEducation'
+					WHEN sppse.ProgramParticipationExitDate IS NULL THEN 'WHERE ProgramParticipationExitDate IS NOT NULL'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						WHERE ske.SchoolYear = sppse.SchoolYear
+							AND ske.StudentIdentifierState = sppse.StudentIdentifierState
+							AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
+							AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
+							AND sppse.ProgramParticipationExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+					) THEN 'JOIN Staging.K12Enrollment'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE sppse.SchoolYear = rsy.SchoolYear) THEN 'JOIN RDS.DimSchoolYears'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE sppse.ProgramParticipationExitDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)) THEN 'JOIN RDS.DimSeas'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						JOIN RDS.vwDimK12Demographics rdkd
+							ON sppse.SchoolYear = rdkd.SchoolYear
+							AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+						WHERE ske.SchoolYear = sppse.SchoolYear
+							AND ske.StudentIdentifierState = sppse.StudentIdentifierState
+							AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
+							AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
+							AND sppse.ProgramParticipationExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+					) THEN 'JOIN RDS.vwDimK12Demographics'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						JOIN RDS.DimAges rda
+							ON RDS.Get_Age(ske.Birthdate, IIF(sppse.ProgramParticipationExitDate < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
+						WHERE ske.SchoolYear = sppse.SchoolYear
+							AND ske.StudentIdentifierState = sppse.StudentIdentifierState
+							AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
+							AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
+							AND sppse.ProgramParticipationExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+					) THEN 'JOIN RDS.DimAges'
+					WHEN NOT EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = sppse.Id) THEN 'Unknown - all required joins matched but no #Facts row was inserted'
+					ELSE 'Inserted into #Facts'
+				END AS DebugResult
+				, (SELECT COUNT(1) FROM #Facts) AS FactsRowsForStudent
+				, CASE WHEN sppse.ProgramParticipationExitDate IS NOT NULL THEN 1 ELSE 0 END AS PassedProgramParticipationExitDateFilter
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM Staging.K12Enrollment ske
+					WHERE ske.SchoolYear = sppse.SchoolYear
+						AND ske.StudentIdentifierState = sppse.StudentIdentifierState
+						AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
+						AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
+						AND sppse.ProgramParticipationExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+				) THEN 1 ELSE 0 END AS MatchedK12Enrollment
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE sppse.SchoolYear = rsy.SchoolYear) THEN 1 ELSE 0 END AS MatchedDimSchoolYears
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE sppse.ProgramParticipationExitDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)) THEN 1 ELSE 0 END AS MatchedDimSeas
+			FROM (SELECT @StudentIdentifierState AS StudentIdentifierState) debugStudent
+			LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
+				ON sppse.StudentIdentifierState = debugStudent.StudentIdentifierState
+				AND sppse.SchoolYear = @SchoolYear
+			ORDER BY sppse.Id
+
+			RETURN
+		END
 
 --NOTE: The application of this rule is being discussed and will be addressed in a future release.  For now, the rule is being commented out.
 	--Add condition that the student was in SPED at the beginning of the reporting period CIID-4693

@@ -1,11 +1,18 @@
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentAssessment]
 	@SchoolYear SMALLINT
+	, @StudentIdentifierState VARCHAR(100) = NULL
+	, @DebugMode BIT = 0
 AS
 
 BEGIN
 
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	IF @DebugMode = 1 AND @StudentIdentifierState IS NULL
+	BEGIN
+		;THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+	END
 
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
 		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
@@ -361,7 +368,8 @@ BEGIN
 
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-			SchoolYearId									int null
+			StagingAssessmentResultId					int not null
+			, SchoolYearId								int null
 			, FactTypeId									int null
 			, SeaId											int null		
 			, IeuId											int null	
@@ -403,7 +411,8 @@ BEGIN
 
 		INSERT INTO #Facts
 		SELECT DISTINCT
-			rsy.DimSchoolYearId												SchoolYearId							
+			sar.Id													StagingAssessmentResultId
+			, rsy.DimSchoolYearId										SchoolYearId
 			, @FactTypeId													FactTypeId							
 			, ISNULL(rds.DimSeaId, -1)										SeaId									
 			, -1															IeuId									
@@ -626,11 +635,79 @@ BEGIN
 
 			WHERE 
 			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+			AND (@DebugMode = 0 OR (sar.StudentIdentifierState = @StudentIdentifierState AND sar.SchoolYear = @SchoolYear))
 
 	--Final insert into RDS.FactK12StudentAssessments table
-		DELETE RDS.FactK12StudentAssessments
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
+		IF @DebugMode = 1
+		BEGIN
+			SELECT
+				@StudentIdentifierState AS StudentIdentifierState
+				, sar.Id AS AssessmentResultStagingId
+				, CASE WHEN sar.Id IS NULL THEN 0 ELSE 1 END AS FoundInAssessmentResult
+				, CASE WHEN EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingAssessmentResultId = sar.Id) THEN 1 ELSE 0 END AS MadeItIntoFacts
+				, CASE
+					WHEN sar.Id IS NULL THEN 'Staging.AssessmentResult'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						WHERE ske.StudentIdentifierState = sar.StudentIdentifierState
+							AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
+							AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+							AND ske.SchoolYear = sar.SchoolYear
+					) THEN 'JOIN Staging.K12Enrollment'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE sar.SchoolYear = rsy.SchoolYear AND rsy.SchoolYear = @SchoolYear) THEN 'JOIN RDS.DimSchoolYears'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						JOIN RDS.vwDimK12Demographics rdkd
+							ON ske.SchoolYear = rdkd.SchoolYear
+							AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+						WHERE ske.StudentIdentifierState = sar.StudentIdentifierState
+							AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
+							AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+							AND ske.SchoolYear = sar.SchoolYear
+					) THEN 'JOIN RDS.vwDimK12Demographics'
+					WHEN sar.AssessmentAdministrationStartDate IS NULL OR NOT EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)) THEN 'JOIN RDS.DimSeas'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						WHERE ske.StudentIdentifierState = sar.StudentIdentifierState
+							AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
+							AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+							AND ske.SchoolYear = sar.SchoolYear
+							AND sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+					) THEN 'WHERE AssessmentAdministrationStartDate between EnrollmentEntryDate/EnrollmentExitDate'
+					WHEN NOT EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingAssessmentResultId = sar.Id) THEN 'Unknown - all required joins matched but no #Facts row was inserted'
+					ELSE 'Inserted into #Facts'
+				END AS DebugResult
+				, (SELECT COUNT(1) FROM #Facts) AS FactsRowsForStudent
+				, CASE WHEN EXISTS (SELECT 1 FROM Staging.K12Enrollment ske WHERE ske.StudentIdentifierState = sar.StudentIdentifierState AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'') AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'') AND ske.SchoolYear = sar.SchoolYear) THEN 1 ELSE 0 END AS MatchedK12Enrollment
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE sar.SchoolYear = rsy.SchoolYear AND rsy.SchoolYear = @SchoolYear) THEN 1 ELSE 0 END AS MatchedDimSchoolYears
+				, CASE WHEN sar.AssessmentAdministrationStartDate IS NOT NULL AND EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)) THEN 1 ELSE 0 END AS MatchedDimSeas
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM Staging.K12Enrollment ske
+					WHERE ske.StudentIdentifierState = sar.StudentIdentifierState
+						AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
+						AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+						AND ske.SchoolYear = sar.SchoolYear
+						AND sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+				) THEN 1 ELSE 0 END AS PassedAssessmentAdministrationEnrollmentFilter
+			FROM (SELECT @StudentIdentifierState AS StudentIdentifierState) debugStudent
+			LEFT JOIN #tempStagingAssessmentResults sar
+				ON sar.StudentIdentifierState = debugStudent.StudentIdentifierState
+				AND sar.SchoolYear = @SchoolYear
+			ORDER BY sar.Id
+
+			RETURN
+		END
+
+		IF @DebugMode = 0
+		BEGIN
+			DELETE RDS.FactK12StudentAssessments
+			WHERE SchoolYearId = @SchoolYearId
+				AND FactTypeId = @FactTypeId
+		END
 
 		INSERT INTO RDS.FactK12StudentAssessments (
 			[SchoolYearId]							

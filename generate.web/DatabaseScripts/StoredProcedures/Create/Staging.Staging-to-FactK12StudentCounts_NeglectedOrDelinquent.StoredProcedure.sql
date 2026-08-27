@@ -38,11 +38,18 @@ FS221
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent]
 	@SchoolYear SMALLINT
+	, @StudentIdentifierState VARCHAR(100) = NULL
+	, @DebugMode BIT = 0
 AS
 
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	IF @DebugMode = 1 AND @StudentIdentifierState IS NULL
+	BEGIN
+		THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+	END
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
 	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
@@ -291,11 +298,97 @@ BEGIN
 		WHERE sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
 			AND sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
 			AND sssrd.OutputCode not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+			AND (@DebugMode = 0 OR (ske.StudentIdentifierState = @StudentIdentifierState AND ske.SchoolYear = @SchoolYear))
+
+		IF @DebugMode = 1
+		BEGIN
+			SELECT
+				@StudentIdentifierState AS StudentIdentifierState
+				, ske.Id AS K12EnrollmentStagingId
+				, CASE WHEN ske.Id IS NULL THEN 0 ELSE 1 END AS FoundInK12Enrollment
+				, CASE WHEN EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = ske.Id) THEN 1 ELSE 0 END AS MadeItIntoFacts
+				, CASE
+					WHEN ske.Id IS NULL THEN 'Staging.K12Enrollment'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Organization sko
+						WHERE isnull(ske.LeaIdentifierSeaAccountability,'') = isnull(sko.LeaIdentifierSea,'')
+							and isnull(ske.SchoolIdentifierSea,'') = isnull(sko.SchoolIdentifierSea,'')
+							and LEA_IsReportedFederally = 1
+					) THEN 'JOIN Staging.K12Organization'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE ske.SchoolYear = rsy.SchoolYear and ske.SchoolYear = @SchoolYear) THEN 'JOIN RDS.DimSchoolYears'
+					WHEN ske.EnrollmentEntryDate IS NULL OR NOT EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)) THEN 'JOIN RDS.DimSeas'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.ProgramParticipationNOrD sppnord
+						WHERE ske.SchoolYear = sppnord.SchoolYear
+							AND ske.StudentIdentifierState = sppnord.StudentIdentifierState
+							AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppnord.LeaIdentifierSeaAccountability, '')
+							AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppnord.SchoolIdentifierSea, '')
+							AND sppnord.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+							AND sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
+							AND sppnord.NeglectedOrDelinquentStatus = 1
+					) THEN 'WHERE Staging.ProgramParticipationNOrD'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Organization sko
+						JOIN Staging.SourceSystemReferenceData sssrd
+							ON sko.SchoolYear = sssrd.SchoolYear
+							AND sko.LEA_OperationalStatus = sssrd.InputCode
+							AND sssrd.Tablename = 'RefOperationalStatus'
+							AND sssrd.TableFilter = '000174'
+						WHERE isnull(ske.LeaIdentifierSeaAccountability,'') = isnull(sko.LeaIdentifierSea,'')
+							and isnull(ske.SchoolIdentifierSea,'') = isnull(sko.SchoolIdentifierSea,'')
+							and LEA_IsReportedFederally = 1
+							AND sssrd.OutputCode not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+					) THEN 'WHERE LEA OperationalStatus'
+					WHEN NOT EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = ske.Id) THEN 'Unknown - all required joins matched but no #Facts row was inserted'
+					ELSE 'Inserted into #Facts'
+				END AS DebugResult
+				, (SELECT COUNT(1) FROM #Facts) AS FactsRowsForStudent
+				, CASE WHEN EXISTS (SELECT 1 FROM Staging.K12Organization sko WHERE isnull(ske.LeaIdentifierSeaAccountability,'') = isnull(sko.LeaIdentifierSea,'') and isnull(ske.SchoolIdentifierSea,'') = isnull(sko.SchoolIdentifierSea,'') and LEA_IsReportedFederally = 1) THEN 1 ELSE 0 END AS MatchedK12Organization
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE ske.SchoolYear = rsy.SchoolYear and ske.SchoolYear = @SchoolYear) THEN 1 ELSE 0 END AS MatchedDimSchoolYears
+				, CASE WHEN ske.EnrollmentEntryDate IS NOT NULL AND EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)) THEN 1 ELSE 0 END AS MatchedDimSeas
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM Staging.ProgramParticipationNOrD sppnord
+					WHERE ske.SchoolYear = sppnord.SchoolYear
+						AND ske.StudentIdentifierState = sppnord.StudentIdentifierState
+						AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppnord.LeaIdentifierSeaAccountability, '')
+						AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppnord.SchoolIdentifierSea, '')
+						AND sppnord.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+						AND sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
+						AND sppnord.NeglectedOrDelinquentStatus = 1
+				) THEN 1 ELSE 0 END AS PassedNorDProgramFilter
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM Staging.K12Organization sko
+					JOIN Staging.SourceSystemReferenceData sssrd
+						ON sko.SchoolYear = sssrd.SchoolYear
+						AND sko.LEA_OperationalStatus = sssrd.InputCode
+						AND sssrd.Tablename = 'RefOperationalStatus'
+						AND sssrd.TableFilter = '000174'
+					WHERE isnull(ske.LeaIdentifierSeaAccountability,'') = isnull(sko.LeaIdentifierSea,'')
+						and isnull(ske.SchoolIdentifierSea,'') = isnull(sko.SchoolIdentifierSea,'')
+						and LEA_IsReportedFederally = 1
+						AND sssrd.OutputCode not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+				) THEN 1 ELSE 0 END AS PassedLeaOperationalStatusFilter
+			FROM (SELECT @StudentIdentifierState AS StudentIdentifierState) debugStudent
+			LEFT JOIN Staging.K12Enrollment ske
+				ON ske.StudentIdentifierState = debugStudent.StudentIdentifierState
+				AND ske.SchoolYear = @SchoolYear
+			ORDER BY ske.Id
+
+			RETURN
+		END
 
 	--Clear the Fact table of the data about to be migrated  
-		DELETE RDS.FactK12StudentCounts
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
+		IF @DebugMode = 0
+		BEGIN
+			DELETE RDS.FactK12StudentCounts
+			WHERE SchoolYearId = @SchoolYearId
+				AND FactTypeId = @FactTypeId
+		END
 
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (

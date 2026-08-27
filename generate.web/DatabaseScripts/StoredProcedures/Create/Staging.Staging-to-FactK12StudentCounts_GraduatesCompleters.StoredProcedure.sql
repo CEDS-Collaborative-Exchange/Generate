@@ -7,11 +7,18 @@ NOTE: This Stored Procedure processes files: 040
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_GraduatesCompleters]
 	@SchoolYear SMALLINT
+	, @StudentIdentifierState VARCHAR(100) = NULL
+	, @DebugMode BIT = 0
 AS
 
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	IF @DebugMode = 1 AND @StudentIdentifierState IS NULL
+	BEGIN
+		THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+	END
 
 	BEGIN TRY
 
@@ -113,9 +120,12 @@ BEGIN
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'graduatescompleters'  --FactTypeId = 8
 
-		DELETE RDS.FactK12StudentCounts
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
+		IF @DebugMode = 0
+		BEGIN
+			DELETE RDS.FactK12StudentCounts
+			WHERE SchoolYearId = @SchoolYearId
+				AND FactTypeId = @FactTypeId
+		END
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
@@ -302,6 +312,71 @@ BEGIN
 		WHERE ((ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) > @ReportingStartDate))
 		AND ISNULL(ske.HighSchoolDiplomaType, '') <> ''
+		AND (@DebugMode = 0 OR (ske.StudentIdentifierState = @StudentIdentifierState AND ske.SchoolYear = @SchoolYear))
+
+		IF @DebugMode = 1
+		BEGIN
+			SELECT
+				@StudentIdentifierState AS StudentIdentifierState
+				, ske.Id AS K12EnrollmentStagingId
+				, CASE WHEN ske.Id IS NULL THEN 0 ELSE 1 END AS FoundInK12Enrollment
+				, CASE WHEN EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = ske.Id) THEN 1 ELSE 0 END AS MadeItIntoFacts
+				, CASE
+					WHEN ske.Id IS NULL THEN 'Staging.K12Enrollment'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE ske.SchoolYear = rsy.SchoolYear) THEN 'JOIN RDS.DimSchoolYears'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM RDS.DimSeas rds
+						WHERE (rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
+							OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, @SYEndDate) > @ReportingStartDate)
+					) THEN 'JOIN RDS.DimSeas'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM RDS.vwDimK12Demographics rdkd
+						WHERE ske.SchoolYear = rdkd.SchoolYear
+							AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+					) THEN 'JOIN RDS.vwDimK12Demographics'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM #vwK12AcademicAwardStatuses rdkaas
+						WHERE ISNULL(ske.HighSchoolDiplomaType, 'MISSING') = ISNULL(rdkaas.HighSchoolDiplomaTypeCode, rdkaas.HighSchoolDiplomaTypeMap)
+					) THEN 'JOIN RDS.vwDimK12AcademicAwardStatuses'
+					WHEN NOT (((ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
+						OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) > @ReportingStartDate))) THEN 'WHERE EnrollmentEntryDate/EnrollmentExitDate'
+					WHEN ISNULL(ske.HighSchoolDiplomaType, '') = '' THEN 'WHERE HighSchoolDiplomaType'
+					WHEN NOT EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = ske.Id) THEN 'Unknown - all required joins matched but no #Facts row was inserted'
+					ELSE 'Inserted into #Facts'
+				END AS DebugResult
+				, (SELECT COUNT(1) FROM #Facts) AS FactsRowsForStudent
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE ske.SchoolYear = rsy.SchoolYear) THEN 1 ELSE 0 END AS MatchedDimSchoolYears
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM RDS.DimSeas rds
+					WHERE (rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
+						OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, @SYEndDate) > @ReportingStartDate)
+				) THEN 1 ELSE 0 END AS MatchedDimSeas
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM RDS.vwDimK12Demographics rdkd
+					WHERE ske.SchoolYear = rdkd.SchoolYear
+						AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+				) THEN 1 ELSE 0 END AS MatchedDimK12Demographics
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM #vwK12AcademicAwardStatuses rdkaas
+					WHERE ISNULL(ske.HighSchoolDiplomaType, 'MISSING') = ISNULL(rdkaas.HighSchoolDiplomaTypeCode, rdkaas.HighSchoolDiplomaTypeMap)
+				) THEN 1 ELSE 0 END AS MatchedK12AcademicAwardStatuses
+				, CASE WHEN ((ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
+					OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) > @ReportingStartDate)) THEN 1 ELSE 0 END AS PassedEnrollmentReportingPeriodFilter
+				, CASE WHEN ISNULL(ske.HighSchoolDiplomaType, '') <> '' THEN 1 ELSE 0 END AS PassedHighSchoolDiplomaTypeFilter
+			FROM (SELECT @StudentIdentifierState AS StudentIdentifierState) debugStudent
+			LEFT JOIN Staging.K12Enrollment ske
+				ON ske.StudentIdentifierState = debugStudent.StudentIdentifierState
+				AND ske.SchoolYear = @SchoolYear
+			ORDER BY ske.Id
+
+			RETURN
+		END
 
 		INSERT INTO RDS.FactK12StudentCounts (
 			[SchoolYearId]
