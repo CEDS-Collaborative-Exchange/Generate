@@ -20,6 +20,7 @@ namespace generate.infrastructure.Services
     public class GenerateReportService : IGenerateReportService
     {
         private readonly IAppRepository _appRepository;
+        private readonly IRDSRepository _rdsRepository;
         private readonly IReportDebugRepository _reportDebugRepository;
 
         private IDataPopulationSummaryService _dataPopulationSummaryService;
@@ -29,6 +30,7 @@ namespace generate.infrastructure.Services
 
         public GenerateReportService(
             IAppRepository appRepository,
+            IRDSRepository rdsRepository,
             IReportDebugRepository reportDebugRepository,
             IDataPopulationSummaryService dataPopulationSummaryService,
             IEdFactsReportService edFactsReportService,
@@ -37,6 +39,7 @@ namespace generate.infrastructure.Services
             )
         {
             _appRepository = appRepository;
+            _rdsRepository = rdsRepository;
             _reportDebugRepository = reportDebugRepository;
             _dataPopulationSummaryService = dataPopulationSummaryService;
             _edFactsReportService = edFactsReportService;
@@ -477,5 +480,124 @@ namespace generate.infrastructure.Services
         }
 
         public string NormalizeNull(string input) => input == "null" ? null : input;
+
+        // Moved from GenerateReportController, which previously queried IAppRepository/IRDSRepository directly.
+        public IEnumerable<CategorySet> GetDistinctCategorySets(string reportCode, string reportLevel, string reportYear)
+        {
+            return _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.OrganizationLevel.LevelCode == reportLevel && c.SubmissionYear == reportYear)
+                .OrderBy(c => c.CategorySetName)
+                .GroupBy(x => x.CategorySetName)
+                .Select(y => y.First())
+                .Distinct();
+        }
+
+        public List<string> GetYearCategoryOptions(string reportYear, string reportLevel)
+        {
+            return _appRepository.GetAll<CategoryOption>(0, 0, x => x.Category, y => y.CategorySet, f => f.CategorySet.OrganizationLevel)
+                .Where(x => x.Category.CategoryCode == "YEAR" && x.CategorySet.SubmissionYear == reportYear && x.CategorySet.OrganizationLevel.LevelCode == reportLevel)
+                .OrderBy(x => x.CategorySet.SubmissionYear)
+                .Select(x => x.CategoryOptionName)
+                .Distinct()
+                .ToList();
+        }
+
+        public List<int> GetSubmissionYears(string reportCode)
+        {
+            List<int> returnResults = new List<int>();
+            IEnumerable<DimSchoolYear> dimYears = _rdsRepository.GetAll<DimSchoolYear>();
+
+            if (reportCode == "cohortgraduationrate")
+            {
+                var currentYear = dimYears.Select(d => d.SchoolYear).Max();
+
+                for (int i = 1; i <= 6; i++)
+                {
+                    int submissionYear = Convert.ToInt32(currentYear) + 1 + i;
+                    returnResults.Add(submissionYear);
+                }
+            }
+            else
+            {
+                var years = dimYears.Select(d => d.SchoolYear).Distinct().OrderByDescending(d => d).ToList();
+
+                for (int i = 0; i < years.Count; i++)
+                {
+                    int submissionYear = years[i];
+                    returnResults.Add(submissionYear);
+                }
+            }
+
+            return returnResults;
+        }
+
+        public List<string> GetSubmissionYearsWithSelectionPrompt(string reportCode, string reportType)
+        {
+            List<string> returnResults = new List<string>();
+            returnResults.Add("Select School Year");
+            IEnumerable<DimSchoolYear> dimYears = _rdsRepository.GetAll<DimSchoolYear>();
+
+            if (reportCode == "cohortgraduationrate")
+            {
+                var currentYear = dimYears.Select(d => d.SchoolYear).Max();
+
+                for (int i = 1; i <= 6; i++)
+                {
+                    int submissionYear = Convert.ToInt32(currentYear) + 1 + i;
+                    if (_appRepository.Count<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.SubmissionYear == submissionYear.ToString()) > 0)
+                    {
+                        returnResults.Add(submissionYear.ToString());
+                    }
+                }
+            }
+            else
+            {
+                List<string> years = dimYears.Select(d => d.SchoolYear.ToString()).Distinct().OrderByDescending(d => d).ToList();
+                for (int i = 0; i < years.Count; i++)
+                {
+                    string submissionYear = years[i];
+                    if (_appRepository.Count<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.SubmissionYear == submissionYear) > 0)
+                    {
+                        returnResults.Add(submissionYear);
+                    }
+                }
+            }
+
+            return returnResults;
+        }
+
+        public List<OrganizationLevelDto> GetOrganizationLevels()
+        {
+            List<OrganizationLevelDto> levels = new List<OrganizationLevelDto>();
+            foreach (OrganizationLevel t in _appRepository.GetAll<OrganizationLevel>(0, 0).ToList())
+            {
+                levels.Add(new OrganizationLevelDto { OrganizationLevelId = t.OrganizationLevelId, LevelCode = t.LevelCode, LevelName = t.LevelName });
+            }
+            return levels;
+        }
+
+        public List<OrganizationLevelDto> GetOrganizationLevelsByReportCodeYear(string reportCode, string reportYear, string categorySetCode)
+        {
+            List<OrganizationLevelDto> levels = new List<OrganizationLevelDto>();
+
+            var results = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.SubmissionYear == reportYear && c.CategorySetCode == categorySetCode).Select(c => c.OrganizationLevelId).Distinct().ToList();
+
+            foreach (int id in results)
+            {
+                OrganizationLevel orgLevel = _appRepository.GetById<OrganizationLevel>(id);
+                levels.Add(new OrganizationLevelDto { OrganizationLevelId = orgLevel.OrganizationLevelId, LevelCode = orgLevel.LevelCode, LevelName = orgLevel.LevelName });
+            }
+
+            return levels;
+        }
+
+        public GenerateReportFilterOption GetFilterOptionByCode(string filterCode)
+        {
+            return _appRepository.Find<GenerateReportFilterOption>(s => s.FilterCode == filterCode).FirstOrDefault();
+        }
+
+        public CategorySet GetCategorySetByCode(string categorySetCode)
+        {
+            return _appRepository.Find<CategorySet>(s => s.CategorySetCode == categorySetCode).FirstOrDefault();
+        }
     }
 }

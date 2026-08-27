@@ -189,7 +189,7 @@ namespace generate.infrastructure.Services
 
                 }
 
-                //_appRepository.MigrateMetadata("ESS", maxSubmissionYear, true);
+                //_appRepository.ExecuteSql("app.Migrate_Metadata @dataSetType = {0}, @submissionYear = {1}, @isTransferAppToMetadata = {2}", "ESS", maxSubmissionYear, true);
 
                 var time1 = DateTime.Now;
                 DeleteExistingCatInfobyYearandDS(collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName, maxSubmissionYear.ToString(), DSYVrdetail);
@@ -205,7 +205,7 @@ namespace generate.infrastructure.Services
 
                 UpdPopFSMetaYrandVersinGenConfig(true, maxSubmissionYear.ToString(), maxVersionNumber);
 
-                _appRepository.UpdateViewDefinitions();
+                _appRepository.ExecuteSql("app.UpdateViewDefinitions");
 
             skipESSPopulation:
 
@@ -288,7 +288,7 @@ namespace generate.infrastructure.Services
 
                 //DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
 
-                //_appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, true);
+                //_appRepository.ExecuteSql("app.Migrate_Metadata @dataSetType = {0}, @submissionYear = {1}, @isTransferAppToMetadata = {2}", "CHARTER", maxSubmissionYear, true);
 
                 DeleteExistingCatInfobyYearandDS(collectName, charterDSNameAbbrv, maxVersNum, fqYrName, year.ToString(), DSYVrdetail);
 
@@ -299,7 +299,7 @@ namespace generate.infrastructure.Services
 
                 UpdPopFSMetaYrandVersinGenConfig(false, maxSubmissionYear.ToString(), Convert.ToInt32(maxVersNum));
 
-                _appRepository.UpdateViewDefinitions();
+                _appRepository.ExecuteSql("app.UpdateViewDefinitions");
 
             skipCHRPopulation:
 
@@ -349,8 +349,8 @@ namespace generate.infrastructure.Services
             }
             catch (Exception e)
             {
-                //_appRepository.MigrateMetadata("ESS", maxSubmissionYear, false);
-                //_appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, false);
+                //_appRepository.ExecuteSql("app.Migrate_Metadata @dataSetType = {0}, @submissionYear = {1}, @isTransferAppToMetadata = {2}", "ESS", maxSubmissionYear, false);
+                //_appRepository.ExecuteSql("app.Migrate_Metadata @dataSetType = {0}, @submissionYear = {1}, @isTransferAppToMetadata = {2}", "CHARTER", maxSubmissionYear, false);
 
                 var x = e.Message;
                 var y = e.InnerException;

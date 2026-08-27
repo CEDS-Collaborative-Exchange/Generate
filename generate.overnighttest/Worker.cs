@@ -361,13 +361,13 @@ namespace generate.overnighttest
                     return;
 
                 }
-                IAppRepository appRepository = serviceProvider!.GetRequiredService<IAppRepository>();
+                IMigrationService migrationService = serviceProvider!.GetRequiredService<IMigrationService>();
                 Action<string> process = (reportCode) =>
                 {
                     string report = reportCode.Equals(ALL_FACT) ? "" : reportCode;
-                    if (isFactType) { appRepository.toggleReportLock(report, "", Convert.ToBoolean(value)); }
-                    else { appRepository.toggleReportLock("", report, Convert.ToBoolean(value)); }
-                   
+                    if (isFactType) { migrationService.toggleReportLock(report, "", Convert.ToBoolean(value)); }
+                    else { migrationService.toggleReportLock("", report, Convert.ToBoolean(value)); }
+
                 };
 
                 using var scope = serviceProvider!.CreateScope();
@@ -483,7 +483,7 @@ namespace generate.overnighttest
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 IRDSRepository rDSRepository = serviceProvider!.GetRequiredService<IRDSRepository>();
                 IAppRepository appRepository = new AppRepository(dbContext, rDSRepository);
-                appRepository.RunBeforeTests(schoolyear);
+                appRepository.ExecuteSql("app.Run_Before_Tests @submissionYear = {0}", schoolyear);
 
             }
             catch (Exception ex)
@@ -600,7 +600,7 @@ namespace generate.overnighttest
         {
             Console.WriteLine($"Inside EnableOrDisableTests enable:{enable} fileSpecNumbers:{fileSpecNumbers}, ");
             IAppRepository appRepository = serviceProvider!.GetRequiredService<IAppRepository>();
-            appRepository.EnableOrDisableTests(fileSpecNumbers, enable);
+            appRepository.ExecuteSql("app.Enable_Disable_Tests @testScope = {0}, @isActive = {1}", fileSpecNumbers, enable);
             
         }
 

@@ -46,13 +46,11 @@ namespace generate.test.Web.Tests.Controllers.Api.App
 
             // Arrange
             var service = new Mock<IGenerateReportService>();
-            var rdsRepository = new Mock<IRDSRepository>();
-            var appRepository = new Mock<IAppRepository>();
 
             service.Setup(x => x.GetReportDtos(It.IsAny<List<GenerateReport>>()))
                 .Returns(GetTestData());
 
-            var controller = new GenerateReportController(service.Object, rdsRepository.Object, appRepository.Object);
+            var controller = new GenerateReportController(service.Object);
 
             // Act
             var result = controller.Get("test");
@@ -72,13 +70,11 @@ namespace generate.test.Web.Tests.Controllers.Api.App
 
             // Arrange
             var service = new Mock<IGenerateReportService>();
-            var rdsRepository = new Mock<IRDSRepository>();
-            var appRepository = new Mock<IAppRepository>();
 
             service.Setup(x => x.GetReportDtos(It.IsAny<List<GenerateReport>>()))
                 .Returns(GetTestData());
 
-            var controller = new GenerateReportController(service.Object, rdsRepository.Object, appRepository.Object);
+            var controller = new GenerateReportController(service.Object);
 
             // Act
             var result = controller.Get("test", "test");

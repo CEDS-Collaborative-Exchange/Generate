@@ -41,7 +41,7 @@ namespace generate.web.Controllers.Api.App
         [HttpGet("{dataMigrationTypeCode}")]
         public JsonResult Get(string dataMigrationTypeCode)
         {
-            var results = _appRepository.GetMigrationHistory(dataMigrationTypeCode);
+            var results = _dataMigrationHistoryService.GetMigrationHistory(dataMigrationTypeCode);
             
             return Json(results);
         }

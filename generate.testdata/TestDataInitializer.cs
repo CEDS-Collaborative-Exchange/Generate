@@ -28,6 +28,7 @@ namespace generate.testdata
         private IIdsTestDataGenerator _odsTestDataGenerator;
         private IStagingTestDataGenerator _stagingTestDataGenerator;
         private IAppRepository _appRepository;
+        private IDataMigrationHistoryService _dataMigrationHistoryService;
         private IFileSystem _fileSystem;
         private ILoggerFactory _loggerFactory;
         private IOptions<DataSettings> _dataSettings;
@@ -38,6 +39,7 @@ namespace generate.testdata
             IIdsTestDataGenerator odsTestDataGenerator,
             IStagingTestDataGenerator stagingTestDataGenerator,
             IAppRepository appRepository,
+            IDataMigrationHistoryService dataMigrationHistoryService,
             IFileSystem fileSystem,
             ILoggerFactory loggerFactory,
             IOptions<DataSettings> dataSettings,
@@ -47,6 +49,7 @@ namespace generate.testdata
             _odsTestDataGenerator = odsTestDataGenerator;
             _stagingTestDataGenerator = stagingTestDataGenerator;
             _appRepository = appRepository;
+            _dataMigrationHistoryService = dataMigrationHistoryService;
             _fileSystem = fileSystem;
             _loggerFactory = loggerFactory;
             _dataSettings = dataSettings;
@@ -57,7 +60,7 @@ namespace generate.testdata
 
         public void PopulateOdsTestData(IJobCancellationToken jobCancellationToken)
         {
-            _appRepository.LogDataMigrationHistory("ods", "Create Test Data - Start", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory("ods", "Create Test Data - Start", true);
 
             // Get Configuration Settings
             ////////////////////////////////////
@@ -77,15 +80,15 @@ namespace generate.testdata
             // Populate test data
             ////////////////////////////////////
 
-            _appRepository.LogDataMigrationHistory("ods", "Creating data for " + studentCount + " students", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory("ods", "Creating data for " + studentCount + " students", true);
 
             var webAppPath = _appSettings.Value.WebAppPath;
 
-            _appRepository.LogDataMigrationHistory("ods", "File Path = " + webAppPath + " / env = " + _appSettings.Value.Environment, true);
+            _dataMigrationHistoryService.LogDataMigrationHistory("ods", "File Path = " + webAppPath + " / env = " + _appSettings.Value.Environment, true);
 
             _odsTestDataGenerator.GenerateTestData(seed, studentCount, schoolYear, "sql", "file", webAppPath);
 
-            _appRepository.LogDataMigrationHistory("ods", "Create Test Data - End", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory("ods", "Create Test Data - End", true);
             
             this.ExecuteTestData("ods", jobCancellationToken, webAppPath);
 
@@ -93,7 +96,7 @@ namespace generate.testdata
 
         public void PopulateStagingTestData(IJobCancellationToken jobCancellationToken, int? schoolYear)
         {
-            _appRepository.LogDataMigrationHistory("staging", "Create Test Data - Start", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory("staging", "Create Test Data - Start", true);
 
             // Get Configuration Settings
             ////////////////////////////////////
@@ -115,20 +118,20 @@ namespace generate.testdata
             // Populate test data
             ////////////////////////////////////
 
-            _appRepository.LogDataMigrationHistory("staging", "Creating data for " + studentCount + " students", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory("staging", "Creating data for " + studentCount + " students", true);
 
             var webAppPath = _appSettings.Value.WebAppPath;
 
-            _appRepository.LogDataMigrationHistory("staging", "File Path = " + webAppPath + " / env = " + _appSettings.Value.Environment, true);
+            _dataMigrationHistoryService.LogDataMigrationHistory("staging", "File Path = " + webAppPath + " / env = " + _appSettings.Value.Environment, true);
 
             _stagingTestDataGenerator.GenerateTestData(seed, studentCount, schoolYear.Value, 1, "sql", "file", "ceds", webAppPath, this);
 
-            _appRepository.LogDataMigrationHistory("staging", "Create Test Data - End", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory("staging", "Create Test Data - End", true);
         }
 
         public void ExecuteTestData(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken, string appPath)
         {
-            _appRepository.LogDataMigrationHistory(dataMigrationTypeCode, "Execute Test Data - Start", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory(dataMigrationTypeCode, "Execute Test Data - Start", true);
 
             int numberOfParallelTasks = 4;
 
@@ -231,8 +234,8 @@ namespace generate.testdata
 
             // Execute initial scripts
 
-            _appRepository.LogDataMigrationHistory(dataMigrationTypeCode, "SQL Script Path = " + appPath, true);
-            _appRepository.LogDataMigrationHistory(dataMigrationTypeCode, "Initial Scripts (" + initialScripts.Count + " files)", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory(dataMigrationTypeCode, "SQL Script Path = " + appPath, true);
+            _dataMigrationHistoryService.LogDataMigrationHistory(dataMigrationTypeCode, "Initial Scripts (" + initialScripts.Count + " files)", true);
 
             if (jobCancellationToken != null)
             {
@@ -261,7 +264,7 @@ namespace generate.testdata
                 numberOfParallelTasks = 1;
             }
 
-            _appRepository.LogDataMigrationHistory(dataMigrationTypeCode, "Subsequent Scripts (" + subsequentScripts.Count + " files / " + numberOfBatches + " batches / " + numberOfParallelTasks + " parallel tasks)", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory(dataMigrationTypeCode, "Subsequent Scripts (" + subsequentScripts.Count + " files / " + numberOfBatches + " batches / " + numberOfParallelTasks + " parallel tasks)", true);
 
             int scriptsRemaining = subsequentScripts.Count;
             int scriptsProcessed = 0;
@@ -336,7 +339,7 @@ namespace generate.testdata
 
             _fileSystem.File.Delete(properDataMigrationTypeCode + "TestData.ps1");
 
-            _appRepository.LogDataMigrationHistory(dataMigrationTypeCode, "Execute Test Data - End", true);
+            _dataMigrationHistoryService.LogDataMigrationHistory(dataMigrationTypeCode, "Execute Test Data - End", true);
 
         }
 

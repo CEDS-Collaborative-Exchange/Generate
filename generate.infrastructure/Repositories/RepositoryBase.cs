@@ -309,7 +309,7 @@ namespace generate.infrastructure.Repositories
         public virtual void ExecuteSql(string sql, params object[] parameters)
         {
             int? oldTimeout = _context.Database.GetCommandTimeout();
-            _context.Database.SetCommandTimeout(8000);
+            _context.Database.SetCommandTimeout(11000);
             _context.Database.ExecuteSqlRaw(sql, parameters);
             _context.Database.SetCommandTimeout(oldTimeout);
         }

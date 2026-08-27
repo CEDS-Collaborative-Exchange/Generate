@@ -88,6 +88,7 @@ namespace generate.web.Config
 
             services.AddScoped<IDbUpdaterService, DbUpdaterService>();
             services.AddScoped<IAppUpdateService, AppUpdateService>();
+            services.AddScoped<IMigrationService, MigrationService>();
 
             services.AddScoped<IDataMigrationService, DataMigrationService>();
             services.AddScoped<IDataMigrationHistoryService, DataMigrationHistoryService>();

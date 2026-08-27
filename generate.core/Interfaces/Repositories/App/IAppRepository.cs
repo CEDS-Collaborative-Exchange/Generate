@@ -53,23 +53,17 @@ namespace generate.core.Interfaces.Repositories.App
 
 
         // Extended Methods
-        void StartMigration(string dataMigrationTypeCode, bool setToProcessing = false);
+        //
+        // These remain here only because Hangfire serializes a reference to this interface and the
+        // method signature into its persistent job store (see generate.infrastructure/Helpers/HangfireHelper.cs),
+        // so an already-enqueued job would fail to resolve if the method moved. The real logic lives in
+        // IMigrationService/MigrationService — these are thin delegates to it.
         void CompleteMigration(string dataMigrationTypeCode, string dataMigrationStatusCode);
-        void LogException(string dataMigrationTypeCode, Exception ex);
-        void LogDataMigrationHistory(string dataMigrationTypeCode, string dataMigrationHistoryMessage, bool logToDatabase = true);
-        IEnumerable<DataMigrationHistory> GetMigrationHistory(string dataMigrationTypeCode, int skip = 0, int take = 1000);
         void ExecuteSqlBasedMigration(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken);
+        void MarkReportAsComplete(string reportCode);
+
         IEnumerable<GenerateReport> GetReports(string reportTypeCode, int skip = 0, int take = 50);
         IEnumerable<GenerateReport> GetReports(int skip = 0, int take = 50);
         IQueryable<CategorySet> GetCategorySets(string reportCode, string reportYear, string reportLevel);
-        void MarkReportAsComplete(string reportCode);
-        void MarkReportsAsComplete();
-        void UpdateViewDefinitions();
-
-        void CompleteReportMigrationIfReady();
-        void RunBeforeTests(int submissionYear);
-        void toggleReportLock(string factTypeCode, string reportCode, bool isLocked);
-        void EnableOrDisableTests(string fileSpecNumbers, bool enable = true);
-        void MigrateMetadata(string dataSetType, int submissionYear, bool isTransferAppToMetadata = true);
     }
 }

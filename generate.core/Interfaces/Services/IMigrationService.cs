@@ -17,5 +17,14 @@ namespace generate.core.Interfaces.Services
         void CreateReportByYear(string reportCode, string reportYear);
         void ExecuteRdsTaskByYear(string taskName, string reportYear);
 
+        // Migration lifecycle and report-locking (moved from IAppRepository's "Extended Methods")
+        void StartMigration(string dataMigrationTypeCode, bool setToProcessing = false);
+        void CompleteMigration(string dataMigrationTypeCode, string dataMigrationStatusCode);
+        void LogException(string dataMigrationTypeCode, Exception ex);
+        void ExecuteSqlBasedMigration(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken);
+        void MarkReportAsComplete(string reportCode);
+        void MarkReportsAsComplete();
+        void CompleteReportMigrationIfReady();
+        void toggleReportLock(string factTypeCode, string reportCode, bool isLocked);
     }
 }

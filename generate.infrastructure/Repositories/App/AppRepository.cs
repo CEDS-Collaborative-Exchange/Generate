@@ -8,6 +8,7 @@ using System.Data;
 using System.Threading.Tasks;
 using generate.core.Interfaces.Repositories.App;
 using generate.core.Interfaces.Repositories.RDS;
+using generate.core.Interfaces.Services;
 using System.Threading;
 using Hangfire;
 
@@ -18,12 +19,16 @@ namespace generate.infrastructure.Repositories.App
     public class AppRepository : RepositoryBase, IAppRepository, IDisposable
     {
         private CancellationTokenSource source;
-        private readonly IRDSRepository _rdsRepository;
-        public AppRepository(AppDbContext context, IRDSRepository rdsRepository)
+        private readonly IServiceProvider _serviceProvider;
+
+        // rdsRepository is no longer used inside AppRepository (its former consumer, toggleReportLock,
+        // moved to IMigrationService) but stays as a constructor parameter for compatibility with existing
+        // callers/tests that construct AppRepository directly.
+        public AppRepository(AppDbContext context, IRDSRepository rdsRepository, IServiceProvider serviceProvider = null)
             : base(context)
         {
             this.source = new CancellationTokenSource();
-            _rdsRepository = rdsRepository;
+            _serviceProvider = serviceProvider;
         }
 
         public void Dispose()
@@ -33,295 +38,37 @@ namespace generate.infrastructure.Repositories.App
             source = null;
             GC.SuppressFinalize(this);
         }
-        
-        public void StartMigration(string dataMigrationTypeCode, bool setToProcessing = false)
-        {
-            // Start time (UTC date)
-            DateTime startDate = DateTime.UtcNow;
 
-            // Get dataMigration for type
-            DataMigration dataMigration = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode, 0, 0, d => d.DataMigrationStatus).FirstOrDefault();
-
-            // Get statuses
-            List<DataMigrationStatus> dataMigrationStatuses = GetAllReadOnly<DataMigrationStatus>(0, 0).ToList();
-            DataMigrationStatus pendingStatus = null;
-            DataMigrationStatus processingStatus = null;
-
-            if (dataMigrationStatuses != null)
-            {
-                pendingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "pending");
-                processingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "processing");
-            }
-
-            if (dataMigration != null)
-            {
-                // Set Migration Status to pending, set last trigger date
-                if (setToProcessing && processingStatus != null)
-                {
-                    dataMigration.DataMigrationStatusId = processingStatus.DataMigrationStatusId;
-                }
-                else if (pendingStatus != null)
-                {
-                    dataMigration.DataMigrationStatusId = pendingStatus.DataMigrationStatusId;
-                }
-                dataMigration.LastTriggerDate = startDate;
-                Save();
-            }
-
-           
-            LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Started", true);
-
-        }
-
-        public void CompleteReportMigrationIfReady()
-        {
-            // Make sure all report tasks are completed
-
-            var reportsPending = _context.Set<GenerateReport>().Any(x => x.IsLocked);
-            
-            if (!reportsPending)
-            {
-                this.CompleteMigration("report", "success");
-            }
-
-        }
-
+        // These three methods stay on IAppRepository only because Hangfire serializes a reference to this
+        // interface and the method signature into its persistent job store (see HangfireHelper.cs). An
+        // already-enqueued job needs the method to still resolve here. The real logic lives in
+        // IMigrationService/MigrationService — resolved lazily (not via constructor injection) because
+        // MigrationService itself depends on IAppRepository, and constructor-injecting it here would be
+        // a circular dependency.
         public void CompleteMigration(string dataMigrationTypeCode, string dataMigrationStatusCode)
         {
-            DataMigration dataMigration = _context.Set<DataMigration>().FirstOrDefault(x => x.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode);
-
-            if (dataMigration == null) return;
-
-            // Make sure we get latest from database in case data was updated by Hangfire
-            _context.Entry<DataMigration>(dataMigration).Reload();
-
-            var migrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusId == dataMigration.DataMigrationStatusId);
-            var currentStatus = "";
-
-            if (migrationStatus != null)
-            {
-                currentStatus = migrationStatus.DataMigrationStatusCode;
-            }
-
-            if (dataMigration.DataMigrationStatus != null)
-            {
-                currentStatus = dataMigration.DataMigrationStatus.DataMigrationStatusCode;
-            }
-
-            // Do not complete if status is already error
-            if (currentStatus != "error")
-            {
-                // Set duration if not error/canceled
-                if (dataMigrationStatusCode != "error")
-                {
-                    var startTime = dataMigration.LastTriggerDate;
-                    var endTime = DateTime.UtcNow;
-                    var duration = endTime.Subtract(startTime.Value);
-                    dataMigration.LastDurationInSeconds = (int)duration.TotalSeconds;
-                }
-
-                var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
-                dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
-
-                var lockedReports = this.GetReports().Where(r => r.IsLocked);
-                if (lockedReports.Any())
-                {
-                    var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
-                    var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
-                    dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
-                    _context.SaveChanges();
-                }
-
-                // Log migration complete message
-                if (dataMigrationStatusCode == "error")
-                {
-                    LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - either due to error or cancellation", true);
-                    this.MarkReportsAsComplete();
-                }
-                else
-                {
-                    LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - successful", true);
-                }
-            }
-            else
-            {
-                LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Completed after Cancel/Error", true);
-                this.MarkReportsAsComplete();
-            }
-        }
-
-        public void MarkReportsAsComplete()
-        {
-            var lockedReports = this.GetReports().Where(r => r.IsLocked);
-            foreach (var report in lockedReports)
-            {
-                this.MarkReportAsComplete(report.ReportCode);
-            }
-        }
-
-        public void LogException(string dataMigrationTypeCode, Exception ex)
-        {
-            LogDataMigrationHistory(dataMigrationTypeCode, "Error Occurred - " + ex.Message, true);
-            LogDataMigrationHistory(dataMigrationTypeCode, "Error Stack Trace = " + ex.StackTrace, true);
-
-            if (ex.InnerException != null)
-            {
-                LogDataMigrationHistory(dataMigrationTypeCode, "Error Inner Exception Message = " + ex.InnerException.Message, true);
-            }
-        }
-
-        public void LogDataMigrationHistory(string dataMigrationTypeCode, string dataMigrationHistoryMessage, bool logToDatabase = true)
-        {
-
-            Console.WriteLine(DateTime.Now + " - " + dataMigrationTypeCode + " - " + dataMigrationHistoryMessage);
-
-            if (logToDatabase)
-            {
-                DataMigrationHistory historyRecord = new DataMigrationHistory();
-                DataMigrationType dataMigrationType = Find<DataMigrationType>(s => s.DataMigrationTypeCode == dataMigrationTypeCode).FirstOrDefault();
-
-                if (dataMigrationType != null)
-                {
-                    historyRecord = new DataMigrationHistory();
-                    historyRecord.DataMigrationHistoryDate = DateTime.UtcNow;
-                    historyRecord.DataMigrationTypeId = dataMigrationType.DataMigrationTypeId;
-                    historyRecord.DataMigrationHistoryMessage = dataMigrationHistoryMessage;
-                    Create(historyRecord);
-                    Save();
-                }
-
-            }
-
-        }
-
-        public IEnumerable<DataMigrationHistory> GetMigrationHistory(string dataMigrationTypeCode, int skip = 0, int take = 1000)
-        {
-            DbSet<DataMigrationHistory> set = _context.Set<DataMigrationHistory>();
-            IQueryable<DataMigrationHistory> results = set.AsQueryable();
-
-            results = results.Include(r => r.DataMigrationType);
-
-            //if (dataMigrationTypeCode != null)
-            //{
-            //    results = results.Where(r => r.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode);
-            //}
-
-            results = results.OrderByDescending(r => r.DataMigrationHistoryDate);
-
-            if (skip != 0)
-            {
-                results = results.Skip(skip);
-            }
-
-            if (take != 0)
-            {
-                results = results.Take(take);
-            }
-
-            return results;
+            ResolveMigrationService().CompleteMigration(dataMigrationTypeCode, dataMigrationStatusCode);
         }
 
         public void ExecuteSqlBasedMigration(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken)
         {
-            try
+            ResolveMigrationService().ExecuteSqlBasedMigration(dataMigrationTypeCode, jobCancellationToken);
+        }
+
+        public void MarkReportAsComplete(string reportCode)
+        {
+            ResolveMigrationService().MarkReportAsComplete(reportCode);
+        }
+
+        private IMigrationService ResolveMigrationService()
+        {
+            if (_serviceProvider == null)
             {
-                // Start migration
-                StartMigration(dataMigrationTypeCode, false);
-
-                // Run migration
-
-                // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
-                // https://github.com/HangfireIO/Hangfire/issues/211
-
-                //var source = new CancellationTokenSource();
-
-                var connection = _context.Database.GetDbConnection();
-
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
-
-                //if (jobCancellationToken != null)
-                //{
-                //    Task.Run(() =>
-                //    {
-                //        try
-                //        {
-                //            while (true)
-                //            {
-                //                Thread.Sleep(1000);
-                //                jobCancellationToken.ThrowIfCancellationRequested();
-                //            }
-                //        }
-                //        catch (Exception)
-                //        {
-                //            this.source.Cancel(); 
-                //            this.source.Dispose();
-                //        }
-                //    }, this.source.Token);
-                //}
-
-                //var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
-                //dbTask.Wait();
-
-                //_context.Database.SetCommandTimeout(oldTimeOut);
-
-                using (var command = connection.CreateCommand())
-                {
-
-                    Action cancelWithGrace = () =>
-                    {
-                        try
-                        {
-                            command.Cancel();
-                            source.Cancel();
-                        }
-                        catch (System.Exception ex)
-                        {
-                            Console.Error.WriteLine($"Exception called canceWithGrace:{ex}");
-                        }
-
-                    };
-
-                    if (jobCancellationToken != null)
-                    {
-                        Task.Run(() =>
-                        {
-                            try
-                            {
-                                while (true)
-                                {
-                                    Thread.Sleep(1000);
-                                    jobCancellationToken.ThrowIfCancellationRequested();
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.Error.WriteLine($"Cancellation called :{ex}");
-                                // command.Cancel();
-                                // this.source.Cancel();
-                                cancelWithGrace();
-                            }
-                        }, source.Token);
-                    }
-                    command.CommandTimeout = 300000;
-                    command.CommandText = "EXEC app.Migrate_Data";
-                    //Console.WriteLine("Executing Migrate_Data stored proc");
-                    command.ExecuteNonQueryAsync().GetAwaiter().GetResult();
-                    //Console.WriteLine($"Done Executing Migrate_Data stored proc rowsAffected:{rowsAffected}");
-
-                }
-            }
-            catch (Exception ex)
-            {
-                this.LogException(dataMigrationTypeCode, ex);
-                this.CompleteMigration(dataMigrationTypeCode, "error");
-                throw;
+                throw new InvalidOperationException($"{nameof(AppRepository)} was constructed without an {nameof(IServiceProvider)}, so it cannot resolve {nameof(IMigrationService)} to fulfill this call.");
             }
 
-
-
+            return (IMigrationService)_serviceProvider.GetService(typeof(IMigrationService))
+                ?? throw new InvalidOperationException($"{nameof(IMigrationService)} is not registered in this application's service collection.");
         }
 
 
@@ -404,97 +151,5 @@ namespace generate.infrastructure.Repositories.App
             return categorySets;
         }
 
-        public void MarkReportAsComplete(string reportCode)
-        {
-
-            // Verify that all pending jobs have completed first
-
-            var api = JobStorage.Current.GetMonitoringApi();
-            var reportMigrationJobs = api.ProcessingJobs(0, (int)api.ProcessingCount()).Where(x => x.Value.InProcessingState && x.Value.Job.Method.Name == "ExecuteReportMigrationByYearLevelAndCategorySet");
-
-            if (!reportMigrationJobs.Any())
-            {
-                GenerateReport report = _context.Set<GenerateReport>().Where(x => x.ReportCode == reportCode).FirstOrDefault();
-                if (report != null)
-                {
-                    report.IsLocked = false;
-                    _context.SaveChanges();
-                }
-
-                this.CompleteReportMigrationIfReady();
-
-            }
-
-        }
-
-        public void UpdateViewDefinitions()
-        {
-
-            int? oldTimeOut = _context.Database.GetCommandTimeout();
-            _context.Database.SetCommandTimeout(11000);
-            _context.Database.ExecuteSqlRaw("app.UpdateViewDefinitions");
-            _context.Database.SetCommandTimeout(oldTimeOut);
-
-
-        }
-
-        public void RunBeforeTests(int submissionYear)
-        {
-
-            int? oldTimeOut = _context.Database.GetCommandTimeout();
-            _context.Database.SetCommandTimeout(11000);
-            _context.Database.ExecuteSqlRaw("app.Run_Before_Tests @submissionYear = {0}", submissionYear);
-            _context.Database.SetCommandTimeout(oldTimeOut);
-
-        }
-
-        public void toggleReportLock(string factTypeCode, string reportCode, bool isLocked)
-        {
-
-            if (reportCode != "")
-            {
-                var report = _context.Set<GenerateReport>().FirstOrDefault(x => x.ReportCode == reportCode);
-                report.IsLocked = isLocked;
-                _context.SaveChanges();
-            }
-            else if (factTypeCode != "")
-            {
-                var factType = _rdsRepository.GetFactType(factTypeCode);
-                var reports = Find<GenerateReport>(t => t.GenerateReport_FactTypes.Any(t => t.FactTypeId == factType.DimFactTypeId)).ToList();
-                foreach (var report in reports)
-                {
-                    report.IsLocked = isLocked;
-                    _context.SaveChanges();
-                }
-            }
-            else
-            {
-                var reportList = "029,002,005,006,007,009,032,033,040,052,088,089,116,118,141,143,144,175,178,179,185,188,189,194";
-                string[] reportCodes = reportList.Split(',');
-                var reports = Find<GenerateReport>(t =>reportCodes.Contains(t.ReportCode) &&  t.IsActive).ToList();
-                foreach (var report in reports)
-                {
-                    report.IsLocked = isLocked;
-                    _context.SaveChanges();
-                }
-            }
-
-        }
-
-        public void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
-        {
-            int? oldTimeOut = _context.Database.GetCommandTimeout();
-            _context.Database.SetCommandTimeout(11000);
-            _context.Database.ExecuteSqlRaw("app.Enable_Disable_Tests @testScope = {0}, @isActive = {1}", fileSpecNumbers, enable);
-            _context.Database.SetCommandTimeout(oldTimeOut);
-        }
-
-        public void MigrateMetadata(string dataSetType, int submissionYear, bool isTransferAppToMetadata = true)
-        {
-            int? oldTimeOut = _context.Database.GetCommandTimeout();
-            _context.Database.SetCommandTimeout(11000);
-            _context.Database.ExecuteSqlRaw("app.Migrate_Metadata @dataSetType = {0}, @submissionYear = {1}, @isTransferAppToMetadata = {2}", dataSetType, submissionYear, isTransferAppToMetadata);
-            _context.Database.SetCommandTimeout(oldTimeOut);
-        }
     }
 }
