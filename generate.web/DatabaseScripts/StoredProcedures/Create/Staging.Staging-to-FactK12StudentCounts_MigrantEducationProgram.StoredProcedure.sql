@@ -15,16 +15,16 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	IF @DebugMode = 1 AND @StudentIdentifierState IS NULL
+	IF @DebugMode = 1 AND ISNULL(@StudentIdentifierState, '') = ''
 	BEGIN
-		THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+		;THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
 	END
 
+	BEGIN TRY
+	
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
 		IF OBJECT_ID(N'tempdb..#vwMigrantStatuses') IS NOT NULL DROP TABLE #vwMigrantStatuses
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
-
-	BEGIN TRY
 
 		DECLARE 
 		@FactTypeId INT,
@@ -38,8 +38,6 @@ BEGIN
 
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
-
-	-- No longer using #dimPeople temp table - direct join to DimPeople_Current
 
 	--Create the temp views (and any relevant indexes) needed for this domain
 		SELECT *
@@ -62,14 +60,6 @@ BEGIN
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'migranteducationprogram'	--DimFactTypeId = 13
-
-	--Clear the Fact table of the data about to be migrated  
-		IF @DebugMode = 0
-		BEGIN
-			DELETE RDS.FactK12StudentCounts
-			WHERE SchoolYearId = @SchoolYearId
-				AND FactTypeId = @FactTypeId
-		END
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
@@ -243,6 +233,14 @@ BEGIN
 			RETURN
 		END
 
+	--Clear the Fact table of the data about to be migrated  
+		IF ISNULL(@DebugMode, 0) = 0
+		BEGIN
+			DELETE RDS.FactK12StudentCounts
+			WHERE SchoolYearId = @SchoolYearId
+				AND FactTypeId = @FactTypeId
+		END
+
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
 			[SchoolYearId]
@@ -317,7 +315,7 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-			insert into app.DataMigrationHistories
+		insert into app.DataMigrationHistories
 		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
 		values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
 	END CATCH

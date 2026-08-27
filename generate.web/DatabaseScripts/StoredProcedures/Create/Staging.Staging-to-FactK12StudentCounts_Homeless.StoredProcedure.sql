@@ -16,7 +16,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	IF @DebugMode = 1 AND @StudentIdentifierState IS NULL
+	IF @DebugMode = 1 AND ISNULL(@StudentIdentifierState, '') = ''
 	BEGIN
 		THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
 	END
@@ -117,14 +117,6 @@ BEGIN
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'homeless'	--FactTypeId = 16
-
-		--Clear the Fact table of the data about to be migrated  
-		IF @DebugMode = 0
-		BEGIN
-			DELETE RDS.FactK12StudentCounts
-			WHERE SchoolYearId = @SchoolYearId
-				AND FactTypeId = @FactTypeId
-		END
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
@@ -411,6 +403,13 @@ BEGIN
 			RETURN
 		END
 
+	--Clear the Fact table of the data about to be migrated  
+		IF ISNULL(@DebugMode, 0) = 0
+		BEGIN
+			DELETE RDS.FactK12StudentCounts
+			WHERE SchoolYearId = @SchoolYearId
+				AND FactTypeId = @FactTypeId
+		END
 
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (

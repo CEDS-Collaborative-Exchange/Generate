@@ -46,9 +46,9 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	IF @DebugMode = 1 AND @StudentIdentifierState IS NULL
+	IF @DebugMode = 1 AND ISNULL(@StudentIdentifierState, '') = ''
 	BEGIN
-		THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+		;THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
 	END
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
@@ -383,7 +383,7 @@ BEGIN
 		END
 
 	--Clear the Fact table of the data about to be migrated  
-		IF @DebugMode = 0
+		IF ISNULL(@DebugMode, 0) = 0
 		BEGIN
 			DELETE RDS.FactK12StudentCounts
 			WHERE SchoolYearId = @SchoolYearId
