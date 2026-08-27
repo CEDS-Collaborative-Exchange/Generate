@@ -48,6 +48,8 @@ Views\\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
 Views\\Create,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
 Views\\Drop,RDS.vwDimPsEnrollmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimPsEnrollmentStatuses.View.sql,0
+Views\\Drop,App.CategoryCodeOptionsByReportAndYear.View.sql,0
+Views\\Create,App.CategoryCodeOptionsByReportAndYear.View.sql,0
 StoredProcedures\\Drop,Utilities.CompareRecordsAcrossMigrations.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.CompareRecordsAcrossMigrations.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.GetEdFactsReportSubmissionData.StoredProcedure.sql,0
