@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using Microsoft.EntityFrameworkCore;
 using generate.core.Interfaces.Repositories.App;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
@@ -16,6 +17,7 @@ namespace generate.web.Controllers.Api.App
     [Route("api/app/toggleresponses")]
     [ResponseCache(Duration = 0)]
     [ApiController]
+    [Authorize]
     public class ToggleResponseController : Controller
     {
         private IAppRepository _toggleResponseRepository;

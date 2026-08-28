@@ -18,11 +18,13 @@ using generate.web.Config;
 using generate.core.Interfaces.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Logging;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -80,6 +82,12 @@ if ("EMBEDDED".Equals(builder.Configuration.GetValue<string>("AppSettings:UserSt
 }
 else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:UserStoreType")))
 {
+    if (builder.Environment.IsDevelopment())
+    {
+        // Reveals the real reason behind JWT validation failures (normally redacted as PII) for local debugging.
+        Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+    }
+
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
     builder.Services.AddAuthorization();
@@ -89,6 +97,15 @@ else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:User
     .AddUserStore<ApplicationUserStore<ApplicationUser>>()
     .AddRoleStore<ApplicationRoleStore>()
     .AddUserManager<ApplicationUserManager>();
+
+    // AddIdentity<>() above overrides DefaultAuthenticateScheme/DefaultChallengeScheme back to
+    // Identity.Application (cookies), even though AddAuthentication() was configured for JWT Bearer.
+    // Re-assert JWT Bearer as the default so [Authorize] validates bearer tokens in OAuth mode.
+    builder.Services.Configure<AuthenticationOptions>(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    });
 }
 else // AD Auth
 {
@@ -112,6 +129,36 @@ builder.Services
         options.UseSqlServer(builder.Configuration.GetValue<string>("Data:StagingDbContextConnection")));
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment() && "OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:UserStoreType")))
+{
+    // Decodes the incoming bearer token's claims directly, bypassing Microsoft.IdentityModel's PII
+    // redaction, so the real audience/scope/issuer can be seen while diagnosing signature failures.
+    app.Use(async (context, next) =>
+    {
+        var header = context.Request.Headers.Authorization.ToString();
+        if (header.StartsWith("Bearer "))
+        {
+            var parts = header.Substring("Bearer ".Length).Split('.');
+            if (parts.Length >= 2)
+            {
+                try
+                {
+                    string Pad(string s) => s.PadRight(s.Length + (4 - s.Length % 4) % 4, '=').Replace('-', '+').Replace('_', '/');
+                    var header_ = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(Pad(parts[0])));
+                    var payload = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(Pad(parts[1])));
+                    app.Logger.LogInformation("OAuth diagnostic - token header: {Header}", header_);
+                    app.Logger.LogInformation("OAuth diagnostic - token payload: {Payload}", payload);
+                }
+                catch (Exception ex)
+                {
+                    app.Logger.LogWarning(ex, "OAuth diagnostic - failed to decode token");
+                }
+            }
+        }
+        await next();
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

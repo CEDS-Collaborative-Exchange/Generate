@@ -20,11 +20,13 @@ using Microsoft.Extensions.Configuration;
 using generate.core.Config;
 using Microsoft.Extensions.Options;
 using System.Configuration;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/filesubmissions")]
     [ApiController]
+    [Authorize]
     public class FileSubmissionController : Controller
     {
 

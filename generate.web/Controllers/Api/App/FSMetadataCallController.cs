@@ -19,12 +19,14 @@ using System.Threading;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/fsmetadata")]
     [ResponseCache(Duration = 0)]
     [ApiController]
+    [Authorize]
     public class FSMetadataCallController : Controller
     {
 

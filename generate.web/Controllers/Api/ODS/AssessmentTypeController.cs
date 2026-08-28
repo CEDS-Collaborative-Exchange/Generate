@@ -6,11 +6,13 @@ using System.Linq;
 using generate.core.Dtos.ODS;
 using generate.core.Interfaces.Repositories.IDS;
 using generate.core.Interfaces.Repositories.RDS;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/assessmenttypes")]
     [ApiController]
+    [Authorize]
     public class AssessmentTypeController : Controller
     {
         private IDimensionRepository _dimensionRepository;

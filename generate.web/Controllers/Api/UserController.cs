@@ -90,8 +90,11 @@ namespace generate.web.Controllers.Api
                         if (claimsPrincipal != null && claimsPrincipal.Identity != null)
                         {
                             _logger.LogInformation("Setting User Claims for : " + claimsPrincipal.Identity.Name);
-                            // Set the claims to the user 
-                            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+                            // Set the claims to the user
+                            // Must sign in under the same scheme [Authorize] challenges by default (Identity.Application,
+                            // set by AddIdentity<>() in Program.cs) — signing in under CookieAuthenticationDefaults.AuthenticationScheme
+                            // ("Cookies") issued a cookie that [Authorize] never recognized, blocking every logged-in user.
+                            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, claimsPrincipal);
                             return Json(user);
                         }
                         else
