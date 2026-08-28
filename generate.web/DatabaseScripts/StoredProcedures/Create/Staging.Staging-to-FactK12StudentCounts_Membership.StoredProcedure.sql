@@ -7,11 +7,18 @@ NOTE: This Stored Procedure processes files: 033, 052
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_Membership]
 	@SchoolYear SMALLINT
+	, @StudentIdentifierState VARCHAR(100) = NULL
+	, @DebugMode BIT = 0
 AS
 
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	IF @DebugMode = 1 AND ISNULL(@StudentIdentifierState, '') = ''
+	BEGIN
+		;THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+	END
 
 	BEGIN TRY
 
@@ -129,17 +136,13 @@ BEGIN
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'membership' --FactTypeId = 6
 
-		--Clear the Fact table of the data about to be migrated  
-		DELETE RDS.FactK12StudentCounts
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
-
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
 		
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-			  SchoolYearId							int null
+			  StagingId								int not null
+			, SchoolYearId							int null
 			, FactTypeId							int null
 			, GradeLevelId							int null
 			, AgeId									int null
@@ -174,7 +177,8 @@ BEGIN
 
 		INSERT INTO #Facts
 		SELECT DISTINCT
-			@SchoolYearId 												SchoolYearId
+			ske.Id											StagingId
+			, @SchoolYearId 									SchoolYearId
 			, @FactTypeId												FactTypeId
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId
 			, rda.DimAgeId												AgeId
@@ -268,7 +272,74 @@ BEGIN
 
 	WHERE @MembershipDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, '1/1/9999')
 		AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList) AND ske.SchoolYear = @SchoolYear
+		AND (@DebugMode = 0 OR ske.StudentIdentifierState = @StudentIdentifierState)
+
+		IF @DebugMode = 1
+		BEGIN
+			SELECT
+				@StudentIdentifierState AS StudentIdentifierState
+				, ske.Id AS K12EnrollmentStagingId
+				, CASE WHEN ske.Id IS NULL THEN 0 ELSE 1 END AS FoundInK12Enrollment
+				, CASE WHEN EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = ske.Id) THEN 1 ELSE 0 END AS MadeItIntoFacts
+				, CASE
+					WHEN ske.Id IS NULL THEN 'Staging.K12Enrollment'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE ske.SchoolYear = rsy.SchoolYear) THEN 'JOIN RDS.DimSchoolYears'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE @MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, '1/1/9999')) THEN 'JOIN RDS.DimSeas'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimAges rda WHERE RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue) THEN 'JOIN RDS.DimAges'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM RDS.vwDimK12Demographics rdkd
+						WHERE ske.SchoolYear = rdkd.SchoolYear
+							AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+					) THEN 'JOIN RDS.vwDimK12Demographics'
+					WHEN @MembershipDate NOT BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, '1/1/9999') THEN 'WHERE MembershipDate between EnrollmentEntryDate/EnrollmentExitDate'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM #vwGradeLevels rgls
+						WHERE rgls.SchoolYear = ske.SchoolYear
+							AND ske.GradeLevel = rgls.GradeLevelMap
+							AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
+							AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
+					) THEN 'WHERE GradeLevel in GradesList'
+					WHEN NOT EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = ske.Id) THEN 'Unknown - all required joins matched but no #Facts row was inserted'
+					ELSE 'Inserted into #Facts'
+				END AS DebugResult
+				, (SELECT COUNT(1) FROM #Facts) AS FactsRowsForStudent
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE ske.SchoolYear = rsy.SchoolYear) THEN 1 ELSE 0 END AS MatchedDimSchoolYears
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE @MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, '1/1/9999')) THEN 1 ELSE 0 END AS MatchedDimSeas
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimAges rda WHERE RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue) THEN 1 ELSE 0 END AS MatchedDimAges
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM RDS.vwDimK12Demographics rdkd
+					WHERE ske.SchoolYear = rdkd.SchoolYear
+						AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+				) THEN 1 ELSE 0 END AS MatchedDimK12Demographics
+				, CASE WHEN @MembershipDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, '1/1/9999') THEN 1 ELSE 0 END AS PassedMembershipDateFilter
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM #vwGradeLevels rgls
+					WHERE rgls.SchoolYear = ske.SchoolYear
+						AND ske.GradeLevel = rgls.GradeLevelMap
+						AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
+						AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
+				) THEN 1 ELSE 0 END AS PassedGradeLevelFilter
+			FROM (SELECT @StudentIdentifierState AS StudentIdentifierState) debugStudent
+			LEFT JOIN Staging.K12Enrollment ske
+				ON ske.StudentIdentifierState = debugStudent.StudentIdentifierState
+				AND ske.SchoolYear = @SchoolYear
+			ORDER BY ske.Id
+
+			RETURN
+		END
 		
+		--Clear the Fact table of the data about to be migrated  
+		IF ISNULL(@DebugMode, 0) = 0
+		BEGIN
+			DELETE RDS.FactK12StudentCounts
+			WHERE SchoolYearId = @SchoolYearId
+				AND FactTypeId = @FactTypeId
+		END
+
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
 			SchoolYearId

@@ -474,7 +474,7 @@ Use the @FileSpec parameter to pass in one of the
 	INNER JOIN #DimAssessments ds
 		ON a.AssessmentIdentifier = ds.AssessmentIdentifierState 
 			AND a.AssessmentTypeAdministered = ds.AssessmentTypeAdministeredMap
-			AND a.AssessmentPerformanceLevelIdentifier = ds.AssessmentPerformanceLevelIdentifier
+			AND a.AssessmentPerformanceLevelIdentifier = ds.AssessmentPerformanceLevelMap
 	INNER JOIN #ToggleAssessments ta
 		ON ds.AssessmentTypeAdministeredCode = replace(ta.AssessmentTypeCode, '_1', '')
 			AND asr.GradeLevelCode = replace(ta.Grade, '_1', '')
