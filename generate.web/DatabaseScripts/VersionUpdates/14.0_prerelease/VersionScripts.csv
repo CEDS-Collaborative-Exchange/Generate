@@ -114,6 +114,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProced
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 TestCases,App.FS002_TestCase.StoredProcedure.sql,0
 TestCases,App.FS005_TestCase.StoredProcedure.sql,0
 TestCases,App.FS006_TestCase.StoredProcedure.sql,0
