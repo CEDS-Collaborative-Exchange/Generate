@@ -233,6 +233,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<bool>> AssessedFirstTimeDistribution { get; set; }
         public List<DataDistribution<string>> AccessibilityFeatureTypeDistribution { get; set; }
         public List<DataDistribution<string>> AccessibilityFeatureApplicationTypeDistribution { get; set; }
+        public List<DataDistribution<string>> EdFactsFormerEnglishLearnerYearStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefAssessmentParticipationIndicatorDistribution { get; set; }
         public List<DataDistribution<string>> RefAssessmentRegistrationReasonNotCompleting { get; set; }
         public List<DataDistribution<string>> RefAssessmentRegistrationReasonNotTested { get; set; }
@@ -1370,6 +1371,14 @@ namespace generate.testdata.Profiles
             this.AccessibilityFeatureApplicationTypeDistribution.Add(new DataDistribution<string>() { Option = "Administrative", ExpectedDistribution = 50 });
             this.AccessibilityFeatureApplicationTypeDistribution.Add(new DataDistribution<string>() { Option = "Designated", ExpectedDistribution = 75 });
             this.AccessibilityFeatureApplicationTypeDistribution.Add(new DataDistribution<string>() { Option = "Universal", ExpectedDistribution = 100 });
+
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution = new List<DataDistribution<string>>();
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "MISSING", ExpectedDistribution = 70 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "1YEAR", ExpectedDistribution = 76 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "2YEAR", ExpectedDistribution = 82 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "3YEAR", ExpectedDistribution = 88 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "4YEAR", ExpectedDistribution = 94 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "5YEAR", ExpectedDistribution = 100 });
 
 
             this.SpecialEdProgramParticipantNowDistribution = new List<DataDistribution<bool>>();

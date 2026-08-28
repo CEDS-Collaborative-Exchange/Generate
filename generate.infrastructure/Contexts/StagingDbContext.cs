@@ -181,6 +181,10 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.DataCollectionName).HasMaxLength(100);
 
+                entity.Property(e => e.EdFactsFormerEnglishLearnerYearStatus)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.GradeLevelWhenAssessed)
                     .HasMaxLength(100)
                     .IsUnicode(false);

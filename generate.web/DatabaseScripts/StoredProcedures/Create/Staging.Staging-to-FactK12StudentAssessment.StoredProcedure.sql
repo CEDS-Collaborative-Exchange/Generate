@@ -497,6 +497,7 @@ BEGIN
 				ON rdas.SchoolYear = rsy.SchoolYear
 				AND ISNULL(CAST(sar.AssessedFirstTime AS SMALLINT), -1) = ISNULL(rdas.AssessedFirstTimeMap, -1)
 				AND rdas.ProgressLevelCode								= 'MISSING'
+				AND ISNULL(sar.EdFactsFormerEnglishLearnerYearStatus, 'MISSING') = ISNULL(rdas.FormerEnglishLearnerYearStatusCode, 'MISSING')
 		--assessment administration (rds)
 			LEFT JOIN #tempAssessmentAdministrations rdaa
 				ON sar.LeaIdentifierSeaAccountability 								= rdaa.LocalEducationAgencyIdentifier

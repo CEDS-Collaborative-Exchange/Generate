@@ -11,6 +11,7 @@ AS
 			WHEN 'No' THEN 0
 			ELSE -1
 		  END							AS AssessedFirstTimeMap
+		, FormerEnglishLearnerYearStatusCode
 	FROM rds.DimAssessmentStatuses rdas
 	CROSS JOIN (select sy.SchoolYear
     			from rds.DimSchoolYearDataMigrationTypes dm

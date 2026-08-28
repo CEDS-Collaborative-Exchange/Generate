@@ -789,6 +789,24 @@ IF OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]', N'U') IS NOT NULL
 		  AND parent_object_id = OBJECT_ID(N'[RDS].[DimAssessmentRegistrations]')
 	)
 BEGIN
-	ALTER TABLE RDS.DimAssessmentRegistrations 
+	ALTER TABLE RDS.DimAssessmentRegistrations
 	ADD CONSTRAINT DF_AssessmentRegistrations_ReasonNotTestedEdFactsCode DEFAULT 'MISSING' FOR ReasonNotTestedEdFactsCode
+END;
+
+--------------------------------------------------
+--RDS.DimAssessmentStatuses
+--------------------------------------------------
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusCode') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusCode VARCHAR (50) NULL;
+END;
+
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusDescription') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusDescription VARCHAR (100) NULL;
+END;
+
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusEdFactsCode') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusEdFactsCode VARCHAR (50) NULL;
 END;

@@ -2193,6 +2193,7 @@ namespace generate.testdata.DataGenerators
                         // - These are 2 new fields that are being added to staging.AssessmentResult
                         AccessibilityFeatureType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AccessibilityFeatureTypeDistribution),
                         AccessibilityFeatureApplicationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AccessibilityFeatureApplicationTypeDistribution),
+                        EdFactsFormerEnglishLearnerYearStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.EdFactsFormerEnglishLearnerYearStatusDistribution),
 
                         AssessmentTitle = assessmentAdministration.AssessmentTitle,
                         AssessmentType = assessmentAdministration.AssessmentType,
