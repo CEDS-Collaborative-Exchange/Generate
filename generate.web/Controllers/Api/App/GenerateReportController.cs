@@ -12,11 +12,13 @@ using System.Collections.Generic;
 using System.Linq;
 using generate.core.Interfaces.Repositories.App;
 using generate.core.Interfaces.Repositories.RDS;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/generatereports")]
     [ApiController]
+    [Authorize]
     public class GenerateReportController : Controller
     {
         private readonly IGenerateReportService _generateReportService;
