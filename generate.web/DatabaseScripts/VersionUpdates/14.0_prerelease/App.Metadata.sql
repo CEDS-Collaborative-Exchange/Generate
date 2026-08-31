@@ -27,7 +27,7 @@ INSERT INTO [App].[ToggleQuestions]
            ,[ToggleQuestionTypeId]
            ,[ToggleSectionId])
      VALUES
-           ('EDUENVSA',304,'Which permitted values are included in your state’s definition for Educational Environments (IDEA) SA?',10,@toggleSectionId)
+           ('EDUENVSA',304,'Which permitted values are included in your state''s definition for Educational Environments (IDEA) SA?',8,@toggleSectionId)
 
 
 
@@ -75,7 +75,7 @@ INSERT INTO [App].[ToggleSections]
            ,[SectionTitle]
            ,[ToggleSectionTypeId])
      VALUES
-           ('ENVEL','A4',400,'Environment',1)
+           ('ENVEL','A4',400,'Environment - Early Childhood',1)
 
 IF NOT EXISTS(SELECT 1 FROM [App].[ToggleSections] WHERE [EmapsSurveySectionAbbrv]= 'ENVIDEAEL')
 INSERT INTO [App].[ToggleSections]
@@ -99,7 +99,7 @@ INSERT INTO [App].[ToggleQuestions]
            ,[ToggleQuestionTypeId]
            ,[ToggleSectionId])
      VALUES
-           ('EDUENVEC',401,'Which permitted values are included in your state’s definition for Educational Environments (IDEA) EC?',10,@toggleSectionId)
+           ('EDUENVEC',401,'Which permitted values are included in your state''s definition for Educational Environments (IDEA) EC?',8,@toggleSectionId)
 
 
 select @toggleQuestionId = ToggleQuestionId from app.ToggleQuestions where EmapsQuestionAbbrv = 'EDUENVEC'
