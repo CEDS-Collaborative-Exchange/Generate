@@ -139,3 +139,6 @@ VALUES (8, 'H - Home', @toggleQuestionId)
 IF NOT EXISTS(SELECT 1 FROM [App].[ToggleQuestionOptions] WHERE [ToggleQuestionId]= @toggleQuestionId AND [OptionText]= 'SPL - Service Provider Location')
 INSERT INTO [App].[ToggleQuestionOptions]([OptionSequence],[OptionText],[ToggleQuestionId])
 VALUES (9, 'SPL - Service Provider Location', @toggleQuestionId)
+
+
+Update app.Category_Dimensions set DimensionId = 56 where CategoryId = 402
