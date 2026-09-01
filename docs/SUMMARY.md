@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Introduction to Generate and Status Updates](README.md)
+* [CIID Common Language Glossary](ciid-common-language-glossary.md)
 
 ## User Guide
 
