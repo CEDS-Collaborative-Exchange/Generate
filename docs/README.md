@@ -27,7 +27,7 @@ The Center for the Integration of IDEA Data (CIID) developed the Generate applic
 
 ## What's Next?&#x20;
 
-**Generate Release v14.0 coming October 2026**. This Release will include file updates, UI improvements, validation rules, and tool enhancements.&#x20;
+**Generate Release v14.0 coming September 2026**. This Release will include file updates, UI improvements, validation rules, and tool enhancements.&#x20;
 
 **Generate Release v14.1 coming November 2026**
 
