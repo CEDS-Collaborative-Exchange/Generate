@@ -92,6 +92,8 @@
   * [Staging Validation](developer-guides/generate-utilities/staging-validation/README.md)
     * [Staging Validation (Old Process)](developer-guides/generate-utilities/staging-validation/staging-validation-old-process.md)
     * [Staging Table Validation Process](developer-guides/generate-utilities/staging-validation/staging-table-validation-process.md)
+  * [Utilities.CompareRecordsAcrossMigrations](developer-guides/generate-utilities/utilities.comparerecordsacrossmigrations.md)
+  * [GetEdFactsReportData Utility](developer-guides/generate-utilities/getedfactsreportdata-utility.md)
   * [Rebuild Indexes](developer-guides/generate-utilities/rebuild-indexes.md)
   * [Cleanup Grades Offered](developer-guides/generate-utilities/cleanup-grades-offered.md)
   * [Cleanup Debug Tables](developer-guides/generate-utilities/cleanup-debug-tables.md)
