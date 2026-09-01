@@ -1064,7 +1064,7 @@ namespace generate.testdata.Profiles
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "BlackorAfricanAmerican", ExpectedDistribution = 35 });
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "NativeHawaiianorOtherPacificIslander", ExpectedDistribution = 40 });
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "White", ExpectedDistribution = 95 });
-            this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "TwoorMoreRaces", ExpectedDistribution = 100 });
+            this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "DemographicRaceTwoOrMoreRaces", ExpectedDistribution = 100 });
 
 
             this.NumberOfConcurrentSchoolEnrollmentDistribution = new List<DataDistribution<int>>();

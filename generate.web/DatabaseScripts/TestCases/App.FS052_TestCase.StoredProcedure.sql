@@ -3,7 +3,7 @@ April 11, 2023
 End to End Test for FS052
 ************************************************************************/
 
-CREATE PROCEDURE [app].[FS052_TestCase] 
+ALTER PROCEDURE [app].[FS052_TestCase] 
 	@SchoolYear INT
 AS
 BEGIN
