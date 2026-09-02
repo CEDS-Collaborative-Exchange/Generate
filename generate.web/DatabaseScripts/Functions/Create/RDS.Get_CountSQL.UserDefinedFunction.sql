@@ -5553,15 +5553,21 @@ BEGIN
 							and K12StaffCount.K12StaffCategoryId = fact.K12StaffCategoryId' 
 				end
 			
+				-- Tracks whether the #categorySet shape built below carries a per-student key
+				-- (DimStudentId/K12StudentStudentIdentifierState). The "Create Debugging Tables"
+				-- section further down joins on that key, and it must be skipped for shapes
+				-- that are pure SEA/LEA/School aggregates with no per-student column.
+				declare @categorySetHasStudentId bit = 1
+
 				set @sql = @sql + '
 
 				----------------------------
-				-- Insert actual count data 
+				-- Insert actual count data
 				----------------------------
-		
-				create table #categorySet (	' 
+
+				create table #categorySet (	'
 					+ case when @reportLevel = 'sea' then 'DimSeaId int,'
-						   when @reportLevel = 'lea' then 'DimLeaId int,' 
+						   when @reportLevel = 'lea' then 'DimLeaId int,'
 						   else 'DimK12SchoolId int,'
 					end + '			
 					DimK12Staff_CurrentId int, K12StudentStudentIdentifierState VARCHAR(60) ' + @sqlCategoryFieldDefs + ',
@@ -6327,7 +6333,8 @@ BEGIN
 			end
 			else if(@reportCode IN ('studentssummary'))
 			begin
-		
+				set @categorySetHasStudentId = 0
+
 				set @sql = @sql + '
 				----------------------------
 				-- Insert actual count data 
@@ -6382,14 +6389,16 @@ BEGIN
 			end
 			else if(@reportCode in ('150'))
 			begin
+				set @categorySetHasStudentId = 0
+
 				set @sql = @sql + '
 					----------------------------
-					-- Insert actual count data 
+					-- Insert actual count data
 					-- default ReportEDFactsK12StudentCounts
 					----------------------------
-		
 
-					create table #categorySet (	' 
+
+					create table #categorySet (	'
 					+ case when @reportLevel = 'sea' then 'DimSeaId int'
 							when @reportLevel = 'lea' then 'DimLeaId int' 
 							else 'DimK12SchoolId int'
@@ -6772,18 +6781,20 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 				end		-- END @factReportTable = 'ReportEDFactsK12StudentCounts'
-				else 
+				else
 				begin
+					set @categorySetHasStudentId = 0
+
 					set @sql = @sql + '
 						----------------------------
-						-- Insert actual count data 
+						-- Insert actual count data
 						----------------------------
-		
-						create table #categorySet (	' 
+
+						create table #categorySet (	'
 						+ case when @reportLevel = 'sea' then 'DimSeaId int'
-								when @reportLevel = 'lea' then 'DimLeaId int' 
+								when @reportLevel = 'lea' then 'DimLeaId int'
 								else 'DimK12SchoolId int'
-						end 
+						end
 							+ @sqlCategoryFieldDefs + ',
 						' + @factField + ' int
 						)
@@ -6934,13 +6945,22 @@ BEGIN
 				inner join rds.DimK12Schools sc 
 					on c.DimK12SchoolId = sc.DimK12SchoolId 
 				order by K12StudentStudentIdentifierState '				
-			end 
-			else 
+			end
+			else if @categorySetHasStudentId = 0
 			begin
-				if @reportCode IN ('059', '067', '070', '099', '112', '203') 
+				-- This #categorySet shape is a pure SEA/LEA/School aggregate with no
+				-- per-student key to join on (e.g. assessment count reports like 113/126).
+				-- Dump it as-is instead of attempting the DimPeople_Current join below.
+				set @debugTableCreate = '					select *
+					into [debug].' + QUOTENAME(@debugTableName) + char(10) +
+					'					from #categorySet c ' + char(10)
+			end
+			else
+			begin
+				if @reportCode IN ('059', '067', '070', '099', '112', '203')
 				begin
 					set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
-				end 
+				end
 				else if @reportCode IN ('009','005','006','007','086','088','143','144','118') 
 				begin
 					set @debugTableCreate = '					select K12StudentStudentIdentifierState '   
