@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [App].[DimK12Students_TestCase]	
+﻿ALTER PROCEDURE [App].[DimK12Students_TestCase]	
 AS
 BEGIN
 

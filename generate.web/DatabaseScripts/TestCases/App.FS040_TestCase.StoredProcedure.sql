@@ -1,4 +1,4 @@
-create PROCEDURE [App].[FS040_TestCase]	
+ALTER PROCEDURE [App].[FS040_TestCase]	
 --declare	
 @SchoolYear SMALLINT
 --= 2023

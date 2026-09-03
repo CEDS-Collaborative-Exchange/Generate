@@ -1,4 +1,4 @@
-CREATE PROCEDURE [App].[FS033_TestCase] 
+ALTER PROCEDURE [App].[FS033_TestCase] 
 @SchoolYear INT
 AS
 BEGIN

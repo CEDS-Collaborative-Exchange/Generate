@@ -1,10 +1,8 @@
 using generate.core.Config;
 using generate.core.Interfaces.Repositories.App;
-using generate.core.Interfaces.Repositories.RDS;
 using generate.core.Interfaces.Services;
 using generate.core.Models.RDS;
 using generate.infrastructure.Contexts;
-using generate.infrastructure.Repositories.App;
 using generate.infrastructure.Services;
 using generate.web.Config;
 using Hangfire;
@@ -15,17 +13,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.CommandLine.Parsing;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Reflection;
-using System.Web.Services.Description;
 using static generate.overnighttest.Utils;
 namespace generate.overnighttest
 {
@@ -110,7 +102,6 @@ namespace generate.overnighttest
             // eg. -enabletest should have FS002,FS005 so on
             Console.Out.WriteLine("ParseResultValue:" + parsedResult);
             Console.Out.WriteLine("ParseResultValue Errors:" + parsedResult.Errors.Count);
-            List<CommandType> trackCommands = [];
             // on error exit and log the reason
             if (parsedResult.Errors.Count > 0)
             {
@@ -129,8 +120,6 @@ namespace generate.overnighttest
                 migrateFactsValue = migrateFactsValue.ToUpper();
                 Console.WriteLine($"Adding option:{MIGRATION_OPTION}");
                 commandToValue.Add(CommandType.MIGRATE, migrateFactsValue);
-
-                trackCommands.Add(CommandType.MIGRATE);
             }
             else
             {
@@ -142,7 +131,6 @@ namespace generate.overnighttest
             {
                 Console.WriteLine($"Adding option:{TEST_ALL_FACT_OPTION}");
                 commandToValue.Add(CommandType.TEST_ALL_FACT, bool.TrueString);
-                trackCommands.Add(CommandType.MIGRATE);
             }
             else
             {
@@ -216,10 +204,9 @@ namespace generate.overnighttest
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
 
 
-            string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
+            string? environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 
-
-            if (environment == "")
+            if (string.IsNullOrEmpty(environment))
             {
                 environment = "development";
             }
@@ -319,7 +306,7 @@ namespace generate.overnighttest
             if (commandTypeToValueDict.ContainsKey(CommandType.TEST_ALL_FACT))
             {
 
-                RunAllTests();
+                ExitWithCodeIfAnyFailed(RunAllTests());
                 return;
             }
 
@@ -327,7 +314,7 @@ namespace generate.overnighttest
             if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_SPEC, out string? testFactBySpecVal))
             {
 
-                RunTestByFileSpecReportCode([testFactBySpecVal]);
+                ExitWithCodeIfAnyFailed(RunTestByFileSpecReportCode([testFactBySpecVal]));
                 //RunTestByFileSpec(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_SPEC, EMPTY_STRING));
                 return;
             }
@@ -336,9 +323,23 @@ namespace generate.overnighttest
             if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_TYPE, out string? testFactByTypeVal))
             {
                 string[] factTypes = testFactByTypeVal.Split(",");
-                RunTestByFactType(factTypes);
+                ExitWithCodeIfAnyFailed(RunTestByFactType(factTypes));
                 //RunTestByFactType(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_TYPE, EMPTY_STRING));
                 return;
+            }
+        }
+
+        /// <summary>
+        /// After every requested report spec has been attempted (regardless of individual
+        /// failures), exits with a non-zero code if any of them failed. Called once at the
+        /// end of a run so a single bad spec doesn't prevent the rest from being attempted.
+        /// </summary>
+        private static void ExitWithCodeIfAnyFailed(List<string> failedReportCodes)
+        {
+            if (failedReportCodes.Count > 0)
+            {
+                Console.Error.WriteLine($"Run completed with {failedReportCodes.Count} failed spec(s): {string.Join(",", failedReportCodes)}");
+                ExitWithCode(EXIT_CODES.RunTestByFileSpec);
             }
         }
 
@@ -412,9 +413,9 @@ namespace generate.overnighttest
                 }
 
 
-                // unlock all GenerateReports.isLocked to 0 
-                toggleReportLock(0, [], isFactType);
-                // Only report that came in to be locked or if all report everthing to be locked, GenerateReports.isLocked = 1 
+                // unlock all GenerateReports.isLocked to 0
+                toggleReportLock(0, [ALL_FACT], isFactType);
+                // Only report that came in to be locked or if all report everthing to be locked, GenerateReports.isLocked = 1
                 toggleReportLock(1, factsToMigrate, isFactType);
                 Console.Out.WriteLine("Inside RunMigration");
                 IMigrationService migrationService = serviceProvider!.GetRequiredService<IMigrationService>();
@@ -424,11 +425,15 @@ namespace generate.overnighttest
                 //    s.MigrateData("report")
                 //);
 
-                // Poll until the migration completes (success or error)
+                // Poll until the migration completes (success or error), bounded by a max wait time
+                // matching the Hangfire command timeout configured in InitializeAndConfigure.
                 Console.WriteLine("Waiting for migration to complete...");
+                var pollInterval = TimeSpan.FromSeconds(30);
+                var maxWait = TimeSpan.FromHours(8);
+                var pollDeadline = DateTime.UtcNow + maxWait;
                 while (true)
                 {
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
+                    System.Threading.Thread.Sleep(pollInterval);
                     using var pollScope = serviceProvider!.CreateScope();
                     var pollContext = pollScope.ServiceProvider.GetRequiredService<AppDbContext>();
                     var dataMigration = pollContext.Set<generate.core.Models.App.DataMigration>()
@@ -439,17 +444,26 @@ namespace generate.overnighttest
                     string statusCode = dataMigration?.DataMigrationStatusCode ?? string.Empty;
                     Console.WriteLine($"Migration status: {statusCode}");
 
-                    if (statusCode == "success" || statusCode == "error")
+                    if (statusCode == "success")
                     {
                         Console.WriteLine($"Migration finished with status: {statusCode}");
                         break;
+                    }
+
+                    if (statusCode == "error")
+                    {
+                        throw new InvalidOperationException($"Migration finished with status 'error'. Check App.DataMigrationHistories for details.");
+                    }
+
+                    if (DateTime.UtcNow >= pollDeadline)
+                    {
+                        throw new TimeoutException($"Migration did not reach a terminal status within {maxWait}. Last observed status: '{statusCode}'.");
                     }
                 }
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Error in RunMigration");
-                // Console.Error.Write(ex);
                 ExitWithCode(EXIT_CODES.RunMigration,ex);
             }
             finally
@@ -480,9 +494,7 @@ namespace generate.overnighttest
                 }
 
                 using var scope = serviceProvider!.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                IRDSRepository rDSRepository = serviceProvider!.GetRequiredService<IRDSRepository>();
-                IAppRepository appRepository = new AppRepository(dbContext, rDSRepository);
+                IAppRepository appRepository = scope.ServiceProvider.GetRequiredService<IAppRepository>();
                 appRepository.RunBeforeTests(schoolyear);
 
             }
@@ -498,7 +510,7 @@ namespace generate.overnighttest
             }
         }
 
-        private void RunAllTests()
+        private List<string> RunAllTests()
         {
             Console.WriteLine("Inside RullAllTests");
 
@@ -506,30 +518,31 @@ namespace generate.overnighttest
             string factSpecValuesSeperatedByComma = string.Join(",", allTestStoredProcs.Keys);
             Console.WriteLine($"All factSpecValuesSeperatedByComma for test all :{factSpecValuesSeperatedByComma}");
 
-            RunTestByFileSpecReportCode(allTestStoredProcs.Keys.ToList());
+            return RunTestByFileSpecReportCode(allTestStoredProcs.Keys.ToList());
 
         }
 
         /// <summary>
-        /// for fact types given ASSESSEMENT,DROPOUT 
+        /// for fact types given ASSESSEMENT,DROPOUT
         /// runs test for given reportCodes under each fact type
         /// If given ASSESSMENT : runs test for all 050,113,125,126,137,138,139,175,178,179,185,188,189,224,225
         /// </summary>
         /// <param name="factTypeValuesList"></param>
-        private void RunTestByFactType(IList<string> factTypeValuesList)
+        private List<string> RunTestByFactType(IList<string> factTypeValuesList)
         {
             // Dictionary<string, string> dict = Utils.BuildFactTypeToFileSpec();
             Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider!);
             Console.WriteLine("Inside RunTestByFactType factTypeValuesSeperatedByComma:" + TryToString(factTypeValuesList));
             //string[] factTypeArr = factTypeValuesList.
 
+            var failedReportCodes = new List<string>();
             foreach (var item in factTypeValuesList)
             {
                 Console.WriteLine("factType came:" + item);
                 if (factTypeCodeToReportCodes.TryGetValue(item, out IList<string>? reportCodes))
                 {
                     //string reportCodeCommaSeperated = string.Join(",", reportCodes);
-                    RunTestByFileSpecReportCode(reportCodes);
+                    failedReportCodes.AddRange(RunTestByFileSpecReportCode(reportCodes));
                 }
                 else
                 {
@@ -538,20 +551,24 @@ namespace generate.overnighttest
 
             }
 
+            return failedReportCodes;
         }
-              
+
         /// <summary>
-        /// 
+        ///
         /// Takes a list of reportCodes 002,005 etc and runs test for them
         /// </summary>
         /// <param name="reportCodeList"></param>
-        private void RunTestByFileSpecReportCode(IList<string> reportCodeList)
+        /// <returns>The report codes whose test failed, so callers can keep going and
+        /// report a combined failure at the end instead of aborting immediately.</returns>
+        private List<string> RunTestByFileSpecReportCode(IList<string> reportCodeList)
         {
             // string factSpecValuesSeperatedByComma
             string reportCodeListStr = string.Join(",", reportCodeList);
             Console.WriteLine($"Inside RunTestByFileSpec factSpecValuesSeperatedByComma:{reportCodeListStr},runPreDmc:{runPreDmc}");
             //string[] reportCodeList = factSpecValuesSeperatedByComma.Split(",");
             Dictionary<string, string> fileSpecToTestStoredProcWithSchoolYear = Utils.buildFileSpecReportCodeToStoredProc(schoolyear);
+            var failedReportCodes = new List<string>();
             try
             {
 
@@ -578,22 +595,26 @@ namespace generate.overnighttest
                     }
                     catch (Exception ex)
                     {
-                        Console.Error.Write("Error in RunTestByFileSpec for file spec:" + item);
-                        // Console.Error.WriteLine(ex);
-                        ExitWithCode(EXIT_CODES.RunTestByFileSpec, ex);
+                        // Log and move on to the next report spec instead of aborting the whole
+                        // overnight run over a single failure; the run fails at the end instead.
+                        Console.Error.WriteLine("Error in RunTestByFileSpec for file spec:" + item);
+                        Console.Error.WriteLine(ex);
+                        failedReportCodes.Add(item);
                     }
                     Console.WriteLine(">>>Done Running Test for spec::" + item);
                 }
             }
             catch (Exception ex)
             {
-                Console.Error.Write($"Error in RunTestByFileSpec for file spec:{reportCodeListStr}");
-                //Console.Error.WriteLine(ex.ToString());
+                // Unexpected failure outside a single spec's try/catch (e.g. building the
+                // stored-proc map or creating a DI scope) - this is systemic, not a single
+                // spec issue, so it's still fatal.
+                Console.Error.WriteLine($"Error in RunTestByFileSpec for file spec:{reportCodeListStr}");
                 ExitWithCode(EXIT_CODES.RunTestByFileSpec, ex);
 
             }
 
-
+            return failedReportCodes;
         }
 
         private void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)

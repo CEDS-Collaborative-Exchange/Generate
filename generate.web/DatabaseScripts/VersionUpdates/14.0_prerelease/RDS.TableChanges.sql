@@ -792,3 +792,5 @@ BEGIN
 	ALTER TABLE RDS.DimAssessmentRegistrations 
 	ADD CONSTRAINT DF_AssessmentRegistrations_ReasonNotTestedEdFactsCode DEFAULT 'MISSING' FOR ReasonNotTestedEdFactsCode
 END;
+
+Update rds.DimRaces set RaceEdFactsCode = 'MU7' where RaceCode = 'DemographicRaceTwoOrMoreRaces'

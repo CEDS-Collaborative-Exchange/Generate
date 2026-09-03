@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[FS212_TestCase]	
+﻿ALTER PROCEDURE [dbo].[FS212_TestCase]	
 	@schoolYear SMALLINT
 AS
 BEGIN
