@@ -566,11 +566,19 @@ BEGIN CREATING TEST RESULTS
 				, RaceEdFactsCode
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC2
-			FROM #staging 
+			FROM #staging
 			GROUP BY SpecialEducationExitReasonEdFactsCode
 				, RaceEdFactsCode
-				
-			INSERT INTO App.SqlUnitTestCaseResult 
+
+			-- Mirrors the real report's "Remove Missing Counts" step in RDS.Get_CountSQL for
+			-- 009-sea-CSB: when any non-MISSING race data exists, the MISSING-race rows are
+			-- dropped from the report entirely rather than shown as their own bucket.
+			IF EXISTS (SELECT 1 FROM #TC2 WHERE RaceEdFactsCode <> 'MISSING')
+				DELETE FROM #TC2 WHERE RaceEdFactsCode = 'MISSING'
+			ELSE
+				DELETE FROM #TC2 WHERE RaceEdFactsCode <> 'MISSING'
+
+			INSERT INTO App.SqlUnitTestCaseResult
 			(
 				[SqlUnitTestId]
 				,[TestCaseName]
@@ -761,10 +769,18 @@ BEGIN CREATING TEST RESULTS
 				  RaceEdFactsCode
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC7
-			FROM #stagingNoExit 
+			FROM #stagingNoExit
 			GROUP BY RaceEdFactsCode
-				
-			INSERT INTO App.SqlUnitTestCaseResult 
+
+			-- Mirrors the real report's "Remove Missing Counts" step in RDS.Get_CountSQL for
+			-- 009-sea-ST3: when any non-MISSING race data exists, the MISSING-race rows are
+			-- dropped from the report entirely rather than shown as their own bucket.
+			IF EXISTS (SELECT 1 FROM #TC7 WHERE RaceEdFactsCode <> 'MISSING')
+				DELETE FROM #TC7 WHERE RaceEdFactsCode = 'MISSING'
+			ELSE
+				DELETE FROM #TC7 WHERE RaceEdFactsCode <> 'MISSING'
+
+			INSERT INTO App.SqlUnitTestCaseResult
 			(
 				[SqlUnitTestId]
 				,[TestCaseName]
@@ -1011,13 +1027,21 @@ BEGIN CREATING TEST RESULTS
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
 			LEFT JOIN #CAT_Organizations org
 				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
-			WHERE s.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
 				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				, RaceEdFactsCode
-				
-			INSERT INTO App.SqlUnitTestCaseResult 
+
+			-- Mirrors the real report's "Remove Missing Counts" step in RDS.Get_CountSQL for
+			-- 009-lea-CSB: when any non-MISSING race data exists, the MISSING-race rows are
+			-- dropped from the report entirely rather than shown as their own bucket.
+			IF EXISTS (SELECT 1 FROM #TC13 WHERE RaceEdFactsCode <> 'MISSING')
+				DELETE FROM #TC13 WHERE RaceEdFactsCode = 'MISSING'
+			ELSE
+				DELETE FROM #TC13 WHERE RaceEdFactsCode <> 'MISSING'
+
+			INSERT INTO App.SqlUnitTestCaseResult
 			(
 				[SqlUnitTestId]
 				,[TestCaseName]
@@ -1255,8 +1279,16 @@ BEGIN CREATING TEST RESULTS
 				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, RaceEdFactsCode
-				
-			INSERT INTO App.SqlUnitTestCaseResult 
+
+			-- Mirrors the real report's "Remove Missing Counts" step in RDS.Get_CountSQL for
+			-- 009-lea-ST3: when any non-MISSING race data exists, the MISSING-race rows are
+			-- dropped from the report entirely rather than shown as their own bucket.
+			IF EXISTS (SELECT 1 FROM #TC18 WHERE RaceEdFactsCode <> 'MISSING')
+				DELETE FROM #TC18 WHERE RaceEdFactsCode = 'MISSING'
+			ELSE
+				DELETE FROM #TC18 WHERE RaceEdFactsCode <> 'MISSING'
+
+			INSERT INTO App.SqlUnitTestCaseResult
 			(
 				[SqlUnitTestId]
 				,[TestCaseName]

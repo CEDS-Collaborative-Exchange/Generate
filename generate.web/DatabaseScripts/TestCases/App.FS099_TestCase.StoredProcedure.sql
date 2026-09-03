@@ -122,8 +122,12 @@ BEGIN
 	FROM Staging.K12StaffAssignment sksa
 	JOIN Staging.K12Organization sko
 		ON sksa.LeaIdentifierSea = sko.LeaIdentifierSea
-	WHERE @ChildCountDate BETWEEN AssignmentStartDate AND ISNULL(AssignmentEndDate, GETDATE())
-		AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
+	-- Mirrors Staging.Staging-to-FactK12StaffCounts, which does not filter staff
+	-- assignment rows by AssignmentStartDate/AssignmentEndDate against the child
+	-- count date at all - every assignment row for the school year is migrated
+	-- regardless of its own date window. Applying that filter here made the test
+	-- under-count relative to the real migration.
+	WHERE @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
 --		AND ProgramTypeCode = @SPEDProgram
 --		WHERE sksa.SchoolYear = @SchoolYear
 
