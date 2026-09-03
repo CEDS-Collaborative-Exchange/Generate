@@ -2834,14 +2834,31 @@ BEGIN
 			set @reportFilterCondition = '
 			and assmntSubject.AssessmentAcademicSubjectCode = ''73065'''
 		end
+		else if @reportCode in ('143') and @categorySetCode = 'TOT'
+		begin
+			-- TOT has no #cat_* option-list join to narrow DimDisciplineStatuses/DimIdeaStatuses
+			-- first (unlike CSA/CSB/CSC/CSD), which let the optimizer misestimate the two
+			-- ~5K-row dimension joins and build their near-full cross product (~20M+ rows)
+			-- before ever correlating them through the fact table - a 15+ minute runaway plan.
+			-- CAT_DisciplinaryActionTaken and CAT_IdeaInterimRemoval both join on the same key
+			-- (fact.DisciplineStatusId = a unique DimDisciplineStatusId), so they always
+			-- resolve to the identical row - the second join is redundant and safe to drop.
+			set @reportFilterJoin = 'inner join RDS.DimDisciplineStatuses CAT_DisciplinaryActionTaken
+			on fact.DisciplineStatusId = CAT_DisciplinaryActionTaken.DimDisciplineStatusId
+			inner join RDS.DimIdeaStatuses CAT_IdeaEducationalEnvironment on fact.IdeaStatusId = CAT_IdeaEducationalEnvironment.DimIdeaStatusId
+			'
+			set @reportFilterCondition = '
+			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
+			and CAT_IdeaEducationalEnvironment.IdeaIndicatorEdFactsCode = ''IDEA'''
+		end
 		else if @reportCode in ('143')
 		begin
-			set @reportFilterJoin = 'inner join RDS.DimDisciplineStatuses CAT_DisciplinaryActionTaken 
+			set @reportFilterJoin = 'inner join RDS.DimDisciplineStatuses CAT_DisciplinaryActionTaken
 			on fact.DisciplineStatusId = CAT_DisciplinaryActionTaken.DimDisciplineStatusId
 			inner join RDS.DimDisciplineStatuses CAT_IdeaInterimRemoval on fact.DisciplineStatusId = CAT_IdeaInterimRemoval.DimDisciplineStatusId
-			inner join RDS.DimIdeaStatuses CAT_IdeaEducationalEnvironment on fact.IdeaStatusId = CAT_IdeaEducationalEnvironment.DimIdeaStatusId																									
+			inner join RDS.DimIdeaStatuses CAT_IdeaEducationalEnvironment on fact.IdeaStatusId = CAT_IdeaEducationalEnvironment.DimIdeaStatusId
 			'
-			set @reportFilterCondition = ' 
+			set @reportFilterCondition = '
 			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 			and CAT_IdeaEducationalEnvironment.IdeaIndicatorEdFactsCode = ''IDEA'''
 		end
@@ -5972,7 +5989,7 @@ BEGIN
 				select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 								when @reportLevel = 'lea' then 'fact.LeaId,' 
 						    else 'fact.K12SchoolId,'
-				end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, CAT_IdeaInterimRemoval.IdeaInterimRemovalEdFactsCode' 
+				end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, ' + (case when @categorySetCode = 'TOT' then 'CAT_DisciplinaryActionTaken' else 'CAT_IdeaInterimRemoval' end) + '.IdeaInterimRemovalEdFactsCode'
 				+ @sqlCategoryQualifiedDimensionFields + ',
 				sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 				sum(isnull(fact.' + @factField + ', 0))
@@ -5988,7 +6005,7 @@ BEGIN
 				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
-								end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, CAT_IdeaInterimRemoval.IdeaInterimRemovalEdFactsCode' 
+								end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, ' + (case when @categorySetCode = 'TOT' then 'CAT_DisciplinaryActionTaken' else 'CAT_IdeaInterimRemoval' end) + '.IdeaInterimRemovalEdFactsCode'
 								+ @sqlCategoryQualifiedDimensionGroupFields + '
 				' + @sqlHavingClause + '
 				'
