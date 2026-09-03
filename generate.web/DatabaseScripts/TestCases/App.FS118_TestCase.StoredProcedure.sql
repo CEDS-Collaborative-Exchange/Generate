@@ -202,6 +202,14 @@ BEGIN
 		END AS MigrantStatusEdFactsCode
 	INTO #C118Staging
 	FROM Staging.K12Enrollment ske
+	-- Mirrors the real migration's DimLeas resolution (Staging.Staging-to-FactK12StudentCounts
+	-- resolves LeaId via RDS.DimLeas, which is sourced from Staging.K12Organization) - an
+	-- enrollment row whose LEA identifier doesn't exist in K12Organization at all never
+	-- produces a valid LeaId, so the real report drops it. A handful of malformed test
+	-- students (e.g. CID4771118, CIID398600) reference LEA codes with no K12Organization
+	-- row, which inflated this test's counts relative to the real migrated data.
+	JOIN Staging.K12Organization sko118
+		ON ske.LeaIdentifierSeaAccountability = sko118.LeaIdentifierSea
 	--homeless
 	JOIN Staging.PersonStatus hmStatus
 		ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
@@ -253,10 +261,13 @@ BEGIN
 		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
 			OR (ske.HispanicLatinoEthnicity = 0 AND replace(spr.RaceType, '_1', '') = rdr.RaceCode)
 
-	WHERE hmStatus.HomelessnessStatus = 1 
+	-- Mirrors the real report's #categorySet filter (dgl.GradeLevelEdFactsCode NOT IN
+	-- ('AE','13','UG')) in RDS.Get_CountSQL for 118-*-CSB/CSF/CSG/etc: ABE is NOT excluded
+	-- there, and there is no StudentIdentifierState pattern filter at all. Both extra
+	-- conditions here were under-counting relative to the real migrated data.
+	WHERE hmStatus.HomelessnessStatus = 1
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
-			AND isnull(ske.GradeLevel, 'xx') not in ('AE', 'ABE', '13', 'UG', 'AE_1', 'ABE_1', '13_1', 'UG_1')
-			AND ske.StudentIdentifierState not like ('%CI%')
+			AND isnull(ske.GradeLevel, 'xx') not in ('AE', '13', 'UG', 'AE_1', '13_1', 'UG_1')
 
 	/**********************************************************************
 		Test Case 1:
@@ -266,12 +277,14 @@ BEGIN
 	select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
 	from #C118Staging
 	)
-	SELECT 
+	SELECT
 		GradeLevelEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSA
-	FROM cte 
-	WHERE GradeLevelEdFactsCode not in ('PK', 'PK_1','MISSING')
+	FROM cte
+	-- Mirrors #cat_GRADELEVEL in the real 118-sea-CSA query, which restricts to
+	-- KG-12/3TO5NOTK (via CategoryOptions) - ABE is not one of those options.
+	WHERE GradeLevelEdFactsCode not in ('PK', 'PK_1','MISSING','ABE','ABE_1')
 		AND rownum = 1
 	GROUP BY GradeLevelEdFactsCode
 
@@ -672,12 +685,14 @@ BEGIN
 		GradeLevelEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
-	INTO #L_CSA 
+	INTO #L_CSA
 	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	-- Mirrors #cat_GRADELEVEL in the real 118-lea-CSA query, which restricts to
+	-- KG-12/3TO5NOTK (via CategoryOptions) - ABE is not one of those options.
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
-		AND GradeLevelEdFactsCode not in ('PK', 'PK_1','MISSING')
+		AND GradeLevelEdFactsCode not in ('PK', 'PK_1','MISSING','ABE','ABE_1')
 		AND rownum = 1
 	GROUP BY GradeLevelEdFactsCode
 		, s.LeaIdentifierSeaAccountability

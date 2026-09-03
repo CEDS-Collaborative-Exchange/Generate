@@ -79,34 +79,71 @@ BEGIN
 	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
 
 	-- Populate temp table
+	-- Queries the base staging/dimension tables directly instead of debug.vwStudentDetails.
+	-- That view is built for ad hoc troubleshooting: it LEFT JOINs ~10 tables (PersonStatus,
+	-- IdeaDisabilityType, ProgramParticipationSpecialEducation, several RDS.vwDim* views, etc.)
+	-- for every student regardless of whether this test needs them, then applies a single wide
+	-- SELECT DISTINCT to collapse the resulting fan-out. FS116 only ever needed GradeLevelEdFactsCode
+	-- and RaceEdFactsCode, so this replicates just those two resolution chains from the view
+	-- (grade via RDS.vwDimGradeLevels/RDS.DimGradeLevels, race via RDS.vwUnduplicatedRaceMap/
+	-- RDS.vwDimRaces/RDS.DimRaces) directly against Staging.K12Enrollment, filtered by SchoolYear
+	-- up front. This also drops the non-sargable convert(date, ...) wrapping on the date filters,
+	-- which prevented any index seek on those columns.
 	SELECT DISTINCT
 		ske.StudentIdentifierState
 		, ske.LeaIdentifierSeaAccountability
 		, ske.SchoolIdentifierSea
-		, ske.GradeLevelEdFactsCode
-		, ske.RaceEdFactsCode
+		, rgl.GradeLevelEdFactsCode
+		, rdr.RaceEdFactsCode
 		, sppt3.TitleIIILanguageInstructionProgramType
 		, rdt3s.TitleIIILanguageInstructionProgramTypeEdFactsCode
 	INTO #staging
-	FROM debug.vwStudentDetails ske
+	FROM Staging.K12Enrollment ske
 
 	JOIN Staging.ProgramParticipationTitleIII sppt3
 		ON sppt3.StudentIdentifierState = ske.StudentIdentifierState
 		AND sppt3.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 		AND sppt3.SchoolIdentifierSea = ske.SchoolIdentifierSea
-		and convert(date, sppt3.ProgramParticipationStartDate) <= @SYEndDate
-		and ISNULL(convert(date, sppt3.ProgramParticipationExitDate), @SYEndDate) >= @SYStartDate
+		AND sppt3.ProgramParticipationStartDate <= @SYEndDate
+		AND ISNULL(sppt3.ProgramParticipationExitDate, @SYEndDate) >= @SYStartDate
 
+	-- Staging carries the raw "_1" CEDS-option suffix (e.g. 'Other_1') that
+	-- RDS.DimTitleIIIStatuses.TitleIIILanguageInstructionProgramTypeCode does not; without
+	-- stripping it this join never matched anything, so #staging came back empty every time.
 	JOIN RDS.DimTitleIIIStatuses rdt3s
-		ON sppt3.TitleIIILanguageInstructionProgramType = rdt3s.TitleIIILanguageInstructionProgramTypeCode
+		ON REPLACE(sppt3.TitleIIILanguageInstructionProgramType, '_1', '') = rdt3s.TitleIIILanguageInstructionProgramTypeCode
 		AND rdt3s.ProgramParticipationTitleIIILiepCode = 'MISSING'
 		AND rdt3s.TitleIIIImmigrantParticipationStatusCode = 'MISSING'
 		AND rdt3s.ProficiencyStatusCode = 'MISSING'
 		AND rdt3s.TitleIIIAccountabilityProgressStatusCode = 'MISSING'
 
-	WHERE isnull(rdt3s.TitleIIILanguageInstructionProgramTypeCode,'MISSING') <> 'MISSING'
-		and convert(date, ske.EnrollmentEntryDate) <= @SYEndDate
-		and ISNULL(convert(date, ske.EnrollmentExitDate), @SYEndDate) >= @SYStartDate
+	-- Grade resolution, mirroring debug.vwStudentDetails
+	LEFT JOIN RDS.vwDimGradeLevels ssrdGRADE
+		ON ssrdGRADE.SchoolYear = ske.SchoolYear
+		AND ssrdGRADE.GradeLevelMap = ske.GradeLevel
+	LEFT JOIN RDS.DimGradeLevels rgl
+		ON rgl.GradeLevelCode = ssrdGRADE.GradeLevelCode
+
+	-- Race resolution, mirroring debug.vwStudentDetails
+	LEFT JOIN RDS.vwUnduplicatedRaceMap vUndupRace
+		ON ske.StudentIdentifierState = vUndupRace.StudentIdentifierState
+		AND ISNULL(ske.LeaIdentifierSeaAccountability,'') = ISNULL(vUndupRace.LeaIdentifierSeaAccountability,'')
+		AND ISNULL(vUndupRace.SchoolIdentifierSea,'') = ISNULL(ske.SchoolIdentifierSea, '')
+		AND vUndupRace.SchoolYear = ske.SchoolYear
+	LEFT JOIN RDS.vwDimRaces ssrdRACE
+		ON ssrdRACE.SchoolYear = ske.SchoolYear
+		AND ssrdRACE.RaceMap = vUndupRace.RaceMap
+	LEFT JOIN RDS.DimRaces rdr
+		ON rdr.RaceCode =
+			CASE
+				WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
+				ELSE ssrdRACE.RaceCode
+			END
+
+	WHERE ske.SchoolYear = @SchoolYear
+		AND isnull(rdt3s.TitleIIILanguageInstructionProgramTypeCode,'MISSING') <> 'MISSING'
+		AND ske.EnrollmentEntryDate <= @SYEndDate
+		AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) >= @SYStartDate
 
 
 
@@ -307,7 +344,7 @@ BEGIN
 
 		/**********************************************************************
 		Test Case 4:
-		CSA at the LEA level
+		CSB at the LEA level
 		Student Count by:
 			Race
 		***********************************************************************/
@@ -342,13 +379,13 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_CSB s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd
 			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-			AND s.RaceEdFactsCode = rreksd.RACE			
-			AND rreksd.ReportCode = '116' 
+			AND s.RaceEdFactsCode = rreksd.RACE
+			AND rreksd.ReportCode = '116'
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
-			AND rreksd.CategorySetCode = 'CSA'
+			AND rreksd.CategorySetCode = 'CSB'
 
 		DROP TABLE #L_CSB
 
