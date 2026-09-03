@@ -125,14 +125,17 @@ BEGIN
 			AND ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
 
+	-- Mirrors the join in Staging.Staging-to-FactK12StudentCounts_Membership: matches on
+	-- SchoolYear/Student/LEA/School (not School alone) and requires the membership date to
+	-- fall within the student's EconomicDisadvantage status window, same as the real
+	-- migration. Without the date check this table over-counts students whose FRL status
+	-- wasn't yet effective as of the count date, which the real report correctly excludes.
 	LEFT JOIN Staging.PersonStatus sps
-		ON ske.StudentIdentifierState = sps.StudentIdentifierState
-		AND --(ske.LEAIdentifierSeaAccountability = sps.LEAIdentifierSeaAccountability
-			--OR 
-			ske.SchoolIdentifierSea = sps.SchoolIdentifierSea
-			--)
-		--AND sps.RecordStartDateTime is not null
-		--AND @MemberDate BETWEEN sps.RecordStartDateTime AND ISNULL(sps.RecordEndDateTime, @SYEnd)		
+		ON ske.SchoolYear = sps.SchoolYear
+		AND ske.StudentIdentifierState = sps.StudentIdentifierState
+		AND ISNULL(sps.LEAIdentifierSeaAccountability, '') = ISNULL(ske.LEAIdentifierSeaAccountability, '')
+		AND ISNULL(sps.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+		AND @MemberDate BETWEEN sps.EconomicDisadvantage_StatusStartDate AND ISNULL(sps.EconomicDisadvantage_StatusExitDate, '1/1/9999')
 	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
 	AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
 
@@ -215,7 +218,8 @@ BEGIN
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		FROM #c033staging
 		where FRLEdFactsCode in ('FL', 'RPL')
-		GROUP BY 
+		and DirectCertEdFactsCode = 'LUNCHFREERED'
+		GROUP BY
 			SchoolIdentifierSea
 
 
