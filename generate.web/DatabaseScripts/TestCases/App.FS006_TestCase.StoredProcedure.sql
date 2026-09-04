@@ -252,42 +252,70 @@ BEGIN
 --temp fix to address bad test records
 	AND ske.StudentIdentifierState not like 'CIID%'
 
-	--Set the EDFacts value for removal length
+	-- Compute each student's total disciplinary-removal duration from a clean, dedicated
+	-- population - NOT from #C006Staging directly. #C006Staging LEFT JOINs PersonStatus/
+	-- IdeaDisabilityType/race, and a student with overlapping status-history records in any
+	-- of those can fan out into multiple #C006Staging rows for the SAME underlying discipline
+	-- record; summing DurationOfDisciplinaryAction over that fanned-out set would double-count
+	-- the same disciplinary action. This mirrors the same eligibility filters #C006Staging
+	-- itself uses (sppse/age/interim-removal/method), just without the fan-out-prone joins.
+	IF OBJECT_ID('tempdb..#StudentDurationTotal') IS NOT NULL DROP TABLE #StudentDurationTotal
+
+	SELECT
+		ske.StudentIdentifierState
+		,CASE
+			WHEN sum(cast(sd.DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5
+				and sum(cast(sd.DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN 'LTOREQ10'
+			WHEN sum(cast(sd.DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
+			ELSE 'MISSING'
+		END AS RemovalLength
+	INTO #StudentDurationTotal
+	FROM Staging.K12Enrollment ske
+	JOIN Staging.Discipline sd
+		ON sd.StudentIdentifierState = ske.StudentIdentifierState
+		AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)
+			BETWEEN ISNULL(ske.EnrollmentEntryDate, @SYStart) and ISNULL (ske.EnrollmentExitDate, @SYEnd)
+	JOIN Staging.ProgramParticipationSpecialEducation sppse
+		ON sppse.StudentIdentifierState = ske.StudentIdentifierState
+		AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)
+			BETWEEN ISNULL(sppse.ProgramParticipationStartDate, @SYStart) AND ISNULL(sppse.ProgramParticipationExitDate, @SYEnd)
+	WHERE sppse.IDEAIndicator = 1
+		AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
+		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
+		AND ISNULL(sd.DisciplineMethodOfCwd, '') in ('InSchool','OutOfSchool', 'InSchool_1','OutOfSchool_1')
+		AND ISNULL(sd.IdeaInterimRemoval, '') NOT IN ('REMDW', 'REMHO', 'REMDW_1', 'REMHO_1')
+		AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)
+			BETWEEN @SYStart AND @SYEnd
+		AND ske.StudentIdentifierState not like 'CIID%'
+	GROUP BY ske.StudentIdentifierState
+
+	CREATE INDEX IX_StudentDurationTotal ON #StudentDurationTotal(StudentIdentifierState)
+
+	-- Set the EDFacts value for removal length.
+	-- FS006 spec: inclusion/removal-length is based on the SUM of ALL of a child's in- and
+	-- out-of-school suspensions/expulsions, not any single discipline method alone - a
+	-- student split across removal types that individually total less than 0.5 days must
+	-- still be included (and reported under each method they experienced). So every one of
+	-- that student's #C006Staging rows gets the same, student-total-based classification.
 	UPDATE s
 	SET s.RemovalLength = tmp.RemovalLength
 	FROM #C006Staging s
-		INNER JOIN (
-				SELECT StudentIdentifierState, DisciplineMethod
-					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN 'LTOREQ10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
-						ELSE 'MISSING'
-					END AS RemovalLength
-				FROM #C006Staging 
-				GROUP BY StudentIdentifierState, DisciplineMethod
-		) tmp
-			ON s.StudentIdentifierState =  tmp.StudentIdentifierState
-			AND s.DisciplineMethod = tmp.DisciplineMethod
-
-	--Set the EDFacts value for removal length for the LEP status
-	UPDATE s
-	SET s.LEPRemovalLength = tmp.LEPRemovalLength
-	FROM #C006Staging s
-		INNER JOIN (
-				SELECT StudentIdentifierState, DisciplineMethod, EnglishLearnerStatusEdFactsCode
-					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN 'LTOREQ10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
-						ELSE 'MISSING'
-					END AS LEPRemovalLength
-				FROM #C006Staging 
-				GROUP BY StudentIdentifierState, DisciplineMethod, EnglishLearnerStatusEdFactsCode
-		) tmp
+		INNER JOIN #StudentDurationTotal tmp
 			ON s.StudentIdentifierState = tmp.StudentIdentifierState
-			AND s.DisciplineMethod = tmp.DisciplineMethod
-			AND s.EnglishLearnerStatusEdFactsCode = tmp.EnglishLearnerStatusEdFactsCode
+
+	--Set the EDFacts value for removal length for the LEP status (same total-across-methods
+	--principle as above; EnglishLearnerStatusEdFactsCode is a per-student attribute so it
+	--doesn't change which rows share a duration total, only how that total is labeled).
+	UPDATE s
+	SET s.LEPRemovalLength = tmp.RemovalLength
+	FROM #C006Staging s
+		INNER JOIN #StudentDurationTotal tmp
+			ON s.StudentIdentifierState = tmp.StudentIdentifierState
 
 	/**********************************************************************
 		Test Case 1:
@@ -346,8 +374,11 @@ BEGIN
 		, RaceEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSB
-	FROM #C006Staging 
+	FROM #C006Staging
+	-- Mirrors the real report's "Remove Missing Counts" step: when real race data exists
+	-- elsewhere, the MISSING/unmapped-race bucket is dropped from the report entirely.
 	WHERE RemovalLength <> 'MISSING'
+	AND RaceEdFactsCode IS NOT NULL
 	GROUP BY DisciplineMethod
 		, RemovalLength
 		, RaceEdFactsCode
@@ -597,8 +628,11 @@ BEGIN
 	FROM #C006Staging s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	-- Mirrors the real report's "Remove Missing Counts" step: when real race data exists
+	-- elsewhere, the MISSING/unmapped-race bucket is dropped from the report entirely.
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude invalid Op Status and Not Reported Federally
 	AND RemovalLength <> 'MISSING'
+	AND RaceEdFactsCode IS NOT NULL
 	GROUP BY s.LeaIdentifierSeaAccountability
 		, DisciplineMethod
 		, RemovalLength

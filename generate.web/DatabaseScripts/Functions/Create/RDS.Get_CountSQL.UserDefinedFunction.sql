@@ -2103,10 +2103,19 @@ BEGIN
 			-- TODO - make use of IsCalculated field to drive this via metadata
 			if @categoryCode = 'REMOVALLENSUS'
 			begin
+				-- REMOVALLENSUS is report-006-only (FS006). Its length bucket must reflect the
+				-- child's SUM of ALL in- and out-of-school suspensions/expulsions, not the
+				-- duration within just this one category-breakdown bucket (e.g. one discipline
+				-- method) - otherwise a student split across removal types that individually
+				-- total less than 0.5 days would show as ''MISSING'' (and get filtered out) in
+				-- every bucket even though their combined total qualifies them for inclusion.
+				-- fact.zzStudentTotalDuration is that per-student total (see the report-006
+				-- #categorySet build above); every row for a given student carries the same
+				-- value, so MAX() here is just a way to reference it through the GROUP BY.
 				set @sqlCategoryReturnField = '
-				case 
-					when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) < 0.5 then ''MISSING''
-					when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) <= 10.0 then ''LTOREQ10''
+				case
+					when max(fact.zzStudentTotalDuration) < 0.5 then ''MISSING''
+					when max(fact.zzStudentTotalDuration) <= 10.0 then ''LTOREQ10''
 					else ''GREATER10''
 				end'
 				set @categoryReturnFieldIsAggregate = 1
@@ -5850,34 +5859,42 @@ BEGIN
 				-- Actual Counts
 				insert into #categorySet
 				(' + case	when @reportLevel = 'sea' then 'DimSeaId,'
-							when @reportLevel = 'lea' then 'DimLeaId,' 
+							when @reportLevel = 'lea' then 'DimLeaId,'
 							else 'DimK12SchoolId,'
-				end  + 'K12StudentStudentIdentifierState' 
+				end  + 'K12StudentStudentIdentifierState'
 				+ @sqlCategoryFields + ', ' + @factField + ')
 				select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
-								when @reportLevel = 'lea' then 'fact.LeaId,' 
+								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
 				end + 'fact.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubSelectDimensionFields + ',
 				sum(isnull(fact.' + @factField + ', 0))
-				from ( select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
-								when @reportLevel = 'lea' then 'fact.LeaId,' 
+				from ( select * from ( select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
-				end + 'stu.K12StudentStudentIdentifierState,sum(fact.DisciplineCount) as DisciplineCount, sum(fact.DurationOfDisciplinaryAction) as DurationOfDisciplinaryAction' 
-				+ @sqlCategoryQualifiedSubDimensionFields + 
-				' from rds.' + @factTable + ' fact '
+				end + 'stu.K12StudentStudentIdentifierState, fact.DisciplineCount, fact.DurationOfDisciplinaryAction'
+				+ @sqlCategoryQualifiedSubDimensionFields + ',
+				-- FS006 spec: a child''s inclusion is based on the SUM of ALL of their in- and
+				-- out-of-school suspensions/expulsions, not any single discipline method or
+				-- category alone - a student split across removal types that individually total
+				-- less than 0.5 days must still be included. Compute that total per student here,
+				-- independent of the category-breakdown fields, instead of folding it into the
+				-- GROUP BY/HAVING below (which would threshold each category bucket separately).
+				SUM(fact.DurationOfDisciplinaryAction) OVER (PARTITION BY ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+								when @reportLevel = 'lea' then 'fact.LeaId,'
+								else 'fact.K12SchoolId,'
+				end + 'stu.K12StudentStudentIdentifierState) AS zzStudentTotalDuration'
+				+ ' from rds.' + @factTable + ' fact '
 				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
-				+ @sqlCountJoins 
+				+ @sqlCountJoins
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
 				and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
 				and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
 								when @reportLevel = 'lea' then 'fact.LeaId <> -1'
 								else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' end   + '
-				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
-									when @reportLevel = 'lea' then 'fact.LeaId,'
-								else 'fact.K12SchoolId,'
-								end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubDimensionFields +
-				+ ' having SUM(fact.DurationOfDisciplinaryAction) >= 0.5 ) as fact
+				) detail
+				where detail.zzStudentTotalDuration >= 0.5
+				) as fact
 				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
