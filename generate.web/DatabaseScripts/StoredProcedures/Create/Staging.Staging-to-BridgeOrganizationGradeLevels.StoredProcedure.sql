@@ -118,7 +118,9 @@ BEGIN
 				ON trgt.LeaId = src.DimLeaId
 				AND trgt.GradeLevelId = src.DimGradeLevelId
 			WHEN NOT MATCHED THEN
-				INSERT (LeaId, GradeLevelId) VALUES (src.DimLeaID, src.DimGradeLevelId);
+				INSERT (LeaId, GradeLevelId) VALUES (src.DimLeaID, src.DimGradeLevelId)
+			WHEN NOT MATCHED BY SOURCE THEN
+				DELETE;
 
 		END
 

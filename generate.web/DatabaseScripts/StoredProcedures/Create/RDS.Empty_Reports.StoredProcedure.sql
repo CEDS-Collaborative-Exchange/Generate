@@ -39,7 +39,7 @@ begin try
 		begin
 			delete from rds.ReportEDFactsOrganizationCounts where ReportCode in (
 					select ReportCode from app.GenerateReports r
-					where r.ReportCode in ('029','039','129','130','193','190','196','197','198','103','131','205','206','163', '170', '035', '207') and r.IsLocked=1)
+					where r.ReportCode in ('029','035','039','129','130','131','163','170','193','190','196','197','198','205','206','207') and r.IsLocked=1)
 					and ReportYear = @selectedReportYear
 		end
 		else if @factTypeCode = 'organizationstatus'
@@ -127,7 +127,7 @@ begin try
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
-				where r.ReportCode in ('045','204', '116') and r.IsLocked=1) and ReportYear = @selectedReportYear
+				where r.ReportCode in ('045','116','204','210','211') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
 		else if @factTypeCode = 'titleI'
 		begin	
@@ -193,17 +193,25 @@ begin try
 				from app.GenerateReports r
 				where r.ReportCode in ('160') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
+		else if @factTypeCode = 'compsupport'
+		begin	
+				
+			delete from rds.ReportEDFactsOrganizationCounts where ReportCode in (
+				select ReportCode
+				from app.GenerateReports r
+				where r.ReportCode in ('212') and r.IsLocked=1) and ReportYear = @selectedReportYear
+		end
 		else if @factTypeCode = 'other'
 		begin	
 				
-				delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
+			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				where r.ReportCode in ('studentfederalprogramsparticipation', 'studentmultifedprogsparticipation', 
 				'edenvironmentdisabilitiesage3-5','edenvironmentdisabilitiesage6-21') and r.IsLocked=1) 
 				and ReportYear = @selectedReportYear
 
-				delete from rds.FactCustomCounts where ReportCode in (
+			delete from rds.FactCustomCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
@@ -212,14 +220,15 @@ begin try
 		end
 		else if @factTypeCode = 'discipline'
 		begin
-				delete from rds.ReportEDFactsK12StudentDisciplines where ReportCode in (
+
+			delete from rds.ReportEDFactsK12StudentDisciplines where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
 				and r.ReportCode in ('005', '006', '007','086','088','143','144','disciplinaryremovals','yeartoyearremoval', 'studentdiscipline') 
 				and r.IsLocked=1) and  ReportYear = @selectedReportYear
 
-				delete from rds.FactCustomCounts where ReportCode in (
+			delete from rds.FactCustomCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
@@ -227,16 +236,16 @@ begin try
 		end
 		else if @factTypeCode = 'assessment'
 		begin
-				delete from rds.ReportEDFactsK12StudentAssessments where ReportCode in (
+
+			delete from rds.ReportEDFactsK12StudentAssessments where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
-				where r.ReportCode in ('126', '139','175','178','179','185','188','189','138','137','050','142','157','stateassessmentsperformance') 
+				where r.ReportCode in ('050','113','125','126','137','138','139','142','157','175','178','179','185','188','189','stateassessmentsperformance') 
 				and r.IsLocked=1) 
 				and  ReportYear = @selectedReportYear
 								
-
-				delete from rds.ReportEDFactsK12StudentAssessments where ReportCode in (
+			delete from rds.ReportEDFactsK12StudentAssessments where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
@@ -244,7 +253,7 @@ begin try
 				select SchoolYear	from rds.DimSchoolYears
 				where Year in (@selectedYear, @selectedYear - 1, @selectedYear - 2, @selectedYear - 3)) 
 
-				delete from rds.FactCustomCounts where ReportCode in (
+			delete from rds.FactCustomCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
@@ -252,11 +261,11 @@ begin try
 		end
 		else if @factTypeCode = 'staff'
 		begin
-				delete from rds.ReportEDFactsK12StaffCounts where ReportCode in (
+			delete from rds.ReportEDFactsK12StaffCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
-				and r.ReportCode in ('070', '099','112','059','067') and r.IsLocked=1)  and  ReportYear = @selectedReportYear
+				and r.ReportCode in ('059','067','070', '099','112','203') and r.IsLocked=1)  and  ReportYear = @selectedReportYear
 		end
 	   	 
 	commit transaction
