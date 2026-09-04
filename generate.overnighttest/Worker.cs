@@ -40,6 +40,14 @@ namespace generate.overnighttest
         private IServiceProvider? serviceProvider;
         private int schoolyear = DateTime.Now.Year;
 
+        private static readonly string[] RequiredDataConnectionNames =
+        [
+            "AppDbContextConnection",
+            "StagingDbContextConnection",
+            "ODSDbContextConnection",
+            "RDSDbContextConnection"
+        ];
+
         /// <summary>
         /// Intiliazes and Register Service with Dependency Injections
         /// Such as DbContext and Services
@@ -200,7 +208,14 @@ namespace generate.overnighttest
 
             var builder = new ConfigurationBuilder()
                 .AddCommandLine(programArgs)
-                .AddEnvironmentVariables(e => e.Prefix = "Data")
+                // No prefix here: a prefix strips itself out of the resulting config key
+                // (e.g. Data__AppDbContextConnection would become "AppDbContextConnection",
+                // not "Data:AppDbContextConnection"), so the env var never matched the
+                // configuration["Data:AppDbContextConnection"] lookup below. That only
+                // worked in Development because AddUserSecrets independently supplies
+                // "Data:AppDbContextConnection" there; deployed environments like Test have
+                // no user secrets, so the connection string was never found.
+                .AddEnvironmentVariables()
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
 
 
@@ -224,6 +239,8 @@ namespace generate.overnighttest
 
             IConfigurationRoot configuration = builder.Build();
 
+            ValidateRequiredDataConnections(configuration);
+
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
             ConfigureServices(configuration, services);
             serviceProvider = services.BuildServiceProvider();
@@ -243,6 +260,29 @@ namespace generate.overnighttest
             Console.WriteLine("Hangfire Server started. Press Ctrl+C to exit.");
 
 
+        }
+
+        /// <summary>
+        /// Fails fast with a clear error when a required Data:* connection string is missing,
+        /// instead of letting UseSqlServer/UseSqlServerStorage fail later with a null/empty
+        /// connection string (or silently point at no database at all).
+        /// </summary>
+        private static void ValidateRequiredDataConnections(IConfigurationRoot configuration)
+        {
+            var missingConnectionNames = RequiredDataConnectionNames
+                .Where(connectionName => string.IsNullOrWhiteSpace(configuration[$"Data:{connectionName}"]))
+                .ToList();
+
+            if (missingConnectionNames.Count == 0)
+            {
+                return;
+            }
+
+            var missingKeys = string.Join(", ", missingConnectionNames.Select(connectionName => $"Data:{connectionName}"));
+            var envKeys = string.Join(", ", missingConnectionNames.Select(connectionName => $"Data__{connectionName}"));
+
+            throw new InvalidOperationException(
+                $"Missing required database connection settings: {missingKeys}. Provide these in Config/appsettings*.json under Data or as environment variables: {envKeys}.");
         }
         public void Start()
         {
