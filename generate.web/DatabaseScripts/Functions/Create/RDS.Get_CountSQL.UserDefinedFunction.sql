@@ -8294,7 +8294,7 @@ BEGIN
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
 				AND RIGHT(a.TableTypeAbbrv, 2) = ''LG''
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'',''PARTELP'' )
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
@@ -8315,7 +8315,7 @@ BEGIN
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
 				AND RIGHT(a.TableTypeAbbrv, 2) = ''HS''
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'',''PARTELP'')
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
@@ -8324,7 +8324,7 @@ BEGIN
 			set @sql = @sql + ' 
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR IN (''MEDEXEMPT'', ''NPART'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR IN (''MEDEXEMPT'', ''NPART'',''PARTELP'')
 				AND NOT EXISTS (Select distinct b.Grade 
 									from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
