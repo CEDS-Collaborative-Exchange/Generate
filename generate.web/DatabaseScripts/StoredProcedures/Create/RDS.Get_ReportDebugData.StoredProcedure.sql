@@ -10,8 +10,8 @@ BEGIN
 	SET NOCOUNT ON;
 
 	declare @debugTable varchar(200)
-	declare @sql varchar(500)
-	declare @WHERE varchar(200) = ''
+	declare @sql varchar(max)
+	declare @WHERE varchar(max) = ''
 	declare @tableTypeAbbrv as varchar(50)
 
 	DECLARE @QueryParam TABLE
@@ -98,8 +98,8 @@ BEGIN
 			SET @WHERE += ' AND '
 
 		IF ISNULL(@ParamName, '') <> ''
-			SET @WHERE += @ParamName + ' = ''' + @ParamValue + ''''
-		
+			SET @WHERE += @ParamName + ' = ''' + REPLACE(@ParamValue, '''', '''''') + ''''
+
 		FETCH NEXT FROM tblcur INTO @ColumnName;
 	END
 
@@ -124,7 +124,7 @@ BEGIN
 			SET @orgName = 'schoolIdentifierSea'
 
 		IF ISNULL(@orgName, '') <> ''
-			SET @WHERE += @orgName + ' = ''' + @orgValue + ''''
+			SET @WHERE += @orgName + ' = ''' + REPLACE(@orgValue, '''', '''''') + ''''
 
 	END
 

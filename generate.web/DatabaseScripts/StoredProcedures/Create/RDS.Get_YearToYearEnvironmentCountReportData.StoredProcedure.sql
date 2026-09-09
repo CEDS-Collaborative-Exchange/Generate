@@ -11,6 +11,11 @@ BEGIN
 	set @reportCategorySubtotal = 'ST6'
 	set @reportColumnName = 'IDEAEDUCATIONALENVIRONMENT'
 
+	--Escape embedded quotes before these values are concatenated into dynamic SQL below (SQL injection defense)
+	declare @safeReportCode varchar(100) = REPLACE(@reportCode, '''', '''''')
+	declare @safeReportLevel varchar(100) = REPLACE(@reportLevel, '''', '''''')
+	declare @safeCategorySetCode varchar(100) = REPLACE(@categorySetCode, '''', '''''')
+
 	--Quick cleanup until the UI is fixed (file 089 isn't reported at the School level)
 	if @categorySetCode = 'earlychildhood' and @reportLevel = 'sch'
 	begin
@@ -27,10 +32,13 @@ BEGIN
 		set @compareYear = cast(cast(@reportYear as int) -1 as varchar(4))
 	end
 	else
-	begin 
+	begin
 		print 'No Report Year value passed in'
 		return;
 	end
+
+	--Escape embedded quotes before this value is concatenated into dynamic SQL below (SQL injection defense)
+	declare @safeReportYear varchar(100) = REPLACE(@reportYear, '''', '''''')
 
 	--report logic goes here
 	declare @sql varchar(max)
@@ -38,10 +46,10 @@ BEGIN
 	set @sql = '
 	SELECT 
 		  CAST(ROW_NUMBER() OVER(ORDER BY ISNULL(a.OrganizationName, b.OrganizationName) ASC) AS INT) as FactCustomCountId
-		, ''' + @reportCode + ''' as ReportCode
-		, ''' + @reportYear + ''' as ReportYear
-		, ''' + @reportLevel + ''' as ReportLevel
-		, ''' + @categorySetCode + ''' as CategorySetCode
+		, ''' + @safeReportCode + ''' as ReportCode
+		, ''' + @safeReportYear + ''' as ReportYear
+		, ''' + @safeReportLevel + ''' as ReportLevel
+		, ''' + @safeCategorySetCode + ''' as CategorySetCode
 		, NULL as ReportFilter
 		, ISNULL(a.StateANSICode			, b.StateANSICode			 ) AS StateANSICode			  
 		, ISNULL(a.StateCode				, b.StateCode				 ) AS StateAbbreviationCode				 
@@ -110,8 +118,8 @@ BEGIN
 				THEN '''C002'')'
 			ELSE '''C002'',''C089'')'
 		END + '
-	AND a.ReportYear = ''' + @reportYear + '''
-	AND a.ReportLevel = ''' + @reportLevel + ''' 
+	AND a.ReportYear = ''' + @safeReportYear + '''
+	AND a.ReportLevel = ''' + @safeReportLevel + '''
 	AND a.CategorySetCode = ''' + @reportCategorySubtotal + '''
 	ORDER BY a.ReportCode
 	'

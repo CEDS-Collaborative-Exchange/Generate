@@ -49,7 +49,7 @@ BEGIN
 	END
 
 	
-	SET @WHERE = ' WHERE SchoolYear = ''' + @reportYear + '''';
+	SET @WHERE = ' WHERE SchoolYear = ''' + REPLACE(@reportYear, '''', '''''') + '''';
 
 
 	-- Cursor over columns
@@ -94,7 +94,7 @@ BEGIN
 		BEGIN
 			SET @selectSQL += ', ' + @ParamName;
 			SET @groupBySQL += ', ' + @ParamName;
-			SET @WHERE += ' AND ' + @ParamName + ' = ''' + @ParamValue + '''';
+			SET @WHERE += ' AND ' + @ParamName + ' = ''' + REPLACE(@ParamValue, '''', '''''') + '''';
 		END
 
 		FETCH NEXT FROM tblcur INTO @ColumnName;
