@@ -119,7 +119,8 @@ BEGIN
 				AND trgt.GradeLevelId = src.DimGradeLevelId
 			WHEN NOT MATCHED THEN
 				INSERT (LeaId, GradeLevelId) VALUES (src.DimLeaID, src.DimGradeLevelId)
-			WHEN NOT MATCHED BY SOURCE THEN
+			WHEN NOT MATCHED BY SOURCE
+				AND trgt.LeaId IN (SELECT DimLeaID FROM LeaGrades) THEN
 				DELETE;
 
 		END
