@@ -2,9 +2,9 @@
 description: Query Generate report data and produce EDFacts-formatted output.
 ---
 
-# GetEdFactsReportData Utility
+# Get EdFacts Report Submission Data
 
-Use `GetEdFactsReportData` to return Generate report data in the EDFacts file layout. The utility adds column headings and, when appropriate, a formatted header record.
+Use `GetEdFactsReportSubmissionData` to return Generate report data in the EDFacts file layout. The utility adds column headings and, when appropriate, a formatted header record.
 
 This supports data review and file production when the Generate user interface is unavailable. SEA data owners with database access can review data before submitting it to the Department of Education.
 
@@ -18,7 +18,7 @@ The stored procedure is in the `Utilities` schema. It requires three parameters 
 
 {% code title="GetEdFactsReportData query" %}
 ```sql
-exec Utilities.GetEdFactsReportData 
+exec Utilities.GetEdFactsSubmissionReportData 
 	@ReportYear = 2026,			-- REQUIRED
 	@ReportCode = '002',		-- REQUIRED
 	@ReportLevel = 'lea'		-- REQUIRED
@@ -61,7 +61,7 @@ You can save the data to a file. You can also copy the header and data into a do
 
 #### Example: 2026 LEA report 002
 
-<figure><img src="../../.gitbook/assets/Picture1 (3).png" alt="Screenshot of GetEdFactsReportData results for 2026 LEA report 002, showing formatted report data and its header record."><figcaption><p>Example GetEdFactsReportData output for 2026 LEA report 002.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Picture1 (3).png" alt="Screenshot of GetEdFactsReportData results for 2026 LEA report 002, showing formatted report data and its header record."><figcaption><p>Example GetEdFactsReportSubmissionData output for 2026 LEA report 002.</p></figcaption></figure>
 
 ***
 
@@ -102,4 +102,5 @@ This example uses several optional parameters:
 * `@ShowCategorySetColumnInResults` and `@ShowOrganizationNameInResults` are set to `1`.
 * `@HideFillerColumns` is set to `1` to remove blank filler columns.
 
-<figure><img src="../../.gitbook/assets/Picture2.png" alt="Screenshot of GetEdFactsReportData results using optional parameters to filter organizations, show category sets and organization names, and hide filler columns."><figcaption><p>Example GetEdFactsReportData output with optional filters and display settings.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Picture2.png" alt="Screenshot of GetEdFactsReportData results using optional parameters to filter organizations, show category sets and organization names, and hide filler columns."><figcaption><p>Example GetEdFactsReportSubmissionData output with optional filters and display settings.</p></figcaption></figure>
+
