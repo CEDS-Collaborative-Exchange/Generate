@@ -4,6 +4,7 @@
 print 'App.Metadata.sql executed for 14.0.'
 
 declare @toggleQuestionId as int, @toggleSectionId as int
+ declare @migrantFactTypeId as int, @generateReportId as int
 
 
 IF NOT EXISTS(SELECT 1 FROM [App].[ToggleSections] WHERE [EmapsSurveySectionAbbrv]= 'EDUENVSCHAGE')
@@ -140,4 +141,9 @@ IF NOT EXISTS(SELECT 1 FROM [App].[ToggleQuestionOptions] WHERE [ToggleQuestionI
 INSERT INTO [App].[ToggleQuestionOptions]([OptionSequence],[OptionText],[ToggleQuestionId])
 VALUES (9, 'SPL - Service Provider Location', @toggleQuestionId)
 
- update rds.DimFactTypes set FactTypeDescription = 'IMMIGRANT - 165' where FactTypeCode = 'immigrant'
+
+ 
+ select @migrantFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = 'migranteducationprogram'
+ select @generateReportId = GenerateReportId from app.GenerateReports where ReportCode = '165'
+
+ Update app.GenerateReport_FactType set FactTypeId = @migrantFactTypeId  where GenerateReportId = @generateReportId
