@@ -181,6 +181,8 @@ BEGIN
 			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
 			WHEN spr.RaceType = 'White_1' THEN 'WH7'
 			WHEN spr.RaceType = 'TwoorMoreRaces_1' THEN 'MU7'
+			WHEN spr.RaceType = 'DemographicRaceTwoOrMoreRaces' THEN 'MU7'
+			WHEN spr.RaceType = 'DemographicRaceTwoOrMoreRaces_1' THEN 'MU7'
 		END AS RaceEdFactsCode,
 		CASE ske.Sex
 				WHEN 'Male' THEN 'M'
@@ -236,7 +238,7 @@ BEGIN
 			AND spr.SchoolYear = sssrd.SchoolYear
 			AND sssrd.TableName = 'RefRace'
 		WHERE @MemberDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
-		AND	OutputCode <> 'TwoOrMoreRaces'	
+		AND	OutputCode NOT IN ('TwoOrMoreRaces', 'DemographicRaceTwoOrMoreRaces')
 		GROUP BY
 			StudentIdentifierState
 			, LeaIdentifierSeaAccountability
@@ -245,7 +247,7 @@ BEGIN
 	) AS stagingRaces
 	JOIN RDS.DimRaces rdr
 		ON stagingRaces.RaceCode = rdr.RaceCode
-	WHERE stagingRaces.RaceCode = 'TwoOrMoreRaces'
+	WHERE stagingRaces.RaceCode IN ('TwoOrMoreRaces', 'DemographicRaceTwoOrMoreRaces')
 
 	UPDATE stg 
 	SET RaceEdFactsCode = 'MU7'
