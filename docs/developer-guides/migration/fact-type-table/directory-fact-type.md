@@ -319,6 +319,20 @@ select * from [generate].[debug].[vwDirectoryLiteLEA_FactTable]
 select * from [generate].[debug].[vwDirectoryLiteSCH_FactTable]
 ```
 
+#### Fact to Staging Stored Procedure Debugging&#x20;
+
+If you have a student that did not migrate successfully to the Fact table you can run the [Staging-to-Fact migration in debug mode](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting/debugging-the-staging-to-fact-migrations) which should provide more insight into why the student failed to migrate.
+
+{% hint style="success" %}
+The following is an example code snippet of how to execute the stored procedure in debug mode
+{% endhint %}
+
+{% code overflow="wrap" %}
+```sql
+exec [Staging].[Staging-to-FactK12StudentCounts_Directory] 2026, '123456789', 1
+```
+{% endcode %}
+
 ***
 
 ## 4. Report Tables
