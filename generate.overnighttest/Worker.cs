@@ -254,7 +254,7 @@ namespace generate.overnighttest
             using var server = new BackgroundJobServer(
             new BackgroundJobServerOptions
             {
-                WorkerCount = Environment.ProcessorCount
+                WorkerCount = 1
             });
 
             Console.WriteLine("Hangfire Server started. Press Ctrl+C to exit.");
