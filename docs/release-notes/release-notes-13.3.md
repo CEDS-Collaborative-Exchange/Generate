@@ -8,6 +8,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -40,22 +41,15 @@ Generate 13.3 requires some additional steps that must be performed prior to per
 
 Prior to updating to Generate version 13.3, you will need to update the parameters in the **appSettings.json** file in **\web\config**. This file is located on the webserver where Generate was installed.
 
-In that file, there is a parameter for the metadata process named "**fsWSURL**”.  You will need to update the value for that parameter to the one below:&#x20;
+In that file, there is a parameter for the metadata process named "**fsWSURL**”. You will need to update the value for that parameter to the one below:
 
-"fsWSURL": "[https://w1st3s2lpd.execute-api.us-east-1.amazonaws.com/api/%22](https://w1st3s2lpd.execute-api.us-east-1.amazonaws.com/api/%22)"&#x20;
+"fsWSURL": "[https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/](https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/)"
 
-There is also a new parameter that supports the metadata process that needs to be added to the file. Paste the line below after the “fsWSURL” parameter:
-
-**"metadataApiKey": "6b5af5c15f74e7d3b4d2a5b564aec7bd9f7c60161e0e0f30"**
-
-{% hint style="info" %}
-NOTE: There is one additional parameter that is used by the updated metadata process and it is located in the table App.GenerateConfigurations.\
-It will be added to the table as part of the update and the value will be set as ‘2026’.
-{% endhint %}
+<figure><img src="../.gitbook/assets/image (3) (1).png" alt="appSettings.json with the fsWSURL parameter set to the metadata API URL."><figcaption><p>fsWSURL metadata API setting.</p></figcaption></figure>
 
 ### Summary of Changes
 
-#### IDEA Reports&#x20;
+#### IDEA Reports
 
 * **Assessments (175, 178, 179)**
   * Added support for Performance Levels up to 6
@@ -64,7 +58,7 @@ It will be added to the table as part of the update and the value will be set as
 
 * **Directory (207**)
   * Added migration and submission file code for this file specification, State Appropriations for Charter Schools
-  * Special thanks to the state of New Mexico for contributing this code!&#x20;
+  * Special thanks to the state of New Mexico for contributing this code!
 * **Membership (052)**
   * Corrected the zero count logic so that rows are only created for Grades Offered at the LEA/School
 
@@ -73,10 +67,8 @@ It will be added to the table as part of the update and the value will be set as
 * **Metadata:** Implemented the newly created API so the automated metadata update in Generate is available again
 
 {% hint style="info" %}
-Note: There is a change to appSettings.json required for the new API and there is a new SY variable in app.GenerateConfigurations
+Note: There is a change to appSettings.json required for the new API and there is a new SY variable in app.GenerateConfigurations. (Reference image above)
 {% endhint %}
-
-<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
 * **User Accessibility:** Added more user accessibility updates
 
@@ -96,3 +88,5 @@ Tickets are available in the CEDS-Collaborative-Exchange.
 ### **Generate Office Hour**
 
 {% embed url="https://www.youtube.com/watch?v=4JhGOudE-yU" %}
+Generate 13.3 Office Hour recording
+{% endembed %}

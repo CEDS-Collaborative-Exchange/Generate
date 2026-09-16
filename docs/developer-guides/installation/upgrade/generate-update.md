@@ -35,7 +35,7 @@ It is strongly recommended that this document be read in full before attempting 
 
 If the current version of Generate is 3.1 or higher, updates should be performed using the Automatic Update functionality of Generate. This can be found in the Settings menu under the menu item named “Update”. This feature is available to users with the Admin role.
 
-![](<../../../.gitbook/assets/Developer Guide_Upgrade_image1.png>)
+<figure><img src="../../../.gitbook/assets/Developer Guide_Upgrade_image1.png" alt="Generate Settings menu showing the Update option available to administrators."><figcaption><p>Update option in Settings.</p></figcaption></figure>
 
 ## Update Steps (Manual Steps) <a href="#toc113461785" id="toc113461785"></a>
 

@@ -73,7 +73,7 @@ ORDER BY        agrft.FactTypeId, agr.ReportCode
 The Generate ETL Documentation Templates give a detailed breakdown of all data elements needed for each Fact Type and show how data are transformed through each stage of the data migration. After completing the CEDS alignment process these templates can be used to document data transformation notes and option set mappings. They also contain a description of the CEDS data elements needed and what they are called throughout the Generate database. The ETL Templates documentation has a detailed instruction tab to help you know how to utilize this tool effectively. If you need clarification, please reach out to your CIID TA provider.
 
 {% hint style="info" %}
-You can find the Neglected or Delinquent ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-etl-mapping-assistance).
+You can find the Neglected or Delinquent ETL Documentation Template.xlsx on the [ETL Documentation Template](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/fact-type-table/etl-documentation-templates-overview/etl-documentation-template) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-etl-mapping-assistance).
 {% endhint %}
 
 **Generate Metadata**
@@ -154,9 +154,9 @@ The Generate database has a stored procedure for each Fact Type which is empty i
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/image (228).png" alt=""><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (228).png" alt="SQL Server Management Studio showing the Source-to-Staging stored procedure placeholder."><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
 
-This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.&#x20;
+This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.
 
 <pre><code><strong>/****** Object:  StoredProcedure [Source].[Source-to-Staging_NeglectedOrDelinquent]    Script Date: 8/18/2025 10:12:03 AM ******/
 </strong>SET ANSI_NULLS ON
@@ -300,6 +300,20 @@ The following is an example code snippet of how to select the Neglected or Delin
 ```sql
 select * from [debug].[vwNeglectedOrDelinquent_FactTable]
 ```
+
+#### Fact to Staging Stored Procedure Debugging&#x20;
+
+If you have a student that did not migrate successfully to the Fact table you can run the [Staging-to-Fact migration in debug mode](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting/debugging-the-staging-to-fact-migrations) which should provide more insight into why the student failed to migrate.
+
+{% hint style="success" %}
+The following is an example code snippet of how to execute the stored procedure in debug mode
+{% endhint %}
+
+{% code overflow="wrap" %}
+```sql
+exec [Staging].[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent] 2026, '123456789', 1
+```
+{% endcode %}
 
 ***
 
