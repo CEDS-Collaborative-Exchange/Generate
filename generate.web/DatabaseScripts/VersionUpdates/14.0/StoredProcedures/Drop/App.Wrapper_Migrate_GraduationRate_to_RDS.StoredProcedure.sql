@@ -1,0 +1,8 @@
+﻿IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'APP' AND ROUTINE_NAME = 'Wrapper_Migrate_GraduationRate_to_RDS') 
+BEGIN
+	DROP PROCEDURE [App].[Wrapper_Migrate_GraduationRate_to_RDS]
+END
+
+
+
+
