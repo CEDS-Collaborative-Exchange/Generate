@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~sass-web-fonts/web-fonts";
+@import "sass-web-fonts/web-fonts";
 
 $url: web-fonts-url("Lato", "Lora", "Oswald", "Merriweather", "Montserrat", "Raleway", "Roboto Slab");
 @import url($url);

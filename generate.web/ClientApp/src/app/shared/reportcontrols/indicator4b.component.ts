@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-indicator4b',
     templateUrl: './indicator4b.component.html',
     styleUrls: ['./indicator4b.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class Indicator4bComponent implements AfterViewInit, OnChanges, OnInit {

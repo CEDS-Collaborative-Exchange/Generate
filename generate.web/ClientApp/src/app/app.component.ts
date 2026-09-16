@@ -12,9 +12,10 @@ declare var componentHandler: any;
 @Component({
     selector: 'app',
     templateUrl: './app.component.html',
-    styleUrls: [ './app.component.scss' ],
+    styleUrls: ['./app.component.scss'],
     providers: [Title, UserService],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 
 

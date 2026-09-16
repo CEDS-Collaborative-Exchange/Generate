@@ -10,7 +10,8 @@ declare let moment: any;
     selector: 'generate-app-metadata',
     templateUrl: './metadata.component.html',
     styleUrl: './metadata.component.scss',
-    providers: [FSMetadataUpdate]
+    providers: [FSMetadataUpdate],
+    standalone: false
 })
 export class MetadataComponent implements AfterViewInit {
 
@@ -81,10 +82,7 @@ export class MetadataComponent implements AfterViewInit {
                         this.isprocessing = true; this.ddlDisabled = true;
                     } else {
                         this.isprocessing = false;
-                        //this.getUplFlag();
-                        //this.getLatestSYs();
-                        //this.ddlDisabled = false;
-                        this.updYearDDL();
+                        this.ddlDisabled = false;
                     }
                 }
             });
@@ -100,65 +98,65 @@ export class MetadataComponent implements AfterViewInit {
     getLatestSYs() {
         console.log('--getLatestSYs--')
 
-        if (this.ddlDisabled == false) {
-            console.log('--cccccccc--')
-            this._fsmetadatapdateService.getlatestSYs()
-                .subscribe(resp => {
-                    console.log("aaaa");
-                    console.log(resp);
-                    this.latestPubSYlist = resp;
-                    console.log("bbbb");
-                    if (this.latestPubSYlist != null && this.latestPubSYlist.length > 0) {
-                        this.selSY = this.latestPubSYlist[0];
-                    }
-                    console.log("cccc");
-                });
-        }
+        this._fsmetadatapdateService.getlatestSYs()
+            .subscribe(resp => {
+                console.log(resp);
+                this.latestPubSYlist = resp;
+                if (this.latestPubSYlist != null && this.latestPubSYlist.length > 0) {
+                    this.selSY = this.latestPubSYlist[0];
+                }
+            });
+
+        //if (this.ddlDisabled == false) {
+            
+        //}
 
     }
 
     getUplFlag() {
         console.log('--getUplFlag--')
-        this._fsmetadatapdateService.getFlag()
-            .subscribe(resp => {
-                console.log('getUplFlag');
-                console.log(resp);
-                //this.latestPubSYlist = resp;
+        //this.ddlDisabled = false;
+        this.getLatestSYs();
+        //this._fsmetadatapdateService.getFlag()
+        //    .subscribe(resp => {
+        //        console.log('getUplFlag');
+        //        console.log(resp);
+        //        //this.latestPubSYlist = resp;
 
-                if (resp=="True") {
-                    this.ddlDisabled = true;
-                    //this.selSY = "";
-                    console.log('--True--');
-                }
-                else {
-                    this.ddlDisabled = false;
-                    this.getLatestSYs();
-                }
+        //        if (resp=="True") {
+        //            this.ddlDisabled = true;
+        //            //this.selSY = "";
+        //            console.log('--True--');
+        //        }
+        //        else {
+        //            this.ddlDisabled = false;
+        //            this.getLatestSYs();
+        //        }
                 
-            });
+        //    });
     }
 
-    updYearDDL() {
-        // The function enables and disables the Year Drop down..
-        console.log('--updYearDDL--')
-        this._fsmetadatapdateService.getFlag()
-            .subscribe(resp => {
-                console.log('updYearDDL');
-                console.log(resp);
-                //this.latestPubSYlist = resp;
+    //updYearDDL() {
+    //    // The function enables and disables the Year Drop down..
+    //    console.log('--updYearDDL--')
+    //    this._fsmetadatapdateService.getFlag()
+    //        .subscribe(resp => {
+    //            console.log('updYearDDL');
+    //            console.log(resp);
+    //            //this.latestPubSYlist = resp;
 
-                if (resp == "True") {
-                    this.ddlDisabled = true;
-                    //this.selSY = "";
-                    console.log('--True--');
-                }
-                else {
-                    this.ddlDisabled = false;
-                    //this.getLatestSYs();
+    //            if (resp == "True") {
+    //                this.ddlDisabled = true;
+    //                //this.selSY = "";
+    //                console.log('--True--');
+    //            }
+    //            else {
+    //                this.ddlDisabled = false;
+    //                //this.getLatestSYs();
                     
-                }
+    //            }
 
-            });
-    }
+    //        });
+    //}
 
 }

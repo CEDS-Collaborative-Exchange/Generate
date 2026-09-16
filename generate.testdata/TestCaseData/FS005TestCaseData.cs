@@ -1,10 +1,11 @@
-﻿using generate.core.Helpers.TestDataHelper;
+using generate.core.Helpers.TestDataHelper;
 using generate.core.Models.IDS;
 using generate.core.Models.Staging;
 using generate.testdata.Interfaces;
 using generate.testdata.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace generate.testdata.TestCaseData
@@ -27,9 +28,9 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "0050000001",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString()),
-                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 2).ToString()),
-                EnrollmentExitDate = DateTime.Parse("1/13/" + (schoolYear - 1).ToString()),
+                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 2).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentExitDate = DateTime.Parse("1/13/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 ExitOrWithdrawalType = testDataHelper.GetWeightedSelection(rnd, testDataProfile.RefExitOrWithdrawalTypeDistribution),
                 FirstName = "Jake",
                 LastOrSurname = "WithAnEndDate",
@@ -43,9 +44,9 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "0050000001",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString()),
-                EnrollmentEntryDate = DateTime.Parse("1/14/" + (schoolYear).ToString()),
-                EnrollmentExitDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentEntryDate = DateTime.Parse("1/14/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentExitDate = DateTime.Parse("6/30/" + schoolYear.ToString(), CultureInfo.InvariantCulture),
                 ExitOrWithdrawalType = testDataHelper.GetWeightedSelection(rnd, testDataProfile.RefExitOrWithdrawalTypeDistribution),
                 FirstName = "Jake",
                 LastOrSurname = "WithAnEndDate",
@@ -58,9 +59,9 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "0050000002",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
-                Birthdate = DateTime.Parse("1/05/" + (schoolYear - 14).ToString()),
-                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnrollmentExitDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                Birthdate = DateTime.Parse("1/05/" + (schoolYear - 14).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentExitDate = DateTime.Parse("6/30/" + schoolYear.ToString(), CultureInfo.InvariantCulture),
                 ExitOrWithdrawalType = testDataHelper.GetWeightedSelection(rnd, testDataProfile.RefExitOrWithdrawalTypeDistribution),
                 FirstName = "Charlie",
                 LastOrSurname = "Brown",
@@ -98,7 +99,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var firstIdt = new core.Models.Staging.IdeaDisabilityType()
@@ -109,7 +110,7 @@ namespace generate.testdata.TestCaseData
                 IdeaDisabilityTypeCode = "VisualImpairment",
                 IsPrimaryDisability = true,
                 SchoolYear = Convert.ToInt16(schoolYear),
-                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 2).ToString())
+                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 2).ToString(), CultureInfo.InvariantCulture)
             };
 
             var leaOnlyStudentPersonStatus = new core.Models.Staging.PersonStatus()
@@ -118,7 +119,7 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString())
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture)
             };
 
             var secondIdt = new core.Models.Staging.IdeaDisabilityType()
@@ -128,7 +129,7 @@ namespace generate.testdata.TestCaseData
                 IdeaDisabilityTypeCode = "Hearingimpairment",
                 SchoolYear = Convert.ToInt16(schoolYear),
                 IsPrimaryDisability = true,
-                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 2).ToString())
+                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 2).ToString(), CultureInfo.InvariantCulture)
             };
 
             var env = testDataHelper.GetRandomObject<generate.core.Models.IDS.RefIdeaeducationalEnvironmentSchoolAge>(rnd, idsReferenceData.RefIdeaeducationalEnvironmentSchoolAges).Code;
@@ -140,7 +141,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 IDEAIndicator = true
             };
 
@@ -150,7 +151,7 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 IDEAIndicator = true
             };
 
@@ -168,7 +169,7 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 IncidentIdentifier = "005001",
-                DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 2).ToString()),
+                DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 2).ToString(), CultureInfo.InvariantCulture),
                 DisciplinaryActionTaken = refDisciplinaryActionTaken,
                 DisciplineMethodOfCwd = refDisciplineMethodOfCwd,
                 IdeaInterimRemoval = refIdeainterimRemoval,
@@ -184,7 +185,7 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 IncidentIdentifier = "005002",
-                DisciplinaryActionStartDate = DateTime.Parse("2/10/" + (schoolYear).ToString()),
+                DisciplinaryActionStartDate = DateTime.Parse("2/10/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 DisciplinaryActionTaken = refDisciplinaryActionTaken,
                 DisciplineMethodOfCwd = refDisciplineMethodOfCwd,
                 IdeaInterimRemoval = refIdeainterimRemoval,
@@ -199,7 +200,7 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "0050000002",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 IncidentIdentifier = "005003",
-                DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 1).ToString()),
+                DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 DisciplinaryActionTaken = refDisciplinaryActionTaken,
                 DisciplineMethodOfCwd = refDisciplineMethodOfCwd,
                 IdeaInterimRemoval = refIdeainterimRemoval,
@@ -232,9 +233,9 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "CD4494_005",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString()),
-                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnrollmentExitDate = DateTime.Parse("1/13/" + (schoolYear).ToString()),
+                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentExitDate = DateTime.Parse("1/13/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 ExitOrWithdrawalType = testDataHelper.GetWeightedSelection(rnd, testDataProfile.RefExitOrWithdrawalTypeDistribution),
                 FirstName = "Daffy",
                 LastOrSurname = "Duck",
@@ -261,7 +262,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var aIdt = new core.Models.Staging.IdeaDisabilityType()
@@ -269,7 +270,7 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "CD4494_005",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 SchoolYear = Convert.ToInt16(schoolYear),
                 IdeaDisabilityTypeCode = "Emotionaldisturbance",
                 IsPrimaryDisability = true
@@ -282,7 +283,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 IDEAIndicator = true,
             };
 
@@ -293,7 +294,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 IncidentIdentifier = "CIID4494_111",
                 DisciplineActionIdentifier = "1",
-                DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 1).ToString()),
+                DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 DurationOfDisciplinaryAction = "25",
                 IdeaInterimRemoval = "REMDW",
                 IdeaInterimRemovalReason = "Drugs",
@@ -306,7 +307,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 IncidentIdentifier = "CIID4494_222",
                 DisciplineActionIdentifier = "2",
-                DisciplinaryActionStartDate = DateTime.Parse("02/1/" + (schoolYear).ToString()),
+                DisciplinaryActionStartDate = DateTime.Parse("02/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 DurationOfDisciplinaryAction = "25",
                 DisciplinaryActionTaken = "03101",
                 DisciplineMethodOfCwd = "OutOfSchool",
@@ -328,9 +329,9 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "CD4522_005",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString()),
-                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnrollmentExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),
+                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 FirstName = "Captain",
                 LastOrSurname = "Caveman",
                 SchoolYear = (schoolYear).ToString(),
@@ -356,7 +357,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var bIdt1 = new core.Models.Staging.IdeaDisabilityType()
@@ -364,8 +365,8 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "CD4522_005",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                RecordEndDateTime = DateTime.Parse("8/10/" + (schoolYear - 1).ToString()),
+                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                RecordEndDateTime = DateTime.Parse("8/10/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 IdeaDisabilityTypeCode = "Emotionaldisturbance",
                 SchoolYear = Convert.ToInt16(schoolYear),
                 IsPrimaryDisability = true
@@ -378,7 +379,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var bIdt2 = new core.Models.Staging.IdeaDisabilityType()
@@ -386,8 +387,8 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "CD4522_005",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                RecordStartDateTime = DateTime.Parse("8/11/" + (schoolYear - 1).ToString()),
-                RecordEndDateTime = DateTime.Parse("12/1/" + (schoolYear - 1).ToString()),
+                RecordStartDateTime = DateTime.Parse("8/11/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                RecordEndDateTime = DateTime.Parse("12/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 SchoolYear = Convert.ToInt16(schoolYear),
                 IdeaDisabilityTypeCode = "Emotionaldisturbance",
                 IsPrimaryDisability = true
@@ -400,7 +401,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var bIdt3 = new core.Models.Staging.IdeaDisabilityType()
@@ -408,8 +409,8 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "CD4522_005",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                RecordStartDateTime = DateTime.Parse("12/2/" + (schoolYear - 1).ToString()),
-                RecordEndDateTime = DateTime.Parse("2/12/" + (schoolYear).ToString()),
+                RecordStartDateTime = DateTime.Parse("12/2/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                RecordEndDateTime = DateTime.Parse("2/12/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 IdeaDisabilityTypeCode = "Emotionaldisturbance",
                 SchoolYear = Convert.ToInt16(schoolYear),
                 IsPrimaryDisability = true
@@ -422,7 +423,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var bIdt4 = new core.Models.Staging.IdeaDisabilityType()
@@ -430,8 +431,8 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "CD4522_005",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
-                RecordStartDateTime = DateTime.Parse("2/13/" + (schoolYear).ToString()),
-                RecordEndDateTime = DateTime.Parse("6/30/" + (schoolYear).ToString()),
+                RecordStartDateTime = DateTime.Parse("2/13/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                RecordEndDateTime = DateTime.Parse("6/30/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 IdeaDisabilityTypeCode = "Hearingimpairment",
                 SchoolYear = Convert.ToInt16(schoolYear),
                 IsPrimaryDisability = true
@@ -444,8 +445,8 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("8/10/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                ProgramParticipationEndDate = DateTime.Parse("8/10/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 IDEAIndicator = true
             };
 
@@ -456,8 +457,8 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("8/11/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("12/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("8/11/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                ProgramParticipationEndDate = DateTime.Parse("12/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 IDEAIndicator = true
             };
 
@@ -468,8 +469,8 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("12/2/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("2/12/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("12/2/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                ProgramParticipationEndDate = DateTime.Parse("2/12/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 IDEAIndicator = true
             };
 
@@ -480,8 +481,8 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("2/13/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("6/30/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("2/13/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                ProgramParticipationEndDate = DateTime.Parse("6/30/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 IDEAIndicator = true
             };
 
@@ -492,7 +493,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 IncidentIdentifier = "CIID4522_111",
                 DisciplineActionIdentifier = "1",
-                DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 1).ToString()),
+                DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 DurationOfDisciplinaryAction = "25",
                 IdeaInterimRemoval = "REMDW",
                 IdeaInterimRemovalReason = "Drugs",
@@ -505,7 +506,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 IncidentIdentifier = "CIID4522_222",
                 DisciplineActionIdentifier = "2",
-                DisciplinaryActionStartDate = DateTime.Parse("02/1/" + (schoolYear).ToString()),
+                DisciplinaryActionStartDate = DateTime.Parse("02/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 DurationOfDisciplinaryAction = "4",
                 DisciplinaryActionTaken = "03101",
                 DisciplineMethodOfCwd = "OutOfSchool",
@@ -518,7 +519,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 IncidentIdentifier = "CIID4522_333",
                 DisciplineActionIdentifier = "2",
-                DisciplinaryActionStartDate = DateTime.Parse("03/15/" + (schoolYear).ToString()),
+                DisciplinaryActionStartDate = DateTime.Parse("03/15/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 DurationOfDisciplinaryAction = "8",
                 DisciplinaryActionTaken = "03101",
                 DisciplineMethodOfCwd = "OutOfSchool",

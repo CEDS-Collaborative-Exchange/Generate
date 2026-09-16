@@ -10,8 +10,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Component({
     selector: 'generate-app-dialog',
     templateUrl: 'dialog.component.html',
-    standalone: true,
-    imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule],
+    imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule]
 })
 export class DialogComponent {
     //Not being used. Just to mimic the behavior.

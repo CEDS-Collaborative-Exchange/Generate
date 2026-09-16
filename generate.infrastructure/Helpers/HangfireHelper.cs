@@ -108,7 +108,7 @@ namespace generate.infrastructure.Helpers
         {
             
             TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-            RecurringJob.AddOrUpdate("FSmetaServc", () => fsMetaRefresh(_useWSforFSMetaUpd, _fsWSURL, _fsMetaFileLoc, _fsMetaESSDetailFileName, _fsMetaCHRDetailFileName, _fsMetaESSLayoutFileName, _fsMetaCHRLayoutFileName, _bkfsMetaFileLoc, _reloadFromBackUp), cronExpr, est);
+            RecurringJob.AddOrUpdate("FSmetaServc", () => fsMetaRefresh(_useWSforFSMetaUpd, _fsWSURL, _fsMetaFileLoc, _fsMetaESSDetailFileName, _fsMetaCHRDetailFileName, _fsMetaESSLayoutFileName, _fsMetaCHRLayoutFileName, _bkfsMetaFileLoc, _reloadFromBackUp), cronExpr, new RecurringJobOptions { TimeZone = est });
 
             //var currentTZ = TimeZoneInfo.Local;            
             //var c = Cron.Daily(23, 50);
@@ -127,8 +127,8 @@ namespace generate.infrastructure.Helpers
             _fsMetadataUpdateService.fsMetaCHRDetailFileName = _fsMetaCHRDetailFileName;
             _fsMetadataUpdateService.fsMetaESSLayoutFileName = _fsMetaESSLayoutFileName;
             _fsMetadataUpdateService.fsMetaCHRLayoutFileName = _fsMetaCHRLayoutFileName;
-            _fsMetadataUpdateService.reloadFromBackUp = _reloadFromBackUp;
-            _fsMetadataUpdateService.bkfsMetaFileLoc = _bkfsMetaFileLoc;
+            //_fsMetadataUpdateService.reloadFromBackUp = _reloadFromBackUp;
+            //_fsMetadataUpdateService.bkfsMetaFileLoc = _bkfsMetaFileLoc;
 
             _fsMetadataUpdateService.callInitFSmetaServc();
 

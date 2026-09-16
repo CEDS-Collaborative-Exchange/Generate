@@ -1,10 +1,11 @@
-﻿using generate.core.Helpers.TestDataHelper;
+using generate.core.Helpers.TestDataHelper;
 using generate.core.Models.IDS;
 using generate.core.Models.Staging;
 using generate.testdata.Interfaces;
 using generate.testdata.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace generate.testdata.TestCaseData
@@ -27,9 +28,9 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "002CID4482",
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
-                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString()),
-                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnrollmentExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),
+                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 FirstName = "Calvin",
                 LastOrSurname = "Hobbes",
                 SchoolYear = (schoolYear).ToString(),
@@ -45,7 +46,7 @@ namespace generate.testdata.TestCaseData
                 IsPrimaryDisability = true,
                 SchoolYear = Convert.ToInt16(schoolYear),
                 IdeaDisabilityTypeCode = "Deafness",
-                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var secondK12Enrollment = new K12Enrollment()
@@ -53,9 +54,9 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "002CID4482",
                 LeaIdentifierSeaAccountability = secondOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = secondOrg.SchoolIdentifierSea,
-                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString()),
-                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnrollmentExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),
+                Birthdate = DateTime.Parse("12/03/" + (schoolYear - 15).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentEntryDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 FirstName = "Calvin",
                 LastOrSurname = "Hobbes",
                 SchoolYear = (schoolYear).ToString(),
@@ -71,7 +72,7 @@ namespace generate.testdata.TestCaseData
                 IsPrimaryDisability = true,
                 SchoolYear = Convert.ToInt16(schoolYear),
                 IdeaDisabilityTypeCode = "Deafness",
-                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var firstPersonRaceLea = new K12PersonRace()
@@ -101,7 +102,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var secondPersonStatus = new core.Models.Staging.PersonStatus()
@@ -111,7 +112,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = secondOrg.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var env = testDataHelper.GetRandomObject<generate.core.Models.IDS.RefIdeaeducationalEnvironmentSchoolAge>(rnd, idsReferenceData.RefIdeaeducationalEnvironmentSchoolAges).Code;
@@ -124,7 +125,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
                 IDEAIndicator = true,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var secondPpse = new core.Models.Staging.ProgramParticipationSpecialEducation()
@@ -135,7 +136,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
                 IDEAIndicator = true,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             testData.K12Enrollments.Add(firstK12Enrollment);

@@ -4,7 +4,8 @@ declare var componentHandler: any;
 
 @Component({
     templateUrl: './reports-sppapr.component.html',
-    styleUrls: ['./reports-sppapr.component.scss']
+    styleUrls: ['./reports-sppapr.component.scss'],
+    standalone: false
 })
 
 

@@ -1,4 +1,8 @@
 <div class="generate-app-student-details__scrollable-div">
+    <button class="mdl-button mdl-js-button mdl-button--icon modal-close-btn" (click)="closeDialog()"
+            title="Close">
+        <i class="material-icons">close</i>
+    </button>
     <div class="zoom-wrapper" [ngStyle]="{'transform': 'scale(' + zoomLevel + ')'}">
         <h3 class="generate-app-report__title">{{data.reportData.reportTitle}}</h3>
         <div class="mdl-typography--text-center generate-app-pivotgrid__categoryset-definition">

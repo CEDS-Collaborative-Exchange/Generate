@@ -7,8 +7,8 @@ import { DataMigrationService } from '../../services/app/dataMigration.service';
     selector: 'generate-app-settings-datastore',
     templateUrl: './datastore.component.html',
     styleUrls: ['./datastore.component.scss'],
-    providers: [DataMigrationService]
-
+    providers: [DataMigrationService],
+    standalone: false
 })
 export class SettingsDataStoreComponent  {
 

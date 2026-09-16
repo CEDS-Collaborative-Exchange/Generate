@@ -4,9 +4,10 @@ import { DialogComponent } from './dialog/dialog.component';
 import { UploadService } from './upload.service';
 
 @Component({
-  selector: 'app-upload',
-  templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.css']
+    selector: 'app-upload',
+    templateUrl: './upload.component.html',
+    styleUrls: ['./upload.component.css'],
+    standalone: false
 })
 export class UploadComponent {
 

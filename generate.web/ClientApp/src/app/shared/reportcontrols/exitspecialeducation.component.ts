@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-exitspecialeducation',
     templateUrl: './exitspecialeducation.component.html',
     styleUrls: ['./exitspecialeducation.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class ExitSpecEdComponent implements AfterViewInit, OnChanges, OnInit {

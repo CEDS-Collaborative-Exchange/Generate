@@ -22,7 +22,8 @@ declare let alphanum: any;
     selector: 'generate-app-earlycharter',
     templateUrl: './earlycharter.component.html',
     styleUrls: ['./earlycharter.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class EarlyCharterComponent implements AfterViewInit, OnChanges, OnInit {

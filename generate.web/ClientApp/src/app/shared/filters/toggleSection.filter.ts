@@ -1,7 +1,8 @@
 ﻿import {Pipe, PipeTransform} from '@angular/core';
 
 @Pipe({
-    name: 'generateToggleSectionFilter'
+    name: 'generateToggleSectionFilter',
+    standalone: false
 })
 export class ToggleSectionFilter implements PipeTransform {
 

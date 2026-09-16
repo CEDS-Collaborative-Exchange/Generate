@@ -398,7 +398,7 @@ namespace generate.infrastructure.Services
 
         public string PadNumbers(string input)
         {
-            return Regex.Replace(input, "[0-9]+", match => match.Value.PadLeft(10, '0'));
+            return Regex.Replace(input, "[0-9]+", match => match.Value.PadLeft(10, '0'), RegexOptions.None, TimeSpan.FromSeconds(1));
         }
 
     }

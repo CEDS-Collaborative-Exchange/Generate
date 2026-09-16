@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { GenerateUpdateService } from '../../services/app/generate-update.service';
 import { forkJoin } from 'rxjs';
 import { UpdatePackage } from '../../models/app/update-package';
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { UpdateStatus } from 'src/app/models/app/update-status';
 import { AppConfig } from 'src/app/app.config';
@@ -16,8 +16,8 @@ declare let componentHandler: any;
     selector: 'generate-app-settings-update',
     templateUrl: './update.component.html',
     styleUrls: ['./update.component.scss'],
-    providers: [GenerateUpdateService]
-
+    providers: [GenerateUpdateService],
+    standalone: false
 })
 export class UpdateComponent implements AfterViewInit {
 

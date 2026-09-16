@@ -29,7 +29,8 @@ declare var alphanum: any;
     selector: 'generate-app-pivotgrid',
     templateUrl: './pivotgrid.component.html',
     styleUrls: ['./pivotgrid.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
@@ -336,7 +337,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
 
     showCategorySetLabel() {
         let isShow: boolean = true;
-        if (this.reportParameters.reportLevel === 'sch' && this.reportParameters.reportCode === 'c059') {
+        if (this.reportParameters.reportLevel === 'sch' && this.reportParameters.reportCode === '059') {
             isShow = false;
         }
         return isShow;

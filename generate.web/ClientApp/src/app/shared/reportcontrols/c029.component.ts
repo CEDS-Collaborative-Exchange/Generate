@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-c029',
     templateUrl: './c029.component.html',
     styleUrls: ['./c029.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class c029Component implements AfterViewInit, OnChanges, OnInit {

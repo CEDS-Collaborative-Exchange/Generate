@@ -5,7 +5,8 @@ declare var componentHandler: any;
 @Component({
     selector: 'generate-app-resources-tutorials',
     templateUrl: './tutorials.component.html',
-    styleUrls: ['./tutorials.component.scss']
+    styleUrls: ['./tutorials.component.scss'],
+    standalone: false
 })
 export class ResourcesTutorialsComponent implements AfterViewInit {
 

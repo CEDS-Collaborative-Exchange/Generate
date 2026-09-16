@@ -31,7 +31,8 @@ export var aggregateColumn: any;
     selector: 'app-pivottable',
     templateUrl: './pivottable.component.html',
     styleUrls: ['./pivottable.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class PivottableComponent {
 
@@ -309,6 +310,43 @@ export class PivottableComponent {
         let columnDisplayFields: any = viewDef.columnFields;
         let derivedAttributes: any = {};
 
+        const bindingAliases: Record<string, string[]> = {
+            'staffcategoryid': ['k12staffclassification'],
+            'k12staffclassification': ['staffcategoryid']
+        };
+
+        const getBindingKey = (row: any, binding: string) => {
+            if (!row || !binding) {
+                return binding;
+            }
+
+            if (row[binding] !== undefined) {
+                return binding;
+            }
+
+            const normalizedBinding = binding.toString().toLowerCase();
+            let resolved = Object.keys(row).find(k => k.toLowerCase() === normalizedBinding);
+            if (resolved) {
+                return resolved;
+            }
+
+            const aliases = bindingAliases[normalizedBinding] || [];
+            for (const alias of aliases) {
+                resolved = Object.keys(row).find(k => k.toLowerCase() === alias.toLowerCase());
+                if (resolved) {
+                    return resolved;
+                }
+            }
+
+            return binding;
+        };
+
+        const getBindingValue = (row: any, binding: string) => {
+            const key = getBindingKey(row, binding);
+            const value = row && key ? row[key] : '';
+            return (value ?? '').toString();
+        };
+
         let uiData = reportData.data;
 
         uiData = JSON.parse(JSON.stringify(this.reportDataDto.data))
@@ -358,13 +396,13 @@ export class PivottableComponent {
                     if (filterBy2[Object.keys(filterBy2)[i]] != "") {
  
                         if (viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]) !== undefined) {
-                            var dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
+                            var dataValue = getBindingValue(d, viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding);
                             var searchValue = filterBy2[Object.keys(filterBy2)[i]];
 
-                            var categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionCode.toLowerCase() == dataValue.toLowerCase());
+                            var categoryOption = reportData.categorySets[0].categoryOptions.find(o => (o.categoryOptionCode ?? '').toString().toLowerCase() == dataValue.toLowerCase());
                             var categoryOptionName = "";
                             if (categoryOption != undefined) {
-                                categoryOptionName = categoryOption.categoryOptionName;
+                                categoryOptionName = (categoryOption.categoryOptionName ?? '').toString();
                             }
 
                             if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) == -1 && categoryOptionName.toLowerCase().indexOf(searchValue.toLowerCase()) == -1) {
@@ -448,13 +486,13 @@ export class PivottableComponent {
             for (var i = 0; i < Object.keys(filterBy2).length; i++) {
                 if (filterBy2[Object.keys(filterBy2)[i]] != "") {
                     if (viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]) !== undefined) {
-                        var dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
+                        var dataValue = getBindingValue(d, viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding);
                         var searchValue = filterBy2[Object.keys(filterBy2)[i]];
 
-                        var categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionName.toLowerCase() === searchValue.toLowerCase());
+                        var categoryOption = reportData.categorySets[0].categoryOptions.find(o => (o.categoryOptionName ?? '').toString().toLowerCase() === searchValue.toLowerCase());
                         var categoryOptionCode = "";
                         if (categoryOption != undefined) {
-                            categoryOptionCode = categoryOption.categoryOptionCode;
+                            categoryOptionCode = (categoryOption.categoryOptionCode ?? '').toString();
                         }
 
                         if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 && dataValue.toLowerCase() !== categoryOptionCode.toLowerCase()) {
@@ -471,7 +509,7 @@ export class PivottableComponent {
             viewDef.fields.forEach(f => {
                 if (r === f.header) {
                     derivedAttributes[r] = function (mp) {
-                        return mp[f.binding];
+                        return getBindingValue(mp, f.binding);
                     }
                 }
             });
@@ -481,7 +519,8 @@ export class PivottableComponent {
             viewDef.fields.forEach(f => {
                 if (r === f.header) {
                     derivedAttributes[r] = function (mp) {
-                        return mp[f.binding] != null ? mp[f.binding] : 0;
+                        const value = getBindingValue(mp, f.binding);
+                        return value != null ? value : 0;
                     }
                 }
             });
@@ -496,9 +535,9 @@ export class PivottableComponent {
                 viewDef.fields.forEach(f => {
                     if (c === f.header) {
                         reportData.categorySets[0].categoryOptions.forEach(o => {
-                            //if (o.categoryOptionCode === d[f.binding]) {
-                            if (o.categoryOptionCode.toLowerCase() === (d[f.binding] !== undefined ? d[f.binding].toLowerCase() : '')) {
-                                d[f.binding] = o.categoryOptionName;
+                            const bindingKey = getBindingKey(d, f.binding);
+                            if ((o.categoryOptionCode ?? '').toString().toLowerCase() === getBindingValue(d, f.binding).toLowerCase()) {
+                                d[bindingKey] = o.categoryOptionName;
                             }
                         });
                     }
@@ -520,19 +559,27 @@ export class PivottableComponent {
 
         function displayDebugInfo(e, value, filters, pivotData) {
             //let categorySetCode = reportData.categorySets[0].categorySetCode;
-            /*console.log(reportData);*/
+           /* console.log(reportData.data[0]);*/
+            if (!reportData || !reportData.data || reportData.data.length === 0) {
+                return;
+            }
+
+            const firstDataRow = reportData.data[0];
             let reportYear = reportData.reportYear;
-            let reportLevel = reportData.data[0].reportLevel;
-            let categorySetCode = reportData.data[0].categorySetCode;
-            let reportCode = reportData.data[0].reportCode;
+            let reportLevel = firstDataRow.reportLevel;
+            let categorySetCode = firstDataRow.categorySetCode;
+            let reportCode = firstDataRow.reportCode;
             //  let headers = reportData.categorySets[0].categories;
 
+            let bindings = ["k12StudentStudentIdentifierState"];
+            let headers = ["Student Id"];
 
-            var bindings = ["k12StudentStudentIdentifierState"];
-            var headers = ["Student Id"];
+            if (firstDataRow.hasOwnProperty('staffCount')) {
+                bindings = ["k12StaffStaffMemberIdentifierState"];
+                headers = ["Staff Id"];
+            }
 
-            //console.log('reportLevel');
-            //console.log(reportLevel);
+
             if (reportLevel == 'lea') {
                 bindings.push('leaIdentifierSea');
                 headers.push('LEA ID');
@@ -546,7 +593,7 @@ export class PivottableComponent {
                 headers.push('School ID');
             }
 
-            var selectedFilter = {}
+            let selectedFilter = {}
 
           
             for (const key in filters) {
@@ -603,8 +650,13 @@ export class PivottableComponent {
 
             const countColumn = viewDef.fields.find(f => f.header === 'Count').binding;
             if (countColumn) {
-                bindings.push(countColumn);
-                headers.push('Count');
+                if (countColumn == 'staffFullTimeEquivalency') {
+                    bindings.push('staffCount');
+                    headers.push('Count'); }
+                else {
+                    bindings.push(countColumn);
+                    headers.push('Count');
+                }
             }
 
             const selectedFilterJson = JSON.stringify(selectedFilter);
@@ -614,9 +666,9 @@ export class PivottableComponent {
                 recordCount: value,
                 filters: selectedFilterJson,
                 reportYear: reportData.reportYear,
-                reportLevel: reportData.data[0].reportLevel,
-                categorySetCode: reportData.data[0].categorySetCode,
-                reportCode: reportData.data[0].reportCode,
+                reportLevel: firstDataRow.reportLevel,
+                categorySetCode: firstDataRow.categorySetCode,
+                reportCode: firstDataRow.reportCode,
                 bindings: bindings,
                 headers: headers
             };

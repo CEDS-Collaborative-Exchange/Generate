@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-edenvironmentdisabilitiesage3-5',
     templateUrl: './edenvironmentdisabilitiesage3-5.component.html',
     styleUrls: ['./edenvironmentdisabilitiesage3-5.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class EdEnvironmentDisabilitiesage3To5Component implements AfterViewInit, OnChanges, OnInit {

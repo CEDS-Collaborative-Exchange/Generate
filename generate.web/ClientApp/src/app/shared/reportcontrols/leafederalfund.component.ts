@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-leafederalfund',
     templateUrl: './leafederalfund.component.html',
     styleUrls: ['./leafederalfund.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class LeaFederalFundComponent implements AfterViewInit, OnChanges, OnInit {

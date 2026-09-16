@@ -22,7 +22,8 @@ declare let alphanum: any;
     selector: 'generate-app-charterschool',
     templateUrl: './charterschool.component.html',
     styleUrls: ['./charterschool.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class CharterSchoolComponent implements AfterViewInit, OnChanges, OnInit {

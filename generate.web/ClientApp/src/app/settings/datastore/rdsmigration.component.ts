@@ -12,8 +12,6 @@ import { DimSchoolYearDataMigrationType } from '../../models/app/schoolYear';
 import { DataMigrationTask } from '../../models/app/migrationtasks';
 import { DataMigrationHistory } from '../../models/app/dataMigrationHistory';
 import { GuiColumn, GuiPaging, GuiPagingDisplay, GuiRowColoring, GuiRowStyle } from '@generic-ui/ngx-grid';
-
-import { Message } from '@generic-ui/hermes/core/domain/message/message';
 declare let componentHandler: any;
 declare let moment: any;
 
@@ -21,7 +19,8 @@ declare let moment: any;
     selector: 'generate-app-rdsmigration',
     templateUrl: './rdsmigration.component.html',
     styleUrls: ['./rdsmigration.component.scss'],
-    providers: [DataMigrationService, UserService, MigrationMessageService, DataMigrationHistoryService]
+    providers: [DataMigrationService, UserService, MigrationMessageService, DataMigrationHistoryService],
+    standalone: false
 })
 export class RDSMigrationComponent implements OnInit, AfterViewInit, OnDestroy {
     

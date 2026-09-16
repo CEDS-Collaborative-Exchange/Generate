@@ -257,3 +257,5 @@ generate.console/StagingTestData_01_0001_Generate_Staging.sql
 generate.console/StagingTestData_01_0002_Generate_Staging_AllData.sql
 generate.background/logs/
 generate.tar
+/generate.web/ClientApp/package-lock.json
+/generate.web/package-lock.json

@@ -5,7 +5,8 @@ declare let componentHandler: any;
 @Component({
     selector: 'generate-app-pagetitle',
     templateUrl: './pagetitle.component.html',
-    styleUrls: ['./pagetitle.component.scss']
+    styleUrls: ['./pagetitle.component.scss'],
+    standalone: false
 })
 export class PageTitleComponent implements AfterViewInit {
 

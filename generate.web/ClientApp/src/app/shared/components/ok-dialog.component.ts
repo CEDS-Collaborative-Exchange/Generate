@@ -4,7 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
     selector: 'generate-app-ok-dialog',
     templateUrl: './ok-dialog.component.html',
-    styleUrls: ['./ok-dialog.component.scss']
+    styleUrls: ['./ok-dialog.component.scss'],
+    standalone: false
 })
 export class OkDialogComponent implements OnInit {
 

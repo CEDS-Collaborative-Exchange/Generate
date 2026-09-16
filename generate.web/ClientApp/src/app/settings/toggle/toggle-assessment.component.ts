@@ -21,7 +21,8 @@ declare let moment: any;
     selector: 'generate-app-settings-toggleassessment',
     templateUrl: './toggle-assessment.component.html',
     styleUrls: ['./toggle-assessment.component.scss'],
-    providers: [ToggleAssessmentService, AssessmentTypeService]
+    providers: [ToggleAssessmentService, AssessmentTypeService],
+    standalone: false
 })
 export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit {
 

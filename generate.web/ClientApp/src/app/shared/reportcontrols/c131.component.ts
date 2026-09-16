@@ -22,7 +22,8 @@ declare let alphanum: any;
     selector: 'generate-app-c131',
     templateUrl: './c131.component.html',
     styleUrls: ['./c131.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class C131Component implements AfterViewInit, OnChanges, OnInit {

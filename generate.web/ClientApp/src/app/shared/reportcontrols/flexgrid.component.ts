@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-flexgrid',
     templateUrl: './flexgrid.component.html',
     styleUrls: ['./flexgrid.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class FlexGridComponent implements AfterViewInit, OnChanges, OnInit {

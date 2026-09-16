@@ -56,12 +56,6 @@ builder.Services.AddMvc()
     .AddControllersAsServices()  //Injecting Controllers themselves thru DI   //For further info see: http://docs.autofac.org/en/latest/integration/aspnetcore.html#controllers-as-services
     .AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
-// Add Angular services
-//builder.Services.AddSpaStaticFiles(spa => 
-//    {
-//        spa.RootPath = $"/ClientApp/dist";
-//    });
-
 // Register the Swagger generator, defining one or more Swagger documents
 builder.Services.AddSwaggerGen(c =>
 {
@@ -129,7 +123,7 @@ app.UseSpa(spa => {
     if (builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("CI"))
     {
         spa.Options.SourcePath = "ClientApp";
-        spa.Options.StartupTimeout = new TimeSpan(0, 2, 120);
+        spa.Options.StartupTimeout = new TimeSpan(0, 6, 0);
         spa.UseAngularCliServer(npmScript: "start");
     }
 });

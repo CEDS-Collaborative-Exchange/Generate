@@ -93,19 +93,7 @@ function MSALInstanceFactory() {
     return clientApp;
 }
 var AppModule = function () {
-    var _classDecorators = [(0, core_1.NgModule)({
-            imports: [
-                platform_browser_1.BrowserModule,
-                http_1.HttpClientModule,
-                forms_1.FormsModule,
-                animations_1.BrowserAnimationsModule,
-                app_routing_module_1.AppRoutingModule,
-                shared_module_1.SharedModule,
-                paginator_1.MatPaginatorModule,
-                msal_angular_1.MsalModule,
-                app_drawer_component_1.AppDrawerComponent
-            ],
-            declarations: [
+    var _classDecorators = [(0, core_1.NgModule)({ declarations: [
                 home_component_1.HomeComponent,
                 about_component_1.AboutComponent,
                 app_not_found_component_1.AppNotFoundComponent,
@@ -113,7 +101,16 @@ var AppModule = function () {
                 app_header_component_1.AppHeaderComponent,
                 app_footer_component_1.AppFooterComponent
             ],
-            providers: [
+            bootstrap: [
+                app_component_1.AppComponent
+            ], imports: [platform_browser_1.BrowserModule,
+                forms_1.FormsModule,
+                animations_1.BrowserAnimationsModule,
+                app_routing_module_1.AppRoutingModule,
+                shared_module_1.SharedModule,
+                paginator_1.MatPaginatorModule,
+                msal_angular_1.MsalModule,
+                app_drawer_component_1.AppDrawerComponent], providers: [
                 app_config_1.AppConfig,
                 {
                     provide: core_2.APP_INITIALIZER,
@@ -125,12 +122,9 @@ var AppModule = function () {
                     provide: msal_angular_1.MSAL_INSTANCE,
                     useFactory: MSALInstanceFactory
                 },
-                msal_angular_1.MsalService
-            ],
-            bootstrap: [
-                app_component_1.AppComponent
-            ]
-        })];
+                msal_angular_1.MsalService,
+                (0, http_1.provideHttpClient)((0, http_1.withInterceptorsFromDi)())
+            ] })];
     var _classDescriptor;
     var _classExtraInitializers = [];
     var _classThis;

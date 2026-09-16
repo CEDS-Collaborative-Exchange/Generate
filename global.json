@@ -1,1 +1,8 @@
-{"projects":["generate.web","generate.core","generate.console","generate.test"]}
+{
+  "sdk": {
+    "version": "10.0.203",
+    "rollForward": "latestMinor",
+    "allowPrerelease": false
+  },
+  "projects": ["generate.web", "generate.core", "generate.console", "generate.test"]
+}

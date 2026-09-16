@@ -17,7 +17,8 @@ declare let componentHandler: any;
 @Component({
     selector: 'generate-app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
+    styleUrls: ['./login.component.scss'],
+    standalone: false
 })
 
 

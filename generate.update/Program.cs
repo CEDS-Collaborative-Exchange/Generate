@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
@@ -24,7 +24,7 @@ namespace generate.update
                                                   .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                                                   .Enrich.FromLogContext()
                                                   .WriteTo.Console()
-                                                  .WriteTo.RollingFile("logs/log-{Date}.txt")
+                                                  .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
                                                   .CreateLogger();
 
             try
@@ -51,10 +51,13 @@ namespace generate.update
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
+        public static IHost BuildWebHost(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .UseSerilog()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                })
                 .Build();
     }
 }

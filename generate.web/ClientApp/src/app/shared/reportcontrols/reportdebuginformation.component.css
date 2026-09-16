@@ -49,6 +49,13 @@ hr {
     display: inline-block;
 }
 
+.modal-close-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 1;
+}
+
  .zoom-wrapper > h3:first-child {
     margin-top: 0;
     padding-top: 7.5rem;

@@ -264,7 +264,9 @@ var PivottableComponent = function () {
                     },
                     format: function (x) {
                         //format with thousands separators
-                        if (x == null || isNaN(x)) { return ''; }
+                        if (x == null || isNaN(x)) {
+                            return '';
+                        }
                         var n = parseFloat(x);
                         return n.toLocaleString('en-US');
                     },
@@ -456,7 +458,7 @@ var PivottableComponent = function () {
                         if (c === f.header) {
                             exports.reportData.categorySets[0].categoryOptions.forEach(function (o) {
                                 //if (o.categoryOptionCode === d[f.binding]) {
-                                if (o.categoryOptionCode.toLowerCase() === d[f.binding].toLowerCase()) {
+                                if (o.categoryOptionCode.toLowerCase() === (d[f.binding] !== undefined ? d[f.binding].toLowerCase() : '')) {
                                     d[f.binding] = o.categoryOptionName;
                                 }
                             });
@@ -475,7 +477,7 @@ var PivottableComponent = function () {
             exports.aggregateColumn = viewDef.columnFields.items[len - 1];
             function displayDebugInfo(e, value, filters, pivotData) {
                 //let categorySetCode = reportData.categorySets[0].categorySetCode;
-                /*console.log(reportData);*/
+                /* console.log(reportData.data[0]);*/
                 var reportYear = exports.reportData.reportYear;
                 var reportLevel = exports.reportData.data[0].reportLevel;
                 var categorySetCode = exports.reportData.data[0].categorySetCode;
@@ -483,8 +485,10 @@ var PivottableComponent = function () {
                 //  let headers = reportData.categorySets[0].categories;
                 var bindings = ["k12StudentStudentIdentifierState"];
                 var headers = ["Student Id"];
-                //console.log('reportLevel');
-                //console.log(reportLevel);
+                if (exports.reportData.data[0].hasOwnProperty('staffCount')) {
+                    bindings = ["k12StaffStaffMemberIdentifierState"];
+                    headers = ["Staff Id"];
+                }
                 if (reportLevel == 'lea') {
                     bindings.push('leaIdentifierSea');
                     headers.push('LEA ID');
@@ -543,8 +547,14 @@ var PivottableComponent = function () {
                 }
                 var countColumn = viewDef.fields.find(function (f) { return f.header === 'Count'; }).binding;
                 if (countColumn) {
-                    bindings.push(countColumn);
-                    headers.push('Count');
+                    if (countColumn == 'staffFullTimeEquivalency') {
+                        bindings.push('staffCount');
+                        headers.push('Count');
+                    }
+                    else {
+                        bindings.push(countColumn);
+                        headers.push('Count');
+                    }
                 }
                 var selectedFilterJson = JSON.stringify(selectedFilter);
                 var data = {

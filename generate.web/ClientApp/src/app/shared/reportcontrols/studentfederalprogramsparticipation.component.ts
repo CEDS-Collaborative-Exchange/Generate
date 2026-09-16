@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-studentfederalprogramsparticipation',
     templateUrl: './studentfederalprogramsparticipation.component.html',
     styleUrls: ['./studentfederalprogramsparticipation.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class FederalProgramsParticipationComponent implements AfterViewInit, OnChanges, OnInit {

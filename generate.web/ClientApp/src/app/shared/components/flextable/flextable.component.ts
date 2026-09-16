@@ -15,8 +15,7 @@ import * as $ from 'jquery';
     selector: 'generate-app-table',
     styleUrl: 'flextable.component.css',
     templateUrl: 'flextable.component.html',
-    standalone: true,
-    imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatPaginatorModule, MatSortModule, MatCheckboxModule],
+    imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatPaginatorModule, MatSortModule, MatCheckboxModule]
 })
 export class FlextableComponent {
     @Input() itemsSource: any;
