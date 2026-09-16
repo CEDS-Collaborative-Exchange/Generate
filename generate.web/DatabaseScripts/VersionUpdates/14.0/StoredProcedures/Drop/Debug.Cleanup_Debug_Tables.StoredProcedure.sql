@@ -1,0 +1,13 @@
+﻿
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'Debug' AND ROUTINE_NAME = 'Cleanup_Debug_Tables') 
+BEGIN
+	DROP PROCEDURE [Debug].[Cleanup_Debug_Tables]
+END
+
+
+
+
+
+
+
+
