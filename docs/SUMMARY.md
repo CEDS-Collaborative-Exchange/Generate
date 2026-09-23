@@ -59,7 +59,7 @@
     * [The New Report Migration Process](developer-guides/migration/fact-to-report/the-new-report-migration-process.md)
   * [Troubleshooting](developer-guides/migration/troubleshooting/README.md)
     * [Troubleshooting Report Migration Results](developer-guides/migration/troubleshooting/troubleshooting-report-migration-results.md)
-    * [Unser Interface Migration Troubleshooting](developer-guides/migration/troubleshooting/unser-interface-migration-troubleshooting.md)
+    * [User Interface Migration Troubleshooting](developer-guides/migration/troubleshooting/unser-interface-migration-troubleshooting.md)
     * [Debugging the Staging-to-Fact Migrations](developer-guides/migration/troubleshooting/debugging-the-staging-to-fact-migrations.md)
   * [Implementation FAQ](developer-guides/migration/implementation-faq.md)
   * [Data Migration](developer-guides/migration/data-migration.md)
