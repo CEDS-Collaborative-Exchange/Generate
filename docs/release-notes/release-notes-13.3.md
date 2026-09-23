@@ -1,6 +1,6 @@
 ---
 description: This document describes the technical enhancements to Generate version 13.3.
-icon: sparkles
+icon: memo-pad
 cover: ../.gitbook/assets/GenerateBanner13_3.avif
 coverY: 0
 layout:
@@ -24,6 +24,8 @@ layout:
   tags:
     visible: true
   actions:
+    visible: true
+  anchors:
     visible: true
 ---
 
