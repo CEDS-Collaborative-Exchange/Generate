@@ -84,6 +84,7 @@ their `K12Enrollment` join mirrors the production ETL
 
 I'd do **(A) + (C)**: (C) is a cheap, high-value guard regardless of where it runs.
 
+Nathan's response: Go with (A) and (C)
 ---
 
 ## Q1 (BLOCKER, highest value) — How should the 38 unregistered specs be registered in `App.EtlMetadata`?

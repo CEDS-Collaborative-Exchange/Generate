@@ -27,7 +27,9 @@ namespace generate.infrastructure.Services
         private readonly IOllamaClient _ollama;
         private readonly string _connectionString;
         private readonly bool _allowSqlExecution;
+        private readonly bool _selfReview;
         private readonly int _defaultMaxLoops;
+        private readonly int _maxTableAttempts;
         private readonly int _adminTimeoutSeconds;
 
         public EtlChatService(
@@ -41,7 +43,13 @@ namespace generate.infrastructure.Services
             _ollama = ollama;
             _connectionString = configuration["Data:AppDbContextConnection"];
             _allowSqlExecution = !string.Equals(configuration["EtlChat:AllowSqlExecution"], "false", StringComparison.OrdinalIgnoreCase);
+            // Self-review is a SECOND model round-trip that re-checks the generated SQL. On by default (prod);
+            // set EtlChat:SelfReview=false to skip it (halves LLM time — used by the live test harness).
+            _selfReview = !string.Equals(configuration["EtlChat:SelfReview"], "false", StringComparison.OrdinalIgnoreCase);
             _defaultMaxLoops = int.TryParse(configuration["EtlChat:DefaultMaxLoops"], out var m) ? m : 10;
+            // Per-table retry budget for the multi-table StagingLoad (build one Staging table per turn; a
+            // table that fails this many times pauses for the user instead of thrashing the whole run).
+            _maxTableAttempts = int.TryParse(configuration["EtlChat:MaxTableAttempts"], out var mta) && mta > 0 ? mta : 4;
             // Timeout (seconds) for the long deterministic steps (RDS wrapper, create_reports, test case).
             _adminTimeoutSeconds = int.TryParse(configuration["EtlChat:AdminTimeoutSeconds"], out var at) && at > 0 ? at : 3600;
         }
@@ -425,6 +433,8 @@ namespace generate.infrastructure.Services
                 return result;
             }
 
+            try
+            {
             // At a later (deterministic) step, the user can steer in plain English:
             //  • "do it" / "yes" / "apply" → run the fix the bot last proposed, then retry the step.
             //  • any other free-form guidance → the LLM generates & runs corrective Staging SQL, then retries.
@@ -462,23 +472,32 @@ namespace generate.infrastructure.Services
                 await AutoProposeFixAsync(session, phase);
             }
             return r;
+            }
+            catch (Exception ex)
+            {
+                // The background runner only LOGS run exceptions, so a bug in prompt-building or a phase step
+                // would look like "clicking Run does nothing". Surface it as a visible chat error instead.
+                try
+                {
+                    AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Error, session.CurrentLoop,
+                        "⚠️ The run stopped on an unexpected error: " + ex.Message + " (" + ex.GetType().Name + "). " +
+                        "Fix the cause and click Run again; the full stack trace is in the server log.");
+                    session.Status = EtlChatSessionStatus.AwaitingInput;
+                    _appRepository.Save();
+                }
+                catch { /* best effort — never let error reporting throw */ }
+                result.Outcome = EtlChatIterationOutcome.Error;
+                result.Status = EtlChatSessionStatus.AwaitingInput;
+                result.CanContinue = false;
+                result.Summary = "Run error: " + ex.Message;
+                return result;
+            }
         }
 
         // -------------------- Phase 2: Staging load (LLM) --------------------
 
         private async Task<EtlChatIterationResultDto> RunStagingLoadPhaseAsync(EtlChatSession session, EtlChatIterationResultDto result)
         {
-            if (session.CurrentLoop >= session.MaxLoops && session.Status != EtlChatSessionStatus.Completed)
-            {
-                session.Status = EtlChatSessionStatus.Failed;
-                _appRepository.Save();
-                result.Outcome = EtlChatIterationOutcome.MaxLoopsReached;
-                result.Status = session.Status;
-                result.CanContinue = false;
-                result.Summary = $"Reached the max of {session.MaxLoops} loops without matching counts.";
-                return result;
-            }
-
             if (!_ollama.IsConfigured)
             {
                 result.Outcome = EtlChatIterationOutcome.Error;
@@ -498,10 +517,6 @@ namespace generate.infrastructure.Services
             // from real schema/values instead of guessing.
             PostPhase1ContextOnce(session);
 
-            // Per-table chunked build: drive ONE mapped Staging table per iteration. The transcript replay
-            // gives the model conversational context (prior chunks it wrote, lookup results, execution errors),
-            // so it builds/fixes the CURRENT table incrementally instead of re-deriving a whole multi-table
-            // script each turn (which small models can't do — that caused the repeat-the-same-thing loop).
             var mappedTables = GetMappedStagingTables(session.EtlMapId);
             if (mappedTables.Count == 0)
             {
@@ -514,16 +529,57 @@ namespace generate.infrastructure.Services
                 result.CanContinue = false;
                 return result;
             }
-            var remainingTables = MappedTablesNotInserted(session.EtlMapId, session.LastEtlSql ?? "");
-            var loadedTables = mappedTables.Where(t => !remainingTables.Any(r => string.Equals(r, t, StringComparison.OrdinalIgnoreCase))).ToList();
-            string currentTable = remainingTables.FirstOrDefault() ?? mappedTables[0];
-            int tableIndex = mappedTables.FindIndex(t => string.Equals(t, currentTable, StringComparison.OrdinalIgnoreCase)) + 1;
 
-            // Build the conversation (system + replayed transcript + a focused nudge for THIS table) and call
+            // PER-TABLE LOCKING LOOP: build ONE Staging table per turn. Tables that load cleanly are LOCKED
+            // IN (recorded in the transcript) and never regenerated, so a later table's failure can't break
+            // an earlier success — the run makes monotonic progress instead of re-rolling the whole script
+            // and thrashing ("10 loops, a different error each time"). The client auto-continues (CanContinue)
+            // to the next table; we only advance to validation once EVERY mapped table is loaded.
+            var (completed, failsThisTable) = ScanStagingProgress(session.EtlChatSessionId);
+            string table = mappedTables.FirstOrDefault(t => !completed.Contains(t));
+            if (table == null)
+            {
+                // All tables already loaded (e.g. a resumed session) — stitch/publish and advance.
+                return FinishStagingLoad(session, result, mappedTables.Count);
+            }
+            int total = mappedTables.Count;
+            int index = mappedTables.IndexOf(table) + 1;
+
+            // Global safety ceiling so a pathological session can't spin forever: give every table its retry
+            // budget plus a little slack. (The per-table cap below is the normal stopping condition.)
+            int globalCeiling = Math.Max(session.MaxLoops, total * _maxTableAttempts + total + 2);
+            if (session.CurrentLoop >= globalCeiling && session.Status != EtlChatSessionStatus.Completed)
+            {
+                session.Status = EtlChatSessionStatus.Failed;
+                _appRepository.Save();
+                result.Outcome = EtlChatIterationOutcome.MaxLoopsReached;
+                result.Status = session.Status;
+                result.CanContinue = false;
+                result.Summary = $"Reached the overall safety ceiling of {globalCeiling} loops.";
+                return result;
+            }
+
+            // This table has burned its retry budget — stop and hand back to the user rather than thrash.
+            if (failsThisTable >= _maxTableAttempts)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Question, session.CurrentLoop,
+                    $"I couldn't build a working load for Staging.{table} after {_maxTableAttempts} attempts (the last SQL error is above). " +
+                    $"{completed.Count} of {total} table(s) loaded so far. Tell me how to proceed — e.g. adjust the mapping for this table then say \"retry\", give guidance, or \"skip\".");
+                session.Status = EtlChatSessionStatus.AwaitingInput;
+                session.ModifiedDate = DateTime.UtcNow;
+                _appRepository.Save();
+                result.Outcome = EtlChatIterationOutcome.Failed;
+                result.Status = session.Status;
+                result.CanContinue = false;
+                result.Summary = $"Paused — Staging.{table} failed {_maxTableAttempts} times.";
+                return result;
+            }
+
+            // Build the conversation (system + replayed transcript + a focused single-table nudge) and call
             // the model. Stream the response into a single live "thinking" message so the user can watch it.
-            var messages = BuildPrompt(session, BuildPerTableNudge(session, currentTable, tableIndex, mappedTables.Count, loadedTables));
+            var messages = BuildPrompt(session, BuildPerTableNudge(session, table, index, total, completed.ToList()));
             var liveMessage = AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Status, session.CurrentLoop,
-                $"🧠 Asking the model ({_ollama.Model}) to build Staging.{currentTable} ({tableIndex} of {mappedTables.Count})…");
+                $"🧠 Asking the model ({_ollama.Model}) to build the load for Staging.{table} (table {index} of {total})…");
             string reply;
             try
             {
@@ -619,74 +675,32 @@ namespace generate.infrastructure.Services
                 return result;
             }
 
-            // Deterministic backstop BEFORE execution: repair a `<source_table>`-style placeholder in the
-            // FROM clause using the known source object (the #1 small-model failure → "Incorrect syntax
-            // near '<'"). If it can't resolve, feed a focused correction back and retry THIS table.
-            var placeholderFix = FixSourcePlaceholders(session, parsed.EtlSql);
-            if (placeholderFix.Blocked)
-            {
-                var names = ResolveSourceObjects(session);
-                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop,
-                    $"Staging.{currentTable}: your SQL contains a placeholder like `<source_table>`. Use the REAL source object name(s) verbatim in FROM/JOIN: " +
-                    (names.Count > 0 ? string.Join(", ", names) : "the source object shown in the ## Source section above") +
-                    $". Re-send just the ```sql block for Staging.{currentTable} with the actual name(s).");
-                return FailOrContinue(session, result, $"Staging.{currentTable}: <source_table> placeholder — asked the model to use the real source name.");
-            }
-            if (placeholderFix.Note != null)
-            {
-                parsed.EtlSql = StripYearDeclare(placeholderFix.Sql);
-                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop, placeholderFix.Note);
-            }
-
-            // Pre-run REVIEW: have the model review its own chunk for Microsoft T-SQL bugs, grounded in the
+            // Pre-run REVIEW: have the model review its own SQL for Microsoft T-SQL bugs, grounded in the
             // real Staging targets. Best-effort. (Strip any DECLARE review may reintroduce.)
-            if (_allowSqlExecution)
+            if (_allowSqlExecution && _selfReview)
             {
                 parsed.EtlSql = StripYearDeclare(await ReviewEtlSqlAsync(session, parsed.EtlSql));
             }
 
-            // Completeness backstop: the chunk for THIS table MUST insert into it. A delete-only chunk —
-            // e.g. the model split the INSERT into a separate block, or the review dropped it — would run a
-            // DELETE that removes the year's rows, leave the table empty, mark it "loaded", and then loop
-            // forever (the table is still uninserted). Refuse it and ask for the complete DELETE+INSERT.
-            bool insertsCurrent = Regex.IsMatch(parsed.EtlSql ?? "",
-                @"(?i)\b(insert\s+into|merge\s+(into\s+)?)\s*(\[?Staging\]?\.)?\[?" + Regex.Escape(currentTable) + @"\]?\b");
-            if (!insertsCurrent)
-            {
-                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop,
-                    $"The script for Staging.{currentTable} has no INSERT INTO Staging.{currentTable} — running only the DELETE would leave the table empty. " +
-                    $"Re-send the COMPLETE load for Staging.{currentTable} in ONE ```sql block: the `DELETE FROM Staging.{currentTable} WHERE SchoolYear = @SchoolYear;` FOLLOWED BY the `INSERT INTO Staging.{currentTable} (...columns...) SELECT ... FROM <source>;`.");
-                return FailOrContinue(session, result, $"Staging.{currentTable}: chunk had no INSERT — asked the model for the complete load.");
-            }
+            // Deterministic schema-qualification backstop for the #1 loop cause: the model occasionally
+            // writes a source table in FROM/JOIN WITHOUT its schema (e.g. `FROM OrganizationExtract2026`),
+            // which resolves to dbo and throws 'Invalid object name'. We KNOW every source object's
+            // schema-qualified name from the map, so we re-qualify bare occurrences. This corrects only the
+            // schema prefix — it makes no logic decision, so it does not undermine the LLM-driven load.
+            parsed.EtlSql = QualifySourceObjects(session, parsed.EtlSql);
 
-            // Loop-break: if the model re-sent SQL identical to the previous attempt that already failed
-            // (and the deterministic backstops above couldn't change it), stop re-running the same failing
-            // SQL — pause and hand back with specific guidance instead of burning loops in an idempotent cycle.
-            if (_allowSqlExecution && IsRepeatOfLastFailedChunk(session, currentTable, parsed.EtlSql))
-            {
-                AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Error, session.CurrentLoop,
-                    $"⛔ Stuck on Staging.{currentTable}: this attempt is identical to the previous one that just failed, so I stopped re-running it. " +
-                    "Read the execution error above and change the SPECIFIC expression it names — e.g. for a bit column, feed it `CASE WHEN <sourceCol> IN ('Y','1') THEN 1 ELSE 0 END` instead of the raw value — then resend, or edit the SQL manually.");
-                session.Status = EtlChatSessionStatus.AwaitingInput;
-                _appRepository.Save();
-                result.Outcome = EtlChatIterationOutcome.AwaitingInput;
-                result.Status = session.Status;
-                result.CanContinue = false;
-                return result;
-            }
-
-            // We have a chunk for this table: count a development loop and show it.
+            // We have this table's load script: count a development loop and show it.
             session.CurrentLoop += 1;
             result.IterationNumber = session.CurrentLoop;
             AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Sql, session.CurrentLoop,
-                $"-- ETL SQL (Staging.{currentTable})\n" + parsed.EtlSql.Trim());
+                $"-- ETL SQL (Staging.{table} — table {index}/{total})\n" + parsed.EtlSql.Trim());
 
             int year = ResolveSchoolYear(session);
             string declareLine = $"DECLARE @SchoolYear SMALLINT = {year};";
 
             if (!_allowSqlExecution)
             {
-                // Can't validate per-chunk; accumulate into the stitched script and let the user run it.
+                // Execution disabled — accumulate this table's chunk and let the user run the script manually.
                 AccumulateChunk(session, declareLine, parsed.EtlSql);
                 AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Status, session.CurrentLoop,
                     "SQL execution is disabled (EtlChat:AllowSqlExecution=false). Review and run the SQL above manually.");
@@ -698,51 +712,100 @@ namespace generate.infrastructure.Services
                 return result;
             }
 
-            // Execute the chunk (guarded, Staging-scoped), prepending a temporary @SchoolYear DECLARE so the
-            // standalone chunk runs. On error, feed it back and retry THIS table conversationally — NOT a
-            // whole-script redo (that was the idempotency loop).
+            // Execute ONLY this table's chunk (guarded to the Staging schema), prepending a temporary
+            // @SchoolYear DECLARE. On error, feed the SQL Server error back and retry THIS table next turn —
+            // tables already loaded stay locked in and are never regenerated.
             string guardError = EtlSqlGuard.ValidateEtl(parsed.EtlSql);
             if (guardError != null)
             {
-                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop, $"Staging.{currentTable}: rejected ETL SQL: " + guardError);
-                return FailOrContinue(session, result, $"Staging.{currentTable}: rejected by safety guard: {guardError}");
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop,
+                    $"Rejected ETL SQL for Staging.{table}: " + guardError);
+                return StayAndContinue(session, result, EtlChatPhase.StagingLoad, $"Rejected by safety guard for Staging.{table}; retrying this table.");
             }
 
             AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
-                $"⚙️ Executing the Staging.{currentTable} load…");
+                $"⚙️ Executing the load for Staging.{table}…");
             string execError = ExecuteNonQuery(declareLine + "\r\n" + parsed.EtlSql);
+
+            // Deterministic backstop: if the ONLY problem is invented/invalid columns, strip those INSERT+SELECT
+            // pairs and retry ONCE. Models can stubbornly re-invent a column to fill a destination they can't
+            // source (esp. when the map over-maps a table to a source the author excludes); rather than burn the
+            // retry budget, we omit exactly the columns SQL Server rejected and load the rest.
             if (execError != null)
             {
-                // Point the model at the specific fix for the recurring bit-conversion error so it can
-                // correct the exact expression rather than re-sending the same SQL.
-                string hint = Regex.IsMatch(execError, @"(?i)to data type bit")
-                    ? $"\n\nThat error means a `bit` column is being fed a non-1/0 value (a text/'' result or a raw source value). Find the offending SELECT expression for that bit column and make it evaluate to ONLY 1, 0, or NULL — e.g. `CASE WHEN <src>='Y' THEN 1 WHEN <src>='N' THEN 0 ELSE NULL END`. Use the source sample values to pick the right true/false mapping; a bit column's CASE must never return '' or the raw text. Change ONLY that expression."
-                    : $"\n\nFix ONLY the Staging.{currentTable} block and re-send just its ```sql — keep whatever already worked.";
-                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop,
-                    $"Staging.{currentTable} load error:\n" + execError + hint);
-                return FailOrContinue(session, result, $"Staging.{currentTable} failed to execute; feeding the error back to the model.");
+                var invalid = ExtractInvalidColumns(execError);
+                if (invalid.Count > 0 && TryStripInvalidColumns(parsed.EtlSql, invalid, out var strippedSql))
+                {
+                    string e2 = ExecuteNonQuery(declareLine + "\r\n" + strippedSql);
+                    if (e2 == null)
+                    {
+                        parsed.EtlSql = strippedSql;
+                        execError = null;
+                        AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                            $"🧹 Omitted {invalid.Count} column(s) with no matching source column ({string.Join(", ", invalid)}) and loaded the rest — those destinations stay NULL.");
+                    }
+                    else
+                    {
+                        execError = e2; // stripping didn't resolve it — surface the remaining error to the model
+                    }
+                }
             }
 
-            // Chunk executed cleanly — accumulate it into the stitched script (one DECLARE at the top).
+            // Backstop 2: a raw Y/N (or similar) fed into a `bit` column. Auto-wrap the offending bit columns'
+            // SELECT expressions in the standard Y/N→1/0 CASE and retry once, rather than depend on the model.
+            if (execError != null && Regex.IsMatch(execError, @"(?i)to data type bit")
+                && TryFixBitConversions(parsed.EtlSql, table, session.EtlMapId, out var bitFixed))
+            {
+                string e3 = ExecuteNonQuery(declareLine + "\r\n" + bitFixed);
+                if (e3 == null)
+                {
+                    parsed.EtlSql = bitFixed;
+                    execError = null;
+                    AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
+                        "🧹 Auto-converted Y/N source value(s) to bit (1/0) for the bit column(s) and loaded the table.");
+                }
+                else
+                {
+                    execError = e3;
+                }
+            }
+
+            if (execError != null)
+            {
+                AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Error, session.CurrentLoop,
+                    "Staging load error:\n" + execError + BuildSqlErrorHint(execError, table));
+                // CanContinue=true → next turn retries THIS SAME table (it is still uncompleted); bounded by
+                // the per-table cap checked at the top of this method.
+                return StayAndContinue(session, result, EtlChatPhase.StagingLoad,
+                    $"Staging.{table} failed to execute; feeding the error back and retrying this table.");
+            }
+
+            // This table loaded cleanly — LOCK IT IN: append its chunk to the stitched script and record the
+            // success in the transcript (the "Loaded Staging.<T>" marker is how the next turn knows it's done).
             AccumulateChunk(session, declareLine, parsed.EtlSql);
+            completed.Add(table);
             AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.TestResult, session.CurrentLoop,
-                $"✅ Loaded Staging.{currentTable}.");
+                $"✅ Loaded Staging.{table} — {completed.Count} of {total} table(s) done.");
             session.ModifiedDate = DateTime.UtcNow;
             _appRepository.Save();
 
-            // More mapped tables to load? Stay in StagingLoad and build the next one next iteration — the
-            // transcript now carries this table's working SQL, so the model keeps context and only needs to
-            // produce the next (small, focused) chunk.
-            var stillRemaining = MappedTablesNotInserted(session.EtlMapId, session.LastEtlSql);
-            if (stillRemaining.Count > 0)
+            bool allDone = mappedTables.All(t => completed.Contains(t));
+            if (!allDone)
             {
+                // More tables to go — the client auto-continues to the next one.
                 return StayAndContinue(session, result, EtlChatPhase.StagingLoad,
-                    $"Loaded Staging.{currentTable}. {stillRemaining.Count} table(s) left: " + string.Join(", ", stillRemaining.Select(t => "Staging." + t)) + ".");
+                    $"Loaded Staging.{table}; moving to the next mapped table.");
             }
 
-            // Every mapped table is loaded — publish the stitched procedure and advance the runbook.
-            AddMessage(session.EtlChatSessionId, EtlChatRole.Assistant, EtlChatMessageType.Status, session.CurrentLoop,
-                $"✅ All {mappedTables.Count} mapped Staging table(s) loaded. Advancing to validation.");
+            return FinishStagingLoad(session, result, total);
+        }
+
+        // All mapped tables loaded: publish the stitched load as a stored procedure and advance to validation.
+        private EtlChatIterationResultDto FinishStagingLoad(EtlChatSession session, EtlChatIterationResultDto result, int total)
+        {
+            AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.TestResult, session.CurrentLoop,
+                $"✅ Source→Staging load complete for all {total} mapped table(s). Advancing to validation.");
+            session.ModifiedDate = DateTime.UtcNow;
             _appRepository.Save();
 
             // Materialize the validated ETL as an executable, registered stored procedure.
@@ -751,6 +814,238 @@ namespace generate.infrastructure.Services
             // Advance to the rest of the fact-type runbook (validate → RDS → reports → test).
             return Advance(session, result, EtlChatPhase.StagingValidate,
                 "Staging loaded (all mapped tables) — moving on to validation, the warehouse migration, reports, and the official test.");
+        }
+
+        // Turn a raw SQL Server error into a targeted, actionable correction hint for the model. The biggest
+        // repeat-failure classes get specific instructions; everything else gets a generic retry nudge.
+        private static string BuildSqlErrorHint(string execError, string table)
+        {
+            if (string.IsNullOrWhiteSpace(execError)) return "";
+            // "Invalid column name 'X'." — the model referenced a column that does not exist (usually an
+            // INVENTED source column to fill a destination it can't source). Name them and say: OMIT them.
+            var invalid = Regex.Matches(execError, @"Invalid column name '([^']+)'", RegexOptions.IgnoreCase)
+                               .Select(m => m.Groups[1].Value)
+                               .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (invalid.Count > 0)
+            {
+                return "\n\nThese column(s) do NOT exist in the source table(s) you selected: " +
+                       string.Join(", ", invalid.Select(c => "`" + c + "`")) +
+                       ". You invented them. In your corrected load, DELETE every SELECT expression that uses them AND remove the matching destination column from the INSERT list — OMIT those destination columns entirely (they stay NULL). Do NOT rename or guess a replacement column. Re-send ONLY the corrected load for Staging." + table + ".";
+            }
+            if (Regex.IsMatch(execError, @"(?i)to data type bit"))
+            {
+                return "\n\nThat error means a `bit` column is being fed a non-1/0 value. Make that column's SELECT expression evaluate to ONLY 1, 0, or NULL — e.g. `CASE WHEN <src> = 'Y' THEN 1 WHEN <src> = 'N' THEN 0 ELSE NULL END`.";
+            }
+            return $"\n\nFix the error above and re-send ONLY the corrected load for Staging.{table}.";
+        }
+
+        private static List<string> ExtractInvalidColumns(string execError) =>
+            string.IsNullOrEmpty(execError) ? new List<string>()
+            : Regex.Matches(execError, @"Invalid column name '([^']+)'", RegexOptions.IgnoreCase)
+                   .Select(m => m.Groups[1].Value).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+        // Split a SQL list on TOP-LEVEL commas only (commas inside parentheses — CAST(...), DATEFROMPARTS(a,b,c)
+        // — are not separators). Trims and drops empties.
+        private static List<string> SplitTopLevelCommas(string s)
+        {
+            var items = new List<string>();
+            if (string.IsNullOrEmpty(s)) return items;
+            int depth = 0, start = 0;
+            for (int i = 0; i < s.Length; i++)
+            {
+                char c = s[i];
+                if (c == '(') depth++;
+                else if (c == ')') { if (depth > 0) depth--; }
+                else if (c == ',' && depth == 0) { items.Add(s.Substring(start, i - start)); start = i + 1; }
+            }
+            items.Add(s.Substring(start));
+            return items.Select(x => x.Trim()).Where(x => x.Length > 0).ToList();
+        }
+
+        // Index of a keyword at paren-depth 0, matched as a whole word, at/after `start` (−1 if none).
+        private static int IndexOfTopLevelKeyword(string sql, string kw, int start)
+        {
+            int depth = 0;
+            for (int i = start; i < sql.Length; i++)
+            {
+                char c = sql[i];
+                if (c == '(') { depth++; continue; }
+                if (c == ')') { if (depth > 0) depth--; continue; }
+                if (depth != 0) continue;
+                bool leftBoundary = i == 0 || (!char.IsLetterOrDigit(sql[i - 1]) && sql[i - 1] != '_');
+                if (!leftBoundary) continue;
+                if (i + kw.Length <= sql.Length &&
+                    string.Compare(sql, i, kw, 0, kw.Length, StringComparison.OrdinalIgnoreCase) == 0 &&
+                    (i + kw.Length == sql.Length || (!char.IsLetterOrDigit(sql[i + kw.Length]) && sql[i + kw.Length] != '_')))
+                    return i;
+            }
+            return -1;
+        }
+
+        // Deterministic backstop for the stubborn "invented source column" failure: given the column names
+        // SQL Server reported as invalid, remove each INSERT column + its positionally-paired SELECT
+        // expression that references an invalid name, so the load succeeds with the columns that CAN be
+        // sourced (the rest stay NULL — which is what the map author's single-source guidance wants). Returns
+        // false (leaving the SQL untouched) on anything it can't safely rewrite, so a real bug still surfaces.
+        private bool TryStripInvalidColumns(string sql, List<string> invalidCols, out string cleaned)
+        {
+            cleaned = sql;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(sql) || invalidCols == null || invalidCols.Count == 0) return false;
+
+                // INSERT column list — identifiers only, so the first "(...)" after INSERT INTO is the list.
+                var ins = Regex.Match(sql, @"INSERT\s+INTO\s+[^\(]+\(([^)]*)\)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                if (!ins.Success) return false;
+                int colStart = ins.Groups[1].Index, colLen = ins.Groups[1].Length;
+                var insCols = SplitTopLevelCommas(ins.Groups[1].Value);
+
+                int selKw = IndexOfTopLevelKeyword(sql, "SELECT", ins.Index + ins.Length);
+                if (selKw < 0) return false;
+                int selStart = selKw + "SELECT".Length;
+                int fromKw = IndexOfTopLevelKeyword(sql, "FROM", selStart);
+                if (fromKw < 0) return false;
+                var selItems = SplitTopLevelCommas(sql.Substring(selStart, fromKw - selStart));
+
+                if (insCols.Count != selItems.Count || insCols.Count == 0) return false; // misaligned — don't risk it
+
+                var invSet = invalidCols;
+                var keepIns = new List<string>();
+                var keepSel = new List<string>();
+                int removed = 0;
+                for (int i = 0; i < selItems.Count; i++)
+                {
+                    bool bad = invSet.Any(inv => Regex.IsMatch(selItems[i], $@"(?<![\w]){Regex.Escape(inv)}(?![\w])", RegexOptions.IgnoreCase));
+                    if (bad) { removed++; continue; }
+                    keepIns.Add(insCols[i]);
+                    keepSel.Add(selItems[i]);
+                }
+                if (removed == 0 || keepIns.Count == 0) return false;
+
+                string newCols = "\r\n    " + string.Join(",\r\n    ", keepIns) + "\r\n";
+                string newSel = "\r\n    " + string.Join(",\r\n    ", keepSel) + "\r\n";
+                // Splice both regions back in order (INSERT column block precedes the SELECT block).
+                cleaned = sql.Substring(0, colStart) + newCols +
+                          sql.Substring(colStart + colLen, selStart - (colStart + colLen)) + newSel +
+                          sql.Substring(fromKw);
+                return true;
+            }
+            catch { return false; }
+        }
+
+        // The `bit`-typed columns of a Staging table (from INFORMATION_SCHEMA), used to auto-wrap Y/N source
+        // values into 1/0 when the model feeds a raw flag into a bit column.
+        private HashSet<string> GetBitColumns(string table)
+        {
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                conn.Open();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = @"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                                    WHERE TABLE_SCHEMA='Staging' AND TABLE_NAME=@t AND DATA_TYPE='bit'";
+                cmd.Parameters.AddWithValue("@t", table);
+                using var r = cmd.ExecuteReader();
+                while (r.Read()) set.Add(r.GetString(0));
+            }
+            catch { }
+            return set;
+        }
+
+        // Deterministic backstop for bit-column conversion failures. Two root causes: (1) the model feeds a raw
+        // Y/N string into a bit column, and (2) — subtler — the SOURCE column is ITSELF bit/numeric and the
+        // model wrote `CASE WHEN srccol = 'Y' ...`, which makes SQL Server convert 'Y' to bit and fail. We fix
+        // BOTH by rebuilding every bit destination's SELECT expression as a type-agnostic CAST-to-varchar CASE
+        // that yields 1/0/NULL whether the source is bit, int, or Y/N text. The source column reference is
+        // taken from the map (alias-preserving via the model's own text), so no logic decision is made.
+        private bool TryFixBitConversions(string sql, string table, int etlMapId, out string cleaned)
+        {
+            cleaned = sql;
+            try
+            {
+                var bitCols = GetBitColumns(table);
+                if (bitCols.Count == 0) return false;
+
+                var ins = Regex.Match(sql, @"INSERT\s+INTO\s+[^\(]+\(([^)]*)\)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                if (!ins.Success) return false;
+                var insCols = SplitTopLevelCommas(ins.Groups[1].Value);
+
+                int selKw = IndexOfTopLevelKeyword(sql, "SELECT", ins.Index + ins.Length);
+                if (selKw < 0) return false;
+                int selStart = selKw + "SELECT".Length;
+                int fromKw = IndexOfTopLevelKeyword(sql, "FROM", selStart);
+                if (fromKw < 0) return false;
+                var selItems = SplitTopLevelCommas(sql.Substring(selStart, fromKw - selStart));
+                if (insCols.Count != selItems.Count || insCols.Count == 0) return false;
+
+                // Map each staging (destination) column -> its mapped source column, so we know which source
+                // token a bit destination should read from even when the model buried it inside a bad CASE.
+                var srcByDest = GetMappedPairsForTable(etlMapId, table)
+                    .Where(p => !string.IsNullOrWhiteSpace(p.SourceCol))
+                    .GroupBy(p => p.Staging, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(g => g.Key, g => g.First().SourceCol, StringComparer.OrdinalIgnoreCase);
+
+                int wrapped = 0;
+                for (int i = 0; i < insCols.Count; i++)
+                {
+                    string dest = insCols[i].Replace("[", "").Replace("]", "").Trim();
+                    if (!bitCols.Contains(dest)) continue;
+
+                    var asm = Regex.Match(selItems[i], @"^(?<expr>.*?)\s+AS\s+(?<alias>[\[\]\w]+)\s*$", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                    string expr = asm.Success ? asm.Groups["expr"].Value.Trim() : selItems[i].Trim();
+                    string alias = asm.Success ? asm.Groups["alias"].Value.Trim() : insCols[i].Trim();
+
+                    // Prefer the source reference AS THE MODEL WROTE IT (keeps any alias prefix): find the mapped
+                    // source column token inside the model's expression. Fall back to the bare mapped name, then
+                    // to the model's whole expression.
+                    string reference = expr;
+                    if (srcByDest.TryGetValue(dest, out var srcCol) && !string.IsNullOrWhiteSpace(srcCol))
+                    {
+                        var refm = Regex.Match(expr, $@"(?:\w+\.)?{Regex.Escape(srcCol)}\b", RegexOptions.IgnoreCase);
+                        reference = refm.Success ? refm.Value : srcCol;
+                    }
+
+                    selItems[i] =
+                        $"CASE WHEN CAST({reference} AS varchar(50)) IN ('Y','1','T','TRUE','True','true') THEN 1 " +
+                        $"WHEN CAST({reference} AS varchar(50)) IN ('N','0','F','FALSE','False','false') THEN 0 " +
+                        $"ELSE NULL END AS {alias}";
+                    wrapped++;
+                }
+                if (wrapped == 0) return false;
+
+                string newSel = "\r\n    " + string.Join(",\r\n    ", selItems) + "\r\n";
+                cleaned = sql.Substring(0, selStart) + newSel + sql.Substring(fromKw);
+                return true;
+            }
+            catch { return false; }
+        }
+
+        // Reconstruct per-table progress from the transcript (no extra session column needed): which mapped
+        // tables have loaded cleanly, and how many CONSECUTIVE failures the current (in-progress) table has
+        // hit since the last success. The "Loaded Staging.<T>" marker is written on each clean table load.
+        private (HashSet<string> completed, int failsThisTable) ScanStagingProgress(int sessionId)
+        {
+            var completed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            int fails = 0;
+            foreach (var msg in GetMessages(sessionId))
+            {
+                string c = msg.Content ?? "";
+                var loaded = Regex.Match(c, @"Loaded Staging\.([A-Za-z0-9_]+)", RegexOptions.IgnoreCase);
+                if (loaded.Success)
+                {
+                    completed.Add(loaded.Groups[1].Value);
+                    fails = 0; // a success resets the current table's failure streak
+                    continue;
+                }
+                if (msg.MessageType == EtlChatMessageType.Error &&
+                    (c.StartsWith("Staging load error", StringComparison.OrdinalIgnoreCase) ||
+                     c.StartsWith("Rejected ETL SQL", StringComparison.OrdinalIgnoreCase)))
+                {
+                    fails++;
+                }
+            }
+            return (completed, fails);
         }
 
         // Append an executed per-table chunk to the session's stitched ETL script, ensuring exactly one
@@ -2321,10 +2616,41 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
             {
                 if (string.IsNullOrWhiteSpace(m.SourceTableName)) continue;
                 string schema = string.IsNullOrWhiteSpace(m.SourceSchemaName) ? "" : m.SourceSchemaName.Trim() + ".";
-                string obj = (schema + m.SourceTableName.Trim());
+                string obj = string.Concat(schema, m.SourceTableName.Trim());
                 if (seen.Add(obj)) result.Add(obj);
             }
             return result;
+        }
+
+        // Deterministic backstop: re-qualify any BARE reference to a known source table with its real
+        // schema (e.g. `FROM OrganizationExtract2026` -> `FROM Source.OrganizationExtract2026`). We only
+        // touch table tokens that (a) exactly match a source table this map knows about and (b) are not
+        // already schema-qualified and (c) are not a `Table.Column` reference (lookahead `(?!\s*\.)` — a
+        // column referenced by full table name stays valid against a schema-qualified FROM in T-SQL). Only
+        // the schema prefix is corrected; no ETL logic is changed.
+        private string QualifySourceObjects(EtlChatSession session, string sql)
+        {
+            if (string.IsNullOrWhiteSpace(sql)) return sql;
+            foreach (var obj in ResolveSourceObjects(session))
+            {
+                if (string.IsNullOrWhiteSpace(obj)) continue;
+                int dot = obj.IndexOf('.');
+                if (dot <= 0) continue;                 // no schema known for this source — nothing to enforce
+                string schema = obj.Substring(0, dot).Trim();
+                string table = obj.Substring(dot + 1).Trim();
+                if (string.IsNullOrWhiteSpace(table)) continue;
+                string tEsc = Regex.Escape(table);
+                string sEsc = Regex.Escape(schema);
+                // (1) Bare `[Table]`/`Table` (no schema) when NOT already prefixed by "<x>." and NOT itself
+                //     a schema/alias in a "Table.Column" reference (lookahead `(?!\s*\.)`).
+                sql = Regex.Replace(sql, $@"(?<![\w.\]])(?:\[{tEsc}\]|{tEsc}\b)(?!\s*\.)", obj, RegexOptions.IgnoreCase);
+                // (2) A FROM/JOIN that names the table under the WRONG schema (e.g. `dbo.Table`) — correct the
+                //     schema. Anchored to FROM/JOIN so an `alias.Column` that happens to match never triggers.
+                sql = Regex.Replace(sql,
+                    $@"(?i)\b(FROM|JOIN)\s+(?!{sEsc}\.)\[?\w+\]?\.(?:\[{tEsc}\]|{tEsc}\b)",
+                    m => m.Groups[1].Value + " " + obj);
+            }
+            return sql;
         }
 
         // Matches angle-bracket placeholders that stand in for the SOURCE object, e.g. <source_table>,
@@ -2446,6 +2772,30 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
             string fromList = sourceObjects.Count > 0 ? string.Join(", ", sourceObjects.Select(s => "`" + s + "`")) : null;
             string primarySource = sourceObjects.Count > 0 ? sourceObjects[0] : null;
 
+            // Map bare table name -> its schema-qualified object, so anything we RENDER (e.g. the declared
+            // joins below) shows the full `Source.Table` form and never teaches the model the bare name.
+            var qualifyMap = sourceObjects
+                .Where(o => o.IndexOf('.') > 0)
+                .GroupBy(o => o.Substring(o.IndexOf('.') + 1).Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+            Func<string, string> QualifyObj = s =>
+            {
+                if (string.IsNullOrWhiteSpace(s)) return s;
+                string t = s.Trim();
+                string bare = t.IndexOf('.') >= 0 ? t.Substring(t.IndexOf('.') + 1) : t;
+                return qualifyMap.TryGetValue(bare, out var q) ? q : t;
+            };
+
+            // PRIMACY: dropping the `Source.` schema is the single most common failure and it loops the whole
+            // load. Anchor the concept HIGH — concretely naming the real tables — before the long alignment
+            // map and rule list dilute it. (A deterministic backstop also re-qualifies before execution.)
+            if (fromList != null)
+            {
+                sb.AppendLine("## CRITICAL: `Source` is a database SCHEMA — always use the two-part name");
+                sb.AppendLine($"Every source table lives in a schema literally named `Source` (exactly like `dbo` or `Staging`). Its real, valid name is the TWO-PART name `Source.<Table>`: {fromList}. If you write only the bare table (e.g. `OrganizationExtract2026` instead of `Source.OrganizationExtract2026`), SQL Server looks in `dbo`, finds nothing, and throws \"Invalid object name\" — and the entire load fails. In EVERY FROM and JOIN, write the full `Source.<Table>` name exactly as listed above. This is the #1 mistake made here — do not make it.");
+                sb.AppendLine();
+            }
+
             // Enrich resolved source objects with any registry metadata (name/connection/notes). Sources may
             // be REGISTERED (EtlMapSource) or DERIVED from the mapping's SourceTable columns — either way we
             // inject EVERY source's real columns + sample below, so the model never has to guess a column on
@@ -2461,7 +2811,7 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
                 sb.AppendLine($"## Sources ({sourceObjects.Count}) — this file spec draws from multiple source datasets");
                 sb.AppendLine("Build the load by JOIN/UNION across these sources on the shared business keys (student id, LEA id, school id, school year). CRITICAL: join and select ONLY columns listed under each source below. If a column is NOT in a source's list, it does NOT exist on that source — do not reference it, and do not assume every source has the same columns.");
                 if (fromList != null)
-                    sb.AppendLine($"Use these EXACT source objects verbatim in FROM/JOIN: {fromList}. NEVER invent a source column name or a placeholder like `<source_table>`.");
+                    sb.AppendLine($"In every FROM/JOIN, use these EXACT, FULLY SCHEMA-QUALIFIED source objects verbatim — INCLUDE the schema prefix (e.g. `Source.OrganizationExtract2026`, NEVER the bare `OrganizationExtract2026`): {fromList}. An unqualified source table name throws 'Invalid object name' and the whole load fails. NEVER invent a source column name or a placeholder like `<source_table>`.");
                 foreach (var obj in sourceObjects)
                 {
                     registryByObject.TryGetValue(obj, out var reg);
@@ -2513,17 +2863,19 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
                              .Where(j => !string.IsNullOrWhiteSpace(j.LeftSourceObject) && !string.IsNullOrWhiteSpace(j.RightSourceObject))
                              .GroupBy(j => new { L = j.LeftSourceObject.Trim(), R = j.RightSourceObject.Trim(), T = string.IsNullOrWhiteSpace(j.JoinType) ? "LEFT" : j.JoinType.Trim().ToUpperInvariant() }))
                 {
+                    string lq = QualifyObj(g.Key.L);
+                    string rq = QualifyObj(g.Key.R);
                     var conds = g.OrderBy(x => x.SortOrder)
                                  .Where(x => !string.IsNullOrWhiteSpace(x.LeftColumn) && !string.IsNullOrWhiteSpace(x.RightColumn))
-                                 .Select(x => $"{g.Key.L}.{x.LeftColumn.Trim()} = {g.Key.R}.{x.RightColumn.Trim()}");
+                                 .Select(x => $"{lq}.{x.LeftColumn.Trim()} = {rq}.{x.RightColumn.Trim()}");
                     string on = string.Join(" AND ", conds);
-                    sb.AppendLine($"- {g.Key.T} JOIN {g.Key.R} ON " + (on.Length > 0 ? on : "(conditions not specified — see the join notes below)"));
+                    sb.AppendLine($"- {g.Key.T} JOIN {rq} ON " + (on.Length > 0 ? on : "(conditions not specified — see the join notes below)"));
                 }
                 if (!string.IsNullOrWhiteSpace(joinText))
                 {
                     sb.AppendLine("Author's join notes: " + joinText.Replace("\r", " ").Replace("\n", " ").Trim());
                 }
-                sb.AppendLine("Build FROM the first source and add the joins above; use ONLY the exact columns named for each ON clause.");
+                sb.AppendLine($"Build FROM {(primarySource ?? "the first source")} and add the joins above (every table schema-qualified as `Source.<Table>`); use ONLY the exact columns named for each ON clause.");
             }
             if (!string.IsNullOrWhiteSpace(processingText))
             {
@@ -2550,7 +2902,13 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
                 string srcCol = "";
                 if (!string.IsNullOrWhiteSpace(m.SourceColumnName) || !string.IsNullOrWhiteSpace(m.SourceTableName))
                 {
-                    string tbl = string.IsNullOrWhiteSpace(m.SourceTableName) ? "" : m.SourceTableName + ".";
+                    // Use the FULL schema-qualified source table (e.g. Source.OrganizationExtract2026) so the
+                    // model copies the correct FROM identifier — an unqualified table name causes "Invalid
+                    // object name" and a load loop.
+                    string srcTable = string.IsNullOrWhiteSpace(m.SourceTableName) ? "" :
+                        (string.IsNullOrWhiteSpace(m.SourceSchemaName) ? m.SourceTableName.Trim()
+                                                                       : m.SourceSchemaName.Trim() + "." + m.SourceTableName.Trim());
+                    string tbl = srcTable.Length == 0 ? "" : srcTable + ".";
                     string typ = string.IsNullOrWhiteSpace(m.SourceDataType) ? "" :
                         " " + m.SourceDataType + (string.IsNullOrWhiteSpace(m.SourceDataLength) ? "" : $"({m.SourceDataLength})");
                     srcCol = $" [{tbl}{m.SourceColumnName}{typ}]";
@@ -2591,22 +2949,19 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
                 sb.AppendLine("- (no mappings in this map yet — ask the user to confirm the source/target if unclear)");
             }
 
-            // Context: the CEDS permitted values each mapped option set allows, so coded transforms are valid.
-            string cedsValues = BuildCedsOptionValuesContext(mappings);
-            if (!string.IsNullOrWhiteSpace(cedsValues))
-            {
-                sb.AppendLine();
-                sb.AppendLine("## CEDS permitted option-set values (transform each coded source value to ONE of these)");
-                sb.AppendLine(cedsValues);
-            }
+            // IMPORTANT: the model must NOT translate source codes to CEDS values. Staging holds the RAW
+            // source enumeration values; Generate translates them downstream via Staging.SourceSystemReferenceData.
+            sb.AppendLine();
+            sb.AppendLine("## Coded / enumeration values — load them RAW (do NOT translate to CEDS)");
+            sb.AppendLine("For any coded or enumeration column, INSERT the source's ORIGINAL value EXACTLY as it appears in the source data — do NOT map or translate it to a CEDS option-set value. Generate performs that translation automatically downstream using the Staging.SourceSystemReferenceData table, so the ETL must NOT do it. The source→CEDS option-set mappings shown in the alignment map are for reference only; IGNORE them when writing your INSERT values and pass the raw source code straight through.");
 
             sb.AppendLine();
-            sb.AppendLine("## Target — I drive ONE Staging table per turn (build only the table I name)");
+            sb.AppendLine("## Target — build the load ONE Staging table per turn");
             if (stagingTables.Count > 0)
             {
                 int ti = 0;
                 foreach (var t in stagingTables) { sb.AppendLine($"  {++ti}. Staging.{t}"); }
-                sb.AppendLine($"- This map targets {stagingTables.Count} Staging table(s). I ask you for ONE at a time. Each turn, build ONLY the single table I name — a DELETE+INSERT pair for just that table. Do NOT load them all in one script, and do NOT re-send tables already loaded this session. I stitch the per-table blocks together at the end.");
+                sb.AppendLine($"- This map targets {stagingTables.Count} Staging table(s). I will name EXACTLY ONE table each turn — write ONLY that table's DELETE+INSERT (do NOT include any other table). Once a table loads cleanly it is locked in and I move you to the next one; if a run fails I feed you the exact SQL Server error and you re-send ONLY that one corrected table. This keeps each step small and reliable.");
             }
             else
             {
@@ -2620,7 +2975,7 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
             if (stagingTables.Count > 0)
             {
                 sb.AppendLine("## Staging table columns (name : type ; NOT NULL / bit are flagged)");
-                sb.AppendLine("Use these EXACT columns and types. INSERT ONLY the columns that have a mapped source (I list them for the table I name each turn) — OMIT any column with no source mapping; do NOT invent a value for it even if it is NOT NULL. Every `bit` column takes 1 or 0 only.");
+                sb.AppendLine("Use these EXACT columns and types. INSERT ONLY the columns that have a mapped source (per the alignment map above) — OMIT any column with no source mapping; do NOT invent a value for it even if it is NOT NULL. Every `bit` column takes 1 or 0 only.");
                 foreach (var t in stagingTables)
                 {
                     string cols = GetStagingColumns(t);
@@ -2639,25 +2994,26 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
             {
                 string codeList = runbook.ReportCodes.Count > 0 ? string.Join(", ", runbook.ReportCodes) : runbook.FactTypeCode;
                 sb.AppendLine($"## Full Staging requirements for file spec(s) {codeList} (authoritative — from app.vwStagingRelationships)");
-                sb.AppendLine("These are ALL the Staging schema tables & columns this file spec uses, with each column's data type/nullability and the CEDS reference table (SSRD) it maps through. Populate the columns your source provides (honoring NOT NULL and bit rules above); for coded columns, translate source values to the CEDS values shown earlier, which land in the referenced CEDS ref table.");
+                sb.AppendLine("These are ALL the Staging schema tables & columns this file spec uses, with each column's data type/nullability and the CEDS reference table (SSRD) it maps through. Populate the columns your source provides (honoring NOT NULL and bit rules above); for coded columns, load the source's RAW value — do NOT translate it to CEDS. The 'CEDS ref' (SSRD) shown is where Generate translates the raw value downstream on its own; your ETL just inserts the original source code.");
                 sb.AppendLine(fileSpecReqs);
                 sb.AppendLine();
             }
 
             sb.AppendLine("## Rules");
             sb.AppendLine("- Dialect: Microsoft T-SQL (SQL Server) ONLY. Use SELECT TOP (n) — NEVER LIMIT/OFFSET or MySQL/Postgres syntax.");
-            sb.AppendLine($"- Reference @SchoolYear (already declared = {schoolYear}) wherever a year is needed — do NOT add your own `DECLARE @SchoolYear` line (I manage a single DECLARE for the stitched script). Treat the year as SMALLINT.");
-            sb.AppendLine($"- Make the load idempotent: for the table I name, first `DELETE FROM Staging.<TargetTableName> WHERE SchoolYear = @SchoolYear;` then `INSERT INTO Staging.<TargetTableName> (<only the mapped columns>, SchoolYear) SELECT ..., @SchoolYear FROM {primarySource ?? "<the source object named above>"};` so re-runs do not double-count.");
-            sb.AppendLine("- Build ONE table per turn (the one I name). Do NOT combine multiple Staging tables into a single script.");
+            sb.AppendLine($"- Reference @SchoolYear (already declared = {schoolYear}) wherever a year is needed — do NOT add your own `DECLARE @SchoolYear` line (I prepend a single DECLARE). Treat the year as SMALLINT.");
+            sb.AppendLine($"- Make each table's load idempotent: for EVERY target table, first `DELETE FROM Staging.<TargetTableName> WHERE SchoolYear = @SchoolYear;` then `INSERT INTO Staging.<TargetTableName> (<only the mapped columns>, SchoolYear) SELECT ..., @SchoolYear FROM {primarySource ?? "<the source object named above>"};` so re-runs do not double-count.");
+            sb.AppendLine("- Emit ONE ```sql block with exactly the DELETE+INSERT pair for the SINGLE table I name this turn — do NOT include other tables.");
             if (fromList != null)
-                sb.AppendLine($"- CRITICAL: the source object name is KNOWN — use {fromList} verbatim in every FROM/JOIN. Do NOT emit ANY angle-bracket placeholder (e.g. `<source_table>`, `<source>`, `<table_name>`) in the SQL you run; every table, column, and value must be a real identifier. A `<...>` token is invalid T-SQL and the load will fail.");
+                sb.AppendLine($"- CRITICAL: the source object name(s) are KNOWN — use {fromList} verbatim in every FROM/JOIN, INCLUDING the schema prefix (write `Source.TableName`, never the bare `TableName` — an unqualified name throws 'Invalid object name'). Do NOT emit ANY angle-bracket placeholder (e.g. `<source_table>`); every table, column, and value must be a real identifier.");
             sb.AppendLine("- Use ONLY column names shown in the mappings/target list; do not invent columns. Copy the destination Table.Column names EXACTLY.");
+            sb.AppendLine("- NEVER invent a SOURCE column name. Every column you SELECT must exist in the source table you read it from (see each source's real column list above). If a destination column cannot be sourced from the table(s) you are using, OMIT it (leave it out of the INSERT and SELECT) — an unmapped column staying NULL is correct; a made-up source column throws 'Invalid column name'.");
             sb.AppendLine("- BIT columns: every `bit` destination column's SELECT expression MUST evaluate to exactly 1, 0, or NULL — nothing else. Look at the source column's ACTUAL sample values (in the Source sample above) and its mapping/transform + option-set to write the conversion. Examples: a Y/N flag → `CASE WHEN <src>='Y' THEN 1 WHEN <src>='N' THEN 0 ELSE NULL END`; a descriptive status like 'Not a charter LEA' → map the specific text values to 1/0 (`CASE WHEN <src>='Not a charter LEA' THEN 0 WHEN <src> LIKE '%charter%' THEN 1 ELSE NULL END`).");
             sb.AppendLine("  A bit column's CASE must NEVER return an empty string ('') , a text value, or the raw source column — that throws 'Conversion failed when converting the varchar value ... to data type bit'. If you are unsure which source value means true vs false, inspect the data first with a ```lookup (e.g. `SELECT DISTINCT <col> FROM <source>`), then write the exact mapping.");
             sb.AppendLine("- INSERT only the columns that have a mapped source element; leave every unmapped column OUT of the INSERT entirely (it keeps its NULL/default). Do NOT fabricate a value just to fill a NOT NULL column — if a required column truly has no source, omit it and it will surface in validation.");
             sb.AppendLine("- For RecordStartDateTime and RecordEndDateTime: use the source's record start/end date if provided. If it is NOT provided, use the CLOSEST available enrollment or program participation date — RecordStartDateTime ← EnrollmentEntryDate, else ProgramParticipationBeginDate; RecordEndDateTime ← EnrollmentExitDate, else ProgramParticipationEndDate. Use COALESCE (e.g. `COALESCE(RecordStartDt, EnrDt, PgmBegDt)`). Only if none of those exist, use `CAST(GETDATE() AS datetime)` for a NOT NULL RecordStartDateTime.");
             sb.AppendLine("- For boolean/indicator/flag columns use CASE, e.g. `CASE WHEN SpedEligFlg = 'Y' THEN 1 ELSE 0 END AS IDEAIndicator`. NEVER write `expr = value AS alias` (e.g. `SpedEligFlg = 'Y' AS IDEAIndicator`) — that is invalid T-SQL and causes 'Incorrect syntax near AS'.");
-            sb.AppendLine("- Apply the option set value maps above when transforming coded values.");
+            sb.AppendLine("- Do NOT translate coded/enumeration values to CEDS — INSERT the RAW source value exactly as-is. Generate translates it downstream via Staging.SourceSystemReferenceData; translating it yourself is wrong and causes double-translation. (Converting a Y/N flag to a `bit` 1/0 is a datatype requirement, not a CEDS translation — still do that.)");
             sb.AppendLine("- You may DELETE/INSERT freely, but ONLY within the Staging schema. Do NOT use DROP, TRUNCATE, ALTER, EXEC, xp_ procedures, or write outside Staging.");
             sb.AppendLine("- Do NOT include any test, validation, or count query — the system runs the official validation automatically after your load.");
             sb.AppendLine("- The Staging tables use surrogate identity primary keys that are IRRELEVANT — do NOT ask about primary keys/unique constraints. Records are matched by business keys (student id, LEA id, school id, school year).");
@@ -3031,6 +3387,23 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
             }
         }
 
+        // The set of real column NAMES on a source object (from INFORMATION_SCHEMA). Used to compute the
+        // genuine shared join keys between two sources so the model never invents a join column.
+        private HashSet<string> GetSourceColumnNames(string sourceObject)
+        {
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            string cols = GetSourceColumns(sourceObject);
+            if (string.IsNullOrWhiteSpace(cols)) return set;
+            foreach (var part in cols.Split(','))
+            {
+                string p = part.Trim();
+                int sp = p.IndexOf(' ');
+                if (sp > 0) p = p.Substring(0, sp);
+                if (p.Length > 0) set.Add(p);
+            }
+            return set;
+        }
+
         // -------------------- Context gathering (feed the model grounded context BEFORE it writes/debugs) --------------------
         // Directive (Nathan): run an explicit context phase as its own step and feed the results into the
         // next step. Phase-1 authoring gathers from the ETL map (+ source sample + CEDS permitted values);
@@ -3151,16 +3524,16 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
                     if (parts.Length < 2) continue;
                     if (!string.Equals(parts[0].Trim(), table, StringComparison.OrdinalIgnoreCase)) continue;
                     string stagingCol = parts[1].Trim();
+                    // SchoolYear / RecordStart/EndDateTime are provided by the ETL itself (@SchoolYear /
+                    // derived dates), NOT inserted from a source column. Listing their source mapping here is
+                    // what leads the model to put a SOURCE column (e.g. RptYr) in the INSERT list — omit them.
+                    if (AutoDerivedStagingColumns.Contains(stagingCol)) continue;
                     if (!seen.Add(stagingCol)) continue;
                     string src = string.IsNullOrWhiteSpace(m.SourceColumnName)
                         ? "(derived/constant per transform)"
-                        : (string.IsNullOrWhiteSpace(m.SourceTableName) ? "" : m.SourceTableName.Trim() + ".") + m.SourceColumnName.Trim();
-                    string transform = string.IsNullOrWhiteSpace(m.TransformationRules) ? "" : "  transform: " + ClipText(m.TransformationRules, 160);
-                    var opts = (m.EtlSourceOptionSetMappings ?? new List<EtlSourceOptionSetMapping>()).ToList();
-                    string optStr = opts.Count > 0
-                        ? "  values: " + string.Join(", ", opts.Select(o => $"'{o.SourceOptionSetCode}'→'{o.CedsOptionSetCode}'"))
-                        : "";
-                    lines.Add($"{stagingCol}  ← {src}{transform}{optStr}");
+                        : (string.IsNullOrWhiteSpace(m.SourceSchemaName) ? "" : "Schema: " + m.SourceSchemaName.Trim() + " ") + (string.IsNullOrWhiteSpace(m.SourceTableName) ? "" : "Table: " + m.SourceTableName.Trim() + " ") + "Column: " + m.SourceColumnName.Trim();
+                    string transform = string.IsNullOrWhiteSpace(m.TransformationRules) ? "" : "  transformation Details: " + ClipText(m.TransformationRules, 160);
+                    lines.Add($"{src} MAPS TO {stagingCol} {transform}");
                 }
             }
             return lines;
@@ -3171,6 +3544,35 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
             if (string.IsNullOrWhiteSpace(s)) return s;
             s = s.Replace("\r", " ").Replace("\n", " ").Trim();
             return s.Length > max ? s.Substring(0, max) + "…" : s;
+        }
+
+        // Structured per-table mappings: (Staging destination column, schema-qualified source object, source
+        // column, transform). Excludes auto-derived columns (SchoolYear / RecordStart-EndDateTime). Drives the
+        // per-table nudge's explicit "destination <= source" list and the real source-table set for joins.
+        private List<(string Staging, string SourceObject, string SourceCol, string Transform)> GetMappedPairsForTable(int etlMapId, string table)
+        {
+            var pairs = new List<(string, string, string, string)>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var m in _mappingService.GetAllMappings(etlMapId).Where(x => !string.IsNullOrWhiteSpace(x.StagingTableColumns)))
+            {
+                foreach (var tc in m.StagingTableColumns.Split(';'))
+                {
+                    string pair = tc.Trim();
+                    if (pair.StartsWith("Staging.", StringComparison.OrdinalIgnoreCase)) pair = pair.Substring("Staging.".Length);
+                    var parts = pair.Split('.');
+                    if (parts.Length < 2) continue;
+                    if (!string.Equals(parts[0].Trim(), table, StringComparison.OrdinalIgnoreCase)) continue;
+                    string stagingCol = parts[1].Trim();
+                    if (AutoDerivedStagingColumns.Contains(stagingCol)) continue;
+                    if (!seen.Add(stagingCol)) continue;
+                    string srcObj = string.IsNullOrWhiteSpace(m.SourceTableName) ? "" :
+                        (string.IsNullOrWhiteSpace(m.SourceSchemaName) ? m.SourceTableName.Trim()
+                                                                       : m.SourceSchemaName.Trim() + "." + m.SourceTableName.Trim());
+                    pairs.Add((stagingCol, srcObj, (m.SourceColumnName ?? "").Trim(),
+                        string.IsNullOrWhiteSpace(m.TransformationRules) ? "" : ClipText(m.TransformationRules, 160)));
+                }
+            }
+            return pairs;
         }
 
         // Strip a leading `DECLARE @SchoolYear ...;` line from a per-table chunk. Chunks are stored
@@ -3190,19 +3592,116 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
         private string BuildPerTableNudge(EtlChatSession session, string table, int index, int total, List<string> alreadyLoaded)
         {
             int year = ResolveSchoolYear(session);
-            var cols = GetMappedColumnsForTable(session.EtlMapId, table);
+            var pairs = GetMappedPairsForTable(session.EtlMapId, table);
+            var mapInfo = (_mappingService.GetMaps() ?? new List<EtlMapDto>()).FirstOrDefault(mm => mm.EtlMapId == session.EtlMapId);
+            string joinText = mapInfo?.JoinInstructions;
+            string processingText = mapInfo?.ProcessingNotes;
+            bool hasAuthorGuidance = !string.IsNullOrWhiteSpace(joinText);
+
             var sb = new StringBuilder();
-            sb.AppendLine($"Build the load for Staging.{table} now — table {index} of {total}.");
+            sb.AppendLine($"Build the load for Staging.{table} now — table {index} of {total}. Write ONLY this one table.");
             if (alreadyLoaded != null && alreadyLoaded.Count > 0)
-                sb.AppendLine($"(Already loaded this session: {string.Join(", ", alreadyLoaded.Select(t => "Staging." + t))}. Do NOT re-send those — build ONLY Staging.{table}.)");
+                sb.AppendLine($"(Already loaded this session: {string.Join(", ", alreadyLoaded.Select(t => "Staging." + t))}. Those are DONE — do NOT re-send them.)");
             sb.AppendLine();
-            sb.AppendLine($"INSERT ONLY these mapped columns into Staging.{table} (omit every other column — unmapped columns are left out of the INSERT, NOT set to a made-up value):");
-            if (cols.Count > 0)
-                foreach (var c in cols) sb.AppendLine($"  • {c}");
+
+            // AUTHORITATIVE author guidance FIRST. The map author's join/source notes override the raw column
+            // list below — e.g. a table's element-mappings may list columns from several sources, but the notes
+            // may say "single source, no join". When they differ, the notes win. Surfacing this at the top of
+            // the (most-recent) nudge is the highest-salience place to make the model follow it.
+            if (hasAuthorGuidance || !string.IsNullOrWhiteSpace(processingText))
+            {
+                sb.AppendLine("## AUTHORITATIVE map-author guidance — follow this EXACTLY, even where it differs from the column list below");
+                if (hasAuthorGuidance)
+                    sb.AppendLine("Sources & joins: " + joinText.Replace("\r", " ").Replace("\n", " ").Trim());
+                if (!string.IsNullOrWhiteSpace(processingText))
+                    sb.AppendLine("Filtering & processing: " + processingText.Replace("\r", " ").Replace("\n", " ").Trim());
+                sb.AppendLine("If the guidance above names a different source column for a destination than the list below, USE THE GUIDANCE.");
+                sb.AppendLine();
+            }
+
+            // Explicit DESTINATION-first mapping. The #1 model mistake is putting a SOURCE column name in the
+            // INSERT list; showing "StagingColumn <= source expression" and stating the rule kills that.
+            sb.AppendLine("INSERT column list = EXACTLY these Staging destination columns (the names on the LEFT), plus SchoolYear. NEVER put a source column name in the INSERT list:");
+            if (pairs.Count > 0)
+            {
+                foreach (var p in pairs)
+                {
+                    string srcExpr = string.IsNullOrWhiteSpace(p.SourceCol)
+                        ? "(derive per transform)"
+                        : (string.IsNullOrWhiteSpace(p.SourceObject) ? p.SourceCol : p.SourceObject + "." + p.SourceCol);
+                    string tr = string.IsNullOrWhiteSpace(p.Transform) ? "" : $"   [transform: {p.Transform}]";
+                    sb.AppendLine($"  • {p.Staging}  <=  {srcExpr}{tr}");
+                }
+            }
             else
-                sb.AppendLine("  • (no columns mapped to this table — skip it)");
+            {
+                sb.AppendLine("  • (no columns mapped to this table — reply with QUESTION: asking the user to map it)");
+            }
             sb.AppendLine();
-            sb.AppendLine($"Emit ONE ```sql block containing exactly: `DELETE FROM Staging.{table} WHERE SchoolYear = @SchoolYear;` then a single `INSERT INTO Staging.{table} (<only the mapped columns above, plus SchoolYear>) SELECT ... ` from the real source object(s). Assume `@SchoolYear` (= {year}) is already declared — do NOT add a DECLARE. Apply the transforms/value-maps shown. If you must inspect the schema first, send a ```lookup block instead.");
+
+            // Source/join hints. When the author gave guidance, DEFER to it (do not impose a computed join). Only
+            // when there is NO author guidance do we compute the genuine shared keys so the model can't invent a
+            // join column that doesn't exist on one side.
+            var sourceObjs = pairs.Where(p => !string.IsNullOrWhiteSpace(p.SourceObject))
+                                   .Select(p => p.SourceObject).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (!hasAuthorGuidance)
+            {
+                if (sourceObjs.Count == 1)
+                {
+                    sb.AppendLine($"All columns come from ONE source: {sourceObjs[0]}. FROM that table only — no JOIN needed.");
+                }
+                else if (sourceObjs.Count > 1)
+                {
+                    var declared = (_mappingService.GetMapJoins(session.EtlMapId) ?? new List<EtlMapJoin>())
+                        .Where(j => !string.IsNullOrWhiteSpace(j.LeftColumn) && !string.IsNullOrWhiteSpace(j.RightColumn)).ToList();
+                    if (declared.Count > 0)
+                    {
+                        sb.AppendLine($"Columns come from {sourceObjs.Count} sources: {string.Join(", ", sourceObjs)}. Use the DECLARED joins from the map above (do not invent others).");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"Columns come from {sourceObjs.Count} sources: {string.Join(", ", sourceObjs)}. You must JOIN them, but ONLY on a column that exists on BOTH sides:");
+                        var colSets = sourceObjs.ToDictionary(o => o, o => GetSourceColumnNames(o), StringComparer.OrdinalIgnoreCase);
+                        for (int i = 0; i < sourceObjs.Count; i++)
+                            for (int j = i + 1; j < sourceObjs.Count; j++)
+                            {
+                                var shared = colSets[sourceObjs[i]].Intersect(colSets[sourceObjs[j]], StringComparer.OrdinalIgnoreCase).ToList();
+                                sb.AppendLine(shared.Count > 0
+                                    ? $"  • {sourceObjs[i]} & {sourceObjs[j]} share (the ONLY legal join keys): {string.Join(", ", shared)}"
+                                    : $"  • {sourceObjs[i]} & {sourceObjs[j]} share NO column names — do NOT guess a join; send a ```lookup to inspect both, or reply QUESTION: for the key.");
+                            }
+                        sb.AppendLine("Do NOT invent a join column; if none is shared, inspect with a ```lookup first.");
+                    }
+                }
+            }
+            sb.AppendLine();
+            // Anti-hallucination: OMIT rather than invent. A top failure is the model inventing a source column
+            // (e.g. a made-up code column) to fill a destination it can't source, instead of leaving it out.
+            sb.AppendLine("CRITICAL — OMIT, do NOT invent: SELECT only from columns that ACTUALLY EXIST in the source table(s) you FROM (their real columns are listed in the system prompt). If a destination column above cannot be sourced from the table(s) you are using (e.g. its mapped source is a different source table the guidance tells you not to join), OMIT that destination column entirely — leave it out of BOTH the INSERT list AND the SELECT. Leaving a column unmapped (NULL) is CORRECT; inventing a source column name to fill it is WRONG and fails with 'Invalid column name'.");
+            sb.AppendLine();
+            sb.AppendLine($"Emit ONE ```sql block: `DELETE FROM Staging.{table} WHERE SchoolYear = @SchoolYear;` then a single `INSERT INTO Staging.{table} (<the destination columns you can actually source>, SchoolYear) SELECT <their source expressions>, @SchoolYear FROM <the schema-qualified source(s)>;`. Assume `@SchoolYear` (= {year}) is already declared — do NOT add a DECLARE. Insert `@SchoolYear` for SchoolYear. Apply the transforms and the author guidance above. Every source table MUST be schema-qualified (e.g. `Source.{(sourceObjs.FirstOrDefault() ?? "Table")}`). If unsure of a column or join key, send a ```lookup block instead.");
+            return sb.ToString().TrimEnd();
+        }
+
+        // The whole-load instruction (LLM-driven mode): build the COMPLETE Source→Staging load for ALL
+        // mapped tables in ONE script, listing each table's mapped columns. On a failed run the model gets
+        // the SQL Server error back and re-sends the full corrected script.
+        private string BuildWholeLoadNudge(EtlChatSession session, List<string> tables)
+        {
+            int year = ResolveSchoolYear(session);
+            var sb = new StringBuilder();
+            sb.AppendLine($"Build the COMPLETE Source→Staging load now for ALL {tables.Count} mapped table(s), in ONE ```sql script.");
+            sb.AppendLine($"For EACH table: `DELETE FROM Staging.<table> WHERE SchoolYear = @SchoolYear;` then a single `INSERT INTO Staging.<table> (<only its mapped columns below, plus SchoolYear>) SELECT ...` from the real source object(s). INSERT ONLY the mapped columns listed — omit every other column (do not fabricate values). Assume `@SchoolYear` (= {year}) is already declared — do NOT add a DECLARE. Order the tables so any dependencies load first.");
+            sb.AppendLine();
+            foreach (var t in tables)
+            {
+                var cols = GetMappedColumnsForTable(session.EtlMapId, t);
+                sb.AppendLine($"Staging.{t} — insert these mapped columns:");
+                if (cols.Count > 0) { foreach (var c in cols) sb.AppendLine($"  • {c}"); }
+                else { sb.AppendLine("  • (no columns mapped — skip this table)"); }
+            }
+            sb.AppendLine();
+            sb.AppendLine("If you need to inspect the source/target schema or data first, send a ```lookup block (one read-only SELECT) instead and I'll return the rows. When a run fails, read the SQL Server error I return and re-send the COMPLETE corrected script.");
             return sb.ToString().TrimEnd();
         }
 
@@ -3273,42 +3772,25 @@ SELECT DataMigrationTaskId FROM App.DataMigrationTasks WHERE DataMigrationTypeId
             if (already) return;
 
             var sb = new StringBuilder();
-            var sources = _mappingService.GetMapSources(session.EtlMapId) ?? new List<EtlMapSource>();
-            if (sources.Count > 0)
+            sb.AppendLine("Always use the real source schema and data types, not guesses, when building the load. The following context is authoritative for this session:");
+            var mappedTables = GetMappedStagingTables(session.EtlMapId);
+            foreach (var t in mappedTables)
             {
-                foreach (var s in sources)
+                sb.AppendLine($"- Source data set information to populate Staging.{t}:");
+                var cols = GetMappedColumnsForTable(session.EtlMapId, t);
+                if (cols.Count > 0)
                 {
-                    string sample = ReadSourceSample(s.SourceObject, 5);
-                    if (!string.IsNullOrWhiteSpace(sample))
-                    {
-                        string name = string.IsNullOrWhiteSpace(s.SourceName) ? s.SourceObject : s.SourceName;
-                        sb.AppendLine($"Source sample — TOP 5 rows of {name} ({s.SourceObject}):");
-                        sb.AppendLine(sample);
-                        sb.AppendLine();
-                    }
+                    foreach (var c in cols) sb.AppendLine($"  • {c}");
+                }
+                else
+                {
+                    sb.AppendLine("  • (no columns mapped to this table — skip it)");
                 }
             }
-            else
-            {
-                // Derive the source object(s) from the ETL Mapping when none is set on the session.
-                foreach (var src in ResolveSourceObjects(session))
-                {
-                    string sample = ReadSourceSample(src, 5);
-                    if (!string.IsNullOrWhiteSpace(sample))
-                    {
-                        sb.AppendLine($"Source sample — TOP 5 rows of {src}:");
-                        sb.AppendLine(sample);
-                        sb.AppendLine();
-                    }
-                }
-            }
-            string cedsVals = BuildCedsOptionValuesContext(_mappingService.GetAllMappings(session.EtlMapId));
-            if (!string.IsNullOrWhiteSpace(cedsVals))
-            {
-                if (sb.Length > 0) sb.AppendLine();
-                sb.AppendLine("CEDS permitted option-set values for the mapped elements:");
-                sb.AppendLine(cedsVals);
-            }
+
+            // NOTE: we deliberately do NOT inject "CEDS permitted option-set values" here — the model must
+            // load RAW source codes into Staging (Generate translates them via SourceSystemReferenceData).
+            // Surfacing the CEDS values would tempt it to translate. The raw source sample above is enough.
             if (sb.Length == 0) return;
             AddMessage(session.EtlChatSessionId, EtlChatRole.Tool, EtlChatMessageType.Status, session.CurrentLoop,
                 "🔎 Context gathered from the ETL map & source (grounds the load):\n" + sb.ToString().TrimEnd());
