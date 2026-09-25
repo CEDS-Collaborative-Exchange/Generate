@@ -415,14 +415,25 @@ namespace generate.test.Infrastructure.Services
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
+                context.GenerateConfigurations.Add(new GenerateConfiguration()
+                {
+                    GenerateConfigurationCategory = "AppUpdate",
+                    GenerateConfigurationKey = "WebPhase",
+                    GenerateConfigurationValue = "Uploading package and updating app settings"
+                });
+                context.SaveChanges();
+
                 var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
 
                 var currentStatus = service.GetUpdateStatus();
 
-                // Assert
-                Assert.Equal("OK", currentStatus.Status);
+                // Assert - no rows seeded yet default to "OK", existing rows are returned as-is
+                Assert.Equal("OK", currentStatus.WebStatus);
+                Assert.Equal("Uploading package and updating app settings", currentStatus.WebPhase);
+                Assert.Equal("OK", currentStatus.BackgroundStatus);
+                Assert.Equal("", currentStatus.BackgroundPhase);
 
             }
         }
@@ -442,19 +453,15 @@ namespace generate.test.Infrastructure.Services
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
-
-                GenerateConfiguration configStatus = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "Status");
-                context.GenerateConfigurations.Remove(configStatus);
-                context.SaveChanges();
-
                 var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
 
                 var currentStatus = service.GetUpdateStatus();
 
-                // Assert
-                Assert.Equal("OK", currentStatus.Status);
+                // Assert - no update has ever run, so every value falls back to its default
+                Assert.Equal("OK", currentStatus.WebStatus);
+                Assert.Equal("OK", currentStatus.BackgroundStatus);
 
             }
         }
@@ -1319,8 +1326,10 @@ namespace generate.test.Infrastructure.Services
                 appDeploymentHelperMock.Verify(x => x.DeployPackage(It.Is<string>(p => p.EndsWith("web_deploy.zip"))), Times.Once);
                 Assert.False(fileSystem.Directory.Exists(@"c:\generate.web\Updates\generate_3.0"));
                 Assert.False(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.zip"));
-                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "Status");
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
                 Assert.Equal("OK", status.GenerateConfigurationValue);
+                var phase = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebPhase");
+                Assert.Equal("Complete", phase.GenerateConfigurationValue);
             }
         }
 
@@ -1404,7 +1413,7 @@ namespace generate.test.Infrastructure.Services
                 Assert.Contains("generate_4.0.zip is invalid - prerequisite is not met", ex.Message);
                 appDeploymentHelperMock.Verify(x => x.DeployPackage(It.IsAny<string>()), Times.Never);
 
-                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "Status");
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
                 Assert.StartsWith("FAILED", status.GenerateConfigurationValue);
             }
         }
@@ -1435,7 +1444,7 @@ namespace generate.test.Infrastructure.Services
                 // Assert
                 Assert.Equal("Blob upload failed", ex.Message);
 
-                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "Status");
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
                 Assert.Equal("FAILED - Blob upload failed", status.GenerateConfigurationValue);
             }
         }
@@ -1471,7 +1480,7 @@ namespace generate.test.Infrastructure.Services
                 Assert.True(!fileSystem.FileExists(@"c:\generate.web\app_offline.htm"));
                 appDeploymentHelperMock.Verify(x => x.DeployPackage(It.IsAny<string>()), Times.Never);
 
-                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "Status");
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
                 Assert.Equal("OK", status.GenerateConfigurationValue);
             }
         }

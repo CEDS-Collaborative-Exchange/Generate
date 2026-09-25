@@ -15,21 +15,43 @@
         <div class="generate-app-update__title">
             Update in Progress
         </div>
+        <div class="generate-app-update__available-text" *ngIf="updateStatus?.webPhase">
+            Web: {{updateStatus.webPhase}}
+        </div>
+        <div class="generate-app-update__available-text" *ngIf="updateStatus?.backgroundPhase">
+            Background: {{updateStatus.backgroundPhase}}
+        </div>
         <div class="generate-app-update__available-text">
-            This page will refresh when complete.
+            This page will refresh automatically as the update progresses.
         </div>
     </div>
 </div>
 
 
-<div class="mdl-grid" *ngIf="this.updateStatus != null && this.updateStatus.status != 'OK'">
+<div class="mdl-grid" *ngIf="!this.updateProcessing && this.hasUpdateFailed()">
     <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
     <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
         <div class="generate-app-update__title">
             Previous Update Failed
         </div>
+        <div class="generate-app-update__available-text" *ngIf="formatFailureMessage(updateStatus.webStatus) as webError">
+            Web: {{webError}}
+        </div>
+        <div class="generate-app-update__available-text" *ngIf="formatFailureMessage(updateStatus.backgroundStatus) as backgroundError">
+            Background: {{backgroundError}}
+        </div>
         <div class="generate-app-update__available-text">
             Please check the log files for additional information.
+        </div>
+    </div>
+</div>
+
+
+<div class="mdl-grid" *ngIf="errorMessage">
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+        <div class="generate-app-update__available-text">
+            {{errorMessage}}
         </div>
     </div>
 </div>

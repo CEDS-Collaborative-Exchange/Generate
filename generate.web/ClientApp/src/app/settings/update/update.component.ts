@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { GenerateUpdateService } from '../../services/app/generate-update.service';
@@ -12,6 +12,10 @@ import { IAppConfig } from '../../models/app-config.model';
 declare let componentHandler: any;
 declare const moment: any;
 
+const IDLE_POLL_MS = 30000;
+const ACTIVE_POLL_MS = 3000;
+const FAILED_PREFIX = 'FAILED - ';
+
 @Component({
     selector: 'generate-app-settings-update',
     templateUrl: './update.component.html',
@@ -19,7 +23,7 @@ declare const moment: any;
     providers: [GenerateUpdateService],
     standalone: false
 })
-export class UpdateComponent implements AfterViewInit {
+export class UpdateComponent implements AfterViewInit, OnDestroy {
 
 
     pendingUpdates: Array<UpdatePackage> = [];
@@ -27,10 +31,10 @@ export class UpdateComponent implements AfterViewInit {
     resultMessage: string;
     errorMessage: string;
     databaseBackupSuggested: boolean = false;
-    refreshInterval: any;
+    pollTimeout: any;
     updateProcessing: boolean = false;
     downloadingUpdates: boolean = false;
-    callService: boolean = false; 
+    callService: boolean = false;
 
     updateStatus: UpdateStatus;
 
@@ -41,36 +45,60 @@ export class UpdateComponent implements AfterViewInit {
     ) {
 
         this.appConfig.getConfig().subscribe((res: IAppConfig) => {
-            //this.timeLeftSeconds = res.timeoutInSeconds
             this.callService = res.callService
 
             if (this.callService) {
-                console.log("checkAvailable true--");
                 this.checkAvailable();
-
-
-                this.refreshInterval = setInterval(
-                    () => {
-                        this.checkAvailable();
-                    }, 30000);
+                this.schedulePoll();
             }
             else {
-                console.log("checkAvailable false--");
                 this.checkAvailableOffline();
             }
 
         })
 
-        //console.log("before callService");
-        //console.log(<string><unknown>this.callService);
-        //console.log("before callService1");
-        //    this.checkAvailable();
-        //    this.refreshInterval = setInterval(
-        //        () => {
-        //            this.checkAvailable();
-        //        }, 30000);
+    }
 
+    // Polls quickly (every few seconds) while an update is actively running so phase text
+    // stays current, and falls back to the slower idle cadence the rest of the time.
+    schedulePoll() {
+        if (this.pollTimeout) {
+            clearTimeout(this.pollTimeout);
+        }
 
+        const delay = this.isUpdateInProgress() ? ACTIVE_POLL_MS : IDLE_POLL_MS;
+
+        this.pollTimeout = setTimeout(() => {
+            this.checkAvailable();
+            this.schedulePoll();
+        }, delay);
+    }
+
+    ngOnDestroy() {
+        if (this.pollTimeout) {
+            clearTimeout(this.pollTimeout);
+        }
+    }
+
+    isUpdateInProgress(): boolean {
+        return this.updateStatus != null &&
+            (this.updateStatus.webStatus === 'IN_PROGRESS' || this.updateStatus.backgroundStatus === 'IN_PROGRESS');
+    }
+
+    hasUpdateFailed(): boolean {
+        return this.updateStatus != null &&
+            (this.isFailedStatus(this.updateStatus.webStatus) || this.isFailedStatus(this.updateStatus.backgroundStatus));
+    }
+
+    formatFailureMessage(status: string): string {
+        if (!this.isFailedStatus(status)) {
+            return '';
+        }
+        return status.substring(FAILED_PREFIX.length);
+    }
+
+    private isFailedStatus(status: string): boolean {
+        return status?.startsWith(FAILED_PREFIX) ?? false;
     }
 
     filesUploaded($event) {
@@ -120,7 +148,7 @@ export class UpdateComponent implements AfterViewInit {
 
             this.downloadedUpdates = downloaded;
 
-            if (this.downloadedUpdates.length == 0 || this.updateStatus.status != "OK") {
+            if (!this.isUpdateInProgress() && (this.downloadedUpdates.length == 0 || this.hasUpdateFailed())) {
                 this.updateProcessing = false;
             }
 
@@ -139,7 +167,7 @@ export class UpdateComponent implements AfterViewInit {
 
             this.downloadedUpdates = downloaded;
 
-            if (this.downloadedUpdates.length == 0 || this.updateStatus.status != "OK") {
+            if (!this.isUpdateInProgress() && (this.downloadedUpdates.length == 0 || this.hasUpdateFailed())) {
                 this.updateProcessing = false;
             }
 
@@ -183,11 +211,22 @@ export class UpdateComponent implements AfterViewInit {
         }
 
         this.updateProcessing = true;
+        this.errorMessage = null;
 
         this._generateUpdateService.applyDownloadedUpdates()
             .subscribe(
-                result => this.resultMessage = <any>result,
-                error => this.errorMessage = <any>error);
+                result => {
+                    this.resultMessage = <any>result;
+                    this.checkAvailable();
+                },
+                error => {
+                    // The apply request itself failed (e.g. network error) before the backend
+                    // could even record a WebStatus/BackgroundStatus - don't leave the page
+                    // stuck showing "Update in Progress" forever.
+                    this.errorMessage = <any>error;
+                    this.updateProcessing = false;
+                    this.checkAvailable();
+                });
 
         return false;
     }
