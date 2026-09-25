@@ -34,6 +34,8 @@ using Microsoft.EntityFrameworkCore;
 using generate.background.Filters;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder();
 string environment_string = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + "_";
@@ -57,6 +59,12 @@ builder.Logging.AddSerilog(new LoggerConfiguration()
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.Configure<DataSettings>(builder.Configuration.GetSection("Data"));
 
+// generate.web calls this app's own update API using a token acquired via managed identity,
+// scoped to this Azure AD app registration - validated here the same way generate.web
+// validates its own OAuth users.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthorization();
 
 builder.Services.AddMvc()
         .AddMvcOptions(options => options.EnableEndpointRouting = false);
@@ -117,6 +125,7 @@ builder.Services.AddScoped<IFileSystem, FileSystem>();
 builder.Services.AddScoped<IHangfireHelper, HangfireHelper>();
 builder.Services.AddScoped<RestClient, RestClient>();
 builder.Services.AddScoped<IZipFileHelper, ZipFileHelper>();
+builder.Services.AddScoped<IAppDeploymentHelper, AzureAppDeploymentHelper>();
 
 builder.Services
     .AddDbContext<AppDbContext>(options =>
@@ -142,6 +151,9 @@ else
 
 
 app.UseCors("CorsPolicy");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseMvc();
 

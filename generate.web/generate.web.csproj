@@ -28,6 +28,7 @@
     <ProjectReference Include="..\generate.testdata\generate.testdata.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.14.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="10.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />

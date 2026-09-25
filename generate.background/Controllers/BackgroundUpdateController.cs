@@ -1,24 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using generate.core.Config;
 using Microsoft.Extensions.Hosting;
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Services;
 using generate.core.Interfaces.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.background.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class BackgroundUpdateController : ControllerBase
     {
-        private readonly IOptions<AppSettings> _appSettings;
         private readonly IHostEnvironment _hostingEnvironment;
         private readonly ILogger<BackgroundUpdateController> _logger;
         private readonly IAppUpdateService _appUpdateService;
@@ -29,14 +28,12 @@ namespace generate.background.Controllers
             ILogger<BackgroundUpdateController> logger,
             IHostEnvironment hostingEnvironment,
             IAppUpdateService appUpdateService,
-            IOptions<AppSettings> appSettings,
             IHangfireHelper hangfireHelper
             )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
             _appUpdateService = appUpdateService ?? throw new ArgumentNullException(nameof(appUpdateService));
-            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
             _hangfireHelper = hangfireHelper ?? throw new ArgumentNullException(nameof(hangfireHelper));
         }
 
@@ -71,19 +68,9 @@ namespace generate.background.Controllers
 
             try
             {
-                var webAppPath = _hostingEnvironment.ContentRootPath;
-
-                if (_hostingEnvironment.IsDevelopment())
-                {
-                    webAppPath = webAppPath.Replace("generate.background", "generate.web");
-                    webAppPath += @"\bin\Debug\netcoreapp2.2";
-                }
-                else
-                {
-                    webAppPath = _appSettings.Value.WebAppPath;
-                }
-
-                _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, webAppPath);
+                // Apply this app's own ("background") part of the pending update to itself.
+                // Never touches generate.web's package or App Service resource.
+                _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, "background");
 
                 return Ok();
 

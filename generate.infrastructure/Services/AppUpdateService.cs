@@ -26,13 +26,15 @@ namespace generate.infrastructure.Services
         private readonly IAppRepository _appRepository;
         private readonly IOptions<AppSettings> _appSettings;
         private readonly IZipFileHelper _zipFileHelper;
+        private readonly IAppDeploymentHelper _appDeploymentHelper;
 
         public AppUpdateService(
             IFileSystem fileSystem,
             IAppRepository appRepository,
             ILogger<AppUpdateService> logger,
             IOptions<AppSettings> appSettings,
-            IZipFileHelper zipFileHelper
+            IZipFileHelper zipFileHelper,
+            IAppDeploymentHelper appDeploymentHelper
             )
         {
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
@@ -40,6 +42,7 @@ namespace generate.infrastructure.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
             _zipFileHelper = zipFileHelper ?? throw new ArgumentNullException(nameof(zipFileHelper));
+            _appDeploymentHelper = appDeploymentHelper ?? throw new ArgumentNullException(nameof(appDeploymentHelper));
         }
 
         public string GetCurrentVersion()
@@ -355,7 +358,7 @@ namespace generate.infrastructure.Services
             return isValid;
         }
 
-        public void ExecuteSiteUpdate(string sourcePath, string destinationPath)
+        public void ExecuteSiteUpdate(string sourcePath, string appFolderName)
         {
             // Reset update status to OK
 
@@ -370,33 +373,41 @@ namespace generate.infrastructure.Services
 
             string updatePath = _fileSystem.Path.Combine(sourcePath, "Updates");
 
+            // Each app only ever deploys itself, so the legacy in-place copy's "destination"
+            // is this app's own content root.
+            string destinationPath = sourcePath;
+
             try
             {
-
                 // Get Update packages
                 List<string> packagesAvailable = this.ExtractAndValidateUpdatePackageDtos(updatePath);
 
                 if (packagesAvailable.Any())
                 {
-                    _logger.LogInformation("Update - Executing Updates");
+                    if (_appSettings.Value.EnableAzureDeployment)
+                    {
+                        this.ExecuteSiteUpdateViaAzure(packagesAvailable, updatePath, appFolderName);
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Update - Executing Updates via legacy file copy (AppSettings:EnableAzureDeployment is false)");
 
-                    // Take site offline
-                    this.TakeSiteOffline(updatePath, destinationPath);
+                        // Take site offline
+                        this.TakeSiteOffline(updatePath, destinationPath);
 
-                    // Pause to give time for site to shutdown
-                    Thread.Sleep(500);
+                        // Pause to give time for site to shutdown
+                        Thread.Sleep(500);
 
-                    // Backup Site
-                    this.BackupSite(updatePath, destinationPath);
+                        // Backup Site
+                        this.BackupSite(updatePath, destinationPath);
 
-                    // Apply updates
-                    this.ApplyUpdates(packagesAvailable, updatePath, destinationPath);
+                        // Apply updates
+                        this.ApplyUpdates(packagesAvailable, updatePath, destinationPath, appFolderName);
 
-                    // Bring site back online
-                    this.BringSiteOnline(destinationPath);
-
+                        // Bring site back online
+                        this.BringSiteOnline(destinationPath);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -405,22 +416,65 @@ namespace generate.infrastructure.Services
                 _appRepository.Save();
 
                 _logger.LogError(ex, "Update of Generate failed");
-                // If exception occurs, bring site back online
+                // If exception occurs, bring site back online (harmless no-op if the legacy
+                // path was never entered, e.g. an Azure-deployment failure)
                 this.BringSiteOnline(destinationPath);
                 throw;
             }
-
         }
 
-        public void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath)
+        /// <summary>
+        /// Deploys this app's own package (appFolderName is "web" or "background") to itself via
+        /// Azure Blob Storage + WEBSITE_RUN_FROM_PACKAGE. Never touches the other app's package or
+        /// App Service resource. Azure restarts and mounts the new package once the ARM app-setting
+        /// write completes, so no offline/backup/restore orchestration is needed here.
+        /// </summary>
+        private void ExecuteSiteUpdateViaAzure(List<string> packagesAvailable, string updatePath, string appFolderName)
+        {
+            foreach (var packageFileName in packagesAvailable)
+            {
+                _logger.LogInformation("Update - Deploying " + appFolderName + " package - " + packageFileName);
+
+                string UpdatePackageDtoJsonFile = _fileSystem.Path.Combine(updatePath, packageFileName.Replace(".zip", ".json"));
+
+                if (!this.IsValidPrerequisite(UpdatePackageDtoJsonFile))
+                {
+                    _logger.LogError("Update " + packageFileName + " is invalid - prerequisite is not met");
+                    throw new InvalidOperationException("Update " + packageFileName + " is invalid - prerequisite is not met");
+                }
+
+                var packagePath = _fileSystem.Path.Combine(updatePath, packageFileName.Replace(".zip", ""));
+                var appSourcePath = _fileSystem.Path.Combine(packagePath, appFolderName);
+
+                if (appFolderName == "web")
+                {
+                    // Database - Execute sql scripts
+                    var databasePath = _fileSystem.Path.Combine(packagePath, "database");
+                    this.ExecuteDatabaseUpdate(databasePath);
+
+                    _logger.LogInformation("Update - Completed Database SQL scripts");
+                }
+
+                // Repackage this app's own files as a clean, self-contained deployment zip
+                var deployZipFile = _fileSystem.Path.Combine(updatePath, appFolderName + "_deploy.zip");
+                if (_fileSystem.File.Exists(deployZipFile))
+                {
+                    _fileSystem.File.Delete(deployZipFile);
+                }
+                _zipFileHelper.CompressDirectory(appSourcePath, deployZipFile);
+
+                _appDeploymentHelper.DeployPackage(deployZipFile);
+                _fileSystem.File.Delete(deployZipFile);
+
+                // Delete update package
+                this.DeleteUpdatePackageDto(packagePath);
+            }
+        }
+
+        public void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath, string appFolderName)
         {
 
-            bool isWebUpdate = true;
-
-            if (destinationPath.Contains("generate.background"))
-            {
-                isWebUpdate = false;
-            }
+            bool isWebUpdate = appFolderName == "web";
 
             try
             {

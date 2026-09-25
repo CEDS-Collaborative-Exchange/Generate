@@ -1,4 +1,4 @@
-﻿using generate.core.Dtos.App;
+using generate.core.Dtos.App;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +21,17 @@ namespace generate.core.Interfaces.Services
         bool IsValidUpdatePackageDto(string updatePath, string packagePath, string packageFileName);
         bool IsValidPrerequisite(string UpdatePackageDtoJsonFile);
 
-        void ExecuteSiteUpdate(string sourcePath, string destinationPath);
+        /// <summary>
+        /// Deploys the given app's own part (appFolderName is "web" or "background") of any
+        /// pending update package(s) found under {sourcePath}\Updates to this app itself. Uses
+        /// Azure Blob Storage + WEBSITE_RUN_FROM_PACKAGE when AppSettings:EnableAzureDeployment
+        /// is true, otherwise falls back to the legacy in-place file-copy mechanism (backup/
+        /// offline/copy/restore) against this app's own content root. Never touches the other
+        /// app's package or App Service resource/filesystem.
+        /// </summary>
+        void ExecuteSiteUpdate(string sourcePath, string appFolderName);
 
-        void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath);
+        void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath, string appFolderName);
 
         void BackupSite(string updatePath, string pathToBackup);
         void RestoreBackup(string updatePath, string targetPath);
