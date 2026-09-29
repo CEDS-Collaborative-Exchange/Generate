@@ -18,8 +18,9 @@ export class HttpConfigInterceptor implements HttpInterceptor {
         let headers = request.headers;
 
         if (token) {
-                // set the accessToken to your header
-            headers = headers.set('accessToken', token);
+                // ASP.NET Core's JWT Bearer authentication reads the token from the standard
+                // Authorization header, not a custom header name.
+            headers = headers.set('Authorization', 'Bearer ' + token);
         }
 
         request = request.clone({

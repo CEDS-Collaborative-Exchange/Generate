@@ -10,9 +10,9 @@
 <form [formGroup]="toggleForm" class="generate-app-toggle__form" (submit)="onSubmit()">
 
     <div class="generate-app-toggle__button-container">
-        <a class="clickable mdl-button--colored" (click)="gotoAssessments()" tabindex="0" title="Assessments" >
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="button" (click)="gotoAssessments()">
             Assessments
-        </a>
+        </button>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-toggle__button" type="submit">
             Save
         </button>

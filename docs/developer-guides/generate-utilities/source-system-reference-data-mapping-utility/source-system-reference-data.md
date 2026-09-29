@@ -76,18 +76,18 @@ The Source System Reference Data Mapping Utility will show the mappings for all 
 
 ### Source Reference Table Filters
 
-The only table filter used for Directory reports is for file 029.  The CEDS IDS is a third normal form database that tries to eliminate the duplication of data wherever possible.  In this specific instance that means that the CEDS reference table, RefOperationalStatus needs to be further qualified to determine what Organization level is being referenced by the operational status.  So, when that occurs in CEDS we take the code value from that qualifying reference table and add it as the Table Filter value in the SSRD table.&#x20;
+The only table filter used for Directory reports is for file 029. The CEDS IDS is a third normal form database that tries to eliminate the duplication of data wherever possible. In this specific instance that means that the CEDS reference table, RefOperationalStatus needs to be further qualified to determine what Organization level is being referenced by the operational status. So, when that occurs in CEDS we take the code value from that qualifying reference table and add it as the Table Filter value in the SSRD table.
 
 For this example, if you query the CEDS reference table directly you get the following:
 
 SELECT \* FROM dbo.RefOperationalStatus
 
-![A screenshot of a computer](<../../../.gitbook/assets/0 (4).png>)
+![SQL Server query results for the RefOperationalStatus reference table, including duplicate Open and Closed codes.](<../../../.gitbook/assets/0 (4).png>)
 
-If you look at the results of the query there are 2 codes = ‘Open’ – RefOperationalStatusId 1 and 9, there are 2 codes = ‘Closed’ - RefOperationalStatusId 2 and 10, etc..  The data in the 6th column, RefOperationalStatusTypeId, determines which of those values is appropriate depending on the type of Organization.  If you query that reference table you get the following:
+If you look at the results of the query there are 2 codes = ‘Open’ – RefOperationalStatusId 1 and 9, there are 2 codes = ‘Closed’ - RefOperationalStatusId 2 and 10, etc.. The data in the 6th column, RefOperationalStatusTypeId, determines which of those values is appropriate depending on the type of Organization. If you query that reference table you get the following:
 
 SELECT \* FROM dbo.RefOperationalStatusType
 
-![](<../../../.gitbook/assets/1 (2).png>)
+![SQL Server query results for the RefOperationalStatusType reference table.](<../../../.gitbook/assets/1 (2).png>)
 
-To distinguish between the different types, Generate uses filters. The value ‘000174’ as the TableFilter is used when the Operational Status belongs to the LEA and ‘000533’ when the Operational Status belongs to the ‘School’.  Note, the last value ‘001418’ defines a generic organization and that is not used by Generate.&#x20;
+To distinguish between the different types, Generate uses filters. The value ‘000174’ as the TableFilter is used when the Operational Status belongs to the LEA and ‘000533’ when the Operational Status belongs to the ‘School’. Note, the last value ‘001418’ defines a generic organization and that is not used by Generate.

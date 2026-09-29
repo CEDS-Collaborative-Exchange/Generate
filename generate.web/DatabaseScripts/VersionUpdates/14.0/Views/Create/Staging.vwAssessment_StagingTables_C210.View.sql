@@ -1,0 +1,54 @@
+﻿CREATE VIEW [Staging].[vwAssessment_StagingTables_C210]
+	
+	AS
+	-- PerformanceLevels requires DimAssessmentPerformanceLevels, SourceSystemReferenceData table AssessmentPerformanceLevelMap, and ToggleAssessments
+	WITH excludedLeas AS (
+        SELECT DISTINCT LEAIdentifierSea
+        FROM Staging.K12Organization
+        WHERE LEA_IsReportedFederally = 0
+            OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
+    )
+	
+	,ToggleAssessments AS (
+	SELECT ta.*
+		,CASE [Subject]
+			WHEN 'MATH' THEN '01166_1'
+			WHEN 'RLA' THEN '13373_1'
+			WHEN 'SCIENCE' THEN '00562_1'
+			WHEN 'CTE' THEN '73065_1'
+			WHEN 'MATH' THEN '01166'
+			WHEN 'RLA' THEN '13373'
+			WHEN 'SCIENCE' THEN '00562'
+			WHEN 'CTE' THEN '73065'
+			ELSE 'MISSING'
+		END AS AssessmentAcademicSubject
+	FROM App.ToggleAssessments ta
+	WHERE [Subject] in ('RLA')	
+	)
+	
+	-- Title III English Learners with Assessments
+	SELECT DISTINCT 
+		  sar.StudentIdentifierState
+		, ta.AssessmentAcademicSubject
+		, ProficiencyStatus = CASE WHEN CAST(RIGHT(replace(sar.[Assessment-AssessmentPerformanceLevelIdentifier], '_1', ''),1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END
+		, sssrd.OutputCode as TitleIIILanguageInstructionProgramType
+		, sar.schoolyear
+	FROM [debug].[vwAssessment_StagingTables] sar
+	JOIN Staging.SourceSystemReferenceData sssrd
+		ON sssrd.SchoolYear = sar.SchoolYear
+		AND sssrd.TableName = 'RefTitleIIILanguageInstructionProgramType'
+		AND sssrd.InputCode = sar.TitleIIILanguageInstructionProgramType
+	LEFT JOIN excludedLeas el
+		ON sar.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
+	JOIN ToggleAssessments ta
+		ON replace(sar.[Assessment-AssessmentTypeAdministered], '_1', '') = replace(ta.AssessmentTypeCode, '_1', '')
+		AND replace(sar.[Results-GradeLevelWhenAssessed], '_1', '') = replace(ta.Grade, '_1', '') 
+		AND	replace(sar.[Assessment-AssessmentAcademicSubject], '_1', '') = replace(ta.AssessmentAcademicSubject, '_1', '')	
+	WHERE
+		el.LeaIdentifierSea IS NULL	
+		AND sar.[Results-AssessmentRegistrationParticipationIndicator] = 1 -- Only students who participated in the assessment
+		AND sar.EnglishLearnerStatus = 1 -- English Learners
+		AND sar.TitleIIIProgramParticipationBeginDate <= CAST(('6/30/' + CAST((sar.SchoolYear) as varchar))  AS Date) -- Only students who were in the program during the school year
+			AND CAST(ISNULL(sar.TitleIIIProgramParticipationEndDate, '9999-01-01') AS DATE) >= CAST(('7/1/' + CAST(sar.SchoolYear - 1 as varchar))  AS Date)
+		AND sar.[Results-AssessmentRegistrationReasonNotCompleting] IS NULL -- Only students who completed the assessment
+		AND sar.[Results-AssessmentPerformanceLevelIdentifier] IS NOT NULL -- Only students who have a performance level

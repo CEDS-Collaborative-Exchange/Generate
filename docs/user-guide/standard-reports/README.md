@@ -15,6 +15,6 @@ To select one of the standard reports:
 1. Click on the words **Standard Reports** from the menu bar at the top of any page in Generate.
 2. From the submenu, click on the report type you want to run.
 
-<figure><img src="../../.gitbook/assets/UserGuide_Standard Reports_image1.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/UserGuide_Standard Reports_image1.png" alt="Standard Reports submenu with report type options."><figcaption></figcaption></figure>
 
 The following sections describe how to run and use each Standard Report.

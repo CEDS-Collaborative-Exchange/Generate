@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using generate.core.Dtos.ODS;
 using generate.core.Interfaces.Repositories.IDS;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/performancelevels")]
     [ApiController]
+    [Authorize]
     public class PerformanceLevelController : Controller
     {
 

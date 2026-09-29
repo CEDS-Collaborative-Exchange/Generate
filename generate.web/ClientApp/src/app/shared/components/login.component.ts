@@ -220,12 +220,17 @@ export class LoginComponent implements AfterViewInit, AfterViewChecked {
                         this.stopTimeoutWatch()
                     },
                     error => {
-                        let snackbarContainer = document.querySelector('#generate-app-shared-login__error');
+                        // The logoff call can fail with 401 when the session had already
+                        // expired server-side. Still clear the client-side session and
+                        // redirect so the user isn't left making further requests with a
+                        // dead token.
+                        this.userService.deleteUser();
+                        this._router.navigateByUrl('/');
+                        this.stopTimeoutWatch();
 
-                        if (error.error) {
-                            snackbarContainer['MaterialSnackbar'].showSnackbar(error.error);
-                        } else {
-                            let data = { message: 'Error occurred - ' + error.message };
+                        let snackbarContainer = document.querySelector('#generate-app-shared-login__error');
+                        if (snackbarContainer) {
+                            let data = error.error ? error.error : { message: 'Error occurred - ' + error.message };
                             snackbarContainer['MaterialSnackbar'].showSnackbar(data);
                         }
                     });

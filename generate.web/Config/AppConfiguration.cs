@@ -41,7 +41,7 @@ namespace generate.web.Config
             // Utilities
             services.AddScoped<IFileSystem, FileSystem>();
             services.AddScoped<IHangfireHelper, HangfireHelper>();
-            services.AddScoped<RestClient, RestClient>();
+            services.AddScoped<RestClient>(_ => new RestClient());
             services.AddScoped<IZipFileHelper, ZipFileHelper>();
 
             // Test Data

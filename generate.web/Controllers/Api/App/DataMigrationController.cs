@@ -17,12 +17,14 @@ using Microsoft.Extensions.Options;
 using generate.core.Config;
 using System.Web.Services.Description;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/datamigrations")]
     [ResponseCache(Duration = 0)]
     [ApiController]
+    [Authorize]
     public class DataMigrationController : Controller
     {
         private readonly IOptions<AppSettings> _appSettings;

@@ -168,6 +168,8 @@ namespace generate.testdata.DataGenerators
                 AccessibleEducationMaterialProviderStaticDataUtility.AppendAccessibleEducationMaterialProviderData(testData, globalRandom, _testDataHelper, SchoolYear);
                 testData = this.CreateGradesOfferedData(globalRandom, testData, SchoolYear);
                 testData = this.CreateOrganizationFederalFundingData(globalRandom, testData, SchoolYear);
+                //create Lea rows that differ from the default grades offered rolled up from the school grades offered
+                LEASpecificGradesOffered.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
 
                 TotalLeasCreated = testData.K12Organizations.Select(o => o.LeaIdentifierSea).Distinct().Count();
                 TotalSchoolsCreated = testData.K12Organizations.Select(o => o.SchoolIdentifierSea).Distinct().Count();
@@ -256,7 +258,6 @@ namespace generate.testdata.DataGenerators
                     StudentsEnrolledAtLeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     CIID5128MulipleRace.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     FS086_CIID8626.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
-
                 }
                 else
                 {

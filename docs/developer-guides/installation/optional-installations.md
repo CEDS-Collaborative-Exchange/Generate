@@ -18,23 +18,23 @@ Please use the following screen shots as a guide to install AD LDS.
 
 ![Graphical user interface, text, application, email](../../.gitbook/assets/0.jpeg)
 
-![Graphical user interface, text, application, Word](<../../.gitbook/assets/1 (1).jpeg>)
+![Graphical user interface, text, application, Word](<../../.gitbook/assets/14 (1)>)
 
 ![Graphical user interface, text, application, email](../../.gitbook/assets/2.png)
 
-![Graphical user interface, text, application](../../.gitbook/assets/3.jpeg)
+![Graphical user interface, text, application](<../../.gitbook/assets/16 (3)>)
 
 * Select AD LDS from the Roles and add the applicable features for the role.
 
-![Graphical user interface, text, application, Word](../../.gitbook/assets/4.jpeg)
+![Graphical user interface, text, application, Word](<../../.gitbook/assets/17 (2)>)
 
-![Graphical user interface, text, application, email](../../.gitbook/assets/5.jpeg)
+![Graphical user interface, text, application, email](<../../.gitbook/assets/18 (2)>)
 
 * Click Install.
 * After AD LDS is installed, please follow the below steps to set up an active directory for Generate tool.
 * From the Server Manager, click on AD LDS.
 
-![Graphical user interface, text, application, email](<../../.gitbook/assets/6 (2).jpeg>)
+![Graphical user interface, text, application, email](<../../.gitbook/assets/19 (3)>)
 
 * Click on the “Configuration required” task and click on the Action link from the Task Window to open up the Active Directory Setup Wizard.
 
@@ -74,7 +74,7 @@ Please use the following screenshots to connect to the AD LDS instance and set u
 
 ![Graphical user interface, text, application](../../.gitbook/assets/20.png)
 
-After connecting to the AD instance, a user should see 3 roles by default:&#x20;
+After connecting to the AD instance, a user should see 3 roles by default:
 
 > Admin
 >
@@ -103,7 +103,7 @@ Please use the following steps to create a user for the generate tool in ADSI Ed
 >
 > userPrincipalName : **svuyuru**
 >
-> msDS-UserDontExpirePassword: **True** �&#xDEA8;_&#x53;et this property if you don’t want to expire user’s password._
+> msDS-UserDontExpirePassword: **True** ��_Set this property if you don’t want to expire user’s password._
 
 5. Go back and set “`ms-DS-UserPasswordNotRequired`” to **False**.
 

@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/k12Sea")]
     [ApiController]
+    [Authorize]
     public class k12SeaController : Controller
     {
         private IIDSRepository _idsRepository;

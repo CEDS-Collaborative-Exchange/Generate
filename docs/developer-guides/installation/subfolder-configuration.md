@@ -9,7 +9,7 @@
 <base href="/Test/">
 ```
 
-<figure><img src="../../.gitbook/assets/Screenshot 2024-09-18 151411.jpg" alt="Screenshot of a Notepad++ editor displaying an index.html file with an updated <base href=&#x22;/Test/&#x22;> tag. The HTML file includes meta tags, viewport settings, and linked resources. It shows the modification step for running the Generate application from a subfolder."><figcaption><p>HTML configuration for running Generate from a subfolder. The index.html file's <code>&#x3C;base></code> tag is updated to reference the subfolder named 'Test' for proper path handling when running Generate from a subdirectory.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot 2024-09-18 151411.jpg" alt="Screenshot of a Notepad++ editor displaying an index.html file with an updated <base href=&#x22;/Test/&#x22;> tag. The HTML file includes meta tags, viewport settings, and linked resources. It shows the modification step for running the Generate application from a subfolder."><figcaption><p>Updated base tag for a subfolder.</p></figcaption></figure>
 
 3. Save the changes.
 

@@ -5,11 +5,13 @@ using generate.core.Models.App;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/togglequestionoptions")]
     [ApiController]
+    [Authorize]
     public class ToggleQuestionOptionController : Controller
     {
         private IAppRepository _toggleQuestionOptionRepository;

@@ -10,6 +10,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -50,7 +51,7 @@ Generate Version 11.4 introduces a new and improved Staging Validation process. 
 
 Paging Enhancement: Implemented paging functionality to enhance the loading speed of larger result sets in the user interface (UI), ensuring smoother navigation and improved user experience.
 
-<figure><img src="../../.gitbook/assets/Slide1.PNG" alt="Screenshot of Generate UI highlighting paging feature."><figcaption><p>Paging feature can be found above the table on the right.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Slide1.PNG" alt="Generate report table with the paging controls highlighted above the results."><figcaption><p>Paging feature can be found above the table on the right.</p></figcaption></figure>
 
 Expanded Search Functionality:
 
@@ -59,7 +60,7 @@ Expanded Search Functionality:
 * Search by Header Value: Added support for searching based on header values.
 * Search by Permitted Value: Enhanced search functionality to include searching by the underlying permitted value.
 
-<figure><img src="../../.gitbook/assets/VideoProject-ezgif.com-overlay (1).gif" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/VideoProject-ezgif.com-overlay.gif" alt="Generate report results with the search controls highlighted for filtering data."><figcaption></figcaption></figure>
 
 #### Performance Improvements
 
@@ -93,10 +94,10 @@ Generate was tested on the following operating systems and browsers:
 * Windows 10 Pro
 * Google Chrome, Version 68 0.3440.106 (Official Build) (64-bit) and Firefox Quantum 61.01 (64 bit)
 
-
-
 ***
 
 ## Office Hour
 
 {% embed url="https://youtu.be/MKNoO8CfP10" %}
+Generate 11.4 Office Hour recording
+{% endembed %}

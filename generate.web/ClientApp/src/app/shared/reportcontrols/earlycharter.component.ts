@@ -2,6 +2,7 @@ import { Component, Input, AfterViewInit, OnInit, OnChanges, SimpleChange, ViewC
 import { Router } from '@angular/router';
 
 import { GenerateReportService } from '../../services/app/generateReport.service';
+import { UserService } from '../../services/app/user.service';
 import { GenerateReport } from '../../models/app/generateReport';
 import { GenerateReportDto } from '../../models/app/generateReportDto';
 import { GenerateReportDataDto } from '../../models/app/generateReportDataDto';
@@ -53,7 +54,8 @@ export class EarlyCharterComponent implements AfterViewInit, OnChanges, OnInit {
     constructor(
         private _router: Router,
         private _generateReportService: GenerateReportService,
-        private _ngZone: NgZone
+        private _ngZone: NgZone,
+        private _userService: UserService
     ) {
 
     }
@@ -432,6 +434,10 @@ export class EarlyCharterComponent implements AfterViewInit, OnChanges, OnInit {
 
         xhr.open('GET', url, true);
         xhr.responseType = 'blob';
+        const token: string = this._userService.getToken();
+        if (token) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        }
 
         xhr.onreadystatechange = function () {
 

@@ -11,10 +11,12 @@ using RestSharp;
 using generate.core.Dtos.App;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/appupdate")]
+    [Authorize]
     public class AppUpdateController: Controller
     {
         private readonly IOptions<AppSettings> _appSettings;

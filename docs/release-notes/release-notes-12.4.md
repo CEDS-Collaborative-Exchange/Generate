@@ -8,6 +8,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -30,7 +31,7 @@ layout:
 
 Release Overview
 
-Generate version 12.4 focuses on EDPass submissions due **July 30, 2025**, specifically enhancing reporting and compatibility for child count files (002, 089), membership (052, 033), CCD schools (129) and staff FTE (059).&#x20;
+Generate version 12.4 focuses on EDPass submissions due **July 30, 2025**, specifically enhancing reporting and compatibility for child count files (002, 089), membership (052, 033), CCD schools (129) and staff FTE (059).
 
 ### Required State Changes - Action Required​
 
@@ -43,9 +44,7 @@ There were 5 tables in the Staging environment that didn't have the SchoolYear c
 * Staging.ProgramParticipationSpecialEducation​
 * Staging.ProgramParticipationNorD​
 * Staging.ProgramParticipationTitleI​
-* Staging.ProgramParticipationTitleIII&#x20;
-
-
+* Staging.ProgramParticipationTitleIII
 
 This will require every state that has an ETL migration that involves one of these tables to update that code to include the new column. It can be populated using the same method that you are currently using to populate SchoolYear in the other tables like Staging.K12Enrollment, Staging.K12PersonRace, etc...​\
 ​\
@@ -72,9 +71,9 @@ SPECIAL NOTE: This issue was identified and fixed by the community and then adde
 * **Membership (033, 052)**
   * 033 - Added the ability to migrate the counts for only 1 data group or both​
   * Fixed the migration order from the UI (if both 033 and 052 are selected) so that 052 runs first
-* **Neglected or Delinquent (119)**&#x20;
+* **Neglected or Delinquent (119)**
   * Added support for this file through the migration code into the Fact and Report tables
-* **Directory (207)**&#x20;
+* **Directory (207)**
   * Identified a column that needs to be added in Staging.OrganizationFederalFunding to support this file and created the OSC tickets to support that
 * **Staff (067, 203)**
   * Added support for this file through the migration code into the Fact and Report tables
@@ -94,15 +93,15 @@ SPECIAL NOTE: This issue was identified and fixed by the community and then adde
 
 * Added a new navigation option to the left menu called: _Working With Generate Code_
 
-SPECIAL NOTE: Thank you to Jason Young from DoubleLine for contributing this documentation!&#x20;
+SPECIAL NOTE: Thank you to Jason Young from DoubleLine for contributing this documentation!
 
-[https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/working-with-generate-code](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/working-with-generate-code)&#x20;
+[https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/working-with-generate-code](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/working-with-generate-code)
 
 ***
 
 #### Generate 12.4 Release Tickets:
 
-Tickets are available in the CEDS-Collaborative-Exchange.&#x20;
+Tickets are available in the CEDS-Collaborative-Exchange.
 
 [**Click here** ](https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av12.4)**to review the Generate 12.4 Release** [**Tickets**](https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av12.4)
 
@@ -122,3 +121,5 @@ Generate was tested on the following operating systems and browsers:
 ### Generate Office Hour
 
 {% embed url="https://www.youtube.com/watch?v=SWB_7jmYonw" %}
+Generate 12.4 Office Hour recording
+{% endembed %}

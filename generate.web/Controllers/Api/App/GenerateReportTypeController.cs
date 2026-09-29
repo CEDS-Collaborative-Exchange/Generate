@@ -3,11 +3,13 @@ using generate.core.Interfaces.Repositories.App;
 using generate.core.Models;
 using generate.core.Models.App;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/generatereporttypes")]
     [ApiController]
+    [Authorize]
     public class GenerateReportTypeController: Controller
     {
         private readonly IAppRepository _appRepository;

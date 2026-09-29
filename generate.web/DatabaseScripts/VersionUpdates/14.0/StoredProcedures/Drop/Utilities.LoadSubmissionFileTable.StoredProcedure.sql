@@ -1,0 +1,13 @@
+﻿
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'Utilities' AND ROUTINE_NAME = 'LoadSubmissionFileTable') 
+BEGIN
+	DROP PROCEDURE [Utilities].[LoadSubmissionFileTable]
+END
+
+
+
+
+
+
+
+

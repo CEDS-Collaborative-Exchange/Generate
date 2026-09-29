@@ -3,11 +3,13 @@ using generate.core.Interfaces.Repositories.IDS;
 using generate.core.Models;
 using generate.core.Models.IDS;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/persons")]
     [ApiController]
+    [Authorize]
     public class PersonController: Controller
     {
         private IIDSRepository _idsRepository;
