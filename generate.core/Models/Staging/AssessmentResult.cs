@@ -39,5 +39,6 @@ namespace generate.core.Models.Staging
         public bool AssessedFirstTime { get; set; }
         public string AccessibilityFeatureType { get; set; }
         public string AccessibilityFeatureApplicationType { get; set; }
+        public string EdFactsFormerEnglishLearnerYearStatus { get; set; }
     }
 }
