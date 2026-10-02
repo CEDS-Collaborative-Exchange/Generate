@@ -398,7 +398,7 @@ namespace generate.infrastructure.Services
         public void ExecuteSiteUpdate(string sourcePath, string appFolderName)
         {
             this.SetAppUpdateConfigValue(StatusKey(appFolderName), "IN_PROGRESS");
-            this.SetPhase(appFolderName, "Validating update package");
+            this.SetPhase(appFolderName, "Validating Update Package");
 
             string updatePath = _fileSystem.Path.Combine(sourcePath, "Updates");
 
@@ -422,27 +422,27 @@ namespace generate.infrastructure.Services
                         _logger.LogInformation("Update - Executing Updates via legacy file copy (AppSettings:EnableAzureDeployment is false)");
 
                         // Take site offline
-                        this.SetPhase(appFolderName, "Taking site offline");
+                        this.SetPhase(appFolderName, "Taking Generate Website Offline");
                         this.TakeSiteOffline(updatePath, destinationPath);
 
                         // Pause to give time for site to shutdown
                         Thread.Sleep(500);
 
                         // Backup Site
-                        this.SetPhase(appFolderName, "Backing up site");
+                        this.SetPhase(appFolderName, "Backing up Generate Website");
                         this.BackupSite(updatePath, destinationPath);
 
                         // Apply updates
-                        this.SetPhase(appFolderName, "Copying updated files");
+                        this.SetPhase(appFolderName, "Updating Generate Files");
                         this.ApplyUpdates(packagesAvailable, updatePath, destinationPath, appFolderName);
 
                         // Bring site back online
-                        this.SetPhase(appFolderName, "Bringing site back online");
+                        this.SetPhase(appFolderName, "Bringing Generate Website Online");
                         this.BringSiteOnline(destinationPath);
                     }
                 }
 
-                this.SetPhase(appFolderName, "Complete");
+                this.SetPhase(appFolderName, "Update Complete");
                 this.SetAppUpdateConfigValue(StatusKey(appFolderName), "OK");
             }
             catch (Exception ex)
@@ -483,7 +483,7 @@ namespace generate.infrastructure.Services
                 if (appFolderName == "web")
                 {
                     // Database - Execute sql scripts
-                    this.SetPhase(appFolderName, "Running database scripts");
+                    this.SetPhase(appFolderName, "Updating Generate Database");
                     var databasePath = _fileSystem.Path.Combine(packagePath, "database");
                     this.ExecuteDatabaseUpdate(databasePath);
 
@@ -491,7 +491,7 @@ namespace generate.infrastructure.Services
                 }
 
                 // Repackage this app's own files as a clean, self-contained deployment zip
-                this.SetPhase(appFolderName, "Packaging deployment");
+                this.SetPhase(appFolderName, "Packaging Generate Deployment");
                 var deployZipFile = _fileSystem.Path.Combine(updatePath, appFolderName + "_deploy.zip");
                 if (_fileSystem.File.Exists(deployZipFile))
                 {
@@ -499,7 +499,7 @@ namespace generate.infrastructure.Services
                 }
                 _zipFileHelper.CompressDirectory(appSourcePath, deployZipFile);
 
-                this.SetPhase(appFolderName, "Uploading package and updating app settings");
+                this.SetPhase(appFolderName, "Uploading Package to Azure");
                 _appDeploymentHelper.DeployPackage(deployZipFile);
                 _fileSystem.File.Delete(deployZipFile);
 
@@ -631,6 +631,7 @@ namespace generate.infrastructure.Services
                         if (isWebUpdate)
                         {
                             // Database - Execute sql scripts
+                            this.SetPhase(appFolderName, "Updating Generate Database");
                             var databasePath = _fileSystem.Path.Combine(packagePath, "database");
                             this.ExecuteDatabaseUpdate(databasePath);
 
