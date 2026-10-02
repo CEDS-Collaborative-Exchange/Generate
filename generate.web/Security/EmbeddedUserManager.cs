@@ -125,10 +125,10 @@ namespace generate.web.Security.Embeddable
             _logger.LogError("GetRoleForGroup: " + group);
             _logger.LogError("hopefully matches: " + _adminGroup);
             if (group == _reviewerGroup)
-                return "REVIEWER";
+                return AppRoles.Reviewer;
 
             if (group == _adminGroup)
-                return "ADMINISTRATOR";
+                return AppRoles.Administrator;
 
             else throw new Exception("Undefined LDAP Group");
         }

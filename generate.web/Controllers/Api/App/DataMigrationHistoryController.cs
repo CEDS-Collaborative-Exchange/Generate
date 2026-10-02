@@ -9,13 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using generate.core.Models.Staging;
 using Microsoft.AspNetCore.Authorization;
+using generate.web.Security;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/datamigrationhistory")]
     [ResponseCache(Duration = 0)]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = AppRoles.Administrator)]
     public class DataMigrationHistoryController: Controller
     {
         private IAppRepository _appRepository;
