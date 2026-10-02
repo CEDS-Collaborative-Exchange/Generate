@@ -1,6 +1,16 @@
 -- App metadata updates for release 14.1
 -- Add release-specific metadata changes in this file.
 
+-- Defensive guard: the metadata update below assumes Staging.AssessmentResult already
+-- carries EdFactsFormerEnglishLearnerYearStatus, added by 14.0's own Staging.TableChanges.sql.
+-- A generate_14.0.bak snapshot taken before that script ran won't have it, which breaks
+-- test-data generation (SqlBulkCopy) against a freshly-restored 14.1_prerelease database.
+IF COL_LENGTH('Staging.AssessmentResult', 'EdFactsFormerEnglishLearnerYearStatus') IS NULL
+BEGIN
+	ALTER TABLE Staging.AssessmentResult
+	ADD EdFactsFormerEnglishLearnerYearStatus VARCHAR (100) NULL;
+END
+
 print 'App.Metadata.sql executed for 14.1.'
 
 declare @toggleSectionId as int
