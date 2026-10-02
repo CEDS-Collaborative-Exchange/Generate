@@ -15,11 +15,12 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using Azure.Core;
 using Azure.Identity;
+using generate.web.Security;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/appupdate")]
-    [Authorize]
+    [Authorize(Roles = AppRoles.Administrator)]
     public class AppUpdateController: Controller
     {
         private readonly IOptions<AppSettings> _appSettings;
