@@ -853,6 +853,46 @@ BEGIN
 		JOIN #vwRaces rdr
 			ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
 
+	--Populate the assessment accessibility feature bridge table
+		IF OBJECT_ID(N'tempdb..#tempAccessibilityFeatures') IS NOT NULL DROP TABLE #tempAccessibilityFeatures
+
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, vaf.AccessibilityFeatureTypeCode
+			, vaf.DimAccessibilityFeatureId
+			, sar.AssessmentIdentifier
+		INTO #tempAccessibilityFeatures
+		FROM #tempStagingAssessmentResults sar
+		INNER JOIN RDS.vwDimAccessibilityFeatures vaf
+			ON vaf.SchoolYear = @SchoolYear
+			AND ISNULL(sar.AccessibilityFeatureType, -1) = ISNULL(vaf.AccessibilityFeatureTypeMap, -1)
+
+		INSERT INTO RDS.BridgeK12StudentAssessmentAccessibilityFeatures (
+			FactK12StudentAssessmentId
+			, AccessibilityFeatureId
+		)
+		SELECT 	
+			rfsa.FactK12StudentAssessmentId
+			, af.DimAccessibilityFeatureId
+		FROM RDS.FactK12StudentAssessments rfsa
+		JOIN RDS.DimAssessments rda
+			ON rfsa.AssessmentId = rda.DimAssessmentId
+		JOIN RDS.DimLeas lea 
+			ON rfsa.LeaId = lea.DimLeaID
+		JOIN RDS.DimK12Schools sch 
+			ON rfsa.K12SchoolId = sch.DimK12SchoolId
+		JOIN RDS.DimPeople_Current students 
+			ON rfsa.K12Student_CurrentId = students.DimPersonId
+		JOIN #tempAccessibilityFeatures af
+			ON lea.LeaIdentifierSea = af.LeaIdentifierSeaAccountability
+			AND sch.SchoolIdentifierSea = af.SchoolIdentifierSea
+			AND students.K12StudentStudentIdentifierState = af.StudentIdentifierState
+			AND rda.AssessmentIdentifierState = af.AssessmentIdentifier
+		WHERE rfsa.SchoolYearId = @SchoolYearId
+		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
+
 	END TRY
 	BEGIN CATCH
 
