@@ -5,43 +5,144 @@ coverY: 0
 layout: landing
 ---
 
-# Introduction to Generate and Status Updates
+# Generate Status Updates
 
-The Center for the Integration of IDEA Data (CIID) developed the Generate application to improve data quality and simplify E&#x44;_&#x46;acts_ reporting for state education agencies (SEAs). Generate standardizes data, improves data use and reporting, and supports administrative and policy work to improve educational outcomes for all students and their families.
+Generate helps state education agencies improve data quality and simplify EDFacts reporting. It standardizes data, supports reporting, and strengthens data-informed decision-making.
 
-**Why use Generate?**
+{% hint style="success" %}
+**Generate is freely available to all SEAs and runs inside each state’s environment.**
+{% endhint %}
 
-* Freely available to all SEAs and is installed inside your state’s environment
-* Automates and simplifies reporting for IDEA E&#x44;_&#x46;acts_ and State Performance Plan/Annual Performance Report (SPP/APR)
-* Improves consistency across states for IDEA data
-* Supports timely and efficient reporting and submission of E&#x44;_&#x46;acts_ data
+### Why Generate
 
-## Generate Status Updates
+{% columns %}
+{% column %}
+#### ⚙️ Automate reporting
 
-* Generate Version 13.3&#x20;
-  * Released May, 2026
-  * [Current Release Notes v13.3](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/release-notes/release-notes-13.3)&#x20;
-  * [Release Tickets](https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av13.3)
-* Known Issues&#x20;
-  * [Generate File Storage](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/installation/upgrade/generate-file-storage) - This page contains the links to Supplemental Release, HotFix and Metadata files in GitHub.
+Automates IDEA EDFacts and SPP/APR reporting.
 
-## What's Next?&#x20;
+#### ⏱️ Submit efficiently
 
-**Generate Release v14.0 coming September 2026**. This Release will include file updates, UI improvements, validation rules, and tool enhancements.&#x20;
+Supports timely, efficient data submission.
+{% endcolumn %}
 
-**Generate Release v14.1 coming November 2026**
+{% column %}
+#### 📊 Improve consistency
 
-## Join Our Discord
+Improves consistency across states for IDEA data.
+{% endcolumn %}
+{% endcolumns %}
 
-Join the **Generate's Discord** server for **Community Collaboration** and **Organized Discussions**. Here you can connect with developers, state reps, and stakeholders while using threads to keep conversations focused on specific topics.&#x20;
+### Current release
 
-To gain access, reach out to your assigned TA provider. [Discord Guide](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/discord-guide#support)
+{% columns %}
+{% column %}
+#### Generate v14.0
 
+Released September 2026.
 
+<a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/release-notes/release-notes-14.0" class="button primary" data-icon="file-lines">Read release notes</a>
 
-{% content-ref url="https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/user-guide" %}
-[User Guide](https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/user-guide)
-{% endcontent-ref %}
+<a href="https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/user-guide" class="button secondary" data-icon="book">User Guide</a>
+{% endcolumn %}
+
+{% column %}
+#### Release resources
+
+Find links to Supplemental Release, HotFix, and Metadata files in GitHub.
+
+<a href="https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av14.0" class="button secondary" data-icon="ticket">View release tickets</a>
+
+<a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/installation/upgrade/generate-file-storage" class="button secondary" data-icon="folder-open">File storage</a>
+{% endcolumn %}
+{% endcolumns %}
+
+### 📈 EDFacts files submitted through Generate
+
+{% hint style="info" %}
+**Generate has supported 500 EDFacts file submissions across 44 file specifications.**
+{% endhint %}
+
+### File specifications submitted
+
+<details>
+
+<summary>View all 44 file specifications</summary>
+
+| File specification | Description                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| 002                | Children with Disabilities (IDEA) School-Age                                         |
+| 005                | Children with Disabilities (IDEA) Removal to Interim Alternative Educational Setting |
+| 006                | Children with Disabilities (IDEA) Suspensions/Expulsions                             |
+| 007                | Children with Disabilities (IDEA) Reasons for Unilateral Removal                     |
+| 009                | Children with Disabilities (IDEA) Exiting Special Education                          |
+| 029                | Directory                                                                            |
+| 033                | Free and Reduced Price Lunch                                                         |
+| 035                | Federal Programs                                                                     |
+| 037                | Title I Part A SWP/TAS Participation                                                 |
+| 039                | Grades Offered                                                                       |
+| 045                | Immigrant                                                                            |
+| 052                | Membership                                                                           |
+| 059                | Staff FTE                                                                            |
+| 067                | Title III Teachers                                                                   |
+| 070                | Special Education Teachers                                                           |
+| 086                | Students Involved with Firearms                                                      |
+| 088                | Children with Disabilities (IDEA) Disciplinary Removals                              |
+| 089                | Children with Disabilities (IDEA) Early Childhood                                    |
+| 099                | Special Education Related Services Personnel                                         |
+| 112                | Special Education Paraprofessionals                                                  |
+| 116                | Title III Students Served                                                            |
+| 118                | Homeless Students Enrolled                                                           |
+| 129                | CCD School                                                                           |
+| 130                | ESEA Status                                                                          |
+| 141                | EL Enrolled                                                                          |
+| 143                | Children with Disabilities (IDEA) Total Disciplinary Removals                        |
+| 144                | Educational Services During Expulsion                                                |
+| 163                | Discipline Data                                                                      |
+| 170                | LEA Subgrant Status                                                                  |
+| 175                | Academic Achievement in Mathematics                                                  |
+| 178                | Academic Achievement in Reading/Language Arts                                        |
+| 179                | Academic Achievement in Science                                                      |
+| 185                | Assessment Participation in Mathematics                                              |
+| 188                | Assessment Participation in Reading/Language Arts                                    |
+| 189                | Assessment Participation in Science                                                  |
+| 190                | Charter School Authorizer Directory                                                  |
+| 194                | Young Homeless Children Served (McKinney-Vento)                                      |
+| 198                | Charter Contracts                                                                    |
+| 203                | Teachers                                                                             |
+| 207                | State Appropriations for Charter Schools                                             |
+| 211                | Title III English Learner Exited                                                     |
+| 222                | Foster Care Enrolled                                                                 |
+| 223                | Title I School Status                                                                |
+| 226                | Economically Disadvantaged Students                                                  |
+
+</details>
+
+### Submissions by school year
+
+| School year | Files submitted |
+| ----------- | --------------: |
+| 2025–2026   |              49 |
+| 2024–2025   |             125 |
+| 2023–2024   |             105 |
+| 2022–2023   |              68 |
+| 2021–2022   |              46 |
+| 2020–2021   |              42 |
+| 2019–2020   |              20 |
+| 2018–2019   |              23 |
+| 2017–2018   |              19 |
+| 2016–2017   |               3 |
+| **Total**   |         **500** |
+
+### Coming next
+
+{% hint style="success" %}
+#### November 2026 — Generate v14.1
+
+**Includes file updates for Discipline, Exiting, and Staff.**
+{% endhint %}
+
+### Explore more of Generate
 
 {% content-ref url="https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/developer-guides" %}
 [Developer Guides](https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/developer-guides)
