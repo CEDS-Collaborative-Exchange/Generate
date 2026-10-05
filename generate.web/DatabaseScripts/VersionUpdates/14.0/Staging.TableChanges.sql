@@ -1473,6 +1473,15 @@ END;
 -- END;
 
 --------------------------------------------------
+--Staging.AssessmentResult
+--------------------------------------------------
+IF COL_LENGTH('Staging.AssessmentResult', 'EdFactsFormerEnglishLearnerYearStatus') IS NULL
+BEGIN
+    ALTER TABLE Staging.AssessmentResult
+    ADD EdFactsFormerEnglishLearnerYearStatus VARCHAR (100) NULL;
+END;
+
+--------------------------------------------------
 --Updates for Staging validation rules
 --------------------------------------------------
 update staging.StagingValidationRules_ReportsXREF set enabled = 0 where StagingValidationRuleId = 109 and GenerateReportId <> 15;

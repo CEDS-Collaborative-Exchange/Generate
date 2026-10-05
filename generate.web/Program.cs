@@ -25,6 +25,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +57,12 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 // Add MVC
 builder.Services.AddMvc()
     .AddMvcOptions(options => options.EnableEndpointRouting = false)
+    // Secure by default: any controller/action without an explicit [AllowAnonymous] requires an
+    // authenticated user. This app uses classic (non-endpoint) routing, so AuthorizationOptions'
+    // FallbackPolicy - which is only enforced via the endpoint-routing-aware AuthorizationMiddleware -
+    // would be a no-op here; a global MVC filter is the mechanism that actually applies in this pipeline.
+    .AddMvcOptions(options => options.Filters.Add(new AuthorizeFilter(
+        new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build())))
     .AddControllersAsServices()  //Injecting Controllers themselves thru DI   //For further info see: http://docs.autofac.org/en/latest/integration/aspnetcore.html#controllers-as-services
     .AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 

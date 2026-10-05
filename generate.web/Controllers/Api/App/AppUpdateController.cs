@@ -12,11 +12,12 @@ using generate.core.Dtos.App;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using generate.web.Security;
 
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/appupdate")]
-    [Authorize]
+    [Authorize(Roles = AppRoles.Administrator)]
     public class AppUpdateController: Controller
     {
         private readonly IOptions<AppSettings> _appSettings;
