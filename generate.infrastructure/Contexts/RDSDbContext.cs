@@ -1587,6 +1587,18 @@ namespace generate.infrastructure.Contexts
                 entity
                    .Property(x => x.AssessmentProgressLevelEdFactsCode)
                    .HasMaxLength(50);
+
+                entity
+                    .Property(x => x.FormerEnglishLearnerYearStatusCode)
+                    .HasMaxLength(50);
+
+                entity
+                   .Property(x => x.FormerEnglishLearnerYearStatusDescription)
+                   .HasMaxLength(100);
+
+                entity
+                   .Property(x => x.FormerEnglishLearnerYearStatusEdFactsCode)
+                   .HasMaxLength(50);
             });
 
             //DimK12StaffCategory

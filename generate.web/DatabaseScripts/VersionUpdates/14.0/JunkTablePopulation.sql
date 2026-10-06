@@ -331,3 +331,49 @@
 
 		ALTER TABLE [RDS].[FactK12StaffCounts] CHECK CONSTRAINT [FK_FactK12StaffCounts_K12StaffCategoryId];
 	END;
+
+--------------------------------------------------
+--Populate DimAssessmentStatuses.FormerEnglishLearnerYearStatus
+--------------------------------------------------
+	-- Existing rows (ProgressLevelCode = 'MISSING') never had this attribute; make the missing case explicit
+	-- instead of leaving it NULL, matching how every other code/description/edfactscode triple on this table is set.
+	UPDATE RDS.DimAssessmentStatuses
+	SET FormerEnglishLearnerYearStatusCode = 'MISSING',
+		FormerEnglishLearnerYearStatusDescription = 'MISSING',
+		FormerEnglishLearnerYearStatusEdFactsCode = 'MISSING'
+	WHERE ProgressLevelCode = 'MISSING'
+	  AND FormerEnglishLearnerYearStatusCode IS NULL
+
+	CREATE TABLE #FormerEnglishLearnerYearStatus (Code VARCHAR(50), Description VARCHAR(200), EdFactsCode VARCHAR(50))
+	INSERT INTO #FormerEnglishLearnerYearStatus VALUES
+		('1YEAR', 'Assessed in the first year after exiting English Learner status', '1YEAR'),
+		('2YEAR', 'Assessed in the second year after exiting English Learner status', '2YEAR'),
+		('3YEAR', 'Assessed in the third year after exiting English Learner status', '3YEAR'),
+		('4YEAR', 'Assessed in the fourth year after exiting English Learner status', '4YEAR'),
+		('5YEAR', 'Assessed in the fifth year or later after exiting English Learner status', '5YEAR')
+
+	-- Only ProgressLevelCode = 'MISSING' combinations are reachable from the assessment staging path
+	-- (Staging.Staging-to-FactK12StudentAssessment always joins on ProgressLevelCode = 'MISSING'),
+	-- so the new attribute only needs to be crossed with the existing AssessedFirstTime values for that slice.
+	INSERT INTO RDS.DimAssessmentStatuses (
+		ProgressLevelCode, ProgressLevelDescription, ProgressLevelEdFactsCode,
+		AssessedFirstTimeCode, AssessedFirstTimeDescription, AssessedFirstTimeEdFactsCode,
+		FormerEnglishLearnerYearStatusCode, FormerEnglishLearnerYearStatusDescription, FormerEnglishLearnerYearStatusEdFactsCode
+	)
+	SELECT DISTINCT
+		'MISSING', 'MISSING', 'MISSING',
+		aft.AssessedFirstTimeCode, aft.AssessedFirstTimeDescription, aft.AssessedFirstTimeEdFactsCode,
+		fely.Code, fely.Description, fely.EdFactsCode
+	FROM (
+		SELECT DISTINCT AssessedFirstTimeCode, AssessedFirstTimeDescription, AssessedFirstTimeEdFactsCode
+		FROM RDS.DimAssessmentStatuses
+		WHERE ProgressLevelCode = 'MISSING'
+	) aft
+	CROSS JOIN #FormerEnglishLearnerYearStatus fely
+	LEFT JOIN RDS.DimAssessmentStatuses main
+		ON main.ProgressLevelCode = 'MISSING'
+		AND main.AssessedFirstTimeCode = aft.AssessedFirstTimeCode
+		AND main.FormerEnglishLearnerYearStatusCode = fely.Code
+	WHERE main.DimAssessmentStatusId IS NULL
+
+	DROP TABLE #FormerEnglishLearnerYearStatus

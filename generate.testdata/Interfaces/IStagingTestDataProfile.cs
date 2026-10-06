@@ -243,6 +243,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> AssessmentAccommodationCategoryDistribution { get; set; }
         List<DataDistribution<string>> AccessibilityFeatureTypeDistribution { get; set; }
         List<DataDistribution<string>> AccessibilityFeatureApplicationTypeDistribution { get; set; }
+        List<DataDistribution<string>> EdFactsFormerEnglishLearnerYearStatusDistribution { get; set; }
 
         List<DataDistribution<bool>> SpecialEdProgramParticipantNowDistribution { get; set; }
         List<DataDistribution<bool>> CteProgramParticipantNowDistribution { get; set; }
