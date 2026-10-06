@@ -395,16 +395,19 @@ namespace generate.infrastructure.Services
             return isValid;
         }
 
-        public void ExecuteSiteUpdate(string sourcePath, string appFolderName)
+        public void ExecuteSiteUpdate(string sourcePath, string appFolderName, string legacyDestinationPath = null)
         {
             this.SetAppUpdateConfigValue(StatusKey(appFolderName), "IN_PROGRESS");
             this.SetPhase(appFolderName, "Validating Update Package");
 
             string updatePath = _fileSystem.Path.Combine(sourcePath, "Updates");
 
-            // Each app only ever deploys itself, so the legacy in-place copy's "destination"
-            // is this app's own content root.
-            string destinationPath = sourcePath;
+            // The legacy in-place copy writes directly to disk, so it can never overwrite this
+            // app's own currently-loaded binaries - it targets the *other* app's content root
+            // (legacyDestinationPath). The Azure path doesn't use destinationPath at all (it
+            // always deploys sourcePath/this app via its own Managed Identity), so sourcePath is
+            // just a harmless fallback there.
+            string destinationPath = legacyDestinationPath ?? sourcePath;
 
             try
             {
@@ -421,16 +424,19 @@ namespace generate.infrastructure.Services
                     {
                         _logger.LogInformation("Update - Executing Updates via legacy file copy (AppSettings:EnableAzureDeployment is false)");
 
+                        // Backup Site - done first, and while the site is still online, because
+                        // copying/zipping the whole site can take far longer than IIS/ANCM's
+                        // shutdownTimeLimit allows once app_offline.htm is in place, which would
+                        // otherwise get this step (and the request running it) killed mid-copy.
+                        this.SetPhase(appFolderName, "Backing up Generate Website");
+                        this.BackupSite(updatePath, destinationPath);
+
                         // Take site offline
                         this.SetPhase(appFolderName, "Taking Generate Website Offline");
                         this.TakeSiteOffline(updatePath, destinationPath);
 
                         // Pause to give time for site to shutdown
                         Thread.Sleep(500);
-
-                        // Backup Site
-                        this.SetPhase(appFolderName, "Backing up Generate Website");
-                        this.BackupSite(updatePath, destinationPath);
 
                         // Apply updates
                         this.SetPhase(appFolderName, "Updating Generate Files");
@@ -511,7 +517,13 @@ namespace generate.infrastructure.Services
         public void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath, string appFolderName)
         {
 
-            bool isWebUpdate = appFolderName == "web";
+            // appFolderName identifies the CALLING app (used for status/phase tracking elsewhere
+            // in ExecuteSiteUpdate), but which half of the package to apply - "web" or
+            // "background" - must be decided from the DESTINATION being written to, not the
+            // caller's own identity: the legacy path's whole purpose is writing the *other* app's
+            // half onto the *other* app's folder (a running process can never overwrite its own
+            // loaded binaries), so destinationPath, not appFolderName, says which half is correct.
+            bool isWebUpdate = !destinationPath.Contains("generate.background");
 
             try
             {
@@ -593,7 +605,7 @@ namespace generate.infrastructure.Services
                             else
                             {
                                 _logger.LogInformation("Update - Copying file - " + updateFileNameAndPath + " / " + destFile);
-                                _fileSystem.File.Copy(updateFileNameAndPath, destFile, true);
+                                FileUtilities.SafeCopyFile(_fileSystem, updateFileNameAndPath, destFile);
                             }
 
                         }

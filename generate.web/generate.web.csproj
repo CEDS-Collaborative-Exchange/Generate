@@ -50,6 +50,12 @@
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Compile Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
     <Compile Remove="DatabaseScripts\VersionUpdates\5.2\LinkedServers\**" />
+    <!-- The legacy file-copy update mechanism backs up the previously-deployed site here, which
+         can include a full old copy of this project's own source (e.g. its own Program.cs) -
+         exclude it from compilation or the build fails with CS8802 (two top-level-statement files). -->
+    <Compile Remove="Updates\Backups\**" />
+    <Content Remove="Updates\Backups\**" />
+    <None Remove="Updates\Backups\**" />
     <Content Remove="$(SpaRoot)**" />
     <Content Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
     <Content Remove="DatabaseScripts\VersionUpdates\5.2\LinkedServers\**" />

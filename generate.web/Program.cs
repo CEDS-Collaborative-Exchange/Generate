@@ -27,6 +27,9 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Linq;
+using System.Security.Claims;
+using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +37,11 @@ string environment_string = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIR
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory() + "/Config/")
+    // WebApplication.CreateBuilder's own default configuration only adds user secrets when
+    // IsDevelopment() is true, so connection strings (which live only in secrets.json, never in
+    // committed appsettings*.json) would be silently missing in any other environment without
+    // this explicit, unconditional call - matching generate.background's own Program.cs.
+    .AddUserSecrets(System.Reflection.Assembly.GetExecutingAssembly(), optional: true)
     .AddEnvironmentVariables(prefix: environment_string)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
@@ -99,6 +107,32 @@ else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:User
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
     builder.Services.AddAuthorization();
+
+    // Azure AD app roles come through as "Administrator"/"Reviewer" (whatever casing the app
+    // role was given in the Entra ID app registration), while EMBEDDED/AD mode's role claims are
+    // always upper-case ("ADMINISTRATOR"/"REVIEWER"). [Authorize(Roles = ...)] compares role
+    // claims case-sensitively, so without this normalization OAuth-mode users are forbidden from
+    // every role-restricted endpoint regardless of their actual Azure AD role assignment.
+    builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        var previousOnTokenValidated = options.Events.OnTokenValidated;
+        options.Events.OnTokenValidated = async context =>
+        {
+            if (previousOnTokenValidated != null)
+            {
+                await previousOnTokenValidated(context);
+            }
+
+            if (context.Principal?.Identity is ClaimsIdentity identity)
+            {
+                foreach (var roleClaim in identity.FindAll(identity.RoleClaimType).ToList())
+                {
+                    identity.RemoveClaim(roleClaim);
+                    identity.AddClaim(new Claim(identity.RoleClaimType, roleClaim.Value.ToUpperInvariant()));
+                }
+            }
+        };
+    });
 
 
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -172,14 +206,35 @@ app.UseAuthentication();
 app.UseAuthorization();
 //app.UseStaticFiles(new StaticFileOptions() { RequestPath = "/ClientApp/dist" });
 app.UseStaticFiles();
+
+bool useAngularDevServer = builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("CI");
+if (!useAngularDevServer)
+{
+    // No dev server outside Development - serve the pre-built Angular output's JS/CSS/assets
+    // directly, the same way wwwroot is served above.
+    var distPath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp", "dist", "browser");
+    app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(distPath) });
+}
+
 app.UseMvc();
 app.UseSpa(spa => {
 
-    if (builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("CI"))
+    if (useAngularDevServer)
     {
         spa.Options.SourcePath = "ClientApp";
         spa.Options.StartupTimeout = new TimeSpan(0, 6, 0);
         spa.UseAngularCliServer(npmScript: "start");
+    }
+    else
+    {
+        // SpaDefaultPageMiddleware only consults DefaultPageStaticFileOptions.FileProvider for
+        // this fallback path; Options.SourcePath alone (used by the dev-server launchers) has no
+        // effect here.
+        var distPath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp", "dist", "browser");
+        spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(distPath)
+        };
     }
 });
 app.UseForwardedHeaders(new ForwardedHeadersOptions { 

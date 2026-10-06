@@ -50,14 +50,18 @@ namespace generate.web.Controllers.Api.App
         private RestClient GetBackgroundClient()
         {
             var backgroundUrl = _appSettings.Value.BackgroundUrl;
-            var scope = _appSettings.Value.BackgroundApiScope;
+            var options = new RestClientOptions(backgroundUrl + "/api/backgroundUpdate/");
 
-            var token = _credential.GetToken(new TokenRequestContext(new[] { scope }), CancellationToken.None).Token;
-
-            var options = new RestClientOptions(backgroundUrl + "/api/backgroundUpdate/")
+            // Managed Identity is only available when actually running in Azure, and
+            // BackgroundApiScope is only configured there - skip the token acquisition for the
+            // legacy/local path (EnableAzureDeployment = false) so this controller keeps working
+            // outside Azure instead of throwing on every call.
+            if (_appSettings.Value.EnableAzureDeployment)
             {
-                Authenticator = new RestSharp.Authenticators.JwtAuthenticator(token)
-            };
+                var scope = _appSettings.Value.BackgroundApiScope;
+                var token = _credential.GetToken(new TokenRequestContext(new[] { scope }), CancellationToken.None).Token;
+                options.Authenticator = new RestSharp.Authenticators.JwtAuthenticator(token);
+            }
 
             return new RestClient(options);
         }
@@ -105,14 +109,14 @@ namespace generate.web.Controllers.Api.App
         public ActionResult<IEnumerable<UpdatePackageDto>> PendingUpdates()
         {
             try { return _appUpdateService.CheckForPendingUpdates(); }
-            catch (Exception ex) { return BadRequest(ex); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
         }
 
         [HttpGet("status")]
         public ActionResult<UpdateStatusDto> UpdateStatus()
         {
             try { return _appUpdateService.GetUpdateStatus(); }
-            catch (Exception ex) { return BadRequest(ex); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
         }
 
         [HttpPost("download")]
@@ -150,10 +154,17 @@ namespace generate.web.Controllers.Api.App
         {
             try
             {
-                // Apply this app's own ("web") part of the update to itself, via Azure Blob
-                // Storage + ARM. Never touches generate.background's package or App Service
-                // resource directly.
-                _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, "web");
+                // Azure path: deploys this app's own ("web") part to itself via Azure Blob
+                // Storage + ARM, using its own Managed Identity - never touches
+                // generate.background's package or App Service resource directly.
+                // Legacy path: a running process can never overwrite its own currently-loaded
+                // binaries, so the in-place file copy targets generate.background's content root
+                // instead (ignored entirely by the Azure path).
+                var backgroundAppPath = _hostingEnvironment.IsDevelopment()
+                    ? _hostingEnvironment.ContentRootPath.Replace("generate.web", "generate.background")
+                    : _appSettings.Value.BackgroundAppPath;
+
+                _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, "web", backgroundAppPath);
 
                 // Ask background to apply its own ("background") part to itself the same way
                 var client = GetBackgroundClient();
@@ -163,7 +174,7 @@ namespace generate.web.Controllers.Api.App
                 if (response.IsSuccessful) return Ok();
                 else return BadRequest();
             }
-            catch (Exception ex) { return BadRequest(ex); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
         }
     }
 }

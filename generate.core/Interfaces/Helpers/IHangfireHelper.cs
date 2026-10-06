@@ -16,7 +16,7 @@ namespace generate.core.Interfaces.Helpers
 
         void CancelMigration(string dataMigrationTypeCode);
 
-        void TriggerSiteUpdate(string sourcePath, string destinationPath);
+        void TriggerSiteUpdate(string sourcePath, string appFolderName, string legacyDestinationPath = null);
 
         void StartFSRecurringJobs(bool _useWSforFSMetaUpd, string _fsWSURL, string _fsMetaFileLoc, string _fsMetaESSDetailFileName, string _fsMetaCHRDetailFileName, string _fsMetaESSLayoutFileName, string _fsMetaCHRLayoutFileName, string _bkfsMetaFileLoc, bool _reloadFromBackUp, string cronExpr);
 

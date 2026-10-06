@@ -88,7 +88,7 @@ namespace generate.web.Security.Embeddable
 
         public Task<string> GetNormalizedUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.UserName?.ToUpperInvariant());
         }
 
         public Task<string> GetPasswordHashAsync(ApplicationUser user, CancellationToken cancellationToken)
@@ -98,7 +98,10 @@ namespace generate.web.Security.Embeddable
 
         public Task<string> GetUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            // Called by ASP.NET Core Identity's cookie SecurityStampValidator on every periodic
+            // revalidation of an authenticated session - must not throw, or every EMBEDDED-mode
+            // session eventually 500s once that revalidation runs, even right after login.
+            return Task.FromResult(user.UserName);
         }
 
         public Task<bool> HasPasswordAsync(ApplicationUser user, CancellationToken cancellationToken)

@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using generate.core.Config;
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Services;
 using generate.core.Interfaces.Helpers;
-using Microsoft.AspNetCore.Authorization;
-
 namespace generate.background.Controllers
 {
+    // Authorization (when enforced) is applied globally in Program.cs, conditional on
+    // AppSettings:EnableAzureDeployment - see the comment there for why.
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class BackgroundUpdateController : ControllerBase
     {
@@ -22,19 +23,22 @@ namespace generate.background.Controllers
         private readonly ILogger<BackgroundUpdateController> _logger;
         private readonly IAppUpdateService _appUpdateService;
         private readonly IHangfireHelper _hangfireHelper;
+        private readonly IOptions<AppSettings> _appSettings;
 
 
         public BackgroundUpdateController(
             ILogger<BackgroundUpdateController> logger,
             IHostEnvironment hostingEnvironment,
             IAppUpdateService appUpdateService,
-            IHangfireHelper hangfireHelper
+            IHangfireHelper hangfireHelper,
+            IOptions<AppSettings> appSettings
             )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
             _appUpdateService = appUpdateService ?? throw new ArgumentNullException(nameof(appUpdateService));
             _hangfireHelper = hangfireHelper ?? throw new ArgumentNullException(nameof(hangfireHelper));
+            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         }
 
 
@@ -68,16 +72,24 @@ namespace generate.background.Controllers
 
             try
             {
-                // Apply this app's own ("background") part of the pending update to itself.
-                // Never touches generate.web's package or App Service resource.
-                _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, "background");
+                // Azure path: deploys this app's own ("background") part to itself via Azure Blob
+                // Storage + ARM, using its own Managed Identity - never touches generate.web's
+                // package or App Service resource directly.
+                // Legacy path: a running process can never overwrite its own currently-loaded
+                // binaries, so the in-place file copy targets generate.web's content root instead
+                // (ignored entirely by the Azure path).
+                var webAppPath = _hostingEnvironment.IsDevelopment()
+                    ? _hostingEnvironment.ContentRootPath.Replace("generate.background", "generate.web")
+                    : _appSettings.Value.WebAppPath;
+
+                _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, "background", webAppPath);
 
                 return Ok();
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
 
 

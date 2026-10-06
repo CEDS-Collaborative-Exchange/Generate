@@ -97,10 +97,10 @@ namespace generate.infrastructure.Helpers
 
         }
 
-        public void TriggerSiteUpdate(string sourcePath, string destinationPath)
+        public void TriggerSiteUpdate(string sourcePath, string appFolderName, string legacyDestinationPath = null)
         {
             BackgroundJob.Enqueue<IAppUpdateService>(x =>
-                x.ExecuteSiteUpdate(sourcePath, destinationPath)
+                x.ExecuteSiteUpdate(sourcePath, appFolderName, legacyDestinationPath)
             );
         }
 
