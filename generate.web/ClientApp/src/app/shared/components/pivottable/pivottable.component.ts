@@ -26,6 +26,71 @@ export let gstudentCount: any;
 export let studentCountColumn: any;
 export let aggregateColumn: any;
 
+//Size columns to their longest text (capped) and wrap long labels, growing rows to fit the wrapped lines.
+//Rows above startRow (report captions) are left untouched.
+function autoFitWorksheet(ws: any, startRow: number) {
+    const minWidth = 10, maxWidth = 45, lineHeight = 15, rowPadding = 10;
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    const merges: any[] = ws['!merges'] || [];
+    const getMerge = (r, c) => merges.find(m => m.s.r === r && m.s.c === c);
+    const getText = cell => (cell.w != null ? cell.w : String(cell.v ?? '')).trim();
+    const getLines = (text: string, width: number) => Math.max(Math.ceil(text.length / Math.max(width - 2, 1)), 1);
+
+    //Column widths from cells that occupy a single column
+    const widths: number[] = [];
+    for (let c = range.s.c; c <= range.e.c; c++) {
+        let longest = 0;
+        for (let r = startRow; r <= range.e.r; r++) {
+            const cell = ws[XLSX.utils.encode_cell({ r: r, c: c })];
+            const merge = getMerge(r, c);
+            if (!cell || (merge && merge.e.c > merge.s.c))
+                continue;
+            longest = Math.max(longest, getText(cell).length);
+        }
+        widths.push(Math.min(Math.max(longest + 2, minWidth), maxWidth));
+    }
+    ws['!cols'] = widths.map(w => ({ wch: w }));
+
+    //Wrap text and grow each row to fit its tallest cell
+    const rows: any[] = ws['!rows'] || [];
+    for (let r = startRow; r <= range.e.r; r++) {
+        let lines = 1;
+        for (let c = range.s.c; c <= range.e.c; c++) {
+            const cell = ws[XLSX.utils.encode_cell({ r: r, c: c })];
+            if (!cell)
+                continue;
+            cell.s = { ...cell.s, alignment: { ...(cell.s && cell.s.alignment), wrapText: true, vertical: 'center' } };
+
+            const merge = getMerge(r, c);
+            if (merge && merge.e.r > merge.s.r)
+                continue; //text spreads over several rows
+            const lastCol = merge ? merge.e.c : c;
+            let width = 0;
+            for (let mc = c; mc <= lastCol; mc++)
+                width += widths[mc - range.s.c];
+            lines = Math.max(lines, getLines(getText(cell), width));
+        }
+        const height = lines * lineHeight + rowPadding;
+        rows[r] = { hpx: Math.max(height, (rows[r] && rows[r].hpx) || 0) };
+    }
+
+    //Cells spanning several rows (e.g. pivot column labels with rowspan 2) grow the last spanned row if they don't fit
+    merges.filter(m => m.s.r >= startRow && m.e.r > m.s.r).forEach(m => {
+        const cell = ws[XLSX.utils.encode_cell(m.s)];
+        if (!cell)
+            return;
+        let width = 0, height = 0;
+        for (let c = m.s.c; c <= m.e.c; c++)
+            width += widths[c - range.s.c];
+        for (let r = m.s.r; r <= m.e.r; r++)
+            height += rows[r].hpx;
+        const needed = getLines(getText(cell), width) * lineHeight + rowPadding;
+        if (needed > height)
+            rows[m.e.r].hpx += needed - height;
+    });
+    ws['!rows'] = rows;
+}
+
 @Component({
     selector: 'app-pivottable',
     templateUrl: './pivottable.component.html',
@@ -726,7 +791,7 @@ export class PivottableComponent {
 
         relayoutGrid();
     }
-    exportToExcel(exportFile) {
+    exportToExcel(exportFile, exportReportCode: string = '') {
         this.self = this;
         if (Object.keys(reportData).length === 0)
             return;
@@ -843,9 +908,10 @@ export class PivottableComponent {
                     { wpx: 70 }
                 ];
 
+                //Report names no longer always carry a "005:" prefix, so prefer the code passed in by the caller
                 const reportCaption = $('.generate-app-report__title').text();
                 let index = reportCaption.indexOf(':');
-                let reportCode = reportCaption.substring(0, index);
+                let reportCode = exportReportCode || reportCaption.substring(0, index);
 
                 let colWidth = 150;
                 const category = $('.generate-app-pivotgrid__categoryset-definition span').html();
@@ -856,11 +922,6 @@ export class PivottableComponent {
                     if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c"
                         || category.toLowerCase() == "category set d") {
                         colWidth = 220;
-                    }
-                }
-                else if (reportCode.toLowerCase() == "005") {
-                    if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d") {
-                        colWidth = 500;
                     }
                 }
                 else if (reportCode.toLowerCase() == "009") {
@@ -960,12 +1021,7 @@ export class PivottableComponent {
 
                 //Set data columns
                 let dataColumnNumber = $('#containerExport .pvtTable thead tr:last').prev().find('.pvtColLabel').length;
-                if (reportCode.toLowerCase() == "005" && category.toLowerCase() == "subtotal 1") {
-                    for (let i = 0; i <= dataColumnNumber; i++) {
-                        ws['!cols'].push({ wpx: 200 })
-                    }
-                }
-                else if ((reportCode.toLowerCase() == "175" || reportCode.toLowerCase() == "178" || reportCode.toLowerCase() == "179") && category.toLowerCase() == "category set j") {
+                if ((reportCode.toLowerCase() == "175" || reportCode.toLowerCase() == "178" || reportCode.toLowerCase() == "179") && category.toLowerCase() == "category set j") {
                     for (let i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: 200 })
                     }
@@ -1060,6 +1116,11 @@ export class PivottableComponent {
                             ws['!rows'].push({ hpx: 30 });
                     }
 
+                }
+
+                //005 category option names (e.g. interim removal reasons) are too long for fixed widths
+                if (reportCode.toLowerCase() == "005") {
+                    autoFitWorksheet(ws, 4); //4 is caption rows
                 }
                 //first row e.g. A1:AB12
                 const ref = ws["!fullref"];
