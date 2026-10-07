@@ -9,6 +9,12 @@ Views\\Drop,RDS.vwDimAccessibilityFeatures.View.sql,0
 Views\\Create,RDS.vwDimAccessibilityFeatures.View.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql, 0
+StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Student.StoredProcedure.sql, 0
+StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Student.StoredProcedure.sql, 0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 VersionUpdates\\14.1_prerelease,UpdateDbVersion.sql,0
