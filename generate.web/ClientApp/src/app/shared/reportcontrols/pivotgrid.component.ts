@@ -364,7 +364,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
         let sheetName = this.reportParameters.reportCode.toUpperCase();
         let reportCategorySetCode = this.reportParameters.reportCategorySetCode !== undefined ? this.reportParameters.reportCategorySetCode : '';
         let fileName = this.reportParameters.reportCode.toUpperCase() + ' - ' + this.reportParameters.reportYear + ' - ' + this.reportParameters.reportLevel.toUpperCase() + ' - ' + reportCategorySetCode + '.xlsx';
-        this.pivotComponent.exportToExcel(fileName);
+        this.pivotComponent.exportToExcel(fileName, this.reportParameters.reportCode);
         return;
     }
 

@@ -38,19 +38,21 @@ BEGIN
 		DROP TABLE IF EXISTS #k12Students
 
 		CREATE TABLE #k12Students (
-			FirstName										NVARCHAR(75) NULL
-			, MiddleName									NVARCHAR(75) NULL
-			, LastOrSurname									NVARCHAR(75) NULL
-			, BirthDate										DATE NULL
-			, K12StudentStudentIdentifierState				NVARCHAR(40) NULL
-			, IsActiveK12Student							BIT NULL
-			, RecordStartDateTime							DATE NULL
-			, RecordEndDateTime								DATE NULL
+			RowId									INT
+			, FirstName								NVARCHAR(75) NULL
+			, MiddleName							NVARCHAR(75) NULL
+			, LastOrSurname							NVARCHAR(75) NULL
+			, BirthDate								DATE NULL
+			, K12StudentStudentIdentifierState		NVARCHAR(40) NULL
+			, IsActiveK12Student					BIT NULL
+			, RecordStartDateTime					DATE NULL
+			, RecordEndDateTime						DATE NULL
 		)
 		
 		--populate the temp table
 		INSERT INTO #k12Students (
-			FirstName
+			RowId
+			, FirstName
 			, MiddleName
 			, LastOrSurname
 			, BirthDate
@@ -60,7 +62,8 @@ BEGIN
 			, RecordEndDateTime
 		)		
 		SELECT DISTINCT
-			FirstName
+			Id
+			, FirstName
 			, MiddleName
 			, LastOrSurname
 			, BirthDate
@@ -133,12 +136,34 @@ BEGIN
 	--------------------------------
 	--DimPeople_Current
 	--------------------------------
-		--populate DimPeople_Current with active K12 student records from Staging.K12Enrollment
+		--Get all the student records and sort any for the same StudentID + Birthdate combination	
+		;WITH RankedStudents AS (
+			SELECT
+				students.*,
+				ROW_NUMBER() OVER (
+					PARTITION BY
+						students.K12StudentStudentIdentifierState,
+						ISNULL(students.BirthDate, CONVERT(date, '19000101'))
+					ORDER BY
+						students.RowId DESC
+				) AS SourceRowNumber
+			FROM #k12Students AS students
+		)
 		MERGE rds.DimPeople_Current AS trgt
-		USING #k12Students AS src
-				ON  trgt.K12StudentStudentIdentifierState = src.K12StudentStudentIdentifierState
-				AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
-				AND trgt.IsActiveK12Student = 1
+		USING (
+			SELECT
+				FirstName,
+				MiddleName,
+				LastOrSurname,
+				BirthDate,
+				K12StudentStudentIdentifierState,
+				IsActiveK12Student
+			FROM RankedStudents
+			WHERE SourceRowNumber = 1
+		) AS src
+		ON trgt.K12StudentStudentIdentifierState = src.K12StudentStudentIdentifierState
+		AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
+		AND trgt.IsActiveK12Student = 1
 
 		--update matched targets, records that match on the StudentIdentifierState and BirthDate but have different name values
 		WHEN MATCHED 

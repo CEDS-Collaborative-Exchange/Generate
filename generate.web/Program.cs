@@ -27,6 +27,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Linq;
+using System.Security.Claims;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -99,6 +101,33 @@ else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:User
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
     builder.Services.AddAuthorization();
+
+    // Entra ID app role values are mixed case (e.g. "Administrator"), but AppRoles and the embedded/AD user
+    // managers use upper case, and IsInRole is case-sensitive. Add an upper-case copy of each role claim so
+    // [Authorize(Roles = AppRoles.Administrator)] matches regardless of how the app role is cased in Azure.
+    builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.Events ??= new JwtBearerEvents();
+        var onTokenValidated = options.Events.OnTokenValidated;
+        options.Events.OnTokenValidated = async context =>
+        {
+            await onTokenValidated(context);
+
+            if (context.Principal?.Identity is ClaimsIdentity identity)
+            {
+                var missingRoles = identity.FindAll(identity.RoleClaimType)
+                    .Select(c => c.Value.ToUpperInvariant())
+                    .Where(role => !identity.HasClaim(identity.RoleClaimType, role))
+                    .Distinct()
+                    .ToList();
+
+                foreach (var role in missingRoles)
+                {
+                    identity.AddClaim(new Claim(identity.RoleClaimType, role));
+                }
+            }
+        };
+    });
 
 
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
