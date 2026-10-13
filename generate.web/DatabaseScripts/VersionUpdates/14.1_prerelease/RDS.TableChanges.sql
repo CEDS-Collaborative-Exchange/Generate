@@ -794,3 +794,17 @@ BEGIN
 END;
 
 Update rds.DimRaces set RaceEdFactsCode = 'MU7' where RaceCode = 'DemographicRaceTwoOrMoreRaces'
+
+--Add SchoolYear to the bridge tables
+IF COL_LENGTH(N'[RDS].[BridgeK12StudentAssessmentAccessibilityFeatures]', N'SchoolYearId') IS NULL
+BEGIN
+	ALTER TABLE RDS.BridgeK12StudentAssessmentAccessibilityFeatures
+	ADD SchoolYearId INT DEFAULT -1 NOT NULL
+END;
+
+IF COL_LENGTH(N'[RDS].[BridgeK12StudentAssessmentRaces]', N'SchoolYearId') IS NULL
+BEGIN
+	ALTER TABLE RDS.BridgeK12StudentAssessmentRaces
+	ADD SchoolYearId INT DEFAULT -1 NOT NULL
+END;
+
