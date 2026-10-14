@@ -137,7 +137,6 @@ BEGIN
     VALUES
     ('13.3','14.0','K12Enrollment','K12Enrollment','RenameColumn','NumberOfSchoolDays','NumberOfDaysInAttendance',NULL,1),
     ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','Homelessness_StatusEndDate','Homelessness_StatusExitDate',NULL,1),
-    ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','HomelessNightimeResidence_BeginDate','HomelessNightimeResidence_StartDate',NULL,1),
     ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','HomelessNightTimeResidence_EndDate','HomelessNightTimeResidence_ExitDate',NULL,1),
     ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','EconomicDisadvantage_StatusEndDate','EconomicDisadvantage_StatusExitDate',NULL,1),
     ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','Migrant_StatusEndDate','Migrant_StatusExitDate',NULL,1),
