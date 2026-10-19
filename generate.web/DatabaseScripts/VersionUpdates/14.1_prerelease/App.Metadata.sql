@@ -17,6 +17,8 @@ declare @toggleSectionId as int
 SELECT @toggleSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CERTIF'
 Update app.ToggleQuestions set ToggleSectionId = @toggleSectionId where EmapsQuestionAbbrv = 'DEFEXCERT'
 
+SET @toggleSectionId = 0
+
 SELECT @toggleSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CERT'
 delete from app.ToggleSections where ToggleSectionId = @toggleSectionId
 
