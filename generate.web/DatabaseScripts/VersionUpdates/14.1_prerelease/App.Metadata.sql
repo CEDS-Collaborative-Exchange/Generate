@@ -13,12 +13,16 @@ END
 
 print 'App.Metadata.sql executed for 14.1.'
 
-declare @toggleSectionId as int
-SELECT @toggleSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CERTIF'
-Update app.ToggleQuestions set ToggleSectionId = @toggleSectionId where EmapsQuestionAbbrv = 'DEFEXCERT'
+-- declare @toggleSectionId as int
+-- SELECT @toggleSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CERTIF'
+-- Update app.ToggleQuestions set ToggleSectionId = @toggleSectionId where EmapsQuestionAbbrv = 'DEFEXCERT'
 
-SELECT @toggleSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CERT'
-delete from app.ToggleSections where ToggleSectionId = @toggleSectionId
+-- SET @toggleSectionId = 0
+
+-- SELECT @toggleSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CERT'
+-- delete from app.ToggleSections where ToggleSectionId = @toggleSectionId
+
+Update app.ToggleSections set SectionTitle = 'Regular High School Diplomas' where EmapsSurveySectionAbbrv = 'CERTIF'
 
 -- Repoint the 2026 PROFSTATUS category (EdFactsCategoryId 202) to the
 -- ProficiencyStatus dimension sourced from DimTitleIIIStatuses, matching
