@@ -84,7 +84,7 @@ BEGIN
 	SET Table_Group = CASE 
 						WHEN Table_Name in ('K12Organization','OrganizationAddress','OrganizationCalendarSession',
 							'OrganizationCustomSchoolIndicatorStatusType','OrganizationFederalFunding','OrganizationGradeOffered',
-							'OrganizationPhone','OrganizationProgramType','OrganizationSchoolComprehensiveAndTargetedSupport',
+							'OrganizationPhone','OrganizationProgramType',
 							'OrganizationSchoolIndicatorStatus','CharterSchoolAuthorizer','CharterSchoolManagementOrganization','StateDetail',
 							'K12SchoolComprehensiveSupportIdentificationType','K12SchoolTargetedSupportIdentificationType')
 						THEN 'Organization'

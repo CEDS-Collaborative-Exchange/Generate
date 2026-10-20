@@ -64,3 +64,41 @@ if @formerElYearStatusDimensionId is not null and @assessmentStatusesTableId is 
 begin
 	Update app.Dimensions set DimensionTableId = @assessmentStatusesTableId where DimensionId = @formerElYearStatusDimensionId
 end
+
+-- Remove the deprecated combined Comprehensive and Targeted Support element.
+-- It has been replaced by Comprehensive Support and Improvement, Targeted Support and Improvement,
+-- and Additional Targeted Support and Improvement. The combined element was only used by the
+-- 2019 C206 file specification.
+declare @ctsCategories table (CategoryId int)
+
+insert into @ctsCategories (CategoryId)
+select CategoryId
+from app.Categories
+where CategoryCode in ('ComprehensiveTargetedSupportSchTypeID', 'COMPREHENSIVETARGETEDSUPPORTSCHTYPE')
+
+declare @ctsDimensionId as int
+
+select @ctsDimensionId = DimensionId
+from app.Dimensions
+where DimensionFieldName = 'ComprehensiveAndTargetedSupport'
+
+delete ffc
+from app.FileSubmission_FileColumns ffc
+inner join app.FileColumns fc on ffc.FileColumnId = fc.FileColumnId
+where fc.ReportColumn = 'ComprehensiveAndTargetedSupportCode'
+
+delete from app.FileColumns where ReportColumn = 'ComprehensiveAndTargetedSupportCode'
+
+delete from app.CategoryOptions where CategoryId in (select CategoryId from @ctsCategories)
+
+delete from app.CategorySet_Categories where CategoryId in (select CategoryId from @ctsCategories)
+
+delete from app.Category_Dimensions
+where CategoryId in (select CategoryId from @ctsCategories)
+	or DimensionId = @ctsDimensionId
+
+delete from app.Categories where CategoryId in (select CategoryId from @ctsCategories)
+
+delete from app.Dimensions where DimensionId = @ctsDimensionId
+
+delete from Staging.SourceSystemReferenceData where TableName = 'RefComprehensiveAndTargetedSupport'

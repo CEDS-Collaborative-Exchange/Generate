@@ -64,7 +64,6 @@ namespace generate.core.Models.Staging
         public string School_ProgressAchievingEnglishLanguageProficiencyIndicatorType { get; set; }
         public string School_ProgressAchievingEnglishLanguageProficiencyStateDefinedStatus { get; set; }
         public string School_SchoolDangerousStatus { get; set; }
-        public string School_ComprehensiveAndTargetedSupport { get; set; }
         public string School_ComprehensiveSupport { get; set; }
         public string School_TargetedSupport { get; set; }
         public bool? School_ConsolidatedMigrantEducationProgramFundsStatus { get; set; }

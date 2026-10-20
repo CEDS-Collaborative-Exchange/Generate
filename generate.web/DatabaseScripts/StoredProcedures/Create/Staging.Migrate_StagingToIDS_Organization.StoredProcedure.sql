@@ -4111,7 +4111,6 @@ BEGIN
 			,[ProgressAcheivingEnglishLearnerProficiencyStateDefinedStatus]
 			,[RefTitleISchoolStatusId]
 			,[ConsolidatedMepFundsStatus]
-			,[RefComprehensiveAndTargetedSupportId]
 			,[RefComprehensiveSupportId]
 			,[RefTargetedSupportId]
 			,[RefSchoolDangerousStatusId]
@@ -4131,7 +4130,6 @@ BEGIN
 			END
 			,sst1.RefTitleISchoolStatusId
 			,s.ConsolidatedMepFundsStatus
-			,cts.RefComprehensiveAndTargetedSupportId
 			,cs.RefComprehensiveSupportId
 			,ts.RefTargetedSupportId
 			,sd.RefSchoolDangerousStatusId
@@ -4155,8 +4153,6 @@ BEGIN
 			AND ssrd.SchoolYear = s.SchoolYear
 		LEFT JOIN [dbo].[RefTitleISchoolStatus] sst1 
 			ON sst1.Code = ssrd.OutputCode
-		LEFT JOIN [dbo].[RefComprehensiveAndTargetedSupport] cts 
-			ON cts.Code = s.School_ComprehensiveAndTargetedSupport
 		LEFT JOIN [dbo].[RefComprehensiveSupport] cs 
 			ON cs.Code = s.School_ComprehensiveSupport
 		LEFT JOIN [dbo].[RefTargetedSupport] ts 
@@ -4177,38 +4173,6 @@ BEGIN
 		LEFT JOIN [dbo].[K12SchoolStatus] ks 
 			ON  ks.[K12SchoolId] = k12.K12SchoolId
 		WHERE ks.K12SchoolStatusId IS NULL
-
-		UPDATE ks
-		SET 
-			[RefTitleISchoolStatusId] = sst1.RefTitleISchoolStatusId
-			,[RefComprehensiveAndTargetedSupportId] = cts.RefComprehensiveAndTargetedSupportId
-			,[RefComprehensiveSupportId] = cs.RefComprehensiveSupportId
-			,[RefTargetedSupportId] = ts.RefTargetedSupportId
-			,[RefSchoolDangerousStatusId] = sd.RefSchoolDangerousStatusId
-		FROM [Staging].[OrganizationSchoolComprehensiveAndTargetedSupport] s
-		JOIN Staging.K12Organization orgff
-			ON s.School_Identifier_State = orgff.School_Identifier_State
-				AND ISNULL(orgff.DataCollectionId,'') = ISNULL(s.DataCollectionId, '')
-		JOIN dbo.K12School k12
-			ON k12.OrganizationId = orgff.OrganizationId_School
-				AND ISNULL(k12.DataCollectionId, '') = ISNULL(orgff.DataCollectionId, '')
-		JOIN [dbo].[K12SchoolStatus] ks
-			ON  ks.[K12SchoolId] = k12.K12SchoolId
-				AND ISNULL(ks.DataCollectionId, '') = ISNULL(k12.DataCollectionId, '')
-		LEFT JOIN [Staging].[SourceSystemReferenceData] ssrd
-			ON ssrd.InputCode = orgff.TitleIPartASchoolDesignation 
-			AND ssrd.TableName = 'RefTitleISchoolStatus'
-			AND ssrd.SchoolYear = orgff.SchoolYear
-		LEFT JOIN [dbo].[RefTitleISchoolStatus] sst1 
-			ON sst1.Code = ssrd.OutputCode
-		LEFT JOIN [dbo].[RefComprehensiveAndTargetedSupport] cts 
-			ON cts.Code = s.School_ComprehensiveAndTargetedSupport
-		LEFT JOIN [dbo].[RefComprehensiveSupport] cs 
-			ON cs.Code = s.School_ComprehensiveSupport
-		LEFT JOIN [dbo].[RefTargetedSupport] ts 
-			ON ts.Code = s.School_TargetedSupport
-		LEFT JOIN [dbo].[RefSchoolDangerousStatus] sd 
-			ON sd.Code = orgff.School_SchoolDangerousStatus
 	END TRY
 
 	BEGIN CATCH

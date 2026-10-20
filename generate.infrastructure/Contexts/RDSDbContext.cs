@@ -1729,10 +1729,6 @@ namespace generate.infrastructure.Contexts
                    .Property(x => x.DimComprehensiveAndTargetedSupportId)
                    .IsRequired();
 
-                entity.Property(x => x.ComprehensiveAndTargetedSupportCode).HasMaxLength(50);
-                entity.Property(x => x.ComprehensiveAndTargetedSupportDescription).HasMaxLength(200);
-                entity.Property(x => x.ComprehensiveAndTargetedSupportEdFactsCode).HasMaxLength(50);
-
                 entity.Property(x => x.ComprehensiveSupportCode).HasMaxLength(50);
                 entity.Property(x => x.ComprehensiveSupportDescription).HasMaxLength(200);
                 entity.Property(x => x.ComprehensiveSupportEdFactsCode).HasMaxLength(50);
@@ -4336,9 +4332,6 @@ namespace generate.infrastructure.Contexts
 
                 entity
                    .HasIndex(p => new { p.ReportCode, p.ReportYear, p.ReportLevel, p.CategorySetCode });
-
-                entity
-               .Property(x => x.ComprehensiveAndTargetedSupportCode);
 
                 entity
                .Property(x => x.ComprehensiveSupportCode);

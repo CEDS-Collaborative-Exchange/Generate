@@ -59,8 +59,8 @@
 <div *ngIf="!isLoading || !hasRecords">
     <!--May need to change after having report data-->
     <generate-app-table #reportGrid [itemsSource]="reportDataDto"
-                        [headers]="['Organization Name','State Code','LEA Identifier (State)','School Identifier (State)','Comprehensive Support and Targeted Support Schools','Comprehensive Support Identification','Targeted Support Identification','Comprehensive Support and Improvement','Targeted Support and Improvement','Additional Targeted Support and Improvement Code']"
-                        [bindings]="['organizationName','stateANSICode','leaStateIdentifier','organizationStateId','comprehensiveAndTargetedSupportCode','comprehensiveSupportCode','targetedSupportCode','comprehensiveSupportImprovementCode','targetedSupportImprovementCode','additionalTargetedSupportandImprovementCode']"
+                        [headers]="['Organization Name','State Code','LEA Identifier (State)','School Identifier (State)','Comprehensive Support Identification','Targeted Support Identification','Comprehensive Support and Improvement','Targeted Support and Improvement','Additional Targeted Support and Improvement Code']"
+                        [bindings]="['organizationName','stateANSICode','leaStateIdentifier','organizationStateId','comprehensiveSupportCode','targetedSupportCode','comprehensiveSupportImprovementCode','targetedSupportImprovementCode','additionalTargetedSupportandImprovementCode']"
                         class="generate-app-charterschools__grid">
     </generate-app-table>
 </div>
