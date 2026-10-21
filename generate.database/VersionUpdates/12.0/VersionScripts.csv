@@ -115,12 +115,6 @@ VersionUpdates\\12.0\\Views\\Drop,RDS.vwNeglectedOrDelinquent_FactTable_C221.Vie
 VersionUpdates\\12.0\\Views\\Create,RDS.vwNeglectedOrDelinquent_FactTable_C221.View.sql
 VersionUpdates\\12.0\\Views\\Drop,RDS.vwDimFirearmDisciplineStatuses.View.sql
 VersionUpdates\\12.0\\Views\\Create,RDS.vwDimFirearmDisciplineStatuses.View.sql
-VersionUpdates\\12.0\\Views\\Drop,Debug.vwStudentRaceConflicts.View.sql
-VersionUpdates\\12.0\\Views\\Create,Debug.vwStudentRaceConflicts.View.sql
-VersionUpdates\\12.0\\Views\\Drop,Debug.vwStudentSexConflicts.View.sql
-VersionUpdates\\12.0\\Views\\Create,Debug.vwStudentSexConflicts.View.sql
-VersionUpdates\\12.0\\Views\\Drop,Debug.vwStudentDisabilityConflicts.View.sql
-VersionUpdates\\12.0\\Views\\Create,Debug.vwStudentDisabilityConflicts.View.sql
 VersionUpdates\\12.0\\StoredProcedures\\Drop,App.UpdateViewDefinitions.StoredProcedure.sql 
 VersionUpdates\\12.0\\StoredProcedures\\Create,App.UpdateViewDefinitions.StoredProcedure.sql 
 VersionUpdates\\12.0\\StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql 
