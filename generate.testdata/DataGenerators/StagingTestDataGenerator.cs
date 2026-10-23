@@ -636,7 +636,6 @@ namespace generate.testdata.DataGenerators
                 OrganizationGradeOffereds = new List<OrganizationGradeOffered>(),
                 OrganizationPhones = new List<OrganizationPhone>(),
                 OrganizationProgramTypes = new List<core.Models.Staging.OrganizationProgramType>(),
-                OrganizationSchoolComprehensiveAndTargetedSupports = new List<OrganizationSchoolComprehensiveAndTargetedSupport>(),
                 OrganizationSchoolIndicatorStatuses = new List<OrganizationSchoolIndicatorStatus>(),
                 PersonRaces = new List<K12PersonRace>(),
                 PersonStatuses = new List<core.Models.Staging.PersonStatus>(),

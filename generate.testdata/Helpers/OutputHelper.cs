@@ -466,7 +466,6 @@ namespace generate.testdata.Helpers
                 output.AppendLine("TRUNCATE TABLE Staging.OrganizationGradeOffered");
                 output.AppendLine("TRUNCATE TABLE Staging.OrganizationPhone");
                 output.AppendLine("TRUNCATE TABLE Staging.OrganizationProgramType");
-                output.AppendLine("TRUNCATE TABLE Staging.OrganizationSchoolComprehensiveAndTargetedSupport");
                 output.AppendLine("TRUNCATE TABLE Staging.OrganizationSchoolIndicatorStatus");
                 output.AppendLine("TRUNCATE TABLE Staging.K12PersonRace");
                 output.AppendLine("TRUNCATE TABLE Staging.PersonStatus");
@@ -938,13 +937,6 @@ namespace generate.testdata.Helpers
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefCharterLeaStatus' ,NULL,'CHRTESEA','CHRTESEA')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefCharterLeaStatus' ,NULL,'CHRTIDEAESEA','CHRTIDEAESEA')"));
 
-            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefComprehensiveAndTargetedSupport' ,NULL,'CSI','CSI')"));
-            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefComprehensiveAndTargetedSupport' ,NULL,'TSI','TSI')"));
-            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefComprehensiveAndTargetedSupport' ,NULL,'CSIEXIT','CSIEXIT')"));
-            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefComprehensiveAndTargetedSupport' ,NULL,'TSIEXIT','TSIEXIT')"));
-            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefComprehensiveAndTargetedSupport' ,NULL,'NOTCSITSI','NOTCSITSI')"));
-            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefComprehensiveAndTargetedSupport' ,NULL,'MISSING','MISSING')"));
-
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefSubgroup' ,NULL,'EconomicDisadvantage','EconomicDisadvantage')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefSubgroup' ,NULL,'IDEA','IDEA')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData([SchoolYear],[TableName],[TableFilter],[InputCode],[OutputCode]) VALUES (", schoolYear, ",'RefSubgroup' ,NULL,'LEP','LEP')"));
@@ -1079,7 +1071,6 @@ namespace generate.testdata.Helpers
             output.AppendLine("Update Staging.K12Organization set School_GunFreeSchoolsActReportingStatus =  CASE WHEN School_GunFreeSchoolsActReportingStatus IS NOT NULL THEN School_GunFreeSchoolsActReportingStatus +  '_1' else School_GunFreeSchoolsActReportingStatus END ");
             output.AppendLine("Update Staging.K12Organization set School_ReconstitutedStatus =  CASE WHEN School_ReconstitutedStatus IS NOT NULL THEN School_ReconstitutedStatus +  '_1' else School_ReconstitutedStatus END ");
             output.AppendLine("Update Staging.K12Organization set School_TitleISchoolStatus =  CASE WHEN School_TitleISchoolStatus IS NOT NULL THEN School_TitleISchoolStatus +  '_1' else School_TitleISchoolStatus END ");
-            output.AppendLine("Update Staging.K12Organization set School_ComprehensiveAndTargetedSupport =  CASE WHEN School_ComprehensiveAndTargetedSupport IS NOT NULL THEN School_ComprehensiveAndTargetedSupport +  '_1' else School_ComprehensiveAndTargetedSupport END ");
             output.AppendLine("Update Staging.K12Organization set School_ComprehensiveSupport =  CASE WHEN School_ComprehensiveSupport IS NOT NULL THEN School_ComprehensiveSupport +  '_1' else School_ComprehensiveSupport END ");
             output.AppendLine("Update Staging.K12Organization set School_TargetedSupport =  CASE WHEN School_TargetedSupport IS NOT NULL THEN School_TargetedSupport +  '_1' else School_TargetedSupport END ");
             output.AppendLine("Update Staging.K12Organization set School_SchoolDangerousStatus =  CASE WHEN School_SchoolDangerousStatus IS NOT NULL THEN School_SchoolDangerousStatus +  '_1' else School_SchoolDangerousStatus END ");

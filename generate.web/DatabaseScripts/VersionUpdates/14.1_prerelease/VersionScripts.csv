@@ -3,6 +3,7 @@ VersionUpdates\\14.1_prerelease,App.Metadata.sql,0
 VersionUpdates\\14.1_prerelease,App.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,CEDS.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,RDS.TableChanges.sql,0
+VersionUpdates\\14.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,JunkTablePopulation.sql,0
 Views\\Drop,RDS.vwStateAssessments.View.sql,0
 Views\\Create,RDS.vwStateAssessments.View.sql,0
@@ -26,4 +27,8 @@ StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.
 StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql, 0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.RebuildIndexes.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.RebuildIndexes.StoredProcedure.sql,0
 VersionUpdates\\14.1_prerelease,UpdateDbVersion.sql,0

@@ -177,7 +177,6 @@ The `Staging.SourceSystemReferenceData` tables are noted below:
 | RefReconstitutedStatus                                        |
 | RefProgressAchievingEnglishLanguageProficiencyIndicatorStatus |
 | RefTitleISchoolStatus                                         |
-| RefComprehensiveAndTargetedSupport                            |
 | RefComprehensiveSupport                                       |
 | RefTargetedSupport                                            |
 | RefSchoolDangerousStatus                                      |

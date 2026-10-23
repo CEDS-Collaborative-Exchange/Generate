@@ -808,3 +808,11 @@ BEGIN
 	ADD SchoolYearId INT DEFAULT -1 NOT NULL
 END;
 
+
+--Remove the deprecated combined Comprehensive and Targeted Support element.
+--It has been replaced by Comprehensive Support and Improvement, Targeted Support and Improvement,
+--and Additional Targeted Support and Improvement.
+IF COL_LENGTH(N'[RDS].[ReportEDFactsOrganizationCounts]', N'ComprehensiveAndTargetedSupportCode') IS NOT NULL
+BEGIN
+	ALTER TABLE RDS.ReportEDFactsOrganizationCounts DROP COLUMN ComprehensiveAndTargetedSupportCode;
+END;
