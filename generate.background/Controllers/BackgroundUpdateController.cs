@@ -75,8 +75,9 @@ namespace generate.background.Controllers
 
                 if (_hostingEnvironment.IsDevelopment())
                 {
-                    webAppPath = webAppPath.Replace("generate.background", "generate.web");
-                    webAppPath += @"\bin\Debug\netcoreapp2.2";
+                    // Use this app's own build output folder (e.g. bin\Debug\net10.0) for the web app
+                    var buildOutputPath = System.IO.Path.GetRelativePath(_hostingEnvironment.ContentRootPath, AppContext.BaseDirectory);
+                    webAppPath = System.IO.Path.Combine(webAppPath.Replace("generate.background", "generate.web"), buildOutputPath).TrimEnd('\\');
                 }
                 else
                 {

@@ -121,10 +121,17 @@ export class UpdateComponent implements AfterViewInit {
             this.downloadedUpdates = downloaded;
 
             if (this.downloadedUpdates.length == 0 || this.updateStatus.status != "OK") {
+                if (this.updateProcessing) {
+                    // The update finished while this page was open. Reload so the browser picks up
+                    // the updated application files and shows the current update status.
+                    window.location.reload();
+                    return;
+                }
                 this.updateProcessing = false;
             }
 
-        });
+        },
+        error => this.errorMessage = <any>error);
     }
 
     checkAvailableOffline() {
@@ -140,10 +147,17 @@ export class UpdateComponent implements AfterViewInit {
             this.downloadedUpdates = downloaded;
 
             if (this.downloadedUpdates.length == 0 || this.updateStatus.status != "OK") {
+                if (this.updateProcessing) {
+                    // The update finished while this page was open. Reload so the browser picks up
+                    // the updated application files and shows the current update status.
+                    window.location.reload();
+                    return;
+                }
                 this.updateProcessing = false;
             }
 
-        });
+        },
+        error => this.errorMessage = <any>error);
     }
 
     ngAfterViewInit() {
