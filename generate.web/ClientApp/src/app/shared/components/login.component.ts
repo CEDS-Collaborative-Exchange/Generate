@@ -28,6 +28,7 @@ export class LoginComponent implements AfterViewInit, AfterViewChecked {
     
     isAuthenticating: boolean;
     isOAuth: boolean = false;
+    allowPasswordLogin: boolean = false;
 
     public userService: UserService;
     public authService: AuthService;
@@ -50,6 +51,7 @@ export class LoginComponent implements AfterViewInit, AfterViewChecked {
 
             if (res.authType.toUpperCase() === 'OAUTH') {
                 this.isOAuth = true;
+                this.allowPasswordLogin = res.allowPasswordLogin === true;
             }
 
             idle.setIdle(res.timeoutInSeconds - 300)
@@ -209,7 +211,8 @@ export class LoginComponent implements AfterViewInit, AfterViewChecked {
     }
 
     logout(event) {
-        if (!this.isOAuth) {
+        // Users signed in with Azure AD carry a bearer token; username/password users have a server cookie instead
+        if (!this.isOAuth || !this.userService.getToken()) {
             event.preventDefault();
 
             this.http.post('api/users/logOff', null)
