@@ -8,6 +8,8 @@ Views\\Drop,RDS.vwStateAssessments.View.sql,0
 Views\\Create,RDS.vwStateAssessments.View.sql,0
 Views\\Drop,RDS.vwDimAccessibilityFeatures.View.sql,0
 Views\\Create,RDS.vwDimAccessibilityFeatures.View.sql,0
+Views\\Drop,RDS.vwStateAssessments.View.sql,0
+Views\\Create,RDS.vwStateAssessments.View.sql,0
 Views\\Drop,Debug.vwStudentRaceConflicts.View.sql,0
 Views\\Create,Debug.vwStudentRaceConflicts.View.sql,0
 Views\\Drop,Debug.vwStudentSexConflicts.View.sql,0
