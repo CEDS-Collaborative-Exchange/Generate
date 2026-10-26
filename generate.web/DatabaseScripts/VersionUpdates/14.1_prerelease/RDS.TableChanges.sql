@@ -808,3 +808,14 @@ BEGIN
 	ADD SchoolYearId INT DEFAULT -1 NOT NULL
 END;
 
+-- Correct misspelled STATEDDEFINEDSTATUSCODE column to STATEDEFINEDSTATUSCODE
+IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'STATEDDEFINEDSTATUSCODE') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'STATEDEFINEDSTATUSCODE') IS NULL
+BEGIN
+	EXEC sp_rename
+		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[STATEDDEFINEDSTATUSCODE]',
+		N'STATEDEFINEDSTATUSCODE',
+		N'COLUMN';
+END;
+
