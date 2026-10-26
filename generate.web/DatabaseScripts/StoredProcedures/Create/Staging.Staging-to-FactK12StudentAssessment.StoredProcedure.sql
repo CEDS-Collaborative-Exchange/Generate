@@ -770,7 +770,7 @@ BEGIN
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
-			, -1 AS [K12StudentId]
+			, -1 										AS [K12StudentId]
 			, [K12Student_CurrentId]							
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
@@ -855,11 +855,13 @@ BEGIN
 				
 		INSERT INTO RDS.BridgeK12StudentAssessmentRaces (
 			FactK12StudentAssessmentId
-			, RaceId          
+			, RaceId         
+			, SchoolYearId 
 		)
 		SELECT DISTINCT
 			t.FactK12StudentAssessmentId
 			, rdr.DimRaceId 
+			, @SchoolYearId
 		FROM #temp t 
 		JOIN #vwRaces rdr
 			ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
@@ -883,10 +885,12 @@ BEGIN
 		INSERT INTO RDS.BridgeK12StudentAssessmentAccessibilityFeatures (
 			FactK12StudentAssessmentId
 			, AccessibilityFeatureId
+			, SchoolYearId
 		)
 		SELECT 	
 			rfsa.FactK12StudentAssessmentId
 			, af.DimAccessibilityFeatureId
+			, @SchoolYearId
 		FROM RDS.FactK12StudentAssessments rfsa
 		JOIN RDS.DimAssessments rda
 			ON rfsa.AssessmentId = rda.DimAssessmentId
