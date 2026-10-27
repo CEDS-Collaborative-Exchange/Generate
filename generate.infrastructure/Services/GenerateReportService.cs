@@ -495,6 +495,6 @@ namespace generate.infrastructure.Services
             return _reportDebugRepository.Get_ReportDebugData(reportCode, reportLevel, reportYear, categorySetCode, parameters, sort, skip, take, pageSize, page).ToList();
         }
 
-        public string NormalizeNull(string input) => input == "null" ? null : input;
+        public static string NormalizeNull(string input) => input == "null" ? null : input;
     }
 }
