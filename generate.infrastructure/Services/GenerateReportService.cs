@@ -302,6 +302,11 @@ namespace generate.infrastructure.Services
                && r.ReportCode == reportCode, 0, 1, c => c.GenerateReport_OrganizationLevels)
                .FirstOrDefault();
 
+            if (report == null)
+            {
+                return null;
+            }
+
             IEnumerable<OrganizationLevel> organizationLevels = _appRepository.GetAll<OrganizationLevel>(0, 0);
 
             List<OrganizationLevel> reportOrganizationLevels = organizationLevels.Where(l => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == l.OrganizationLevelId)).ToList();
@@ -310,11 +315,6 @@ namespace generate.infrastructure.Services
             {
                 reportLevel = reportOrganizationLevels[0].LevelCode;
 
-            }
-
-            if (report == null)
-            {
-                return null;
             }
 
             GenerateReportControlType reportControlType = new GenerateReportControlType();
@@ -327,31 +327,8 @@ namespace generate.infrastructure.Services
             }
             else if (reportType == "edfactsreport")
             {
-                string[] assessmentList = ["175", "178", "179", "185", "188", "189"];
                 reportDto = _edFactsReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, tableTypeAbbrv, reportSort, pageSize, page);
-                IEnumerable<CategorySet> categorySets = null;
-                if (assessmentList.Contains(reportCode) && tableTypeAbbrv.Length > 0)
-                {
-                    categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
-                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel && c.TableType.TableTypeAbbrv == tableTypeAbbrv, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
-                }
-                else if (reportCode == "150") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
-                else if (reportCode == "151") { categorySets = categorySets.Where(c =>  c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
-                else if (reportCode == "116" && categorySetCode.ToUpper() == "CSA" && tableTypeAbbrv.Length > 0)
-                {
-                    categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
-                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel && c.TableType.TableTypeAbbrv == tableTypeAbbrv, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
-                }
-                else if (reportCode == "059" && categorySetCode.ToUpper() == "TOT" && tableTypeAbbrv.Length > 0)
-                {
-                    categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
-                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel && c.TableType.TableTypeAbbrv == tableTypeAbbrv, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
-                }
-                else {
-                    categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
-                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
-                }
-
+                IEnumerable<CategorySet> categorySets = GetEdFactsCategorySets(reportCode, reportLevel, reportYear, categorySetCode, tableTypeAbbrv);
                 reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
 
             }
@@ -384,6 +361,48 @@ namespace generate.infrastructure.Services
             reportDto.ReportControlTypeName = reportControlType.ControlTypeName;
             reportDto.ReportYear = reportYear;
             return reportDto;
+        }
+
+        private IEnumerable<CategorySet> GetEdFactsCategorySets(string reportCode, string reportLevel, string reportYear, string categorySetCode, string tableTypeAbbrv)
+        {
+            string[] assessmentList = ["175", "178", "179", "185", "188", "189"];
+
+            if (assessmentList.Contains(reportCode) && tableTypeAbbrv.Length > 0)
+            {
+                return FindEdFactsCategorySetsByTableType(reportCode, reportLevel, reportYear, categorySetCode, tableTypeAbbrv);
+            }
+
+            if (IsTableTypeSpecificCategorySet(reportCode, categorySetCode, tableTypeAbbrv))
+            {
+                return FindEdFactsCategorySetsByTableType(reportCode, reportLevel, reportYear, categorySetCode, tableTypeAbbrv);
+            }
+
+            IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
+                && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
+
+            // Reports 150 and 151 share category sets across table types; keep only the one each report uses,
+            // matching the filtering in GetCategorySets.
+            if (reportCode == "150") { return categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
+            if (reportCode == "151") { return categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
+
+            return categorySets;
+        }
+
+        private static bool IsTableTypeSpecificCategorySet(string reportCode, string categorySetCode, string tableTypeAbbrv)
+        {
+            if (tableTypeAbbrv.Length == 0)
+            {
+                return false;
+            }
+
+            return (reportCode == "116" && categorySetCode.ToUpper() == "CSA")
+                || (reportCode == "059" && categorySetCode.ToUpper() == "TOT");
+        }
+
+        private IEnumerable<CategorySet> FindEdFactsCategorySetsByTableType(string reportCode, string reportLevel, string reportYear, string categorySetCode, string tableTypeAbbrv)
+        {
+            return _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
+                && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel && c.TableType.TableTypeAbbrv == tableTypeAbbrv, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
         }
         
         public List<CategorySetDto> GetCategorySets(GenerateReport report)
