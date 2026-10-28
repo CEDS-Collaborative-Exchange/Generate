@@ -9,7 +9,7 @@ using System.Text;
 
 namespace generate.testdata.TestCaseData
 {
-    public class FS086_CIID8626
+    public static class FS086_CIID8626
     {
         public static void AppendTestCaseData(StagingTestDataObject testData, Random rnd, ITestDataHelper testDataHelper, int schoolYear)
         {

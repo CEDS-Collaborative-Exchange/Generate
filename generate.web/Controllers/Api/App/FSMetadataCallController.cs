@@ -40,8 +40,6 @@ namespace generate.web.Controllers.Api.App
         private readonly string _fsMetaCHRDetailFileName;
         private readonly string _fsMetaESSLayoutFileName;        
         private readonly string _fsMetaCHRLayoutFileName;
-        private readonly string _bkfsMetaFileLoc;
-        private readonly bool _reloadFromBackUp;
 
         public FSMetadataCallController
         (
@@ -54,17 +52,15 @@ namespace generate.web.Controllers.Api.App
             _appRepository = appRepository;
             _FSMetadataUpdate = fsMetadataUpdate;
 
-            _useWSforFSMetaUpd = configuration.GetSection("appSettings").GetValue<bool>("useWSforFSMetaUpd");
-            _fsWSURL = configuration.GetSection("appSettings").GetValue<string>("fsWSURL");
-            _fsApiKey = configuration.GetSection("appSettings").GetValue<string>("metadataApiKey");
-            _fsMetaFileLoc = configuration.GetSection("appSettings").GetValue<string>("fsMetaFileLoc");
-            _fsMetaESSDetailFileName = configuration.GetSection("appSettings").GetValue<string>("fsMetaESSDetailFileName");
-            _fsMetaCHRDetailFileName = configuration.GetSection("appSettings").GetValue<string>("fsMetaCHRDetailFileName");
-            _fsMetaESSLayoutFileName = configuration.GetSection("appSettings").GetValue<string>("fsMetaESSLayoutFileName");
-            _fsMetaCHRLayoutFileName = configuration.GetSection("appSettings").GetValue<string>("fsMetaCHRLayoutFileName");
-            _bkfsMetaFileLoc = configuration.GetSection("appSettings").GetValue<string>("bkfsMetaFileLoc");
-            _reloadFromBackUp = configuration.GetSection("appSettings").GetValue<bool>("reloadFromBackUp");
-            //_backgroundUrl = configuration.GetSection("appSettings").GetValue<string>("BackgroundUrl");
+            IConfigurationSection appSettings = configuration.GetSection("appSettings");
+            _useWSforFSMetaUpd = appSettings.GetValue<bool>("useWSforFSMetaUpd");
+            _fsWSURL = appSettings.GetValue<string>("fsWSURL");
+            _fsApiKey = appSettings.GetValue<string>("metadataApiKey");
+            _fsMetaFileLoc = appSettings.GetValue<string>("fsMetaFileLoc");
+            _fsMetaESSDetailFileName = appSettings.GetValue<string>("fsMetaESSDetailFileName");
+            _fsMetaCHRDetailFileName = appSettings.GetValue<string>("fsMetaCHRDetailFileName");
+            _fsMetaESSLayoutFileName = appSettings.GetValue<string>("fsMetaESSLayoutFileName");
+            _fsMetaCHRLayoutFileName = appSettings.GetValue<string>("fsMetaCHRLayoutFileName");
         }
 
         [HttpGet("fsservc/{SelSchYear}")]
@@ -79,11 +75,8 @@ namespace generate.web.Controllers.Api.App
             this._FSMetadataUpdate.fsMetaCHRDetailFileName = _fsMetaCHRDetailFileName;
             this._FSMetadataUpdate.fsMetaESSLayoutFileName = _fsMetaESSLayoutFileName;
             this._FSMetadataUpdate.fsMetaCHRLayoutFileName = _fsMetaCHRLayoutFileName;
-            //this._FSMetadataUpdate.bkfsMetaFileLoc = _bkfsMetaFileLoc;
-            //this._FSMetadataUpdate.reloadFromBackUp = _reloadFromBackUp;
-            this._FSMetadataUpdate.selSchYr = (SelSchYear == "undefined" || _useWSforFSMetaUpd == false) ? string.Empty : SelSchYear;
+            this._FSMetadataUpdate.selSchYr = (SelSchYear == "undefined" || !_useWSforFSMetaUpd) ? string.Empty : SelSchYear;
 
-            var x = SelSchYear;
             await Task.FromResult(this._FSMetadataUpdate.callInitFSmetaServc());
 
             return Ok();
@@ -109,8 +102,6 @@ namespace generate.web.Controllers.Api.App
             this._FSMetadataUpdate.fsMetaCHRDetailFileName = _fsMetaCHRDetailFileName;
             this._FSMetadataUpdate.fsMetaESSLayoutFileName = _fsMetaESSLayoutFileName;
             this._FSMetadataUpdate.fsMetaCHRLayoutFileName = _fsMetaCHRLayoutFileName;
-            //this._FSMetadataUpdate.bkfsMetaFileLoc = _bkfsMetaFileLoc;
-            //this._FSMetadataUpdate.reloadFromBackUp = _reloadFromBackUp;
 
             return await Task.FromResult(this._FSMetadataUpdate.GetLatestSYs());
       

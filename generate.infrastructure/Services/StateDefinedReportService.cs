@@ -311,7 +311,7 @@ namespace generate.infrastructure.Services
             return (resultList, distinctCount);
         }
 
-        private IEnumerable<ReportEDFactsK12StudentCount> ApplyDisabilityFilter(IEnumerable<ReportEDFactsK12StudentCount> query, string reportFilter)
+        private static IEnumerable<ReportEDFactsK12StudentCount> ApplyDisabilityFilter(IEnumerable<ReportEDFactsK12StudentCount> query, string reportFilter)
         {
             if (reportFilter == "WDIS")
                 return query.Where(t => t.IDEADISABILITYTYPE != "MISSING").ToList();

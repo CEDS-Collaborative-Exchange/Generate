@@ -86,7 +86,7 @@ namespace generate.infrastructure.Services
             return PopulateReportDto(report, reportCode, reportLevel, reportYear, categorySetCode, tableTypeAbbrv, isOnlineReport, reportDto);
         }
 
-        private GenerateReportDataDto CreateReportDto()
+        private static GenerateReportDataDto CreateReportDto()
         {
             return new GenerateReportDataDto
             {
@@ -257,7 +257,7 @@ namespace generate.infrastructure.Services
 
         }
 
-        private dynamic processOrganizationStatusRow(ReportEDFactsOrganizationStatusCount item, Dictionary<string, string> columns, string categorySetCode)
+        private static dynamic processOrganizationStatusRow(ReportEDFactsOrganizationStatusCount item, Dictionary<string, string> columns, string categorySetCode)
         {
             dynamic row = new ExpandoObject();
             row.stateCode = item.StateCode;

@@ -7,7 +7,7 @@ using generate.core.Models.RDS;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class DimDateHelper
+    public static class DimDateHelper
     {
         public static List<DimDate> GetData()
         {

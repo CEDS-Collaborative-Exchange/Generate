@@ -7,7 +7,7 @@ using generate.core.Models.App;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class TableTypeHelper
+    public static class TableTypeHelper
     {
         public static List<TableType> GetData()
         {

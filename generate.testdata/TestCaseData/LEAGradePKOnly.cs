@@ -5,7 +5,7 @@ using System;
 
 namespace generate.testdata.TestCaseData
 {
-    public class LEAGradePKOnlyTestCaseData
+    public static class LEAGradePKOnlyTestCaseData
     {
         public static void AppendTestCaseData(StagingTestDataObject testData, Random rnd, ITestDataHelper testDataHelper, int schoolYear)
         {

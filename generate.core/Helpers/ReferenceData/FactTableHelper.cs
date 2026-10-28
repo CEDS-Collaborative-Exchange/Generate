@@ -7,7 +7,7 @@ using generate.core.Models.App;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class FactTableHelper
+    public static class FactTableHelper
     {
         public static List<FactTable> GetData()
         {
