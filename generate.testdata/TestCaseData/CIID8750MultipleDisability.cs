@@ -8,7 +8,7 @@ using System.Text;
 
 namespace generate.testdata.TestCaseData
 {
-    public class CIID8750MultipleDisability
+    public static class CIID8750MultipleDisability
     {
         public static void AppendTestCaseData(StagingTestDataObject testData, Random rnd, ITestDataHelper testDataHelper, int schoolYear)
         {

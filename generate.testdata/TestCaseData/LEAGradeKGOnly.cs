@@ -7,7 +7,7 @@ using System.Text;
 
 namespace generate.testdata.TestCaseData
 {
-    public class LEAGradeKGOnlyTestCaseData
+    public static class LEAGradeKGOnlyTestCaseData
     {
         public static void AppendTestCaseData(StagingTestDataObject testData, Random rnd, ITestDataHelper testDataHelper, int schoolYear)
         {

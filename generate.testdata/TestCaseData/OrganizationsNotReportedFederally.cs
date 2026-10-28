@@ -6,7 +6,7 @@ using System.Text;
 
 namespace generate.testdata.TestCaseData
 {
-    public class OrganizationsNotReportedFederallyTestCaseData
+    public static class OrganizationsNotReportedFederallyTestCaseData
     {
         public static void AppendTestCaseData(StagingTestDataObject testData, Random rnd, ITestDataHelper testDataHelper, int schoolYear)
         {
