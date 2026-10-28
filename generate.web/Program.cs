@@ -29,7 +29,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
+
+// Authentication scheme that accepts either an Azure AD bearer token or the username/password cookie
+const string OAuthOrPasswordScheme = "OAuthOrPassword";
 
 var builder = WebApplication.CreateBuilder(args);
 string environment_string = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + "_";
@@ -130,18 +136,63 @@ else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:User
     });
 
 
-    builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddUserStore<ApplicationUserStore<ApplicationUser>>()
-    .AddRoleStore<ApplicationRoleStore>()
-    .AddUserManager<ApplicationUserManager>();
+    // Optionally allow the embedded username/password accounts to sign in alongside Azure AD.
+    // Off by default: the embedded accounts use configured (often default) passwords, so this
+    // should only be enabled for local development.
+    var allowPasswordLogin = builder.Configuration.GetValue<bool>("AppSettings:AllowPasswordLoginWithOAuth");
+
+    if (allowPasswordLogin)
+    {
+        builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+        .AddUserStore<EmbeddedUserStore<ApplicationUser>>()
+        .AddRoleStore<ApplicationRoleStore>()
+        .AddUserManager<EmbeddedUserManager>();
+
+        // Requests carrying an Azure AD bearer token use JWT Bearer; everything else uses the
+        // Identity cookie issued by the username/password login.
+        builder.Services.AddAuthentication()
+            .AddPolicyScheme(OAuthOrPasswordScheme, OAuthOrPasswordScheme, options =>
+            {
+                options.ForwardDefaultSelector = context =>
+                    context.Request.Headers.Authorization.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                        ? JwtBearerDefaults.AuthenticationScheme
+                        : IdentityConstants.ApplicationScheme;
+            });
+
+        // Return 401/403 instead of redirecting to a login page, matching JWT Bearer behavior
+        // so the Angular app gets a status code rather than an HTML page.
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return Task.CompletedTask;
+            };
+        });
+    }
+    else
+    {
+        builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+        .AddUserStore<ApplicationUserStore<ApplicationUser>>()
+        .AddRoleStore<ApplicationRoleStore>()
+        .AddUserManager<ApplicationUserManager>();
+    }
 
     // AddIdentity<>() above overrides DefaultAuthenticateScheme/DefaultChallengeScheme back to
     // Identity.Application (cookies), even though AddAuthentication() was configured for JWT Bearer.
-    // Re-assert JWT Bearer as the default so [Authorize] validates bearer tokens in OAuth mode.
+    // Re-assert JWT Bearer (or the bearer-or-cookie policy scheme) as the default so [Authorize]
+    // validates bearer tokens in OAuth mode.
+    var defaultScheme = allowPasswordLogin ? OAuthOrPasswordScheme : JwtBearerDefaults.AuthenticationScheme;
     builder.Services.Configure<AuthenticationOptions>(options =>
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = defaultScheme;
+        options.DefaultChallengeScheme = defaultScheme;
+        options.DefaultForbidScheme = defaultScheme;
     });
 }
 else // AD Auth

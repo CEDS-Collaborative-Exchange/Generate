@@ -23,7 +23,6 @@ BEGIN
 	ALTER INDEX ALL ON Staging.OrganizationGradeOffered								  REBUILD;
 	ALTER INDEX ALL ON Staging.OrganizationPhone									  REBUILD;
 	ALTER INDEX ALL ON Staging.OrganizationProgramType								  REBUILD;
-	ALTER INDEX ALL ON Staging.OrganizationSchoolComprehensiveAndTargetedSupport	  REBUILD;
 	ALTER INDEX ALL ON Staging.OrganizationSchoolIndicatorStatus					  REBUILD;
 	ALTER INDEX ALL ON Staging.PersonRace											  REBUILD;
 	ALTER INDEX ALL ON Staging.PersonStatus											  REBUILD;
