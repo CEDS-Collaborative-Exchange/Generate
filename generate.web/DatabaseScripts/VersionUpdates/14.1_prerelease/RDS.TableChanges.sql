@@ -795,6 +795,23 @@ END;
 
 Update rds.DimRaces set RaceEdFactsCode = 'MU7' where RaceCode = 'DemographicRaceTwoOrMoreRaces'
 
+--Fix misspelled SubgroupCode (Purto -> Puerto) at its source (dbo.RefSubgroup), in RDS.DimSubgroups, and the OutputCode that maps to it in RDS.vwDimSubgroups
+IF OBJECT_ID(N'[dbo].[RefSubgroup]', N'U') IS NOT NULL
+BEGIN
+	UPDATE dbo.RefSubgroup
+	SET Code = 'HispanicNotPuertoRican'
+	WHERE Code = 'HispanicNotPurtoRican'
+END;
+
+UPDATE RDS.DimSubgroups
+SET SubgroupCode = 'HispanicNotPuertoRican'
+WHERE SubgroupCode = 'HispanicNotPurtoRican'
+
+UPDATE Staging.SourceSystemReferenceData
+SET OutputCode = 'HispanicNotPuertoRican'
+WHERE TableName = 'RefSubgroup'
+	AND OutputCode = 'HispanicNotPurtoRican'
+
 --Add SchoolYear to the bridge tables
 IF COL_LENGTH(N'[RDS].[BridgeK12StudentAssessmentAccessibilityFeatures]', N'SchoolYearId') IS NULL
 BEGIN
