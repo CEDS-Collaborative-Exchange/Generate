@@ -96,7 +96,7 @@ namespace generate.web.Controllers.Api.App
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
 
         }
@@ -111,7 +111,7 @@ namespace generate.web.Controllers.Api.App
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
 
         }
@@ -172,8 +172,9 @@ namespace generate.web.Controllers.Api.App
 
                 if (_hostingEnvironment.IsDevelopment())
                 {
-                    backgroundAppPath = backgroundAppPath.Replace("generate.web", "generate.background");
-                    backgroundAppPath += @"\bin\Debug\netcoreapp2.2";
+                    // Use this app's own build output folder (e.g. bin\Debug\net10.0) for the background app
+                    var buildOutputPath = System.IO.Path.GetRelativePath(_hostingEnvironment.ContentRootPath, AppContext.BaseDirectory);
+                    backgroundAppPath = System.IO.Path.Combine(backgroundAppPath.Replace("generate.web", "generate.background"), buildOutputPath).TrimEnd('\\');
                 }
                 else
                 {
@@ -201,7 +202,7 @@ namespace generate.web.Controllers.Api.App
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
 
 
