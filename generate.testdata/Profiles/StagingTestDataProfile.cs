@@ -131,7 +131,6 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<string>> RefNSLPStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefSchoolDangerousStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefProgressAchievingEnglishLanguageProficiencyIndicatorStatusDistribution { get; set; }
-        public List<DataDistribution<string>> RefComprehensiveAndTargetedSupportDistribution { get; set; }
         public List<DataDistribution<string>> RefComprehensiveSupportDistribution { get; set; }
         public List<DataDistribution<string>> RefTargetedSupportDistribution { get; set; }
         public List<DataDistribution<string>> RefTargetedSupportImprovementDistribution { get; set; }
@@ -768,15 +767,6 @@ namespace generate.testdata.Profiles
             this.RefProgressAchievingEnglishLanguageProficiencyIndicatorStatusDistribution.Add(new DataDistribution<string>() { Option = "TOOFEW", ExpectedDistribution = 66 });
             this.RefProgressAchievingEnglishLanguageProficiencyIndicatorStatusDistribution.Add(new DataDistribution<string>() { Option = "NOSTUDENTS", ExpectedDistribution = 100 });
 
-
-            this.RefComprehensiveAndTargetedSupportDistribution = new List<DataDistribution<string>>();
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "CSI", ExpectedDistribution = 15 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "TSI", ExpectedDistribution = 30 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "ADDLTSI", ExpectedDistribution = 45 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "CSIEXIT", ExpectedDistribution = 60 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "TSIEXIT", ExpectedDistribution = 75 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "NOTCSI", ExpectedDistribution = 85 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "NOTTSI", ExpectedDistribution = 95 });
 
 
             this.RefComprehensiveSupportDistribution = new List<DataDistribution<string>>();
