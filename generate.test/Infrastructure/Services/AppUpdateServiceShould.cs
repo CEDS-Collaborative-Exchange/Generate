@@ -233,7 +233,7 @@ namespace generate.test.Infrastructure.Services
             return context;
         }
 
-        private RDSDbContext GetRdsDbContext()
+        private static RDSDbContext GetRdsDbContext()
         {
 
             var options = new DbContextOptionsBuilder<infrastructure.Contexts.RDSDbContext>()

@@ -122,6 +122,12 @@ namespace generate.infrastructure.Services
             var client = new RestClient(new RestClientOptions(new Uri(updateUrl + "/api/update/" + currentVersion)));
             var request = new RestRequest("", Method.Get);
             var response = client.Execute(request);
+
+            if (!response.IsSuccessful || string.IsNullOrEmpty(response.Content))
+            {
+                throw new InvalidOperationException("Unable to check for updates at " + updateUrl + " (" + response.StatusCode + "): " + response.ErrorMessage);
+            }
+
             List<UpdatePackageDto> pendingUpdates = JsonConvert.DeserializeObject<List<UpdatePackageDto>>(response.Content);
 
             return pendingUpdates;
@@ -222,6 +228,12 @@ namespace generate.infrastructure.Services
             var client = new RestClient(new RestClientOptions(new Uri(updateUrl)));
             var request = new RestRequest("/api/update/" + currentVersion, Method.Get);
             var response = client.Execute(request);
+
+            if (!response.IsSuccessful || string.IsNullOrEmpty(response.Content))
+            {
+                throw new InvalidOperationException("Unable to check for updates at " + updateUrl + " (" + response.StatusCode + "): " + response.ErrorMessage);
+            }
+
             List<UpdatePackageDto> pendingUpdates = JsonConvert.DeserializeObject<List<UpdatePackageDto>>(response.Content);
 
             var updatePath = _fileSystem.Path.Combine(appPath, "Updates");

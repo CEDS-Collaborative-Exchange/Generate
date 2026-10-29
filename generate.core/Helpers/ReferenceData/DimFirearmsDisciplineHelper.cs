@@ -7,7 +7,7 @@ using generate.core.Models.RDS;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class DimFirearmsDisciplineHelper
+    public static class DimFirearmsDisciplineHelper
     {
         public static List<DimFirearmDiscipline> GetData()
         {

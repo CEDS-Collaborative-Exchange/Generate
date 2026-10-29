@@ -6,7 +6,7 @@ using System.Text;
 
 namespace generate.testdata.TestCaseData
 {
-    public class K12SchoolTargetedSupportIdentificationTypeTestCaseData
+    public static class K12SchoolTargetedSupportIdentificationTypeTestCaseData
     {
         public static void AppendStaticK12SchoolTargetedSupportIdentificationTypeTestCaseData(StagingTestDataObject testData, Random rnd, ITestDataHelper testDataHelper, int schoolYear)
         {
