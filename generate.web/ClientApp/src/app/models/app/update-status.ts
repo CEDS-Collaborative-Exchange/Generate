@@ -1,3 +1,6 @@
 export interface UpdateStatus {
-    status: string;
+    webStatus: string;
+    webPhase: string;
+    backgroundStatus: string;
+    backgroundPhase: string;
 }

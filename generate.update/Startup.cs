@@ -25,7 +25,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using RestSharp;
 using Serilog;
 
 namespace generate.update
@@ -64,14 +63,14 @@ namespace generate.update
             services.AddScoped<IAppRepository, AppRepository>();
             services.AddScoped<IRDSRepository, RDSRepository>();
 
-            // Services            
+            // Services
             services.AddScoped<IAppUpdateService, AppUpdateService>();
             services.AddScoped<IFSMetadataUpdateService, MetadataUpdateService>();
 
             services.AddScoped<IHangfireHelper, HangfireHelper>();
             services.AddScoped<IFileSystem, FileSystem>();
-            services.AddScoped<RestClient, RestClient>();
             services.AddScoped<IZipFileHelper, ZipFileHelper>();
+            services.AddScoped<IAppDeploymentHelper, AzureAppDeploymentHelper>();
 
 
         }
