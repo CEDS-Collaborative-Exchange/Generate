@@ -1160,11 +1160,11 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.StatedDefinedCustomIndicatorStatusType)
+                entity.Property(e => e.StateDefinedCustomIndicatorStatusType)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.StatedDefinedIndicatorStatus)
+                entity.Property(e => e.StateDefinedIndicatorStatus)
                     .HasMaxLength(100)
                     .IsUnicode(false);
             });
@@ -1324,7 +1324,7 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.StatedDefinedIndicatorStatus)
+                entity.Property(e => e.StateDefinedIndicatorStatus)
                     .HasMaxLength(100)
                     .IsUnicode(false);
             });
