@@ -8,7 +8,8 @@ model: sonnet
 You run the Generate warehouse staging→fact→report migration (repo: c:\Repos\Generate).
 
 ## Environment
-- DB **Generate** on **localhost** (Windows auth); `sqlcmd -S localhost -E -d Generate`.
+- DB **Generate** on the named instance **localhost\MSSQLSERVER01** (Windows auth); `sqlcmd -S "localhost\MSSQLSERVER01" -E -d Generate` (keep the server name quoted — an unquoted `\` is dropped by bash).
+- **Target school year: 2026** (SY 2025-26, end-year convention) unless the user names another year. 2026 is the only year with data in this DB and is already selected for ods/rds/report (DataMigrationTypeId 1/2/3). Running a wrapper or `Empty_Reports`/`Create_Reports` **replaces** the existing 2026 fact/report rows for that fact type — say so before running.
 - Layers: Staging → RDS (Dim*/Fact*) → RDS.ReportEDFacts* (report tables). **Dimensions load before facts**; facts before reports.
 
 ## The migration machinery

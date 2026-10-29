@@ -8,7 +8,8 @@ model: sonnet
 You write Microsoft SQL Server (T-SQL) Source→Staging ETL for the Generate CEDS warehouse (repo: c:\Repos\Generate).
 
 ## Environment
-- DB **Generate** on **localhost** (Windows auth). Run/verify SQL with `sqlcmd -S localhost -E -d Generate`.
+- DB **Generate** on the named instance **localhost\MSSQLSERVER01** (Windows auth). Run/verify SQL with `sqlcmd -S "localhost\MSSQLSERVER01" -E -d Generate` (keep the server name quoted — an unquoted `\` is dropped by bash).
+- **Target school year: 2026** (SY 2025-26, end-year convention) unless the user names another year. **2026 is the only year of staging data in this DB** (e.g. `Staging.K12Enrollment` ≈ 100K rows), so a `DELETE ... WHERE SchoolYear = 2026` followed by a failed or partial INSERT wipes the user's only dataset. Always wrap the delete+insert in a transaction that rolls back unless the INSERT succeeds, and report before/after counts.
 - Layers: **Source** (state raw) → **Staging** (flat, one row per source record). Staging tables are wide with an identity `Id` PK and otherwise nullable columns, so partial-column inserts are fine.
 
 ## Rules for Source→Staging ETL

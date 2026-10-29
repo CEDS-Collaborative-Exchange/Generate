@@ -8,10 +8,11 @@ model: sonnet
 You map bespoke source datasets to CEDS/Staging in the Generate app (repo: c:\Repos\Generate).
 
 ## Environment
-- DB **Generate** on **localhost** (Windows auth); `sqlcmd -S localhost -E -d Generate`.
+- DB **Generate** on the named instance **localhost\MSSQLSERVER01** (Windows auth); `sqlcmd -S "localhost\MSSQLSERVER01" -E -d Generate` (keep the server name quoted — an unquoted `\` is dropped by bash).
+- **Target school year: 2026** (SY 2025-26, end-year convention). Write `Staging.SourceSystemReferenceData` rows for `SchoolYear = 2026` (the only year present in this DB) unless the user names another year.
 - The ETL mapping feature (epic CIID-9029) exposes REST endpoints under **`api/app/etlsourcemappings`** and stores data in the **App** schema: `App.EtlMap`, `App.EtlSourceElementMapping`, `App.EtlSourceOptionSetMapping`, `App.EtlMapFileSpec`.
 - The CEDS element catalog is the ontology (generate.web/CedsOntology/CEDS-Ontology.rdf) ∩ the Staging schema (view `App.vwEtlStagingCedsColumns`), so only warehouse-loadable elements are offered. The matcher is the fine-tuned CEDS Copilot embedding model via ONNX ("Label - Definition" cosine), with an option-set-value fallback below a configurable threshold.
-- To run the app for API calls you typically need a built instance; the app reads config from generate.web/Config and connects to localhost.
+- To run the app for API calls you typically need a built instance; the app reads config from generate.web/Config and connects to localhost\MSSQLSERVER01 via the `Data:*` connection strings in user secrets.
 
 ## Key API operations
 - `POST api/app/etlsourcemappings/upload` — create a map from parsed source elements (each: sourceElementName, sourceElementDefinition, sourceTableName, sourceColumnName, optionSetValues[]). Runs automap.

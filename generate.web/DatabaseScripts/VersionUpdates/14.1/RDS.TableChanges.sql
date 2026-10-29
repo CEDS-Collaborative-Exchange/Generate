@@ -36,6 +36,16 @@ IF COL_LENGTH('RDS.FactK12StudentCounts', 'CteOutcomeIndicatorId') IS NULL
         ADD CteOutcomeIndicatorId INT NOT NULL
             CONSTRAINT DF_FactK12StudentCounts_CteOutcomeIndicatorId DEFAULT((-1));
 
+-- 14.0 also dropped RDS.FactOrganizationCounts.HomelessChildrenandYouthReservation (added in 13.2 for
+-- FS193 Title I allocations), but Staging-to-FactOrganizationCounts still inserts it and
+-- RDS.Create_OrganizationReportData reads it for FS193 (the report-table column was kept). Its absence
+-- fails the directory fact load ("Invalid column name"), which blocks every directory report.
+-- Re-add it exactly as 13.2 defined it.
+IF COL_LENGTH('RDS.FactOrganizationCounts', 'HomelessChildrenandYouthReservation') IS NULL
+    ALTER TABLE RDS.FactOrganizationCounts
+        ADD HomelessChildrenandYouthReservation INT NULL
+            CONSTRAINT DF_FactOrganizationCounts_HomelessChildrenandYouthReservation DEFAULT((0));
+
 DECLARE @facts TABLE (tbl sysname);
 -- All RDS fact tables (the 14.0 rebuild dropped the NA-member -1 defaults across the board).
 INSERT INTO @facts (tbl)

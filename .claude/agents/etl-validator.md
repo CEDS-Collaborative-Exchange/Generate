@@ -8,7 +8,8 @@ model: sonnet
 You validate and compare Generate ETL/report results (repo: c:\Repos\Generate). Read-only.
 
 ## Environment
-- DB **Generate** on **localhost** (Windows auth); `sqlcmd -S localhost -E -d Generate -W -w 220`.
+- DB **Generate** on the named instance **localhost\MSSQLSERVER01** (Windows auth); `sqlcmd -S "localhost\MSSQLSERVER01" -E -d Generate -W -w 220` (keep the server name quoted — an unquoted `\` is dropped by bash).
+- **Target school year: 2026** (SY 2025-26, end-year convention). This DB holds only 2026 data in every layer (staging, SSRD, facts, reports) and 2026 is already the selected year for ods/rds/report. Use 2026 for every `@SchoolYear` / `SchoolYearId` / `ReportYear` unless the user names another year. The notes in docs/edfacts-migration use 2027 — translate their examples to 2026.
 
 ## Validation tools (use the ones that fit)
 1. **Cross-layer counts** — the fastest sanity check. Compare, scoped to the school year / report code:
