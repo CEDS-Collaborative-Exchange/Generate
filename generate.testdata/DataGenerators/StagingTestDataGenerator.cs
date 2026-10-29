@@ -849,9 +849,9 @@ namespace generate.testdata.DataGenerators
                         SchoolIdentifierSea = o.SchoolIdentifierSea,
                         IndicatorStatusType = statusType,
                         IndicatorStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IndicatorStatusDistribution),
-                        StatedDefinedIndicatorStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefStateDefinedIndicatorStatusDistribution),
+                        StateDefinedIndicatorStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefStateDefinedIndicatorStatusDistribution),
                         IndicatorStatusSubgroupType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIndicatorStatusSubgroupTypeDistribution),
-                        StatedDefinedCustomIndicatorStatusType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIndicatorStatusCustomTypeDistribution),
+                        StateDefinedCustomIndicatorStatusType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIndicatorStatusCustomTypeDistribution),
                         RecordStartDateTime = _testDataHelper.GetSessionStartDate(rnd, schoolYear),
                         RecordEndDateTime = _testDataHelper.GetSessionEndDate(rnd, schoolYear),
                         SchoolYear = schoolYear.ToString()

@@ -4015,7 +4015,7 @@ BEGIN
 		JOIN [dbo].[RefIndicatorStatusType] ist		
 			ON ist.Code = s.IndicatorStatusType
 		JOIN [dbo].[RefIndicatorStateDefinedStatus] ds 
-			ON ds.Code = s.StatedDefinedIndicatorStatus
+			ON ds.Code = s.StateDefinedIndicatorStatus
 		JOIN [dbo].[RefIndicatorStatusSubgroupType] st 
 			ON st.Code = s.IndicatorStatusSubgroupType
 		LEFT JOIN [dbo].[K12SchoolIndicatorStatus] ks  
@@ -4072,11 +4072,11 @@ BEGIN
 		JOIN [dbo].[RefIndicatorStatusType] ist 
 			ON ist.Code = s.IndicatorStatusType
 		JOIN [dbo].[RefIndicatorStateDefinedStatus] ds 
-			ON ds.Code = s.StatedDefinedIndicatorStatus
+			ON ds.Code = s.StateDefinedIndicatorStatus
 		JOIN [dbo].[RefIndicatorStatusSubgroupType] st 
 			ON st.Code = s.IndicatorStatusSubgroupType
 		JOIN [dbo].[RefIndicatorStatusCustomType] cust 
-			ON cust.Code = s.StatedDefinedCustomIndicatorStatusType
+			ON cust.Code = s.StateDefinedCustomIndicatorStatusType
 			--AND cust.RefJurisdictionId = k12.OrganizationId
 		LEFT JOIN [dbo].[K12SchoolIndicatorStatus] ks  
 			ON  ks.[K12SchoolId] = k12.K12SchoolId
