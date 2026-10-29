@@ -795,14 +795,7 @@ END;
 
 Update rds.DimRaces set RaceEdFactsCode = 'MU7' where RaceCode = 'DemographicRaceTwoOrMoreRaces'
 
---Fix misspelled SubgroupCode (Purto -> Puerto) at its source (dbo.RefSubgroup), in RDS.DimSubgroups, and the OutputCode that maps to it in RDS.vwDimSubgroups
-IF OBJECT_ID(N'[dbo].[RefSubgroup]', N'U') IS NOT NULL
-BEGIN
-	UPDATE dbo.RefSubgroup
-	SET Code = 'HispanicNotPuertoRican'
-	WHERE Code = 'HispanicNotPurtoRican'
-END;
-
+--Fix misspelled SubgroupCode (Purto -> Puerto) and the OutputCode that maps to it in RDS.vwDimSubgroups
 UPDATE RDS.DimSubgroups
 SET SubgroupCode = 'HispanicNotPuertoRican'
 WHERE SubgroupCode = 'HispanicNotPurtoRican'
