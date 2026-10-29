@@ -184,6 +184,8 @@
 	--clear the DimTitleIIIStatuses table for the junk record if it exists
 	DELETE FROM RDS.DimTitleIIIStatuses WHERE DimTitleIIIStatusId <> -1;
 
+	DBCC CHECKIDENT ('rds.DimTitleIIIStatuses', RESEED, 1);
+
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimTitleIIIStatuses 
 			WHERE ProgramParticipationTitleIIILiepCode = 'MISSING'
 			AND TitleIIIImmigrantParticipationStatusCode = 'MISSING'
