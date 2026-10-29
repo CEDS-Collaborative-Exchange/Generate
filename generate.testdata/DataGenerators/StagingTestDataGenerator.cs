@@ -1060,7 +1060,7 @@ namespace generate.testdata.DataGenerators
                 subgroups.Add("AsianPacificIslander");
                 subgroups.Add("BlackorAfricanAmerican");
                 subgroups.Add("Filipino");
-                subgroups.Add("HispanicNotPurtoRican");
+                subgroups.Add("HispanicNotPuertoRican");
                 subgroups.Add("HispanicLatino");
                 subgroups.Add("TwoorMoreRaces");
                 subgroups.Add("NativeHawaiianorOtherPacificIslander");
