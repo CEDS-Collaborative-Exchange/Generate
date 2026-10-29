@@ -250,7 +250,7 @@ namespace generate.infrastructure.Services
             return reportDto;
         }
 
-        private IEnumerable<dynamic> GroupStudentSexData(IEnumerable<ReportEDFactsK12StudentCount> data)
+        private static IEnumerable<dynamic> GroupStudentSexData(IEnumerable<ReportEDFactsK12StudentCount> data)
         {
             return data
                 .GroupBy(c => new
@@ -272,7 +272,7 @@ namespace generate.infrastructure.Services
                 });
         }
 
-        private IEnumerable<dynamic> GroupStudentRaceData(IEnumerable<ReportEDFactsK12StudentCount> data)
+        private static IEnumerable<dynamic> GroupStudentRaceData(IEnumerable<ReportEDFactsK12StudentCount> data)
         {
             return data
                 .GroupBy(c => new
@@ -298,7 +298,7 @@ namespace generate.infrastructure.Services
                 });
         }
 
-        private IEnumerable<dynamic> GroupStudentSubpopData(IEnumerable<ReportEDFactsK12StudentCount> data)
+        private static IEnumerable<dynamic> GroupStudentSubpopData(IEnumerable<ReportEDFactsK12StudentCount> data)
         {
             return data
                 .GroupBy(c => new
@@ -320,7 +320,7 @@ namespace generate.infrastructure.Services
                 });
         }
 
-        private IEnumerable<dynamic> GroupStudentDisabilityData(IEnumerable<ReportEDFactsK12StudentCount> data)
+        private static IEnumerable<dynamic> GroupStudentDisabilityData(IEnumerable<ReportEDFactsK12StudentCount> data)
         {
             return data
                 .GroupBy(c => new
@@ -352,7 +352,7 @@ namespace generate.infrastructure.Services
                 });
         }
 
-        private IEnumerable<dynamic> GroupStudentDisciplineData(IEnumerable<ReportEDFactsK12StudentDiscipline> data, List<string> disciplineCodes)
+        private static IEnumerable<dynamic> GroupStudentDisciplineData(IEnumerable<ReportEDFactsK12StudentDiscipline> data, List<string> disciplineCodes)
         {
             return data
                 .GroupBy(c => new
@@ -393,7 +393,7 @@ namespace generate.infrastructure.Services
         }
 
 
-        private IEnumerable<ExpandoObject> BuildDataRows(IEnumerable<dynamic> groupedData, Dictionary<string, string> columnMappings)
+        private static IEnumerable<ExpandoObject> BuildDataRows(IEnumerable<dynamic> groupedData, Dictionary<string, string> columnMappings)
         {
             foreach (var item in groupedData)
             {

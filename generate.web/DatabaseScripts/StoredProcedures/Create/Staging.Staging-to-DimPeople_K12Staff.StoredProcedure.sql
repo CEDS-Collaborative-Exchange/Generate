@@ -134,14 +134,36 @@ BEGIN
 	--------------------------------
 	--DimPeople_Current
 	--------------------------------
-		--populate DimPeople_Current with active K12 student records from Staging.K12Enrollment
+		--Get all the staff records and sort any for the same StaffMemberIdentifierState + Birthdate combination
+		;WITH RankedStaff AS (
+			SELECT
+				staff.*,
+				ROW_NUMBER() OVER (
+					PARTITION BY
+						staff.K12StaffStaffMemberIdentifierState,
+						ISNULL(staff.BirthDate, CONVERT(date, '19000101'))
+					ORDER BY
+						staff.RowId DESC
+				) AS SourceRowNumber
+			FROM #k12Staff AS staff
+		)
 		MERGE rds.DimPeople_Current AS trgt
-		USING #k12Staff AS src
-				ON  trgt.K12StaffStaffMemberIdentifierState = src.K12StaffStaffMemberIdentifierState
-				AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
-				AND trgt.IsActiveK12Staff = 1
+		USING (
+			SELECT
+				FirstName,
+				MiddleName,
+				LastOrSurname,
+				BirthDate,
+				K12StaffStaffMemberIdentifierState,
+				IsActiveK12Staff
+			FROM RankedStaff
+			WHERE SourceRowNumber = 1
+		) AS src
+		ON trgt.K12StaffStaffMemberIdentifierState = src.K12StaffStaffMemberIdentifierState
+		AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
+		AND trgt.IsActiveK12Staff = 1
 
-		--update matched targets, records that match on the StudentIdentifierState and BirthDate but have different name values
+		--update matched targets, records that match on the StaffMemberIdentifierState and BirthDate but have different name values
 		WHEN MATCHED 
 		AND EXISTS (
 			SELECT trgt.FirstName, trgt.LastOrSurname, trgt.MiddleName

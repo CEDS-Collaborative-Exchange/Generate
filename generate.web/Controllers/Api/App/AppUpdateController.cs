@@ -108,15 +108,27 @@ namespace generate.web.Controllers.Api.App
         [HttpGet("pending")]
         public ActionResult<IEnumerable<UpdatePackageDto>> PendingUpdates()
         {
-            try { return _appUpdateService.CheckForPendingUpdates(); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            try
+            {
+                return _appUpdateService.CheckForPendingUpdates();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("status")]
         public ActionResult<UpdateStatusDto> UpdateStatus()
         {
-            try { return _appUpdateService.GetUpdateStatus(); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            try
+            {
+                return _appUpdateService.GetUpdateStatus();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("download")]
@@ -160,9 +172,13 @@ namespace generate.web.Controllers.Api.App
                 // Legacy path: a running process can never overwrite its own currently-loaded
                 // binaries, so the in-place file copy targets generate.background's content root
                 // instead (ignored entirely by the Azure path).
-                var backgroundAppPath = _hostingEnvironment.IsDevelopment()
-                    ? _hostingEnvironment.ContentRootPath.Replace("generate.web", "generate.background")
-                    : _appSettings.Value.BackgroundAppPath;
+                var backgroundAppPath = _appSettings.Value.BackgroundAppPath;
+                if (_hostingEnvironment.IsDevelopment())
+                {
+                    // Use this app's own build output folder (e.g. bin\Debug\net10.0) for the background app
+                    var buildOutputPath = System.IO.Path.GetRelativePath(_hostingEnvironment.ContentRootPath, AppContext.BaseDirectory);
+                    backgroundAppPath = System.IO.Path.Combine(_hostingEnvironment.ContentRootPath.Replace("generate.web", "generate.background"), buildOutputPath).TrimEnd('\\');
+                }
 
                 _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, "web", backgroundAppPath);
 
@@ -174,7 +190,10 @@ namespace generate.web.Controllers.Api.App
                 if (response.IsSuccessful) return Ok();
                 else return BadRequest();
             }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -15,7 +15,6 @@ namespace generate.core.Models.IDS
         public int? RefSchoolImprovementStatusId { get; set; }
         public int? RefSchoolDangerousStatusId { get; set; }
         public int? RefProgressAchievingEnglishLanguageProficiencyIndicatorStatusId { get; set; }
-        public int? RefComprehensiveAndTargetedSupportId { get; set; }
         public int? RefComprehensiveSupportId { get; set; }
         public int? RefTargetedSupportId { get; set; }
         public bool? ConsolidatedMepFundsStatus { get; set; }
@@ -38,7 +37,6 @@ namespace generate.core.Models.IDS
         public virtual RefProgressAchievingEnglishLanguageProficiencyIndicatorStatus RefProgressAchievingEnglishLanguageProficiencyIndicatorStatus { get; set; }
         public virtual RefVirtualSchoolStatus RefVirtualSchoolStatus { get; set; }
 
-        public virtual RefComprehensiveAndTargetedSupport RefComprehensiveAndTargetedSupport { get; set; }
 		public virtual RefComprehensiveSupport RefComprehensiveSupport { get; set; }
 		public virtual RefTargetedSupport RefTargetedSupport { get; set; }
 

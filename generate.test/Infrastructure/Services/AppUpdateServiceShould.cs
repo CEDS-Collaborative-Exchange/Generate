@@ -233,7 +233,7 @@ namespace generate.test.Infrastructure.Services
             return context;
         }
 
-        private RDSDbContext GetRdsDbContext()
+        private static RDSDbContext GetRdsDbContext()
         {
 
             var options = new DbContextOptionsBuilder<infrastructure.Contexts.RDSDbContext>()
@@ -1329,7 +1329,7 @@ namespace generate.test.Infrastructure.Services
                 var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
                 Assert.Equal("OK", status.GenerateConfigurationValue);
                 var phase = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebPhase");
-                Assert.Equal("Complete", phase.GenerateConfigurationValue);
+                Assert.Equal("Update Complete", phase.GenerateConfigurationValue);
             }
         }
 

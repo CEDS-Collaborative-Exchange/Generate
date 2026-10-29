@@ -257,6 +257,8 @@ namespace generate.testdata.DataGenerators
                     StudentsEnrolledAtSeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     StudentsEnrolledAtLeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     CIID5128MulipleRace.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
+                    CIID8750MultipleDisability.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
+                    CIID8750MultipleSex.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     FS086_CIID8626.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 }
                 else
@@ -634,7 +636,6 @@ namespace generate.testdata.DataGenerators
                 OrganizationGradeOffereds = new List<OrganizationGradeOffered>(),
                 OrganizationPhones = new List<OrganizationPhone>(),
                 OrganizationProgramTypes = new List<core.Models.Staging.OrganizationProgramType>(),
-                OrganizationSchoolComprehensiveAndTargetedSupports = new List<OrganizationSchoolComprehensiveAndTargetedSupport>(),
                 OrganizationSchoolIndicatorStatuses = new List<OrganizationSchoolIndicatorStatus>(),
                 PersonRaces = new List<K12PersonRace>(),
                 PersonStatuses = new List<core.Models.Staging.PersonStatus>(),
@@ -1059,7 +1060,7 @@ namespace generate.testdata.DataGenerators
                 subgroups.Add("AsianPacificIslander");
                 subgroups.Add("BlackorAfricanAmerican");
                 subgroups.Add("Filipino");
-                subgroups.Add("HispanicNotPurtoRican");
+                subgroups.Add("HispanicNotPuertoRican");
                 subgroups.Add("HispanicLatino");
                 subgroups.Add("TwoorMoreRaces");
                 subgroups.Add("NativeHawaiianorOtherPacificIslander");

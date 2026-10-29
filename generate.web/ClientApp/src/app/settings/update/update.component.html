@@ -46,6 +46,18 @@
     </div>
 </div>
 
+<div class="mdl-grid" *ngIf="errorMessage && !this.updateProcessing">
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+        <div class="generate-app-update__title">
+            Unable to Check for Updates
+        </div>
+        <div class="generate-app-update__available-text">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
 
 <div class="mdl-grid" *ngIf="errorMessage">
     <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>

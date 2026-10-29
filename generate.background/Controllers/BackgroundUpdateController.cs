@@ -78,9 +78,13 @@ namespace generate.background.Controllers
                 // Legacy path: a running process can never overwrite its own currently-loaded
                 // binaries, so the in-place file copy targets generate.web's content root instead
                 // (ignored entirely by the Azure path).
-                var webAppPath = _hostingEnvironment.IsDevelopment()
-                    ? _hostingEnvironment.ContentRootPath.Replace("generate.background", "generate.web")
-                    : _appSettings.Value.WebAppPath;
+                var webAppPath = _appSettings.Value.WebAppPath;
+                if (_hostingEnvironment.IsDevelopment())
+                {
+                    // Use this app's own build output folder (e.g. bin\Debug\net10.0) for the web app
+                    var buildOutputPath = System.IO.Path.GetRelativePath(_hostingEnvironment.ContentRootPath, AppContext.BaseDirectory);
+                    webAppPath = System.IO.Path.Combine(_hostingEnvironment.ContentRootPath.Replace("generate.background", "generate.web"), buildOutputPath).TrimEnd('\\');
+                }
 
                 _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, "background", webAppPath);
 

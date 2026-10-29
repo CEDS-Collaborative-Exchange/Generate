@@ -423,7 +423,6 @@ namespace generate.infrastructure.Contexts
         public virtual DbSet<RefCommunityBasedType> RefCommunityBasedType { get; set; }
         public virtual DbSet<RefCompetencySetCompletionCriteria> RefCompetencySetCompletionCriteria { get; set; }
 		public virtual DbSet<RefComprehensiveSupport> RefComprehensiveSupport { get; set; }
-		public virtual DbSet<RefComprehensiveAndTargetedSupport> RefComprehensiveAndTargetedSupport { get; set; }
         public virtual DbSet<RefComprehensiveSupportImprovement> RefComprehensiveSupportImprovement { get; set; }
         public virtual DbSet<RefTargetedSupportImprovement> RefTargetedSupportImprovement { get; set; }
         public virtual DbSet<RefAdditionalTargetedSupport> RefAdditionalTargetedSupport { get; set; }
@@ -4657,11 +4656,6 @@ namespace generate.infrastructure.Contexts
                     .HasForeignKey(d => d.RefSchoolDangerousStatusId)
                     .HasConstraintName("FK_K12SchoolStatus_RefSchoolDangerousStatus");
 
-                entity.HasOne(d => d.RefComprehensiveAndTargetedSupport)
-                    .WithMany(p => p.K12schoolStatus)
-                    .HasForeignKey(d => d.RefComprehensiveAndTargetedSupportId)
-                    .HasConstraintName("FK_K12SchoolStatus_RefComprehensiveAndTargetedSupport");               
-
                 entity.HasOne(d => d.RefComprehensiveSupport)
                     .WithMany(p => p.K12schoolStatus)
                     .HasForeignKey(d => d.RefComprehensiveSupportId)
@@ -4686,11 +4680,6 @@ namespace generate.infrastructure.Contexts
                 //	.WithMany(p => p.K12schoolStatus)
                 //	.HasForeignKey(d => d.RefComprehensiveSupportId)
                 //	.HasConstraintName("FK_K12SchoolStatus_RefComprehensiveSupport");
-
-                //entity.HasOne(d => d.RefComprehensiveAndTargetedSupport)
-                //	.WithMany(p => p.K12schoolStatus)
-                //	.HasForeignKey(d => d.RefComprehensiveAndTargetedSupportId)
-                //	.HasConstraintName("FK_K12SchoolStatus_RefComprehensiveAndTargetedSupport");
 
                 //entity.HasOne(d => d.RefTargetedSupport)
                 //	.WithMany(p => p.K12schoolStatus)
@@ -10600,24 +10589,6 @@ namespace generate.infrastructure.Contexts
 					.WithMany(p => p.RefComprehensiveSupport)
 					.HasForeignKey(d => d.RefJurisdictionId)
 					.HasConstraintName("FK_RefComprehensiveSupport_Org");
-			});
-
-			modelBuilder.Entity<RefComprehensiveAndTargetedSupport>(entity =>
-			{
-				entity.ToTable("RefComprehensiveAndTargetedSupport", "dbo");
-
-				entity.Property(e => e.Code).HasMaxLength(50);
-
-				entity.Property(e => e.Description)
-					.IsRequired()
-					.HasMaxLength(100);
-
-				entity.Property(e => e.SortOrder).HasColumnType("decimal");
-
-				entity.HasOne(d => d.RefJurisdiction)
-					.WithMany(p => p.RefComprehensiveAndTargetedSupport)
-					.HasForeignKey(d => d.RefJurisdictionId)
-					.HasConstraintName("FK_RefComprehensiveAndTargetedSupport_Org");
 			});
 
             modelBuilder.Entity<RefComprehensiveSupportImprovement>(entity =>
@@ -16545,24 +16516,6 @@ namespace generate.infrastructure.Contexts
                     .WithMany(p => p.RefSchoolDangerousStatus)
                     .HasForeignKey(d => d.RefJurisdictionId)
                     .HasConstraintName("FK_RefSchoolDangerousStatus_Organization");
-            });
-
-            modelBuilder.Entity<RefComprehensiveAndTargetedSupport>(entity =>
-            {
-                entity.ToTable("RefComprehensiveAndTargetedSupport", "dbo");
-
-                entity.Property(e => e.Code).HasMaxLength(50);
-
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(e => e.SortOrder).HasColumnType("decimal");
-
-                entity.HasOne(d => d.RefJurisdiction)
-                    .WithMany(p => p.RefComprehensiveAndTargetedSupport)
-                    .HasForeignKey(d => d.RefJurisdictionId)
-                    .HasConstraintName("FK_RefComprehensiveAndTargetedSupport_Organization");
             });
 
             modelBuilder.Entity<RefComprehensiveSupport>(entity =>
