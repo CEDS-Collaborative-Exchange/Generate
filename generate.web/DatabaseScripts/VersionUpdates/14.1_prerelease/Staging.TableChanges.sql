@@ -24,7 +24,7 @@ BEGIN
         'Staging.OrganizationSchoolIndicatorStatus.StatedDefinedIndicatorStatus',
         'StateDefinedIndicatorStatus',
         'COLUMN';
--- Staging table updates for release 14.1
+END;
 
 --Remove the deprecated combined Comprehensive and Targeted Support element.
 --It has been replaced by Comprehensive Support and Improvement, Targeted Support and Improvement,
@@ -38,3 +38,4 @@ IF OBJECT_ID(N'[Staging].[OrganizationSchoolComprehensiveAndTargetedSupport]', N
 BEGIN
 	DROP TABLE Staging.OrganizationSchoolComprehensiveAndTargetedSupport;
 END;
+-- Staging table updates for release 14.1

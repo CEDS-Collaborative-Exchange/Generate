@@ -4,7 +4,6 @@ VersionUpdates\\14.1_prerelease,App.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,CEDS.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,RDS.TableChanges.sql,0
-VersionUpdates\\14.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,JunkTablePopulation.sql,0
 Views\\Drop,RDS.vwStateAssessments.View.sql,0
 Views\\Create,RDS.vwStateAssessments.View.sql,0
