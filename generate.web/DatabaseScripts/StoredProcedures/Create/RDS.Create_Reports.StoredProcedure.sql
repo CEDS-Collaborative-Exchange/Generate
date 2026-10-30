@@ -783,7 +783,13 @@ begin try
 				(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - 007')
 
-				exec [RDS].[Create_ReportData]	@reportCode = '007', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
+				-- FS007 counts removals (one fact row each, DisciplineCount = 1), not distinct children
+				exec [RDS].[Insert_CountsIntoReportTable]
+						@ReportCode  = '007',
+						@SubmissionYear = @SchoolYear,
+						@IdentifierToCount = 'FactK12StudentDisciplineId',
+						@IsDistinctCount  = 0,
+						@RunAsTest = @runAsTest
 			end
 
 			if exists (select 'c' from app.GenerateReports where ReportCode = '086' and IsLocked = 1 and UseLegacyReportMigration = 1)

@@ -28,7 +28,7 @@ Sources scanned (all under `generate.web/DatabaseScripts`):
 | 002 | ChildCount | Y | N | Y | Done |
 | 005 | Discipline | Y | Y | Y | Done — e2e GREEN on 2026 (9,380), see [FS005](FS005-IDEAInterimRemovals.md) |
 | 006 | Discipline | Y | Y | Y | Done — e2e GREEN on 2026 (16,969), see [FS006](FS006-IDEASuspensionsExpulsions.md) |
-| 007 | Discipline | Y | N | Y | Done (fact view WDIS fix 2026-10-30; still legacy populator) |
+| 007 | Discipline | Y | Y | Y | Done — e2e GREEN on 2026 (11,335 removal counts), see [FS007](FS007-IDEAUnilateralRemovalReasons.md) |
 | 009 | Exiting | Y | N | Y | Done |
 | 029 | Directory | N | N | Y | Needs conversion |
 | 032 | Dropout | Y | N | Y | Done |
@@ -100,7 +100,7 @@ Sources scanned (all under `generate.web/DatabaseScripts`):
 | Needs conversion | 9 |
 | **Total** | **65** |
 
-- **Wired to `Insert_CountsIntoReportTable`** (new populator): 11 — `005, 006, 088, 218, 219, 220, 221, 222, 224, 225, 226`. FS005, FS006 and FS088 are green via `Staging.RunEndToEndTest`; the other 8 have no bespoke test proc on disk, so they fall under *Needs test*.
+- **Wired to `Insert_CountsIntoReportTable`** (new populator): 12 — `005, 006, 007, 088, 218, 219, 220, 221, 222, 224, 225, 226`. FS005, FS006, FS007 and FS088 are green via `Staging.RunEndToEndTest`; the other 8 have no bespoke test proc on disk, so they fall under *Needs test*.
 
 ## View coverage note
 
