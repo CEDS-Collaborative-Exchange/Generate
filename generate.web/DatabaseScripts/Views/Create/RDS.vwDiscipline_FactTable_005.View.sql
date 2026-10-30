@@ -1,4 +1,4 @@
-CREATE VIEW [RDS].[vwDiscipline_FactTable_005] 
+CREATE VIEW [RDS].[vwDiscipline_FactTable_005]
 AS
 	SELECT 	f.[FactK12StudentDisciplineId]
 			, f.[SchoolYear]
@@ -20,11 +20,15 @@ AS
 		  	, f.[NameOfInstitution]
 		  	, f.[SchoolOperationalStatus]
 		  	, f.[SchoolTypeCode]
+			, f.[IdeaDisabilityTypeEdFactsCode]
+			, f.[RaceEdFactsCode]
+			, f.[SexEdFactsCode]
+			, f.[EnglishLearnerStatusEdFactsCode]
 			, f.[IdeaInterimRemovalEdFactsCode]
 	FROM [debug].[vwDiscipline_FactTable] f
 	WHERE 	IdeaIndicatorEdFactsCode = 'WDIS'
 			AND AgeValue >= 3
 			AND AgeValue <= 21
 			AND IdeaInterimRemovalEdFactsCode in ('REMDW','REMHO')
-			AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS' 
-			AND SchoolOperationalStatus IN ('Open','New') 
+			AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS'
+			AND SchoolOperationalStatus IN ('Open','New')

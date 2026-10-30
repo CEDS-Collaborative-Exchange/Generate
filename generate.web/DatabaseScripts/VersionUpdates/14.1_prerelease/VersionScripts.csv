@@ -165,8 +165,10 @@ Views\\Drop,Staging.vwDiscipline_StagingTables_088.View.sql,0
 Views\\Create,RDS.vwDiscipline_FactTable_088.View.sql,0
 Views\\Create,Staging.vwDiscipline_StagingTables_088.View.sql,0
 Views\\Drop,RDS.vwDiscipline_FactTable_005.View.sql,0
+Views\\Drop,Staging.vwDiscipline_StagingTables_005.View.sql,0
 Views\\Drop,RDS.vwDiscipline_FactTable_007.View.sql,0
 Views\\Create,RDS.vwDiscipline_FactTable_005.View.sql,0
+Views\\Create,Staging.vwDiscipline_StagingTables_005.View.sql,0
 Views\\Create,RDS.vwDiscipline_FactTable_007.View.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
