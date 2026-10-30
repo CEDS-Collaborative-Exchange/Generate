@@ -1,4 +1,4 @@
-﻿using generate.background.Controllers;
+using generate.background.Controllers;
 using generate.core.Config;
 using generate.core.Interfaces.Helpers;
 using generate.core.Interfaces.Services;
@@ -23,7 +23,7 @@ namespace generate.test.Background.Controllers
 {
     public class BackgroundUpdateControllerShould
     {
-               
+
         [Fact]
         public void DownloadedUpdates()
         {
@@ -32,7 +32,6 @@ namespace generate.test.Background.Controllers
             var logger = Mock.Of<ILogger<BackgroundUpdateController>>();
             var hostingEnvironment = Mock.Of<IHostEnvironment>();
             var backgroundUpdateService = new Mock<IAppUpdateService>();
-            var options = Mock.Of<IOptions<AppSettings>>();
             var hangfireHelper = Mock.Of<IHangfireHelper>();
 
             var updatePackage = new UpdatePackageDto()
@@ -52,7 +51,7 @@ namespace generate.test.Background.Controllers
 
             backgroundUpdateService.Setup(x => x.GetDownloadedUpdates(It.IsAny<string>())).Returns(packages);
 
-            var controller = new BackgroundUpdateController(logger, hostingEnvironment, backgroundUpdateService.Object, options, hangfireHelper);
+            var controller = new BackgroundUpdateController(logger, hostingEnvironment, backgroundUpdateService.Object, hangfireHelper, Options.Create(new AppSettings()));
 
             // Act
 
@@ -73,13 +72,12 @@ namespace generate.test.Background.Controllers
             var logger = Mock.Of<ILogger<BackgroundUpdateController>>();
             var hostingEnvironment = Mock.Of<IHostEnvironment>();
             var backgroundUpdateService = Mock.Of<IAppUpdateService>();
-            var options = Mock.Of<IOptions<AppSettings>>();            
             var hangfireHelper = Mock.Of<IHangfireHelper>();
 
-            var controller = new BackgroundUpdateController(logger, hostingEnvironment, backgroundUpdateService, options, hangfireHelper);
+            var controller = new BackgroundUpdateController(logger, hostingEnvironment, backgroundUpdateService, hangfireHelper, Options.Create(new AppSettings()));
 
             // Act
-            
+
             var response = controller.DownloadUpdates();
 
             // Assert
@@ -97,10 +95,9 @@ namespace generate.test.Background.Controllers
             var logger = Mock.Of<ILogger<BackgroundUpdateController>>();
             var hostingEnvironment = Mock.Of<IHostEnvironment>();
             var backgroundUpdateService = Mock.Of<IAppUpdateService>();
-            var appSettings = Mock.Of<IOptions<AppSettings>>();
             var hangfireHelper = Mock.Of<IHangfireHelper>();
 
-            var controller = new BackgroundUpdateController(logger, hostingEnvironment, backgroundUpdateService, appSettings, hangfireHelper);
+            var controller = new BackgroundUpdateController(logger, hostingEnvironment, backgroundUpdateService, hangfireHelper, Options.Create(new AppSettings()));
 
             // Act
 
@@ -115,20 +112,19 @@ namespace generate.test.Background.Controllers
 
 
         [Fact]
-        public void ExecuteUpdate_Development()
+        public void ExecuteUpdate()
         {
             // Arrange
 
             var logger = Mock.Of<ILogger<BackgroundUpdateController>>();
             var hostingEnvironment = new Mock<IHostEnvironment>();
             var appUpdateService = Mock.Of<IAppUpdateService>();
-            var appSettings = Mock.Of<IOptions<AppSettings>>();
-            var hangfireHelper = Mock.Of<IHangfireHelper>();
+            var hangfireHelper = new Mock<IHangfireHelper>();
 
-            hostingEnvironment.Setup(x => x.ContentRootPath).Returns(@"c:\generate.web");
-            hostingEnvironment.Setup(x => x.EnvironmentName).Returns("Development");
+            hostingEnvironment.Setup(x => x.ContentRootPath).Returns(@"c:\generate.background");
+            var appSettings = Options.Create(new AppSettings { WebAppPath = @"c:\generate.web" });
 
-            var controller = new BackgroundUpdateController(logger, hostingEnvironment.Object, appUpdateService, appSettings, hangfireHelper);
+            var controller = new BackgroundUpdateController(logger, hostingEnvironment.Object, appUpdateService, hangfireHelper.Object, appSettings);
 
             // Act
 
@@ -137,38 +133,7 @@ namespace generate.test.Background.Controllers
             // Assert
 
             Assert.IsType<OkResult>(response);
-
-        }
-
-
-        [Fact]
-        public void ExecuteUpdate_NotDevelopment()
-        {
-            // Arrange
-
-            var logger = Mock.Of<ILogger<BackgroundUpdateController>>();
-            var hostingEnvironment = new Mock<IHostEnvironment>();
-            var appUpdateService = Mock.Of<IAppUpdateService>();
-            var appSettings = new Mock<IOptions<AppSettings>>();
-            var hangfireHelper = Mock.Of<IHangfireHelper>();
-
-            hostingEnvironment.Setup(x => x.ContentRootPath).Returns(@"c:\generate.web");
-            hostingEnvironment.Setup(x => x.EnvironmentName).Returns("Production");
-
-            var options = new AppSettings() {
-                WebAppPath = @"c:\generate.web"
-            };
-            appSettings.Setup(x => x.Value).Returns(options);
-
-            var controller = new BackgroundUpdateController(logger, hostingEnvironment.Object, appUpdateService, appSettings.Object, hangfireHelper);
-
-            // Act
-
-            var response = controller.ExecuteUpdate();
-
-            // Assert
-
-            Assert.IsType<OkResult>(response);
+            hangfireHelper.Verify(x => x.TriggerSiteUpdate(@"c:\generate.background", "background", @"c:\generate.web"), Times.Once);
 
         }
 
@@ -181,12 +146,11 @@ namespace generate.test.Background.Controllers
             var logger = Mock.Of<ILogger<BackgroundUpdateController>>();
             var hostingEnvironment = Mock.Of<IHostEnvironment>();
             var appUpdateService = Mock.Of<IAppUpdateService>();
-            var appSettings = Mock.Of<IOptions<AppSettings>>();
             var hangfireHelper = new Mock<IHangfireHelper>();
 
-            hangfireHelper.Setup(x => x.TriggerSiteUpdate(It.IsAny<string>(), It.IsAny<string>())).Throws(new InvalidOperationException());
+            hangfireHelper.Setup(x => x.TriggerSiteUpdate(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new InvalidOperationException());
 
-            var controller = new BackgroundUpdateController(logger, hostingEnvironment, appUpdateService, appSettings,hangfireHelper.Object);
+            var controller = new BackgroundUpdateController(logger, hostingEnvironment, appUpdateService, hangfireHelper.Object, Options.Create(new AppSettings()));
 
             // Act
 

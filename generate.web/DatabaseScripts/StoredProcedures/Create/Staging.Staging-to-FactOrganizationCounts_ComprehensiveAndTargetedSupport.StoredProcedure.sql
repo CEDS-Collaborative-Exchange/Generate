@@ -125,7 +125,6 @@ BEGIN
 				ON sko.SchoolYear = vcts.SchoolYear
 				AND scsupp.ComprehensiveSupport = vcts.ComprehensiveSupportMap
 				AND vcts.AdditionalTargetedSupportandImprovementCode = 'MISSING'
-				AND vcts.ComprehensiveAndTargetedSupportCode = 'MISSING'
 				AND vcts.ComprehensiveSupportImprovementCode = 'MISSING'
 				AND vcts.TargetedSupportCode = 'MISSING'
 				AND vcts.TargetedSupportImprovementCode = 'MISSING'

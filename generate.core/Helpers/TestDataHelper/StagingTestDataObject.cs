@@ -40,7 +40,6 @@ namespace generate.core.Helpers.TestDataHelper
         public List<OrganizationGradeOffered> OrganizationGradeOffereds { get; set; }
         public List<OrganizationPhone> OrganizationPhones { get; set; }
         public List<OrganizationProgramType> OrganizationProgramTypes { get; set; }
-        public List<OrganizationSchoolComprehensiveAndTargetedSupport> OrganizationSchoolComprehensiveAndTargetedSupports { get; set; }
         public List<IdeaDisabilityType> IdeaDisabilityTypes { get; set; }
         public List<K12SchoolComprehensiveSupportIdentificationType> K12SchoolComprehensiveSupportIdentificationTypes { get; set; }
         public List<K12SchoolTargetedSupportIdentificationType> K12SchoolTargetedSupportIdentificationType { get; set; }

@@ -43,6 +43,7 @@ namespace generate.web.Config
             services.AddScoped<IHangfireHelper, HangfireHelper>();
             services.AddScoped<RestClient>(_ => new RestClient());
             services.AddScoped<IZipFileHelper, ZipFileHelper>();
+            services.AddScoped<IAppDeploymentHelper, AzureAppDeploymentHelper>();
 
             // Test Data
             //////////////////////

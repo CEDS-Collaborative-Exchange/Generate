@@ -101,7 +101,7 @@ namespace generate.infrastructure.Repositories.RDS
             return facts;
         }
 
-        private string GetOrgName(dynamic x, string reportLevel)
+        private static string GetOrgName(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -115,7 +115,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.NameOfInstitution;
         }
 
-        private string? GetParentStateId(dynamic x, string reportLevel)
+        private static string? GetParentStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -173,7 +173,7 @@ namespace generate.infrastructure.Repositories.RDS
             return groupedFacts;
         }
 
-        private string GetOrgStateId(dynamic x, string reportLevel)
+        private static string GetOrgStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -187,7 +187,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierState;
         }
 
-        private string GetOrgNcesId(dynamic x, string reportLevel)
+        private static string GetOrgNcesId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -276,7 +276,7 @@ namespace generate.infrastructure.Repositories.RDS
             return facts;
         }
 
-        private string GetDisciplineOrgNcesId(dynamic x, string reportLevel)
+        private static string GetDisciplineOrgNcesId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -290,7 +290,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierNces ?? "";
         }
 
-        private string GetDisciplineOrgStateId(dynamic x, string reportLevel)
+        private static string GetDisciplineOrgStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -304,7 +304,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierState;
         }
 
-        private string GetDisciplineOrgName(dynamic x, string reportLevel)
+        private static string GetDisciplineOrgName(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -318,7 +318,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.NameOfInstitution;
         }
 
-        private string? GetDisciplineParentStateId(dynamic x, string reportLevel)
+        private static string? GetDisciplineParentStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -496,7 +496,7 @@ namespace generate.infrastructure.Repositories.RDS
         #region FactStudentAssessmentReport
 
 
-        private string GetAssessmentOrgNcesId(dynamic x, string reportLevel)
+        private static string GetAssessmentOrgNcesId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -510,7 +510,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierNces ?? "";
         }
 
-        private string GetAssessmentOrgStateId(dynamic x, string reportLevel)
+        private static string GetAssessmentOrgStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -524,7 +524,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierState;
         }
 
-        private string GetAssessmentOrgName(dynamic x, string reportLevel)
+        private static string GetAssessmentOrgName(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -538,7 +538,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.NameOfInstitution;
         }
 
-        private string? GetAssessmentParentStateId(dynamic x, string reportLevel)
+        private static string? GetAssessmentParentStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";

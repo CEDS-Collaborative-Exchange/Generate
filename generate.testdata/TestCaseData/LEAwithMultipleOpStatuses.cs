@@ -6,7 +6,7 @@ using System.Text;
 
 namespace generate.testdata.TestCaseData
 {
-    public class LEAwithMultipleOpStatusesTestCaseData
+    public static class LEAwithMultipleOpStatusesTestCaseData
     {
        
         public static void AppendTestCaseData(StagingTestDataObject testData, Random rnd, ITestDataHelper testDataHelper, int schoolYear)

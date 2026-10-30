@@ -794,3 +794,45 @@ BEGIN
 END;
 
 Update rds.DimRaces set RaceEdFactsCode = 'MU7' where RaceCode = 'DemographicRaceTwoOrMoreRaces'
+
+--Fix misspelled SubgroupCode (Purto -> Puerto) and the OutputCode that maps to it in RDS.vwDimSubgroups
+UPDATE RDS.DimSubgroups
+SET SubgroupCode = 'HispanicNotPuertoRican'
+WHERE SubgroupCode = 'HispanicNotPurtoRican'
+
+UPDATE Staging.SourceSystemReferenceData
+SET OutputCode = 'HispanicNotPuertoRican'
+WHERE TableName = 'RefSubgroup'
+	AND OutputCode = 'HispanicNotPurtoRican'
+
+--Add SchoolYear to the bridge tables
+IF COL_LENGTH(N'[RDS].[BridgeK12StudentAssessmentAccessibilityFeatures]', N'SchoolYearId') IS NULL
+BEGIN
+	ALTER TABLE RDS.BridgeK12StudentAssessmentAccessibilityFeatures
+	ADD SchoolYearId INT DEFAULT -1 NOT NULL
+END;
+
+IF COL_LENGTH(N'[RDS].[BridgeK12StudentAssessmentRaces]', N'SchoolYearId') IS NULL
+BEGIN
+	ALTER TABLE RDS.BridgeK12StudentAssessmentRaces
+	ADD SchoolYearId INT DEFAULT -1 NOT NULL
+END;
+
+-- Correct misspelled STATEDDEFINEDSTATUSCODE column to STATEDEFINEDSTATUSCODE
+IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'STATEDDEFINEDSTATUSCODE') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'STATEDEFINEDSTATUSCODE') IS NULL
+BEGIN
+	EXEC sp_rename
+		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[STATEDDEFINEDSTATUSCODE]',
+		N'STATEDEFINEDSTATUSCODE',
+		N'COLUMN';
+END;
+
+--Remove the deprecated combined Comprehensive and Targeted Support element.
+--It has been replaced by Comprehensive Support and Improvement, Targeted Support and Improvement,
+--and Additional Targeted Support and Improvement.
+IF COL_LENGTH(N'[RDS].[ReportEDFactsOrganizationCounts]', N'ComprehensiveAndTargetedSupportCode') IS NOT NULL
+BEGIN
+	ALTER TABLE RDS.ReportEDFactsOrganizationCounts DROP COLUMN ComprehensiveAndTargetedSupportCode;
+END;

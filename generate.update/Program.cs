@@ -12,7 +12,7 @@ using Serilog.Events;
 
 namespace generate.update
 {
-    public class Program
+    public static class Program
     {
 
         public static void Main(string[] args)
