@@ -34,19 +34,25 @@ BEGIN
 			SET IDENTITY_INSERT RDS.DimPeople_Current off
 		END
 
+		--drop and create the temp table for the staging.K12Enrollment student records
+		DROP TABLE IF EXISTS #k12Students
+
 		CREATE TABLE #k12Students (
-			FirstName										NVARCHAR(75) NULL
-			, MiddleName									NVARCHAR(75) NULL
-			, LastOrSurname									NVARCHAR(75) NULL
-			, BirthDate										DATE NULL
-			, K12StudentStudentIdentifierState				NVARCHAR(40) NULL
-			, IsActiveK12Student							BIT NULL
-			, RecordStartDateTime							DATE NULL
-			, RecordEndDateTime								DATE NULL
+			RowId									INT
+			, FirstName								NVARCHAR(75) NULL
+			, MiddleName							NVARCHAR(75) NULL
+			, LastOrSurname							NVARCHAR(75) NULL
+			, BirthDate								DATE NULL
+			, K12StudentStudentIdentifierState		NVARCHAR(40) NULL
+			, IsActiveK12Student					BIT NULL
+			, RecordStartDateTime					DATE NULL
+			, RecordEndDateTime						DATE NULL
 		)
 		
+		--populate the temp table
 		INSERT INTO #k12Students (
-			FirstName
+			RowId
+			, FirstName
 			, MiddleName
 			, LastOrSurname
 			, BirthDate
@@ -56,7 +62,8 @@ BEGIN
 			, RecordEndDateTime
 		)		
 		SELECT DISTINCT
-			FirstName
+			Id
+			, FirstName
 			, MiddleName
 			, LastOrSurname
 			, BirthDate
@@ -66,6 +73,10 @@ BEGIN
 			, e.EnrollmentExitDate
 		FROM Staging.K12Enrollment e
 
+	--------------------------------
+	--DimPeople		
+	--------------------------------
+		--merge rds.DimPeople using the temp table
 		MERGE rds.DimPeople AS trgt
 		USING #k12Students AS src
 				ON  trgt.K12StudentStudentIdentifierState = src.K12StudentStudentIdentifierState
@@ -122,49 +133,68 @@ BEGIN
 		WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 			AND student.RecordEndDateTime IS NULL
 
-		-- Populate DimPeople_Current with active K12 student records
-
-		-- Insert current K12 student records into DimPeople_Current
-		-- Insert new current K12 student records into DimPeople_Current
-		INSERT INTO RDS.DimPeople_Current (
-			FirstName,
-			MiddleName,
-			LastOrSurname,
-			BirthDate,
-			K12StudentStudentIdentifierState,
-			IsActiveK12Student
+	--------------------------------
+	--DimPeople_Current
+	--------------------------------
+		--Get all the student records and sort any for the same StudentID + Birthdate combination	
+		;WITH RankedStudents AS (
+			SELECT
+				students.*,
+				ROW_NUMBER() OVER (
+					PARTITION BY
+						students.K12StudentStudentIdentifierState,
+						ISNULL(students.BirthDate, CONVERT(date, '19000101'))
+					ORDER BY
+						students.RowId DESC
+				) AS SourceRowNumber
+			FROM #k12Students AS students
 		)
-		SELECT 
-			rdp.FirstName,
-			rdp.MiddleName,
-			rdp.LastOrSurname,
-			rdp.BirthDate,
-			rdp.K12StudentStudentIdentifierState,
-			rdp.IsActiveK12Student
-		FROM RDS.DimPeople rdp
-		LEFT JOIN RDS.DimPeople_Current rdpc
-			ON rdp.K12StudentStudentIdentifierState = rdpc.K12StudentStudentIdentifierState
-			AND ISNULL(rdp.BirthDate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
-		WHERE rdp.IsActiveK12Student = 1 
-		AND rdpc.DimPersonId IS NULL  -- Only new active records
-		AND rdp.RecordEndDateTime IS NULL  -- Only current/active records
-		AND rdp.DimPersonId <> -1
+		MERGE rds.DimPeople_Current AS trgt
+		USING (
+			SELECT
+				FirstName,
+				MiddleName,
+				LastOrSurname,
+				BirthDate,
+				K12StudentStudentIdentifierState,
+				IsActiveK12Student
+			FROM RankedStudents
+			WHERE SourceRowNumber = 1
+		) AS src
+		ON trgt.K12StudentStudentIdentifierState = src.K12StudentStudentIdentifierState
+		AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
+		AND trgt.IsActiveK12Student = 1
 
-		-- Update existing records in DimPeople_Current
-		UPDATE rdpc
-		SET 
-			rdpc.FirstName = rdp.FirstName,
-			rdpc.MiddleName = rdp.MiddleName,
-			rdpc.LastOrSurname = rdp.LastOrSurname,
-			rdpc.BirthDate = rdp.BirthDate,
-			rdpc.IsActiveK12Student = rdp.IsActiveK12Student
-		FROM RDS.DimPeople_Current rdpc
-		INNER JOIN RDS.DimPeople rdp
-			ON rdpc.K12StudentStudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND ISNULL(rdpc.BirthDate, '1900-01-01') = ISNULL(rdp.BirthDate, '1900-01-01')
-		WHERE rdp.IsActiveK12Student = 1
-		AND rdp.RecordEndDateTime IS NULL  -- Only current/active records
-		AND rdp.DimPersonId <> -1
+		--update matched targets, records that match on the StudentIdentifierState and BirthDate but have different name values
+		WHEN MATCHED 
+		AND EXISTS (
+			SELECT trgt.FirstName, trgt.LastOrSurname, trgt.MiddleName
+			EXCEPT
+			SELECT src.FirstName,  src.LastOrSurname,  src.MiddleName
+		)
+		THEN UPDATE SET
+			trgt.FirstName     = src.FirstName,
+			trgt.LastOrSurname = src.LastOrSurname,
+			trgt.MiddleName    = src.MiddleName
+
+		--insert non-matched targets, records exist in Source but NOT in Target
+		WHEN NOT MATCHED BY TARGET THEN
+		INSERT (
+			FirstName
+			, MiddleName
+			, LastOrSurname
+			, BirthDate
+			, K12StudentStudentIdentifierState
+			, IsActiveK12Student
+		)
+		VALUES (
+			src.FirstName
+			, src.MiddleName
+			, src.LastOrSurname
+			, src.Birthdate
+			, src.K12StudentStudentIdentifierState
+			, src.IsActiveK12Student
+		);
 
 	END TRY
 	BEGIN CATCH

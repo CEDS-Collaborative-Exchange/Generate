@@ -11,7 +11,7 @@ namespace generate.core.Models.Staging
         public string IndicatorStatus { get; set; }
         public string IndicatorStatusSubgroupType { get; set; }
         public string IndicatorStatusSubgroup { get; set; }
-        public string StatedDefinedIndicatorStatus { get; set; }
+        public string StateDefinedIndicatorStatus { get; set; }
         public DateTime? RecordStartDateTime { get; set; }
         public DateTime? RecordEndDateTime { get; set; }
         public string SchoolYear { get; set; }

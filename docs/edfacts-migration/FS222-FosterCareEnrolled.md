@@ -65,4 +65,4 @@ Result: **SEA TOT 790 = 790; all 171 LEA TOTs match (0 mismatches); 172/172 test
 1. Filtered-out foster students (those the Title I fact migration excludes via its date/age logic) are treated as correctly excluded (per review) — expected mirrors the fact rather than a looser raw-enrollment population.
 2. The spec's "LEA receives Title I, Part A funds" (CFDA 84.010) restriction is **not yet enforced** (it excludes ~2 of 344 LEAs in test data) pending the LEA Title I-A funding indicator warehouse addition (README §5, item 1). Documented as a known refinement, not a test failure.
 
-All objects packaged in `VersionUpdates/14.1` (deployable to all states).
+All objects packaged in `VersionUpdates/14.1_prerelease` (deployable to all states).

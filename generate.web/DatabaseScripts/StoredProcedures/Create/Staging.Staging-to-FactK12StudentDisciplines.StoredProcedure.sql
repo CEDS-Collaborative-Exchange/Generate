@@ -10,9 +10,17 @@
 --************************************************************************/
 CREATE PROCEDURE  [Staging].[Staging-to-FactK12StudentDisciplines] 
 	@SchoolYear SMALLINT
+	, @StudentIdentifierState VARCHAR(100) = NULL
+	, @DebugMode BIT = 0
 AS
 BEGIN
 	--SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	IF @DebugMode = 1 AND ISNULL(@StudentIdentifierState, '') = ''
+	BEGIN
+		;THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+	END
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
@@ -180,10 +188,6 @@ BEGIN
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'discipline'
-
-	-- Clear the Fact table for the SY being migrated
-		DELETE RDS.FactK12StudentDisciplines
-		WHERE SchoolYearId = @SchoolYearId 
 
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
@@ -380,7 +384,110 @@ BEGIN
 			LEFT JOIN RDS.vwDimFirearms rdf
 				ON rdf.SchoolYear = @SchoolYear
 				AND ISNULL(sd.FirearmType, 'MISSING') 	= ISNULL(rdf.FirearmTypeMap, rdf.FirearmTypeCode)
+			WHERE (@DebugMode = 0 OR (sd.StudentIdentifierState = @StudentIdentifierState AND sd.SchoolYear = @SchoolYear))
 
+			IF @DebugMode = 1
+			BEGIN
+				SELECT
+					@StudentIdentifierState AS StudentIdentifierState
+					, sd.Id AS DisciplineStagingId
+					, CASE WHEN sd.Id IS NULL THEN 0 ELSE 1 END AS FoundInDiscipline
+					, CASE WHEN EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = sd.Id) THEN 1 ELSE 0 END AS MadeItIntoFacts
+					, CASE
+						WHEN sd.Id IS NULL THEN 'Staging.Discipline'
+						WHEN NOT EXISTS (
+							SELECT 1
+							FROM Staging.K12Enrollment ske
+							WHERE sd.SchoolYear = ske.SchoolYear
+								AND sd.StudentIdentifierState = ske.StudentIdentifierState
+								AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+								AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+								AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+						) THEN 'JOIN Staging.K12Enrollment'
+						WHEN sd.DisciplinaryActionStartDate IS NULL OR NOT EXISTS (
+							SELECT 1
+							FROM RDS.DimSeas rds
+							WHERE sd.DisciplinaryActionStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
+						) THEN 'JOIN RDS.DimSeas'
+						WHEN NOT EXISTS (
+							SELECT 1
+							FROM Staging.K12Enrollment ske
+							JOIN RDS.DimAges rda
+								ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
+							WHERE sd.SchoolYear = ske.SchoolYear
+								AND sd.StudentIdentifierState = ske.StudentIdentifierState
+								AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+								AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+								AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+						) THEN 'JOIN RDS.DimAges'
+						WHEN NOT EXISTS (
+							SELECT 1
+							FROM Staging.K12Enrollment ske
+							JOIN RDS.vwDimK12Demographics rdkd
+								ON rdkd.SchoolYear = @SchoolYear
+								AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+							WHERE sd.SchoolYear = ske.SchoolYear
+								AND sd.StudentIdentifierState = ske.StudentIdentifierState
+								AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+								AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+								AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+						) THEN 'JOIN RDS.vwDimK12Demographics'
+						WHEN NOT EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingId = sd.Id) THEN 'Unknown - all required joins matched but no #Facts row was inserted'
+						ELSE 'Inserted into #Facts'
+					END AS DebugResult
+					, (SELECT COUNT(1) FROM #Facts) AS FactsRowsForStudent
+					, CASE WHEN EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						WHERE sd.SchoolYear = ske.SchoolYear
+							AND sd.StudentIdentifierState = ske.StudentIdentifierState
+							AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+							AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+							AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+					) THEN 1 ELSE 0 END AS MatchedK12Enrollment
+					, CASE WHEN sd.DisciplinaryActionStartDate IS NOT NULL AND EXISTS (
+						SELECT 1
+						FROM RDS.DimSeas rds
+						WHERE sd.DisciplinaryActionStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
+					) THEN 1 ELSE 0 END AS MatchedDimSeas
+					, CASE WHEN EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						JOIN RDS.DimAges rda
+							ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
+						WHERE sd.SchoolYear = ske.SchoolYear
+							AND sd.StudentIdentifierState = ske.StudentIdentifierState
+							AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+							AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+							AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+					) THEN 1 ELSE 0 END AS MatchedDimAges
+					, CASE WHEN EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						JOIN RDS.vwDimK12Demographics rdkd
+							ON rdkd.SchoolYear = @SchoolYear
+							AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+						WHERE sd.SchoolYear = ske.SchoolYear
+							AND sd.StudentIdentifierState = ske.StudentIdentifierState
+							AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+							AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+							AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+					) THEN 1 ELSE 0 END AS MatchedDimK12Demographics
+				FROM (SELECT @StudentIdentifierState AS StudentIdentifierState) debugStudent
+				LEFT JOIN Staging.Discipline sd
+					ON sd.StudentIdentifierState = debugStudent.StudentIdentifierState
+					AND sd.SchoolYear = @SchoolYear
+				ORDER BY sd.Id
+
+				RETURN
+			END
+
+	-- Clear the Fact table for the SY being migrated
+		IF ISNULL(@DebugMode, 0) = 0
+		BEGIN
+			DELETE RDS.FactK12StudentDisciplines
+			WHERE SchoolYearId = @SchoolYearId
+		END
 
 	--Final insert into RDS.FactK12StudentDisciplines table
 		INSERT INTO RDS.FactK12StudentDisciplines (

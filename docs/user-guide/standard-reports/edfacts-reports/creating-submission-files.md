@@ -10,7 +10,7 @@ Currently, accepted file types are:
 
 Use the dropdown list under CREATE SUBMISSION FILE to see the available formats, as shown below.
 
-<figure><img src="../../../.gitbook/assets/image (124).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (124).png" alt="Create Submission File dropdown listing available file formats."><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 Note: Opening .csv or. tab files in Excel can cause leading zeros to drop from the file. To view the submission file in these formats consider creating a copy of the file and opening the copy instead.

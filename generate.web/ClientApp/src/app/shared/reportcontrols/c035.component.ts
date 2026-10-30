@@ -2,6 +2,7 @@ import { Component, Input, AfterViewInit, OnInit, OnChanges, SimpleChange, ViewC
 import { Router, ActivatedRoute } from '@angular/router';
 import { GenerateReport } from '../../models/app/generateReport';
 import { GenerateReportService } from '../../services/app/generateReport.service';
+import { UserService } from '../../services/app/user.service';
 import { GenerateReportDto } from '../../models/app/generateReportDto';
 import { GenerateReportDataDto } from '../../models/app/generateReportDataDto';
 import { GenerateReportParametersDto } from '../../models/app/generateReportParametersDto';
@@ -52,7 +53,8 @@ export class C035Component implements AfterViewInit, OnChanges, OnInit {
         private _router: Router,
         private _generateReportService: GenerateReportService,
         private _ngZone: NgZone,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private _userService: UserService
     ) {
     }
 
@@ -429,6 +431,10 @@ export class C035Component implements AfterViewInit, OnChanges, OnInit {
 
         xhr.open('GET', url, true);
         xhr.responseType = 'blob';
+        const token: string = this._userService.getToken();
+        if (token) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        }
 
         xhr.onreadystatechange = function () {
 

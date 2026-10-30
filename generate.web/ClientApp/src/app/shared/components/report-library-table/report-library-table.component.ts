@@ -10,7 +10,8 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 import { GenerateReportDataDto } from '../../../models/app/generateReportDataDto';
 import * as XLSX from '../../../../lib/xlsx-js-style/xlsx.js'
-import * as $ from 'jquery';
+
+declare let $: any;
 
 @Component({
     selector: 'generate-app-report-library-table',

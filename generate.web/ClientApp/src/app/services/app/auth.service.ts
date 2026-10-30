@@ -19,9 +19,10 @@ const msalConfig = {
 export class AuthService {
     private app: PublicClientApplication;
     private isMsalInitialized: boolean = false;
+    private apiScope: string;
     public userService: UserService;
 
-    
+
 
     constructor(private _userService: UserService, private appConfig: AppConfig) {
 
@@ -36,6 +37,10 @@ export class AuthService {
                     redirectUri: res.redirectUri
                 },
             };
+
+            // Requests a token for this app's own API (Expose an API -> access_as_user), not Microsoft Graph,
+            // so the audience matches what the backend's JWT bearer validation expects.
+            this.apiScope = `api://${res.clientId}/access_as_user`;
 
             this.app = new PublicClientApplication(msalConfig);
             this.initializeMsal();
@@ -61,7 +66,7 @@ export class AuthService {
 
         try {
             const loginResponse = await this.app.loginPopup({
-                scopes: ['openid', 'profile', 'User.Read'],
+                scopes: ['openid', 'profile', this.apiScope],
             });
 
             if (loginResponse && loginResponse.account.idTokenClaims !== null) {

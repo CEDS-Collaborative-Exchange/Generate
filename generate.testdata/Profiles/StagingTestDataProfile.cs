@@ -131,7 +131,6 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<string>> RefNSLPStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefSchoolDangerousStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefProgressAchievingEnglishLanguageProficiencyIndicatorStatusDistribution { get; set; }
-        public List<DataDistribution<string>> RefComprehensiveAndTargetedSupportDistribution { get; set; }
         public List<DataDistribution<string>> RefComprehensiveSupportDistribution { get; set; }
         public List<DataDistribution<string>> RefTargetedSupportDistribution { get; set; }
         public List<DataDistribution<string>> RefTargetedSupportImprovementDistribution { get; set; }
@@ -233,6 +232,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<bool>> AssessedFirstTimeDistribution { get; set; }
         public List<DataDistribution<string>> AccessibilityFeatureTypeDistribution { get; set; }
         public List<DataDistribution<string>> AccessibilityFeatureApplicationTypeDistribution { get; set; }
+        public List<DataDistribution<string>> EdFactsFormerEnglishLearnerYearStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefAssessmentParticipationIndicatorDistribution { get; set; }
         public List<DataDistribution<string>> RefAssessmentRegistrationReasonNotCompleting { get; set; }
         public List<DataDistribution<string>> RefAssessmentRegistrationReasonNotTested { get; set; }
@@ -351,8 +351,8 @@ namespace generate.testdata.Profiles
 
             this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "13373", ExpectedDistribution = 30 }); // Reading/Language Arts
             this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "01166", ExpectedDistribution = 60 }); // Mathematics
-            this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "00562", ExpectedDistribution = 70 }); // Science
-            this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "73065", ExpectedDistribution = 80 }); // Career and Technical Education
+            this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "00562", ExpectedDistribution = 90 }); // Science
+            this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "73065", ExpectedDistribution = 91 }); // Career and Technical Education
             this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "00256", ExpectedDistribution = 100 }); // English as a second language (ESL)
                                                                                                                                       //this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "09999", ExpectedDistribution = 100 }); // Other
             this.RefAssessmentPurposeDistribution = new List<DataDistribution<string>>();
@@ -768,15 +768,6 @@ namespace generate.testdata.Profiles
             this.RefProgressAchievingEnglishLanguageProficiencyIndicatorStatusDistribution.Add(new DataDistribution<string>() { Option = "NOSTUDENTS", ExpectedDistribution = 100 });
 
 
-            this.RefComprehensiveAndTargetedSupportDistribution = new List<DataDistribution<string>>();
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "CSI", ExpectedDistribution = 15 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "TSI", ExpectedDistribution = 30 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "ADDLTSI", ExpectedDistribution = 45 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "CSIEXIT", ExpectedDistribution = 60 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "TSIEXIT", ExpectedDistribution = 75 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "NOTCSI", ExpectedDistribution = 85 });
-            this.RefComprehensiveAndTargetedSupportDistribution.Add(new DataDistribution<string>() { Option = "NOTTSI", ExpectedDistribution = 95 });
-
 
             this.RefComprehensiveSupportDistribution = new List<DataDistribution<string>>();
             this.RefComprehensiveSupportDistribution.Add(new DataDistribution<string>() { Option = "CSILOWPERF", ExpectedDistribution = 25 });
@@ -1064,7 +1055,7 @@ namespace generate.testdata.Profiles
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "BlackorAfricanAmerican", ExpectedDistribution = 35 });
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "NativeHawaiianorOtherPacificIslander", ExpectedDistribution = 40 });
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "White", ExpectedDistribution = 95 });
-            this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "TwoorMoreRaces", ExpectedDistribution = 100 });
+            this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "DemographicRaceTwoOrMoreRaces", ExpectedDistribution = 100 });
 
 
             this.NumberOfConcurrentSchoolEnrollmentDistribution = new List<DataDistribution<int>>();
@@ -1371,6 +1362,14 @@ namespace generate.testdata.Profiles
             this.AccessibilityFeatureApplicationTypeDistribution.Add(new DataDistribution<string>() { Option = "Designated", ExpectedDistribution = 75 });
             this.AccessibilityFeatureApplicationTypeDistribution.Add(new DataDistribution<string>() { Option = "Universal", ExpectedDistribution = 100 });
 
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution = new List<DataDistribution<string>>();
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "MISSING", ExpectedDistribution = 70 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "1YEAR", ExpectedDistribution = 76 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "2YEAR", ExpectedDistribution = 82 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "3YEAR", ExpectedDistribution = 88 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "4YEAR", ExpectedDistribution = 94 });
+            this.EdFactsFormerEnglishLearnerYearStatusDistribution.Add(new DataDistribution<string>() { Option = "5YEAR", ExpectedDistribution = 100 });
+
 
             this.SpecialEdProgramParticipantNowDistribution = new List<DataDistribution<bool>>();
             this.SpecialEdProgramParticipantNowDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 20 });
@@ -1510,7 +1509,7 @@ namespace generate.testdata.Profiles
             this.RefIdeaInterimRemovalDistribution.Add(new DataDistribution<string>() { Option = "REMHO", ExpectedDistribution = 100 });
 
             this.RefIdeaIndicatorDistribution = new List<DataDistribution<bool>>();
-            this.RefIdeaIndicatorDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 20 });
+            this.RefIdeaIndicatorDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 10 });
             this.RefIdeaIndicatorDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 100 });
 
             #endregion

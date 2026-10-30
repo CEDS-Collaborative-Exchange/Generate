@@ -8,13 +8,13 @@ icon: table
 
 The Data Population Summary contains all the data that was moved into the Generate Reporting Data Store (RDS) from the state’s longitudinal data system (SLDS) or other source systems.
 
-<figure><img src="../../.gitbook/assets/image (147).png" alt=""><figcaption><p>Data Population Summary Home page</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (147).png" alt="Data Population Summary home page with report categories."><figcaption><p>Data Population Summary Home page</p></figcaption></figure>
 
-The Data Population Summary is not limited to counts based on ED_Facts_ or other reports; instead, it provides comprehensive counts of data based on student subpopulations. This affords you a chance to identify anomalies or discrepancies in the data before reports are run or submitted.
+The Data Population Summary is not limited to counts based on ED\_Facts\_ or other reports; instead, it provides comprehensive counts of data based on student subpopulations. This affords you a chance to identify anomalies or discrepancies in the data before reports are run or submitted.
 
 To access the Data Population Summary report page, click on “**Data Population Summary**” from the toolbar at the top of any page in Generate. You can also click on the "**Data Population Summary**" graphic located on the right side of the home page.
 
-<figure><img src="../../.gitbook/assets/image (159).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (159).png" alt="Generate toolbar with the Data Population Summary option."><figcaption></figcaption></figure>
 
 The following sections describe the data population summary reports, the fields and options available to you.
 

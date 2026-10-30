@@ -829,7 +829,7 @@ namespace generate.testdata.Profiles
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "BlackorAfricanAmerican", ExpectedDistribution = 31 });
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "NativeHawaiianorOtherPacificIslander", ExpectedDistribution = 32 });
             this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "White", ExpectedDistribution = 96 });
-            this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "TwoorMoreRaces", ExpectedDistribution = 103 });
+            this.RefRaceDistribution.Add(new DataDistribution<string>() { Option = "DemographicRaceTwoOrMoreRaces", ExpectedDistribution = 103 });
 
 
             this.NumberOfConcurrentSchoolEnrollmentDistribution = new List<DataDistribution<int>>();

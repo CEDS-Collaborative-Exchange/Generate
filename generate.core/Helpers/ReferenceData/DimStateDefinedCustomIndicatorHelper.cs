@@ -7,7 +7,7 @@ using generate.core.Models.RDS;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class DimStateDefinedCustomIndicatorHelper
+    public static class DimStateDefinedCustomIndicatorHelper
     {
         public static List<DimStateDefinedCustomIndicator> GetData()
         {

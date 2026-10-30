@@ -233,7 +233,7 @@ namespace generate.test.Infrastructure.Services
             return context;
         }
 
-        private RDSDbContext GetRdsDbContext()
+        private static RDSDbContext GetRdsDbContext()
         {
 
             var options = new DbContextOptionsBuilder<infrastructure.Contexts.RDSDbContext>()
@@ -325,12 +325,12 @@ namespace generate.test.Infrastructure.Services
             var updatePackageDirectory = mockFileSystem.Path.Combine(targetPath, updatePackageName);
             mockFileSystem.Directory.CreateDirectory(updatePackageDirectory);
             mockFileSystem.Directory.CreateDirectory(mockFileSystem.Path.Combine(updatePackageDirectory, "web"));
-            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "web", "newfile.htm"));
+            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "web", "newfile.htm")).Dispose();
             mockFileSystem.Directory.CreateDirectory(mockFileSystem.Path.Combine(updatePackageDirectory, "database"));
-            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "database", "UpdateScripts.csv"));
+            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "database", "UpdateScripts.csv")).Dispose();
             mockFileSystem.Directory.CreateDirectory(mockFileSystem.Path.Combine(updatePackageDirectory, "background"));
-            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "web_todelete.csv"));
-            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "background_todelete.csv"));
+            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "web_todelete.csv")).Dispose();
+            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "background_todelete.csv")).Dispose();
         }
 
         private void MockUncompressInvalidUpdatePackage(MockFileSystem mockFileSystem, string fileNameWithPath, string targetPath)
@@ -339,11 +339,11 @@ namespace generate.test.Infrastructure.Services
             var updatePackageDirectory = mockFileSystem.Path.Combine(targetPath, updatePackageName);
             mockFileSystem.Directory.CreateDirectory(updatePackageDirectory);
             mockFileSystem.Directory.CreateDirectory(mockFileSystem.Path.Combine(updatePackageDirectory, "web"));
-            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "web", "newfile.htm"));
+            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "web", "newfile.htm")).Dispose();
             mockFileSystem.Directory.CreateDirectory(mockFileSystem.Path.Combine(updatePackageDirectory, "database"));
-            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "database", "UpdateScripts.csv"));
+            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "database", "UpdateScripts.csv")).Dispose();
             mockFileSystem.Directory.CreateDirectory(mockFileSystem.Path.Combine(updatePackageDirectory, "background"));
-            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "web_todelete.csv"));
+            mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "web_todelete.csv")).Dispose();
             // Invalid because it is missing this file
             //mockFileSystem.File.CreateText(mockFileSystem.Path.Combine(updatePackageDirectory, "background_todelete.csv"));
         }
@@ -351,7 +351,7 @@ namespace generate.test.Infrastructure.Services
 
         private void MockCompressSite(MockFileSystem mockFileSystem, string backupDirectory, string backupZipFile)
         {
-            mockFileSystem.File.Create(mockFileSystem.Path.Combine(backupDirectory, backupZipFile));
+            mockFileSystem.File.Create(mockFileSystem.Path.Combine(backupDirectory, backupZipFile)).Dispose();
         }
 
 
@@ -390,7 +390,7 @@ namespace generate.test.Infrastructure.Services
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 var currentVersion = service.GetCurrentVersion();
@@ -415,14 +415,25 @@ namespace generate.test.Infrastructure.Services
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper);
+                context.GenerateConfigurations.Add(new GenerateConfiguration()
+                {
+                    GenerateConfigurationCategory = "AppUpdate",
+                    GenerateConfigurationKey = "WebPhase",
+                    GenerateConfigurationValue = "Uploading package and updating app settings"
+                });
+                context.SaveChanges();
+
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
 
                 var currentStatus = service.GetUpdateStatus();
 
-                // Assert
-                Assert.Equal("OK", currentStatus.Status);
+                // Assert - no rows seeded yet default to "OK", existing rows are returned as-is
+                Assert.Equal("OK", currentStatus.WebStatus);
+                Assert.Equal("Uploading package and updating app settings", currentStatus.WebPhase);
+                Assert.Equal("OK", currentStatus.BackgroundStatus);
+                Assert.Equal("", currentStatus.BackgroundPhase);
 
             }
         }
@@ -442,19 +453,15 @@ namespace generate.test.Infrastructure.Services
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
-
-                GenerateConfiguration configStatus = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "Status");
-                context.GenerateConfigurations.Remove(configStatus);
-                context.SaveChanges();
-
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
 
                 var currentStatus = service.GetUpdateStatus();
 
-                // Assert
-                Assert.Equal("OK", currentStatus.Status);
+                // Assert - no update has ever run, so every value falls back to its default
+                Assert.Equal("OK", currentStatus.WebStatus);
+                Assert.Equal("OK", currentStatus.BackgroundStatus);
 
             }
         }
@@ -478,7 +485,7 @@ namespace generate.test.Infrastructure.Services
                     Environment = "development"
                 });
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
 
@@ -510,7 +517,7 @@ namespace generate.test.Infrastructure.Services
                     Environment = "test"
                 });
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
 
@@ -542,7 +549,7 @@ namespace generate.test.Infrastructure.Services
                     Environment = "stage"
                 });
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
 
@@ -575,7 +582,7 @@ namespace generate.test.Infrastructure.Services
                     Environment = "production"
                 });
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
 
@@ -607,7 +614,7 @@ namespace generate.test.Infrastructure.Services
                     Environment = "production"
                 });
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
                 
                 // Act
                 Exception ex = Assert.Throws<InvalidOperationException>(() => service.GetUpdateUrl());
@@ -633,7 +640,7 @@ namespace generate.test.Infrastructure.Services
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 Exception ex = Assert.Throws<InvalidOperationException>(() => service.GetCurrentVersion());
@@ -654,9 +661,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             var results = service.GetPendingUpdates(@"c:\generate.web\");
@@ -677,9 +683,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             var results = service.GetPendingUpdates(@"c:\generate.web\", 2, 9);
@@ -700,9 +705,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             var results = service.GetPendingUpdates(@"c:\generate.web\", 3, 2);
@@ -723,9 +727,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             var results = service.GetPendingUpdates(@"c:\generate.web\", 4, 2);
@@ -908,9 +911,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             var results = service.GetDownloadedUpdates(@"c:\generate.web\");
@@ -932,9 +934,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.ClearUpdates(@"c:\generate.web\");
@@ -963,9 +964,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             fileSystem.AddDirectory(@"c:\generate.web\Updates\generate_3.0");
 
@@ -1002,7 +1002,7 @@ namespace generate.test.Infrastructure.Services
 
                 this.MockUncompressValidUpdatePackage(fileSystem, @"c:\generate.web\Updates\generate_3.0.zip", @"c:\generate.web\Updates\");
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPackage = service.IsValidUpdatePackageDto(@"c:\generate.web\Updates", @"c:\generate.web\Updates\generate_3.0", "generate_3.0.zip");
@@ -1031,7 +1031,7 @@ namespace generate.test.Infrastructure.Services
                 this.MockUncompressValidUpdatePackage(fileSystem, @"c:\generate.web\Updates\generate_3.0.zip", @"c:\generate.web\Updates\");
                 fileSystem.Directory.Delete(@"c:\generate.web\Updates\generate_3.0\web", true);
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPackage = service.IsValidUpdatePackageDto(@"c:\generate.web\Updates", @"c:\generate.web\Updates\generate_3.0", "generate_3.0.zip");
@@ -1060,7 +1060,7 @@ namespace generate.test.Infrastructure.Services
                 this.MockUncompressValidUpdatePackage(fileSystem, @"c:\generate.web\Updates\generate_3.0.zip", @"c:\generate.web\Updates\");
                 fileSystem.Directory.Delete(@"c:\generate.web\Updates\generate_3.0\database", true);
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPackage = service.IsValidUpdatePackageDto(@"c:\generate.web\Updates", @"c:\generate.web\Updates\generate_3.0", "generate_3.0.zip");
@@ -1089,7 +1089,7 @@ namespace generate.test.Infrastructure.Services
                 this.MockUncompressValidUpdatePackage(fileSystem, @"c:\generate.web\Updates\generate_3.0.zip", @"c:\generate.web\Updates\");
                 fileSystem.Directory.Delete(@"c:\generate.web\Updates\generate_3.0\background");
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPackage = service.IsValidUpdatePackageDto(@"c:\generate.web\Updates", @"c:\generate.web\Updates\generate_3.0", "generate_3.0.zip");
@@ -1119,7 +1119,7 @@ namespace generate.test.Infrastructure.Services
                 this.MockUncompressValidUpdatePackage(fileSystem, @"c:\generate.web\Updates\generate_3.0.zip", @"c:\generate.web\Updates\");
                 fileSystem.File.Delete(@"c:\generate.web\Updates\generate_3.0\web_todelete.csv");
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPackage = service.IsValidUpdatePackageDto(@"c:\generate.web\Updates", @"c:\generate.web\Updates\generate_3.0", "generate_3.0.zip");
@@ -1148,7 +1148,7 @@ namespace generate.test.Infrastructure.Services
                 this.MockUncompressValidUpdatePackage(fileSystem, @"c:\generate.web\Updates\generate_3.0.zip", @"c:\generate.web\Updates\");
                 fileSystem.File.Delete(@"c:\generate.web\Updates\generate_3.0\background_todelete.csv");
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPackage = service.IsValidUpdatePackageDto(@"c:\generate.web\Updates", @"c:\generate.web\Updates\generate_3.0", "generate_3.0.zip");
@@ -1178,7 +1178,7 @@ namespace generate.test.Infrastructure.Services
                 this.MockUncompressValidUpdatePackage(fileSystem, @"c:\generate.web\Updates\generate_3.0.zip", @"c:\generate.web\Updates\");
                 fileSystem.File.Delete(@"c:\generate.web\Updates\generate_3.0.json");
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPackage = service.IsValidUpdatePackageDto(@"c:\generate.web\Updates", @"c:\generate.web\Updates\generate_3.0", "generate_3.0.zip");
@@ -1204,7 +1204,7 @@ namespace generate.test.Infrastructure.Services
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPrerequisite = service.IsValidPrerequisite(@"c:\generate.web\Updates\generate_3.0.json");
@@ -1228,7 +1228,7 @@ namespace generate.test.Infrastructure.Services
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 bool isValidPrerequisite = service.IsValidPrerequisite(@"c:\generate.web\Updates\generate_4.0.json");
@@ -1256,7 +1256,7 @@ namespace generate.test.Infrastructure.Services
 
                 zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressValidUpdatePackage(fileSystem, p, q));
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 List<string> updatePackages = service.ExtractAndValidateUpdatePackageDtos(@"c:\generate.web\Updates");
@@ -1285,7 +1285,7 @@ namespace generate.test.Infrastructure.Services
 
                 zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressInvalidUpdatePackage(fileSystem, p, q));
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
                 // Act
                 List<string> updatePackages = service.ExtractAndValidateUpdatePackageDtos(@"c:\generate.web\Updates");
@@ -1301,7 +1301,7 @@ namespace generate.test.Infrastructure.Services
 
 
         [Fact]
-        public void ApplyUpdates()
+        public void ExecuteSiteUpdate_Web()
         {
             using (var context = GetContextWithData())
             {
@@ -1311,29 +1311,30 @@ namespace generate.test.Infrastructure.Services
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
                 var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
                 var appRepository = new AppRepository(context, rdsRepository);
-                var appSettings = Mock.Of<IOptions<AppSettings>>();
+                var appSettings = Mock.Of<IOptions<AppSettings>>(x => x.Value == new AppSettings { EnableAzureDeployment = true });
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
-
+                var appDeploymentHelperMock = new Mock<IAppDeploymentHelper>();
 
                 zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressValidUpdatePackage(fileSystem, p, q));
 
-                var updatePackages = new List<string>();
-                updatePackages.Add("generate_3.0.zip");
-
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
-
-                Assert.False(fileSystem.FileExists(@"c:\generate.web\newfile.htm"));
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, appDeploymentHelperMock.Object);
 
                 // Act
-                service.ApplyUpdates(updatePackages, @"c:\generate.web\Updates", @"c:\generate.web");
+                service.ExecuteSiteUpdate(@"c:\generate.web", "web");
 
-                // Assert
-                Assert.True(fileSystem.FileExists(@"c:\generate.web\newfile.htm"));
+                // Assert - own package deployed, package cleaned up, status left OK
+                appDeploymentHelperMock.Verify(x => x.DeployPackage(It.Is<string>(p => p.EndsWith("web_deploy.zip"))), Times.Once);
+                Assert.False(fileSystem.Directory.Exists(@"c:\generate.web\Updates\generate_3.0"));
+                Assert.False(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.zip"));
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
+                Assert.Equal("OK", status.GenerateConfigurationValue);
+                var phase = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebPhase");
+                Assert.Equal("Update Complete", phase.GenerateConfigurationValue);
             }
         }
 
         [Fact]
-        public void ApplyUpdates_BackgroundUpdate()
+        public void ExecuteSiteUpdate_Background()
         {
             using (var context = GetContextWithData())
             {
@@ -1343,124 +1344,19 @@ namespace generate.test.Infrastructure.Services
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
                 var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
                 var appRepository = new AppRepository(context, rdsRepository);
-                var appSettings = Mock.Of<IOptions<AppSettings>>();
+                var appSettings = Mock.Of<IOptions<AppSettings>>(x => x.Value == new AppSettings { EnableAzureDeployment = true });
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
-
+                var appDeploymentHelperMock = new Mock<IAppDeploymentHelper>();
 
                 zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressValidUpdatePackage(fileSystem, p, q));
 
-                var updatePackages = new List<string>();
-                updatePackages.Add("generate_3.0.zip");
-
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
-
-                Assert.False(fileSystem.FileExists(@"c:\generate.background\test.htm"));
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, appDeploymentHelperMock.Object);
 
                 // Act
-                service.ApplyUpdates(updatePackages, @"c:\generate.web\Updates", @"c:\generate.background");
+                service.ExecuteSiteUpdate(@"c:\generate.web", "background");
 
-                // Assert
-                Assert.True(fileSystem.FileExists(@"c:\generate.background\test.htm"));
-            }
-        }
-
-        [Fact]
-        public void ApplyUpdates_Exception()
-        {
-            using (var context = GetContextWithData())
-            {
-
-                // Arrange
-                var fileSystem = SetupFileSystem_SingleValidUpdate();
-                var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
-                var appRepository = new AppRepository(context, rdsRepository);
-                var appSettings = Mock.Of<IOptions<AppSettings>>();
-                var zipFileHelperMock = new Mock<IZipFileHelper>();
-
-
-                zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressInvalidUpdatePackage(fileSystem, p, q));
-
-                var updatePackages = new List<string>();
-                updatePackages.Add("generate_3.0.zip");
-
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
-
-                // Act
-
-                Exception ex = Assert.Throws<System.IO.DirectoryNotFoundException>(() => service.ApplyUpdates(updatePackages, @"c:\generate.web\Updates", @"c:\generate_web"));
-
-                // Assert 
-
-                Assert.Equal("Could not find a part of the path 'c:\\generate_web\\newfile.htm'.", ex.Message);
-
-
-            }
-        }
-
-
-        [Fact]
-        public void ApplyUpdates_InvalidPrerequisite()
-        {
-            using (var context = GetContextWithData())
-            {
-
-                // Arrange
-                var fileSystem = SetupFileSystem_SingleValidUpdate_WrongPrerequisite();
-                var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
-                var appRepository = new AppRepository(context, rdsRepository);
-                var appSettings = Mock.Of<IOptions<AppSettings>>();
-                var zipFileHelperMock = new Mock<IZipFileHelper>();
-
-
-                zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressValidUpdatePackage(fileSystem, p, q));
-
-                var updatePackages = new List<string>();
-                updatePackages.Add("generate_4.0.zip");
-
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
-
-                // Act
-
-                Exception ex = Assert.Throws<InvalidOperationException>(() => service.ApplyUpdates(updatePackages, @"c:\generate.web\Updates", @"c:\generate_web"));
-
-                // Assert 
-
-                Assert.Equal("Update generate_4.0.zip is invalid - prerequisite is not met", ex.Message);
-
-
-            }
-        }
-
-        [Fact]
-        public void ExecuteSiteUpdate()
-        {
-            using (var context = GetContextWithData())
-            {
-
-                // Arrange
-                var fileSystem = SetupFileSystem_SingleValidUpdate();
-                var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
-                var appRepository = new AppRepository(context, rdsRepository);
-                var appSettings = Mock.Of<IOptions<AppSettings>>();
-                var zipFileHelperMock = new Mock<IZipFileHelper>();
-
-
-                zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressValidUpdatePackage(fileSystem, p, q));
-
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
-
-                Assert.False(fileSystem.FileExists(@"c:\generate.web\newfile.htm"));
-
-                // Act
-                service.ExecuteSiteUpdate(@"c:\generate.web", @"c:\generate.web");
-
-                // Assert
-                Assert.True(fileSystem.FileExists(@"c:\generate.web\newfile.htm"));
-
-
+                // Assert - the background subfolder is packaged and deployed, not web's
+                appDeploymentHelperMock.Verify(x => x.DeployPackage(It.Is<string>(p => p.EndsWith("background_deploy.zip"))), Times.Once);
             }
         }
 
@@ -1475,20 +1371,50 @@ namespace generate.test.Infrastructure.Services
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
                 var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
                 var appRepository = new AppRepository(context, rdsRepository);
-                var appSettings = Mock.Of<IOptions<AppSettings>>();
-                var zipFileHelperMock = new Mock<IZipFileHelper>();
+                var appSettings = Mock.Of<IOptions<AppSettings>>(x => x.Value == new AppSettings { EnableAzureDeployment = true });
+                var zipFileHelper = Mock.Of<IZipFileHelper>();
+                var appDeploymentHelperMock = new Mock<IAppDeploymentHelper>();
 
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, appDeploymentHelperMock.Object);
+
+                // Act
+                service.ExecuteSiteUpdate(@"c:\generate.web", "web");
+
+                // Assert
+                appDeploymentHelperMock.Verify(x => x.DeployPackage(It.IsAny<string>()), Times.Never);
+            }
+        }
+
+        [Fact]
+        public void ExecuteSiteUpdate_InvalidPrerequisite()
+        {
+            using (var context = GetContextWithData())
+            {
+
+                // Arrange
+                var fileSystem = SetupFileSystem_SingleValidUpdate_WrongPrerequisite();
+                var logger = Mock.Of<ILogger<AppUpdateService>>();
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
+                var appSettings = Mock.Of<IOptions<AppSettings>>(x => x.Value == new AppSettings { EnableAzureDeployment = true });
+                var zipFileHelperMock = new Mock<IZipFileHelper>();
+                var appDeploymentHelperMock = new Mock<IAppDeploymentHelper>();
 
                 zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressValidUpdatePackage(fileSystem, p, q));
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, appDeploymentHelperMock.Object);
 
                 // Act
-                service.ExecuteSiteUpdate(@"c:\generate.web", @"c:\generate.web");
+
+                Exception ex = Assert.Throws<InvalidOperationException>(() => service.ExecuteSiteUpdate(@"c:\generate.web", "web"));
 
                 // Assert
-                Assert.False(fileSystem.FileExists(@"c:\generate.web\newfile.htm"));
-                
+
+                Assert.Contains("generate_4.0.zip is invalid - prerequisite is not met", ex.Message);
+                appDeploymentHelperMock.Verify(x => x.DeployPackage(It.IsAny<string>()), Times.Never);
+
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
+                Assert.StartsWith("FAILED", status.GenerateConfigurationValue);
             }
         }
 
@@ -1503,23 +1429,59 @@ namespace generate.test.Infrastructure.Services
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
                 var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
                 var appRepository = new AppRepository(context, rdsRepository);
-                var appSettings = Mock.Of<IOptions<AppSettings>>();
+                var appSettings = Mock.Of<IOptions<AppSettings>>(x => x.Value == new AppSettings { EnableAzureDeployment = true });
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
-
+                var appDeploymentHelperMock = new Mock<IAppDeploymentHelper>();
 
                 zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressValidUpdatePackage(fileSystem, p, q));
+                appDeploymentHelperMock.Setup(x => x.DeployPackage(It.IsAny<string>())).Throws(new InvalidOperationException("Blob upload failed"));
 
-                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
-
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, appDeploymentHelperMock.Object);
 
                 // Act
-                Exception ex = Assert.Throws<System.IO.DirectoryNotFoundException>(() => service.ExecuteSiteUpdate(@"c:\generate.web", @"c:\generate_web"));
+                Exception ex = Assert.Throws<InvalidOperationException>(() => service.ExecuteSiteUpdate(@"c:\generate.web", "web"));
 
-                // Assert 
+                // Assert
+                Assert.Equal("Blob upload failed", ex.Message);
 
-                Assert.Equal("Could not find a part of the path 'c:\\generate_web\\app_offline.htm'.", ex.Message);
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
+                Assert.Equal("FAILED - Blob upload failed", status.GenerateConfigurationValue);
+            }
+        }
 
+        [Fact]
+        public void ExecuteSiteUpdate_LegacyPath_WhenDisabled()
+        {
+            using (var context = GetContextWithData())
+            {
 
+                // Arrange - EnableAzureDeployment left at its default (false), so this falls
+                // back to the legacy in-place file-copy mechanism instead of Azure deployment
+                var fileSystem = SetupFileSystem_SingleValidUpdate();
+                var logger = Mock.Of<ILogger<AppUpdateService>>();
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
+                var appSettings = Mock.Of<IOptions<AppSettings>>(x => x.Value == new AppSettings());
+                var zipFileHelperMock = new Mock<IZipFileHelper>();
+                var appDeploymentHelperMock = new Mock<IAppDeploymentHelper>();
+
+                zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressValidUpdatePackage(fileSystem, p, q));
+                zipFileHelperMock.Setup(x => x.CompressDirectory(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockCompressSite(fileSystem, p, q));
+
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, appDeploymentHelperMock.Object);
+
+                Assert.False(fileSystem.FileExists(@"c:\generate.web\newfile.htm"));
+
+                // Act
+                service.ExecuteSiteUpdate(@"c:\generate.web", "web");
+
+                // Assert - files copied in place via the legacy mechanism, Azure never touched
+                Assert.True(fileSystem.FileExists(@"c:\generate.web\newfile.htm"));
+                Assert.True(!fileSystem.FileExists(@"c:\generate.web\app_offline.htm"));
+                appDeploymentHelperMock.Verify(x => x.DeployPackage(It.IsAny<string>()), Times.Never);
+
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
+                Assert.Equal("OK", status.GenerateConfigurationValue);
             }
         }
 
@@ -1535,11 +1497,10 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
             this.MockUncompressValidUpdatePackage(fileSystem, @"c:\generate.web\Updates\generate_3.0.zip", @"c:\generate.web\Updates\");
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.DeleteUpdatePackageDto(@"c:\generate.web\Updates\generate_3.0");
@@ -1562,9 +1523,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             Assert.True(!fileSystem.FileExists(@"c:\generate.web\app_offline.htm"));
 
@@ -1588,11 +1548,10 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
-            fileSystem.File.CreateText(@"c:\generate.web\app_offline.htm");
+            fileSystem.File.CreateText(@"c:\generate.web\app_offline.htm").Dispose();
 
             Assert.True(fileSystem.FileExists(@"c:\generate.web\app_offline.htm"));
 
@@ -1615,9 +1574,8 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.BringSiteOnline(@"c:\generate.web");
@@ -1639,15 +1597,14 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelperMock = new Mock<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
             // Add a web file
-            fileSystem.File.CreateText(@"c:\generate.web\index.htm");
+            fileSystem.File.CreateText(@"c:\generate.web\index.htm").Dispose();
 
 
             zipFileHelperMock.Setup(x => x.CompressDirectory(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockCompressSite(fileSystem, p, q));
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.web");
@@ -1669,15 +1626,14 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelperMock = new Mock<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
             // Add a web file
-            fileSystem.File.CreateText(@"c:\generate.background\index.htm");
+            fileSystem.File.CreateText(@"c:\generate.background\index.htm").Dispose();
 
 
             zipFileHelperMock.Setup(x => x.CompressDirectory(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockCompressSite(fileSystem, p, q));
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.background");
@@ -1699,18 +1655,17 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelperMock = new Mock<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
             // Add a web file
-            fileSystem.File.CreateText(@"c:\generate.web\index.htm");
+            fileSystem.File.CreateText(@"c:\generate.web\index.htm").Dispose();
 
             // Add a backup
             fileSystem.Directory.CreateDirectory(@"c:\generate.web\Updates\Backups");
-            fileSystem.File.Create(@"c:\generate.web\Updates\Backups\generate.web_backup.zip");
+            fileSystem.File.Create(@"c:\generate.web\Updates\Backups\generate.web_backup.zip").Dispose();
 
             zipFileHelperMock.Setup(x => x.CompressDirectory(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockCompressSite(fileSystem, p, q));
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.web");
@@ -1733,19 +1688,18 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelperMock = new Mock<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
             zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressBackup(fileSystem, p, q));
 
             // Add a backup
             fileSystem.Directory.CreateDirectory(@"c:\generate.web\Updates\Backups");
-            fileSystem.File.Create(@"c:\generate.web\Updates\Backups\generate.web_backup.zip");
+            fileSystem.File.Create(@"c:\generate.web\Updates\Backups\generate.web_backup.zip").Dispose();
 
             // Add a web file
             MockFileData initialFile = new MockFileData("html content");
             fileSystem.AddFile(@"c:\generate.web\test.html", initialFile);
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.RestoreBackup(@"c:\generate.web\Updates", @"c:\generate.web");
@@ -1767,19 +1721,18 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelperMock = new Mock<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
             zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockUncompressBackup(fileSystem, p, q));
 
             // Add a backup
             fileSystem.Directory.CreateDirectory(@"c:\generate.web\Updates\Backups");
-            fileSystem.File.Create(@"c:\generate.web\Updates\Backups\generate.background_backup.zip");
+            fileSystem.File.Create(@"c:\generate.web\Updates\Backups\generate.background_backup.zip").Dispose();
 
             // Add a web file
             MockFileData initialFile = new MockFileData("html content");
             fileSystem.AddFile(@"c:\generate.background\test.html", initialFile);
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.RestoreBackup(@"c:\generate.web\Updates", @"c:\generate.background");
@@ -1801,10 +1754,9 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.ExecuteDatabaseUpdate(@"c:\generate.web\Updates\generate_3.0\database");
@@ -1825,10 +1777,9 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             // Act
             service.ExecuteDatabaseScript(@"c:\generate.web\Updates\generate_3.0\database", "testscript.sql");
@@ -1852,10 +1803,9 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             Assert.True(fileSystem.FileExists(@"c:\generate.web\test.html"));
 
@@ -1878,10 +1828,9 @@ namespace generate.test.Infrastructure.Services
             var appRepository = Mock.Of<IAppRepository>();
             var appSettings = Mock.Of<IOptions<AppSettings>>();
             var zipFileHelper = Mock.Of<IZipFileHelper>();
-            var restClient = Mock.Of<RestClient>();
 
 
-            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper);
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
 
             Assert.True(fileSystem.FileExists(@"c:\generate.web\test.html"));
 

@@ -10,6 +10,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -44,7 +45,7 @@ Generate version 12.0 is focused on the Assessment files, file specifications FS
 ### Important Updates
 
 * **Generate in the OSC -** We’ve removed the last application dependencies on **Wijmo**, improving Generate’s compatibility within the Open Source Community (OSC) framework. This update not only makes Generate more lightweight but also prepares us for its upcoming transition to an open-source tool on GitHub. With this move, users will soon be able to contribute directly to Generate's development.
-* **Migrations -** Improvements have been made to the migration performance for key organization tables—**DimSeas**, **DimLeas**, and **DimK12Schools**—leading to faster and more efficient migrations.&#x20;
+* **Migrations -** Improvements have been made to the migration performance for key organization tables—**DimSeas**, **DimLeas**, and **DimK12Schools**—leading to faster and more efficient migrations.
 * **Generate Utilities**\
   Several Generate utilities have been updated to provide more accuracy and faster processing. These include:
   * **Check\_SourceSystemReferenceData\_Mapping**: Improved mapping validation between source systems.
@@ -123,3 +124,5 @@ Generate was tested on the following operating systems and browsers:
 ## Generate 12.0 Office Hour
 
 {% embed url="https://youtu.be/zfGtirLFB4c" %}
+Generate 12.0 Office Hour recording
+{% endembed %}

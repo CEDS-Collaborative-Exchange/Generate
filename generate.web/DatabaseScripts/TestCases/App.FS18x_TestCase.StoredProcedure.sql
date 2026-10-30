@@ -262,7 +262,7 @@ BEGIN
 		cross join rds.DimAssessmentPerformanceLevels rdapl
 		inner join staging.SourceSystemReferenceData ssrd
 			on ssrd.SchoolYear = @SchoolYear
-			and ssrd.InputCode = rdapl.AssessmentPerformanceLevelIdentifier
+			and ssrd.OutputCode = rdapl.AssessmentPerformanceLevelIdentifier
 			and ssrd.TableName = 'AssessmentPerformanceLevel_Identifier'
 
 			CREATE NONCLUSTERED INDEX IX_ds ON #DimAssessments (AssessmentAcademicSubjectCode,AssessmentTypeAdministeredCode,AssessmentPerformanceLevelIdentifier)
@@ -444,7 +444,7 @@ BEGIN
 	INNER JOIN #DimAssessments ds
 		ON a.AssessmentIdentifier = ds.AssessmentIdentifierState 
 			AND a.AssessmentTypeAdministered = ds.AssessmentTypeAdministeredMap
-			AND a.AssessmentPerformanceLevelIdentifier = ds.AssessmentPerformanceLevelIdentifier
+			AND a.AssessmentPerformanceLevelIdentifier = ds.AssessmentPerformanceLevelMap
 	INNER JOIN #ToggleAssessments ta
 		ON ds.AssessmentTypeAdministeredCode = replace(ta.AssessmentTypeCode, '_1', '')
 			AND asr.GradeLevelCode = replace(ta.Grade, '_1', '')

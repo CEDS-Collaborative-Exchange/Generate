@@ -28,6 +28,7 @@ export class LoginComponent implements AfterViewInit, AfterViewChecked {
     
     isAuthenticating: boolean;
     isOAuth: boolean = false;
+    allowPasswordLogin: boolean = false;
 
     public userService: UserService;
     public authService: AuthService;
@@ -50,6 +51,7 @@ export class LoginComponent implements AfterViewInit, AfterViewChecked {
 
             if (res.authType.toUpperCase() === 'OAUTH') {
                 this.isOAuth = true;
+                this.allowPasswordLogin = res.allowPasswordLogin === true;
             }
 
             idle.setIdle(res.timeoutInSeconds - 300)
@@ -209,7 +211,8 @@ export class LoginComponent implements AfterViewInit, AfterViewChecked {
     }
 
     logout(event) {
-        if (!this.isOAuth) {
+        // Users signed in with Azure AD carry a bearer token; username/password users have a server cookie instead
+        if (!this.isOAuth || !this.userService.getToken()) {
             event.preventDefault();
 
             this.http.post('api/users/logOff', null)
@@ -220,12 +223,17 @@ export class LoginComponent implements AfterViewInit, AfterViewChecked {
                         this.stopTimeoutWatch()
                     },
                     error => {
-                        let snackbarContainer = document.querySelector('#generate-app-shared-login__error');
+                        // The logoff call can fail with 401 when the session had already
+                        // expired server-side. Still clear the client-side session and
+                        // redirect so the user isn't left making further requests with a
+                        // dead token.
+                        this.userService.deleteUser();
+                        this._router.navigateByUrl('/');
+                        this.stopTimeoutWatch();
 
-                        if (error.error) {
-                            snackbarContainer['MaterialSnackbar'].showSnackbar(error.error);
-                        } else {
-                            let data = { message: 'Error occurred - ' + error.message };
+                        let snackbarContainer = document.querySelector('#generate-app-shared-login__error');
+                        if (snackbarContainer) {
+                            let data = error.error ? error.error : { message: 'Error occurred - ' + error.message };
                             snackbarContainer['MaterialSnackbar'].showSnackbar(data);
                         }
                     });

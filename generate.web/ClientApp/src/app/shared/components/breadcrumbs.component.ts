@@ -13,6 +13,7 @@ declare let componentHandler: any;
 export class BreadcrumbsComponent implements AfterViewInit, OnChanges {
 
     @Input() breadcrumbs!: string;
+    @Input() nonClickableSegments: string = '';
 
     breadcrumbItems: { label: string; route?: string; isCurrent: boolean }[] = [];
 
@@ -40,7 +41,7 @@ export class BreadcrumbsComponent implements AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['breadcrumbs']) {
+        if (changes['breadcrumbs'] || changes['nonClickableSegments']) {
             this.updateBreadcrumbsAndTitle();
         }
     }
@@ -51,6 +52,14 @@ export class BreadcrumbsComponent implements AfterViewInit, OnChanges {
             .split('>')
             .map(s => s.trim())
             .filter(s => s.length > 0);
+        
+        // Parse non-clickable segments
+        const nonClickableSet = new Set(
+            this.nonClickableSegments
+                .split(',')
+                .map(s => s.trim())
+                .filter(s => s.length > 0)
+        );
 
         this.breadcrumbItems = [
             {
@@ -63,10 +72,11 @@ export class BreadcrumbsComponent implements AfterViewInit, OnChanges {
         for (let i = 0; i < segments.length; i++) {
             const currentPath = segments.slice(0, i + 1).join(' > ');
             const isCurrent = i === segments.length - 1;
+            const isNonClickable = nonClickableSet.has(segments[i]);
 
             this.breadcrumbItems.push({
                 label: segments[i],
-                route: !isCurrent ? this.routeMap[currentPath] : undefined,
+                route: !isCurrent && !isNonClickable ? this.routeMap[currentPath] : undefined,
                 isCurrent: isCurrent
             });
         }

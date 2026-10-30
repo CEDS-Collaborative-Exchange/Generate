@@ -447,8 +447,10 @@ export class SettingsToggleComponent implements AfterViewInit, OnInit, AfterView
             //console.log('3 - ' + new Date(convertedDate + '/' + dateYear));
         } else {
             let snackbarContainer = document.querySelector('#generate-app-toggle__message');
-            let data = { message: errorMessage };
-            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            if (snackbarContainer) {
+                let data = { message: errorMessage };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
             this.responseDateValues['ctrl_q_' + questionId] = new Date('11/01/' + dateYear);
             //console.log('4 - ' + new Date('11/01/' + dateYear));
             return;
@@ -737,8 +739,10 @@ export class SettingsToggleComponent implements AfterViewInit, OnInit, AfterView
         }
 
         let snackbarContainer = document.querySelector('#generate-app-toggle__message');
-        let data = { message: formMessage };
-        snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        if (snackbarContainer) {
+            let data = { message: formMessage };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
 
     }
 

@@ -101,7 +101,7 @@ namespace generate.infrastructure.Repositories.RDS
             return facts;
         }
 
-        private string GetOrgName(dynamic x, string reportLevel)
+        private static string GetOrgName(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -115,7 +115,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.NameOfInstitution;
         }
 
-        private string? GetParentStateId(dynamic x, string reportLevel)
+        private static string? GetParentStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -173,7 +173,7 @@ namespace generate.infrastructure.Repositories.RDS
             return groupedFacts;
         }
 
-        private string GetOrgStateId(dynamic x, string reportLevel)
+        private static string GetOrgStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -187,7 +187,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierState;
         }
 
-        private string GetOrgNcesId(dynamic x, string reportLevel)
+        private static string GetOrgNcesId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -276,7 +276,7 @@ namespace generate.infrastructure.Repositories.RDS
             return facts;
         }
 
-        private string GetDisciplineOrgNcesId(dynamic x, string reportLevel)
+        private static string GetDisciplineOrgNcesId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -290,7 +290,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierNces ?? "";
         }
 
-        private string GetDisciplineOrgStateId(dynamic x, string reportLevel)
+        private static string GetDisciplineOrgStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -304,7 +304,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierState;
         }
 
-        private string GetDisciplineOrgName(dynamic x, string reportLevel)
+        private static string GetDisciplineOrgName(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -318,7 +318,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.NameOfInstitution;
         }
 
-        private string? GetDisciplineParentStateId(dynamic x, string reportLevel)
+        private static string? GetDisciplineParentStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -334,23 +334,10 @@ namespace generate.infrastructure.Repositories.RDS
 
         private IQueryable<ReportEDFactsK12StudentDiscipline> AggregateFactStudentDiscipline(IQueryable<FactK12StudentDiscipline> facts, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
         {
-            // Category flags
-            bool includeAGE = categories.Contains("|AGE|");
-            bool includeDISABILITY = categories.Contains("|DISABCATIDEA|");
-            bool includeLEPSTATUS = categories.Contains("|LEPBOTH|");
-            bool includeREMOVALTYPE = categories.Contains("|REMOVALTYPE|");
-            bool includeRACE = categories.Contains("|RACEETHNIC|");
-            bool includeSEX = categories.Contains("|SEX|");
-            bool includeTITLEIIIPROGRAMPARTICIPATION = categories.Contains("|IMGRNTPROGPART|");
-
+            var categoryFlags = GetDisciplineCategoryFlags(categories);
             string totalIndicator = categorySetCode.StartsWith("CS") ? "N" : "Y";
 
-            // Apply filtering by report level
-            if (reportLevel == "sea" || reportLevel == "lea")
-                facts = facts.Where(x => x.LeaId != -1);
-
-            if (reportLevel == "sch")
-                facts = facts.Where(x => x.K12SchoolId != -1);
+            facts = ApplyDisciplineReportLevelFilter(facts, reportLevel);
 
             var groupedFacts = facts
                 .GroupBy(x => new
@@ -363,13 +350,13 @@ namespace generate.infrastructure.Repositories.RDS
                     OrganizationStateId = GetDisciplineOrgStateId(x, reportLevel),
                     OrganizationName = GetDisciplineOrgName(x, reportLevel),
                     ParentOrganizationStateId = GetDisciplineParentStateId(x, reportLevel),
-                    AGE = includeAGE ? x.DimAge.AgeEdFactsCode : null,
-                    DISABILITY = includeDISABILITY ? x.DimIdeaStatus.PrimaryDisabilityTypeEdFactsCode : null,
-                    LEPSTATUS = includeLEPSTATUS ? x.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
-                    REMOVALTYPE = includeREMOVALTYPE ? x.DimDiscipline.IdeaInterimRemovalEdFactsCode : null,
-                    RACE = includeRACE ? x.DimRace.RaceCode : null,
-                    SEX = includeSEX ? x.DimStudent.SexEdFactsCode : null,
-                    TITLEIIIPROGRAMPARTICIPATION = includeTITLEIIIPROGRAMPARTICIPATION ? x.DimProgramStatus.TitleiiiProgramParticipationEdFactsCode : null
+                    AGE = categoryFlags.IncludeAge ? x.DimAge.AgeEdFactsCode : null,
+                    DISABILITY = categoryFlags.IncludeDisability ? x.DimIdeaStatus.PrimaryDisabilityTypeEdFactsCode : null,
+                    LEPSTATUS = categoryFlags.IncludeLepStatus ? x.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
+                    REMOVALTYPE = categoryFlags.IncludeRemovalType ? x.DimDiscipline.IdeaInterimRemovalEdFactsCode : null,
+                    RACE = categoryFlags.IncludeRace ? x.DimRace.RaceCode : null,
+                    SEX = categoryFlags.IncludeSex ? x.DimStudent.SexEdFactsCode : null,
+                    TITLEIIIPROGRAMPARTICIPATION = categoryFlags.IncludeTitleIiiProgramParticipation ? x.DimProgramStatus.TitleiiiProgramParticipationEdFactsCode : null
                 })
                 .Select(g => new
                 {
@@ -434,6 +421,39 @@ namespace generate.infrastructure.Repositories.RDS
             return groupedFacts;
         }
 
+        private static DisciplineCategoryFlags GetDisciplineCategoryFlags(string categories) => new()
+        {
+            IncludeAge = categories.Contains("|AGE|"),
+            IncludeDisability = categories.Contains("|DISABCATIDEA|"),
+            IncludeLepStatus = categories.Contains("|LEPBOTH|"),
+            IncludeRemovalType = categories.Contains("|REMOVALTYPE|"),
+            IncludeRace = categories.Contains("|RACEETHNIC|"),
+            IncludeSex = categories.Contains("|SEX|"),
+            IncludeTitleIiiProgramParticipation = categories.Contains("|IMGRNTPROGPART|")
+        };
+
+        private static IQueryable<FactK12StudentDiscipline> ApplyDisciplineReportLevelFilter(IQueryable<FactK12StudentDiscipline> facts, string reportLevel)
+        {
+            if (reportLevel == "sea" || reportLevel == "lea")
+                return facts.Where(x => x.LeaId != -1);
+
+            if (reportLevel == "sch")
+                return facts.Where(x => x.K12SchoolId != -1);
+
+            return facts;
+        }
+
+        private sealed class DisciplineCategoryFlags
+        {
+            public bool IncludeAge { get; init; }
+            public bool IncludeDisability { get; init; }
+            public bool IncludeLepStatus { get; init; }
+            public bool IncludeRemovalType { get; init; }
+            public bool IncludeRace { get; init; }
+            public bool IncludeSex { get; init; }
+            public bool IncludeTitleIiiProgramParticipation { get; init; }
+        }
+
         private IQueryable<ReportEDFactsK12StudentDiscipline> RemoveMissingFactStudentDisciplines(IQueryable<ReportEDFactsK12StudentDiscipline> reports)
         {
 
@@ -476,7 +496,7 @@ namespace generate.infrastructure.Repositories.RDS
         #region FactStudentAssessmentReport
 
 
-        private string GetAssessmentOrgNcesId(dynamic x, string reportLevel)
+        private static string GetAssessmentOrgNcesId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -490,7 +510,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierNces ?? "";
         }
 
-        private string GetAssessmentOrgStateId(dynamic x, string reportLevel)
+        private static string GetAssessmentOrgStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -504,7 +524,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.SchoolIdentifierState;
         }
 
-        private string GetAssessmentOrgName(dynamic x, string reportLevel)
+        private static string GetAssessmentOrgName(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -518,7 +538,7 @@ namespace generate.infrastructure.Repositories.RDS
             return x.DimSchool.NameOfInstitution;
         }
 
-        private string? GetAssessmentParentStateId(dynamic x, string reportLevel)
+        private static string? GetAssessmentParentStateId(dynamic x, string reportLevel)
         {
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
@@ -534,24 +554,10 @@ namespace generate.infrastructure.Repositories.RDS
 
         private IQueryable<FactK12StudentAssessmentReport> AggregateFactAssessmentCount(IQueryable<FactK12StudentAssessment> facts, List<ToggleAssessment> toggleAssessments, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
         {
-            // Category flags
-            bool includeSubject = categories.Contains("|ASSESSMENTSUBJECT|");
-            bool includeGradeLevel = categories.Contains("|GRADELVLASS|");
-            bool includeEcoDis = categories.Contains("|ECODIS|");
-            bool includeLepStatus = categories.Contains("|LEPBOTH|");
-            bool includeMigrant = categories.Contains("|MIGRNTSTATUS|");
-            bool includeRace = categories.Contains("|RACEETHNIC|");
-            bool includeSEX = categories.Contains("|SEX|"); // Currently unused
-            bool includeTITLEI = categories.Contains("|TITLEISCHSTATUS|");
-            bool includeIdea = categories.Contains("|DISABSTATIDEA|");
-            bool includeProficiency = categories.Contains("|PROFSTATUS|");
+            var categoryFlags = GetAssessmentCategoryFlags(categories);
 
-            // Report-level filtering
-            if (reportLevel == "sea" || reportLevel == "lea")
-                facts = facts.Where(x => x.LeaId != -1);
-            if (reportLevel == "sch")
-                facts = facts.Where(x => x.K12SchoolId != -1);
-            if (includeRace)
+            facts = ApplyAssessmentReportLevelFilter(facts, reportLevel);
+            if (categoryFlags.IncludeRace)
                 facts = facts.Where(x => x.DimRace.DimFactType.FactTypeCode == "submission");
 
             var joinedFacts = facts
@@ -584,22 +590,15 @@ namespace generate.infrastructure.Repositories.RDS
                     OrganizationStateId = GetAssessmentOrgStateId(x.t1, reportLevel),
                     OrganizationName = GetAssessmentOrgName(x.t1, reportLevel),
                     ParentOrganizationStateId = GetAssessmentParentStateId(x.t1, reportLevel),
-                    ASSESSMENTSUBJECT = includeSubject ? x.t1.DimAssessment.AssessmentSubjectEdFactsCode : null,
-                    GRADELEVEL = includeGradeLevel ? x.t1.DimGradeLevel.GradeLevelEdFactsCode : null,
-                    IDEAINDICATOR = includeIdea ? x.t1.DimIdeaStatus.IdeaIndicatorEdFactsCode : null,
-                    ECODISSTATUS = includeEcoDis ? x.t1.DimDemographic.EconomicDisadvantageStatusEdFactsCode : null,
-                    LEPSTATUS = includeLepStatus ? x.t1.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
-                    MIGRANTSTATUS = includeMigrant ? x.t1.DimDemographic.MigrantStatusEdFactsCode : null,
-                    RACE = includeRace ? x.t1.DimRace.RaceCode : null,
-                    TITLE1SCHOOLSTATUS = includeTITLEI ? x.t1.DimTitle1Status.TitleISchoolStatusEdFactsCode : null,
-                    PROFICIENCYSTATUS = includeProficiency
-                        ? (
-                            int.TryParse(x.t1.DimAssessment.PerformanceLevelEdFactsCode?.LastOrDefault().ToString(), out var perf)
-                            && int.TryParse(x.t2.ProficientOrAboveLevel, out var cutoff)
-                                ? (perf >= cutoff ? "PROFICIENT" : "BELOWPROFICIENT")
-                                : null
-                        )
-                        : null
+                    ASSESSMENTSUBJECT = categoryFlags.IncludeSubject ? x.t1.DimAssessment.AssessmentSubjectEdFactsCode : null,
+                    GRADELEVEL = categoryFlags.IncludeGradeLevel ? x.t1.DimGradeLevel.GradeLevelEdFactsCode : null,
+                    IDEAINDICATOR = categoryFlags.IncludeIdea ? x.t1.DimIdeaStatus.IdeaIndicatorEdFactsCode : null,
+                    ECODISSTATUS = categoryFlags.IncludeEcoDis ? x.t1.DimDemographic.EconomicDisadvantageStatusEdFactsCode : null,
+                    LEPSTATUS = categoryFlags.IncludeLepStatus ? x.t1.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
+                    MIGRANTSTATUS = categoryFlags.IncludeMigrant ? x.t1.DimDemographic.MigrantStatusEdFactsCode : null,
+                    RACE = categoryFlags.IncludeRace ? x.t1.DimRace.RaceCode : null,
+                    TITLE1SCHOOLSTATUS = categoryFlags.IncludeTitleI ? x.t1.DimTitle1Status.TitleISchoolStatusEdFactsCode : null,
+                    PROFICIENCYSTATUS = categoryFlags.IncludeProficiency ? GetAssessmentProficiencyStatus(x.t1, x.t2) : null
                 })
                 .GroupBy(x => new
                 {
@@ -650,6 +649,59 @@ namespace generate.infrastructure.Repositories.RDS
                 .AsQueryable();
 
             return groupedFacts;
+        }
+
+        private static AssessmentCategoryFlags GetAssessmentCategoryFlags(string categories) => new()
+        {
+            IncludeSubject = categories.Contains("|ASSESSMENTSUBJECT|"),
+            IncludeGradeLevel = categories.Contains("|GRADELVLASS|"),
+            IncludeEcoDis = categories.Contains("|ECODIS|"),
+            IncludeLepStatus = categories.Contains("|LEPBOTH|"),
+            IncludeMigrant = categories.Contains("|MIGRNTSTATUS|"),
+            IncludeRace = categories.Contains("|RACEETHNIC|"),
+            IncludeSex = categories.Contains("|SEX|"),
+            IncludeTitleI = categories.Contains("|TITLEISCHSTATUS|"),
+            IncludeIdea = categories.Contains("|DISABSTATIDEA|"),
+            IncludeProficiency = categories.Contains("|PROFSTATUS|")
+        };
+
+        private static IQueryable<FactK12StudentAssessment> ApplyAssessmentReportLevelFilter(IQueryable<FactK12StudentAssessment> facts, string reportLevel)
+        {
+            if (reportLevel == "sea" || reportLevel == "lea")
+                return facts.Where(x => x.LeaId != -1);
+
+            if (reportLevel == "sch")
+                return facts.Where(x => x.K12SchoolId != -1);
+
+            return facts;
+        }
+
+        private static string? GetAssessmentProficiencyStatus(FactK12StudentAssessment fact, ToggleAssessment toggleAssessment)
+        {
+            if (string.IsNullOrWhiteSpace(fact.DimAssessment.PerformanceLevelEdFactsCode))
+                return null;
+
+            if (!int.TryParse(fact.DimAssessment.PerformanceLevelEdFactsCode?.LastOrDefault().ToString(), out var performanceLevel))
+                return null;
+
+            if (!int.TryParse(toggleAssessment.ProficientOrAboveLevel, out var cutoff))
+                return null;
+
+            return performanceLevel >= cutoff ? "PROFICIENT" : "BELOWPROFICIENT";
+        }
+
+        private sealed class AssessmentCategoryFlags
+        {
+            public bool IncludeSubject { get; init; }
+            public bool IncludeGradeLevel { get; init; }
+            public bool IncludeEcoDis { get; init; }
+            public bool IncludeLepStatus { get; init; }
+            public bool IncludeMigrant { get; init; }
+            public bool IncludeRace { get; init; }
+            public bool IncludeSex { get; init; }
+            public bool IncludeTitleI { get; init; }
+            public bool IncludeIdea { get; init; }
+            public bool IncludeProficiency { get; init; }
         }
 
         #endregion

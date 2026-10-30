@@ -14,6 +14,27 @@ RETURNS nvarchar(MAX)
 AS
 BEGIN
 
+/*
+	RDS.Get_CountSQL is a dynamic SQL builder used by report-generation procedures.
+	It returns a text batch for the requested report/year/level/category set and does
+	not execute that batch itself.  The main caller, RDS.Create_ReportData, requests
+	@sqlType = 'actual' and executes the returned SQL with sp_executesql.  Report
+	retrieval and zero-count procedures request the other @sqlType values to fill
+	report table variables with missing zero-count rows or legacy performance rows.
+
+	Important inputs:
+	- @reportCode, @reportLevel, @reportYear, @categorySetCode identify the slice.
+	- @sqlType selects the fragment to build: actual counts, zero counts,
+	  performance-level backfill, or specialized online-report zero-count shapes.
+	- @includeOrganizations controls whether the generated batch creates the
+	  #CAT_Organizations population used by zero-count cross joins.
+	- @isFileGenerator controls whether category temp tables are created once for
+	  a larger generated-file batch or inside this returned fragment.
+	- @tableTypeAbbrvs and @totalIndicators are passed in for reports whose table
+	  type/total metadata is chosen by the caller rather than derived here.
+	- @factTypeCode resolves the RDS fact type that the generated joins must filter.
+*/
+
 --For debugging
 
 --declare
@@ -368,6 +389,9 @@ BEGIN
 		s.LeaIdentifierSea as ParentOrganizationIdentifierSea'
 	end
 
+	-- Non-actual modes start by optionally building the organization universe used
+	-- for zero-count cross joins.  Actual-count mode skips this and builds facts
+	-- directly from the RDS fact tables.
 	-- not Actual sql types
 	if @sqlType = 'zero' or @sqlType = 'zero-performance' or @sqlType = 'zero-discipline' or @sqlType = 'zero-educenv' or @sqlType = 'zero-programs' 
 	begin
@@ -557,6 +581,8 @@ BEGIN
 		end
 	end
 
+	-- Actual-count mode builds the batch that inserts real counted rows into the
+	-- RDS report table.  This is the mode used by RDS.Create_ReportData.
 	-- Actual sql type
 	if @sqlType = 'actual'
 	begin
@@ -1177,6 +1203,9 @@ BEGIN
 	declare @sqlPerformanceLevelJoins as nvarchar(max)
 	set @sqlPerformanceLevelJoins = ''
 
+	-- Create category option temp tables when needed.  File-generation callers can
+	-- create these once and reuse them; other callers get table creation in this
+	-- returned fragment.
 	if(@includeOrganizations = 1)
 	begin
 		if(@isFileGenerator = 1)
@@ -1226,6 +1255,10 @@ BEGIN
 		end
 	end
 
+	-- Walk the category metadata for this report/category set.  Each cursor row
+	-- contributes one report field: the generated SQL accumulates select fields,
+	-- temp-table definitions, dimension joins, category option inserts, and group
+	-- by fields from these metadata rows.
 	-- Loop through category set  cursor
 	declare @categoryCnt as int
 	set @categoryCnt = 0			-- reset count to 0
@@ -1507,6 +1540,9 @@ BEGIN
 			DELETE FROM #cat_' + @reportField + '
 			'						
 
+		-- Populate the generated #cat_<ReportField> table for this category.  Most
+		-- categories use app.CategoryOptions, with report-specific branches for
+		-- toggles, grades, ages, assessment participation, and data-population reports.
 		-- Get Category Option Values
 		-------------------------------------
 		if @generateReportTypeCode = 'datapopulation'
@@ -1706,7 +1742,7 @@ BEGIN
 			end
 
 			---End New Code for c118
-			else if @categoryCode IN ('EDENVIDEAEC', 'EDENVIRIDEASA')
+			else if @categoryCode IN ('EDENVIRIDEASA')
 			begin
 				set @sqlCategoryOptions = @sqlCategoryOptions + '
 					insert into #cat_' + @reportField + '
@@ -1715,7 +1751,45 @@ BEGIN
 					inner join app.Categories c on o.CategoryId = c.CategoryId
 					and c.CategoryCode = ''' +  @categoryCode + '''
 					and o.CategorySetId = ' + convert(varchar(20), @categorySetId) + '
+					inner join app.ToggleResponses r on o.CategoryOptionCode =
+								case
+									when o.CategoryOptionCode = ''MISSING'' then o.CategoryOptionCode
+									else TRIM(
+											CASE
+												WHEN CHARINDEX(''-'', r.ResponseValue) > 0
+												THEN TRIM(LEFT(r.ResponseValue, CHARINDEX(''-'', r.ResponseValue) - 1))
+												ELSE r.ResponseValue
+											END
+										)
+								end
+					inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId
 					where o.CategoryOptionCode <> ''NOTCOLLECT''
+					and q.EmapsQuestionAbbrv = ''EDUENVSA''
+					'
+			end
+			else if @categoryCode IN ('EDENVIDEAEC')
+			begin
+				set @sqlCategoryOptions = @sqlCategoryOptions + '
+					insert into #cat_' + @reportField + '
+					SELECT distinct o.CategoryOptionCode
+					from app.CategoryOptions o
+					inner join app.Categories c on o.CategoryId = c.CategoryId
+					and c.CategoryCode = ''' +  @categoryCode + '''
+					and o.CategorySetId = ' + convert(varchar(20), @categorySetId) + '
+					inner join app.ToggleResponses r on o.CategoryOptionCode =
+								case
+									when o.CategoryOptionCode = ''MISSING'' then o.CategoryOptionCode
+									else TRIM(
+											CASE
+												WHEN CHARINDEX(''-'', r.ResponseValue) > 0
+												THEN TRIM(LEFT(r.ResponseValue, CHARINDEX(''-'', r.ResponseValue) - 1))
+												ELSE r.ResponseValue
+											END
+										)
+								end
+					inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId
+					where o.CategoryOptionCode <> ''NOTCOLLECT''
+					and q.EmapsQuestionAbbrv = ''EDUENVEC''
 					'
 			end
 			else if @categoryCode in ('DISABCATIDEA', 'DISABCATIDEAEXIT')
@@ -1891,6 +1965,9 @@ BEGIN
 				and o.CategoryOptionCode NOT IN (''MISSING'') '
 			end
 		end		
+		-- Actual-count mode also decides how each dimension value should be returned.
+		-- Some categories are direct dimension fields; others are calculated labels or
+		-- toggle-driven mappings that must be repeated in select and group-by clauses.
 		if @sqlType = 'actual'
 		begin
 
@@ -2026,10 +2103,19 @@ BEGIN
 			-- TODO - make use of IsCalculated field to drive this via metadata
 			if @categoryCode = 'REMOVALLENSUS'
 			begin
+				-- REMOVALLENSUS is report-006-only (FS006). Its length bucket must reflect the
+				-- child's SUM of ALL in- and out-of-school suspensions/expulsions, not the
+				-- duration within just this one category-breakdown bucket (e.g. one discipline
+				-- method) - otherwise a student split across removal types that individually
+				-- total less than 0.5 days would show as ''MISSING'' (and get filtered out) in
+				-- every bucket even though their combined total qualifies them for inclusion.
+				-- fact.zzStudentTotalDuration is that per-student total (see the report-006
+				-- #categorySet build above); every row for a given student carries the same
+				-- value, so MAX() here is just a way to reference it through the GROUP BY.
 				set @sqlCategoryReturnField = '
-				case 
-					when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) < 0.5 then ''MISSING''
-					when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) <= 10.0 then ''LTOREQ10''
+				case
+					when max(fact.zzStudentTotalDuration) < 0.5 then ''MISSING''
+					when max(fact.zzStudentTotalDuration) <= 10.0 then ''LTOREQ10''
 					else ''GREATER10''
 				end'
 				set @categoryReturnFieldIsAggregate = 1
@@ -2476,6 +2562,9 @@ BEGIN
 				set @sqlHavingClause = @sqlHavingClause + ' and ' + @sqlCategoryReturnField + ' in (select Code from #cat_' + @reportField + ')'
 			end
 
+		-- Build dimension/category joins for actual counts.  These joins constrain
+		-- facts to the generated #cat_* option tables and normalize special category
+		-- mappings such as race, grade/age buckets, assessments, and proficiency.
 		-- Build join conditions for actual counts
 			if @reportField = 'RACE' and @reportCode in ('yeartoyearremovalcount','yeartoyearexitcount') and @categorySetCode not in ('raceethnicity','raceethnic')
 			begin
@@ -2531,7 +2620,7 @@ BEGIN
 						on fact.AssessmentId = assmnt.DimAssessmentId
 					inner join rds.DimAssessmentRegistrations rdar 
 						on fact.AssessmentRegistrationId = rdar.DimAssessmentRegistrationId
-					inner join APP.ToggleAssessments tgglAssmnt 
+					left join APP.ToggleAssessments tgglAssmnt 
 						on tgglAssmnt.Grade = CAT_GradeLevel.GradeLevelCode 
 						and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 						and tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode			
@@ -2676,6 +2765,10 @@ BEGIN
 		select @categorySetCategoryList = isnull(app.Get_CategoriesByCategorySet(@categorySetId, 1, 0), '')
 
 		
+		-- Report-specific fact filters are applied after the generic category joins.
+		-- These branches enforce file-spec rules such as age ranges, IDEA status,
+		-- assessment subject, Title III participation, CTE concentrator status,
+		-- membership requirements, and reportable organization status.
 		-- Filter facts based on report
 		----------------------------------		
 		declare @reportFilterJoin as nvarchar(max)
@@ -2750,14 +2843,31 @@ BEGIN
 			set @reportFilterCondition = '
 			and assmntSubject.AssessmentAcademicSubjectCode = ''73065'''
 		end
+		else if @reportCode in ('143') and @categorySetCode = 'TOT'
+		begin
+			-- TOT has no #cat_* option-list join to narrow DimDisciplineStatuses/DimIdeaStatuses
+			-- first (unlike CSA/CSB/CSC/CSD), which let the optimizer misestimate the two
+			-- ~5K-row dimension joins and build their near-full cross product (~20M+ rows)
+			-- before ever correlating them through the fact table - a 15+ minute runaway plan.
+			-- CAT_DisciplinaryActionTaken and CAT_IdeaInterimRemoval both join on the same key
+			-- (fact.DisciplineStatusId = a unique DimDisciplineStatusId), so they always
+			-- resolve to the identical row - the second join is redundant and safe to drop.
+			set @reportFilterJoin = 'inner join RDS.DimDisciplineStatuses CAT_DisciplinaryActionTaken
+			on fact.DisciplineStatusId = CAT_DisciplinaryActionTaken.DimDisciplineStatusId
+			inner join RDS.DimIdeaStatuses CAT_IdeaEducationalEnvironment on fact.IdeaStatusId = CAT_IdeaEducationalEnvironment.DimIdeaStatusId
+			'
+			set @reportFilterCondition = '
+			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
+			and CAT_IdeaEducationalEnvironment.IdeaIndicatorEdFactsCode = ''IDEA'''
+		end
 		else if @reportCode in ('143')
 		begin
-			set @reportFilterJoin = 'inner join RDS.DimDisciplineStatuses CAT_DisciplinaryActionTaken 
+			set @reportFilterJoin = 'inner join RDS.DimDisciplineStatuses CAT_DisciplinaryActionTaken
 			on fact.DisciplineStatusId = CAT_DisciplinaryActionTaken.DimDisciplineStatusId
 			inner join RDS.DimDisciplineStatuses CAT_IdeaInterimRemoval on fact.DisciplineStatusId = CAT_IdeaInterimRemoval.DimDisciplineStatusId
-			inner join RDS.DimIdeaStatuses CAT_IdeaEducationalEnvironment on fact.IdeaStatusId = CAT_IdeaEducationalEnvironment.DimIdeaStatusId																									
+			inner join RDS.DimIdeaStatuses CAT_IdeaEducationalEnvironment on fact.IdeaStatusId = CAT_IdeaEducationalEnvironment.DimIdeaStatusId
 			'
-			set @reportFilterCondition = ' 
+			set @reportFilterCondition = '
 			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 			and CAT_IdeaEducationalEnvironment.IdeaIndicatorEdFactsCode = ''WDIS'''
 		end
@@ -2772,6 +2882,9 @@ BEGIN
 			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS'''
 		end
 
+		-- Some reports need additional rule sets or prefiltered temp tables before
+		-- actual aggregation.  The generated joins below are intentionally report
+		-- specific because each EDFacts file has different eligibility rules.
 		-- Filter facts based on report
 		----------------------------------
 		declare @queryFactFilter as nvarchar(max)
@@ -5345,6 +5458,10 @@ BEGIN
 
 		end
 		
+		-- Insert actual count rows into #categorySet.  The table shape differs by
+		-- target report table and by report-specific counting grain: students, staff,
+		-- incidents, assessments, disciplinary duration, cohort totals, or calculated
+		-- rates.  Later sections aggregate #categorySet into the final report table.
 		-- Insert actual count data
 		if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 		begin
@@ -5462,15 +5579,21 @@ BEGIN
 							and K12StaffCount.K12StaffCategoryId = fact.K12StaffCategoryId' 
 				end
 			
+				-- Tracks whether the #categorySet shape built below carries a per-student key
+				-- (DimStudentId/K12StudentStudentIdentifierState). The "Create Debugging Tables"
+				-- section further down joins on that key, and it must be skipped for shapes
+				-- that are pure SEA/LEA/School aggregates with no per-student column.
+				declare @categorySetHasStudentId bit = 1
+
 				set @sql = @sql + '
 
 				----------------------------
-				-- Insert actual count data 
+				-- Insert actual count data
 				----------------------------
-		
-				create table #categorySet (	' 
+
+				create table #categorySet (	'
 					+ case when @reportLevel = 'sea' then 'DimSeaId int,'
-						   when @reportLevel = 'lea' then 'DimLeaId int,' 
+						   when @reportLevel = 'lea' then 'DimLeaId int,'
 						   else 'DimK12SchoolId int,'
 					end + '			
 					DimK12Staff_CurrentId int, K12StudentStudentIdentifierState VARCHAR(60) ' + @sqlCategoryFieldDefs + ',
@@ -5736,34 +5859,42 @@ BEGIN
 				-- Actual Counts
 				insert into #categorySet
 				(' + case	when @reportLevel = 'sea' then 'DimSeaId,'
-							when @reportLevel = 'lea' then 'DimLeaId,' 
+							when @reportLevel = 'lea' then 'DimLeaId,'
 							else 'DimK12SchoolId,'
-				end  + 'K12StudentStudentIdentifierState' 
+				end  + 'K12StudentStudentIdentifierState'
 				+ @sqlCategoryFields + ', ' + @factField + ')
 				select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
-								when @reportLevel = 'lea' then 'fact.LeaId,' 
+								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
 				end + 'fact.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubSelectDimensionFields + ',
 				sum(isnull(fact.' + @factField + ', 0))
-				from ( select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
-								when @reportLevel = 'lea' then 'fact.LeaId,' 
+				from ( select * from ( select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
-				end + 'stu.K12StudentStudentIdentifierState,sum(fact.DisciplineCount) as DisciplineCount, sum(fact.DurationOfDisciplinaryAction) as DurationOfDisciplinaryAction' 
-				+ @sqlCategoryQualifiedSubDimensionFields + 
-				' from rds.' + @factTable + ' fact '
+				end + 'stu.K12StudentStudentIdentifierState, fact.DisciplineCount, fact.DurationOfDisciplinaryAction'
+				+ @sqlCategoryQualifiedSubDimensionFields + ',
+				-- FS006 spec: a child''s inclusion is based on the SUM of ALL of their in- and
+				-- out-of-school suspensions/expulsions, not any single discipline method or
+				-- category alone - a student split across removal types that individually total
+				-- less than 0.5 days must still be included. Compute that total per student here,
+				-- independent of the category-breakdown fields, instead of folding it into the
+				-- GROUP BY/HAVING below (which would threshold each category bucket separately).
+				SUM(fact.DurationOfDisciplinaryAction) OVER (PARTITION BY ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+								when @reportLevel = 'lea' then 'fact.LeaId,'
+								else 'fact.K12SchoolId,'
+				end + 'stu.K12StudentStudentIdentifierState) AS zzStudentTotalDuration'
+				+ ' from rds.' + @factTable + ' fact '
 				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
-				+ @sqlCountJoins 
+				+ @sqlCountJoins
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
 				and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
 				and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
 								when @reportLevel = 'lea' then 'fact.LeaId <> -1'
 								else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' end   + '
-				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
-									when @reportLevel = 'lea' then 'fact.LeaId,'
-								else 'fact.K12SchoolId,'
-								end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubDimensionFields +
-				+ ' having SUM(fact.DurationOfDisciplinaryAction) >= 0.5 ) as fact
+				) detail
+				where detail.zzStudentTotalDuration >= 0.5
+				) as fact
 				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
@@ -5875,7 +6006,7 @@ BEGIN
 				select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 								when @reportLevel = 'lea' then 'fact.LeaId,' 
 						    else 'fact.K12SchoolId,'
-				end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, CAT_IdeaInterimRemoval.IdeaInterimRemovalEdFactsCode' 
+				end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, ' + (case when @categorySetCode = 'TOT' then 'CAT_DisciplinaryActionTaken' else 'CAT_IdeaInterimRemoval' end) + '.IdeaInterimRemovalEdFactsCode'
 				+ @sqlCategoryQualifiedDimensionFields + ',
 				sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 				sum(isnull(fact.' + @factField + ', 0))
@@ -5891,7 +6022,7 @@ BEGIN
 				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
-								end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, CAT_IdeaInterimRemoval.IdeaInterimRemovalEdFactsCode' 
+								end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, ' + (case when @categorySetCode = 'TOT' then 'CAT_DisciplinaryActionTaken' else 'CAT_IdeaInterimRemoval' end) + '.IdeaInterimRemovalEdFactsCode'
 								+ @sqlCategoryQualifiedDimensionGroupFields + '
 				' + @sqlHavingClause + '
 				'
@@ -6236,7 +6367,8 @@ BEGIN
 			end
 			else if(@reportCode IN ('studentssummary'))
 			begin
-		
+				set @categorySetHasStudentId = 0
+
 				set @sql = @sql + '
 				----------------------------
 				-- Insert actual count data 
@@ -6291,14 +6423,16 @@ BEGIN
 			end
 			else if(@reportCode in ('150'))
 			begin
+				set @categorySetHasStudentId = 0
+
 				set @sql = @sql + '
 					----------------------------
-					-- Insert actual count data 
+					-- Insert actual count data
 					-- default ReportEDFactsK12StudentCounts
 					----------------------------
-		
 
-					create table #categorySet (	' 
+
+					create table #categorySet (	'
 					+ case when @reportLevel = 'sea' then 'DimSeaId int'
 							when @reportLevel = 'lea' then 'DimLeaId int' 
 							else 'DimK12SchoolId int'
@@ -6681,18 +6815,20 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 				end		-- END @factReportTable = 'ReportEDFactsK12StudentCounts'
-				else 
+				else
 				begin
+					set @categorySetHasStudentId = 0
+
 					set @sql = @sql + '
 						----------------------------
-						-- Insert actual count data 
+						-- Insert actual count data
 						----------------------------
-		
-						create table #categorySet (	' 
+
+						create table #categorySet (	'
 						+ case when @reportLevel = 'sea' then 'DimSeaId int'
-								when @reportLevel = 'lea' then 'DimLeaId int' 
+								when @reportLevel = 'lea' then 'DimLeaId int'
 								else 'DimK12SchoolId int'
-						end 
+						end
 							+ @sqlCategoryFieldDefs + ',
 						' + @factField + ' int
 						)
@@ -6751,6 +6887,9 @@ BEGIN
 		----------------------------
 		' + @sqlRemoveMissing
 
+		-- Decide the final aggregation expression used when #categorySet is inserted
+		-- into the RDS report table.  Most reports sum the fact field, but several
+		-- files count distinct students/staff/incidents or sum staff FTE values.
 		-- Different Sum Operations
 		declare @sumOperation as nvarchar(500)
 		set @sumOperation = 'sum(isnull(' + @factField + ', 0))'
@@ -6777,6 +6916,9 @@ BEGIN
 	/***************************************
 		Create Debugging Tables
 	***************************************/
+		-- Optionally materialize debugging tables for numeric EDFacts report codes.
+		-- The generated tables capture the pre-aggregation #categorySet rows so file
+		-- investigations can trace reported totals back to student/staff identifiers.
 		--only create debug tables for the EDFacts reports
 		if (len(@reportCode) = 3 and @reportCode not like '%[^0-9]%')
 		begin
@@ -6814,7 +6956,7 @@ BEGIN
 			begin -- drop the table for all other files
 				set @dropTableSQL = '		IF OBJECT_ID(N''[debug].' + QUOTENAME(@debugTableName) + ''',N''U'') IS NOT NULL DROP TABLE [debug].' + QUOTENAME(@debugTableName) + char(10) + char(10)
 			end
-		
+
 			set @sql += @dropTableSQL
 
 			--create the table with the insert
@@ -6837,21 +6979,30 @@ BEGIN
 				inner join rds.DimK12Schools sc 
 					on c.DimK12SchoolId = sc.DimK12SchoolId 
 				order by K12StudentStudentIdentifierState '				
-			end 
-			else 
+			end
+			else if @categorySetHasStudentId = 0
 			begin
-				if @reportCode IN ('059', '067', '070', '099', '112', '203') 
+				-- This #categorySet shape is a pure SEA/LEA/School aggregate with no
+				-- per-student key to join on (e.g. assessment count reports like 113/126).
+				-- Dump it as-is instead of attempting the DimPeople_Current join below.
+				set @debugTableCreate = '					select *
+					into [debug].' + QUOTENAME(@debugTableName) + char(10) +
+					'					from #categorySet c ' + char(10)
+			end
+			else
+			begin
+				if @reportCode IN ('059', '067', '070', '099', '112', '203')
 				begin
 					set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
-				end 
-				else if @reportCode IN ('009','005','006','007','086','088','143','144','118') 
+				end
+				else if @reportCode IN ('009','005','006','007','086','088','143','144','118')
 				begin
-					set @debugTableCreate = '					select K12StudentStudentIdentifierState '   
-				end 
-				else  
+					set @debugTableCreate = '					select K12StudentStudentIdentifierState '
+				end
+				else
 				begin
-					set @debugTableCreate = '					select s.K12StudentStudentIdentifierState ' 
-				end 
+					set @debugTableCreate = '					select s.K12StudentStudentIdentifierState '
+				end
 
 				--set the LEA field in the select if necessary
 				if @reportLevel	= 'LEA' 
@@ -6935,12 +7086,16 @@ BEGIN
 					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
 				end
 			end
-			set @sql += @debugTableCreate 
+			set @sql += @debugTableCreate
 
 		end
 
 		---------------------------------
 		-- Insert SQL into Fact Tables
+		-- This final actual-count section writes aggregated rows from #categorySet to
+		-- the configured RDS report table.  The SEA, LEA, and school branches differ
+		-- mostly in organization joins and identifiers; all preserve report metadata,
+		-- category values, table type, total indicator, and the selected count field.
 		---------------------------------
 
 		if @reportLevel = 'sea'
@@ -7239,10 +7394,11 @@ BEGIN
 				end 
 
 				set @sql = @sql + '
-					where lea.DimLeaId <> -1 ' + char(10)
-					set @sql = @sql + 'and lea.RecordStartDateTime >= ''' + @CalculatedSYStartDate + '''' + char(10)
-					set @sql = @sql + 'and isnull(lea.RecordEndDateTime, ''' + @CalculatedSYEndDate + ''') <= ''' + @CalculatedSYEndDate + '''' + char(10)
-					set @sql = @sql + 'and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
+					where lea.DimLeaId <> -1 '
+					set @sql = @sql + '
+						and lea.RecordStartDateTime >= ''' + @CalculatedSYStartDate + '''
+						and isnull(lea.RecordEndDateTime, ''' + @CalculatedSYEndDate + ''') <= ''' + @CalculatedSYEndDate + '''
+						and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
 					group by 
 						lea.StateANSICode,
 						lea.StateAbbreviationCode,
@@ -7251,6 +7407,14 @@ BEGIN
 						lea.LeaIdentifierSea,
 						lea.LeaOrganizationName ' +
 						@sqlCategoryFields
+
+				--the logic above can create 0 count rows and that is not valid at the LEA level  --CIID-8752
+				if @reportCode = '009' and @reportLevel = 'lea' and @categorySetCode = 'TOT' 
+				begin
+					set @sql = @sql + '
+					having count(distinct cs.K12StudentStudentIdentifierState ) > 0
+					'
+				end
 
 			end		-- END @factReportTable = 'ReportEDFactsK12StudentCounts'
 			else
@@ -7575,6 +7739,9 @@ BEGIN
 		end
 	end
 
+	-- Legacy state assessment reports sometimes need contiguous zero rows for
+	-- performance levels that did not appear in @reportData.  This mode fills those
+	-- gaps for older non-SEA assessment reports without recalculating actual counts.
 	-----------------Contiguous Performance levels------------------------------------------------------------
 	if @sqlType = 'performanceLevels'
 	begin
@@ -7750,6 +7917,9 @@ BEGIN
 		end
 	end
 	
+	-- Generic zero-count mode cross joins organizations with category option temp
+	-- tables and inserts missing combinations into @reportData.  Follow-up delete
+	-- rules remove invalid zero rows for report-specific file-spec requirements.
 	if @sqlType = 'zero'
 	begin
 
@@ -8124,7 +8294,7 @@ BEGIN
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
 				AND RIGHT(a.TableTypeAbbrv, 2) = ''LG''
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'',''PARTELP'' )
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
@@ -8145,7 +8315,7 @@ BEGIN
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
 				AND RIGHT(a.TableTypeAbbrv, 2) = ''HS''
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'',''PARTELP'')
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
@@ -8154,7 +8324,7 @@ BEGIN
 			set @sql = @sql + ' 
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR IN (''MEDEXEMPT'', ''NPART'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR IN (''MEDEXEMPT'', ''NPART'',''PARTELP'')
 				AND NOT EXISTS (Select distinct b.Grade 
 									from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
@@ -8185,6 +8355,8 @@ BEGIN
 	declare @dynamicCategoryCondition as nvarchar(max)
 	set @dynamicCategoryCondition = ''
 
+	-- Specialized online-report zero-count modes target report-shaped temp tables
+	-- rather than the standard @reportData table used by EDFacts file generation.
 	if @sqlType = 'zero-performance' 
 	begin
 

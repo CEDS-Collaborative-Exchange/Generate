@@ -1,43 +1,44 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using generate.core.Config;
-using Microsoft.Extensions.Hosting;
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Services;
 using generate.core.Interfaces.Helpers;
-
 namespace generate.background.Controllers
 {
+    // Authorization (when enforced) is applied globally in Program.cs, conditional on
+    // AppSettings:EnableAzureDeployment - see the comment there for why.
     [Route("api/[controller]")]
     [ApiController]
     public class BackgroundUpdateController : ControllerBase
     {
-        private readonly IOptions<AppSettings> _appSettings;
         private readonly IHostEnvironment _hostingEnvironment;
         private readonly ILogger<BackgroundUpdateController> _logger;
         private readonly IAppUpdateService _appUpdateService;
         private readonly IHangfireHelper _hangfireHelper;
+        private readonly IOptions<AppSettings> _appSettings;
 
 
         public BackgroundUpdateController(
             ILogger<BackgroundUpdateController> logger,
             IHostEnvironment hostingEnvironment,
             IAppUpdateService appUpdateService,
-            IOptions<AppSettings> appSettings,
-            IHangfireHelper hangfireHelper
+            IHangfireHelper hangfireHelper,
+            IOptions<AppSettings> appSettings
             )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
             _appUpdateService = appUpdateService ?? throw new ArgumentNullException(nameof(appUpdateService));
-            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
             _hangfireHelper = hangfireHelper ?? throw new ArgumentNullException(nameof(hangfireHelper));
+            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         }
 
 
@@ -71,26 +72,28 @@ namespace generate.background.Controllers
 
             try
             {
-                var webAppPath = _hostingEnvironment.ContentRootPath;
-
+                // Azure path: deploys this app's own ("background") part to itself via Azure Blob
+                // Storage + ARM, using its own Managed Identity - never touches generate.web's
+                // package or App Service resource directly.
+                // Legacy path: a running process can never overwrite its own currently-loaded
+                // binaries, so the in-place file copy targets generate.web's content root instead
+                // (ignored entirely by the Azure path).
+                var webAppPath = _appSettings.Value.WebAppPath;
                 if (_hostingEnvironment.IsDevelopment())
                 {
-                    webAppPath = webAppPath.Replace("generate.background", "generate.web");
-                    webAppPath += @"\bin\Debug\netcoreapp2.2";
-                }
-                else
-                {
-                    webAppPath = _appSettings.Value.WebAppPath;
+                    // Use this app's own build output folder (e.g. bin\Debug\net10.0) for the web app
+                    var buildOutputPath = System.IO.Path.GetRelativePath(_hostingEnvironment.ContentRootPath, AppContext.BaseDirectory);
+                    webAppPath = System.IO.Path.Combine(_hostingEnvironment.ContentRootPath.Replace("generate.background", "generate.web"), buildOutputPath).TrimEnd('\\');
                 }
 
-                _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, webAppPath);
+                _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, "background", webAppPath);
 
                 return Ok();
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
 
 

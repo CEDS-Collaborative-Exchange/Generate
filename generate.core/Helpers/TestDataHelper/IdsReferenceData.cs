@@ -104,7 +104,6 @@ namespace generate.core.Helpers.TestDataHelper
         public List<RefNSLPStatus> RefNSLPStatuses { get; private set; }
         public List<RefSchoolDangerousStatus> RefSchoolDangerousStatuses { get; private set; }
         public List<RefProgressAchievingEnglishLanguageProficiencyIndicatorStatus> RefProgressAchievingEnglishLanguageProficiencyIndicatorStatuses { get; private set; }
-        public List<RefComprehensiveAndTargetedSupport> RefComprehensiveAndTargetedSupports { get; private set; }
         public List<RefComprehensiveSupport> RefComprehensiveSupports { get; private set; }
         public List<RefTargetedSupport> RefTargetedSupports { get; private set; }
         public List<RefComprehensiveSupportImprovement> RefComprehensiveSupportImprovements { get; private set; }
@@ -224,7 +223,6 @@ namespace generate.core.Helpers.TestDataHelper
 
         public IdsReferenceData()
         {
-
             // Data
 
             this.RefK12responsibilityTypes = RefK12responsibilityTypeHelper.GetData();
@@ -322,7 +320,6 @@ namespace generate.core.Helpers.TestDataHelper
             this.RefNSLPStatuses = RefNSLPStatusHelper.GetData();
             this.RefSchoolDangerousStatuses = RefSchoolDangerousStatusHelper.GetData();
             this.RefProgressAchievingEnglishLanguageProficiencyIndicatorStatuses = RefProgressAchievingEnglishLanguageProficiencyIndicatorStatusHelper.GetData();
-            this.RefComprehensiveAndTargetedSupports = RefComprehensiveAndTargetedSupportHelper.GetData();
             this.RefComprehensiveSupports = RefComprehensiveSupportHelper.GetData();
             this.RefTargetedSupports = RefTargetedSupportHelper.GetData();
             this.RefComprehensiveSupportImprovements = RefComprehensiveSupportImprovementHelper.GetData();
@@ -437,7 +434,6 @@ namespace generate.core.Helpers.TestDataHelper
 
             this.ParaProfessionalId = this.RefK12staffClassifications.Single(c => c.Code == "Paraprofessionals").RefEducationStaffClassificationId;
             this.SpecialEdTeacherId = this.RefK12staffClassifications.Single(c => c.Code == "SpecialEducationTeachers").RefEducationStaffClassificationId;
-           
 
         }
 

@@ -1,11 +1,18 @@
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentAssessment]
 	@SchoolYear SMALLINT
+	, @StudentIdentifierState VARCHAR(100) = NULL
+	, @DebugMode BIT = 0
 AS
 
 BEGIN
 
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	IF @DebugMode = 1 AND ISNULL(@StudentIdentifierState, '') = ''
+	BEGIN
+		;THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+	END
 
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
 		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
@@ -25,7 +32,6 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#tempLeas') IS NOT NULL DROP TABLE #tempLeas
 		IF OBJECT_ID(N'tempdb..#tempK12Schools') IS NOT NULL DROP TABLE #tempK12Schools
 		IF OBJECT_ID(N'tempdb..#tempNorDStudents') IS NOT NULL DROP TABLE #tempNorDStudents
-		IF OBJECT_ID(N'tempdb..#tempAccomodations') IS NOT NULL DROP TABLE #tempAccomodations
 
 	BEGIN TRY
 
@@ -362,7 +368,8 @@ BEGIN
 
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-			SchoolYearId									int null
+			StagingAssessmentResultId					int not null
+			, SchoolYearId								int null
 			, FactTypeId									int null
 			, SeaId											int null		
 			, IeuId											int null	
@@ -404,7 +411,8 @@ BEGIN
 
 		INSERT INTO #Facts
 		SELECT DISTINCT
-			rsy.DimSchoolYearId												SchoolYearId							
+			sar.Id													StagingAssessmentResultId
+			, rsy.DimSchoolYearId										SchoolYearId
 			, @FactTypeId													FactTypeId							
 			, ISNULL(rds.DimSeaId, -1)										SeaId									
 			, -1															IeuId									
@@ -489,6 +497,7 @@ BEGIN
 				ON rdas.SchoolYear = rsy.SchoolYear
 				AND ISNULL(CAST(sar.AssessedFirstTime AS SMALLINT), -1) = ISNULL(rdas.AssessedFirstTimeMap, -1)
 				AND rdas.ProgressLevelCode								= 'MISSING'
+				AND ISNULL(sar.EdFactsFormerEnglishLearnerYearStatus, 'MISSING') = ISNULL(rdas.FormerEnglishLearnerYearStatusCode, 'MISSING')
 		--assessment administration (rds)
 			LEFT JOIN #tempAssessmentAdministrations rdaa
 				ON sar.LeaIdentifierSeaAccountability 								= rdaa.LocalEducationAgencyIdentifier
@@ -627,21 +636,92 @@ BEGIN
 
 			WHERE 
 			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
-
-		-- 14.1: the CEDS "accommodations" bridge was redesigned in 14.0 into the granular
-		-- BridgeK12StudentAssessmentAccessibilityFeatures. Repoint this cleanup DELETE to the
-		-- current table so it no longer fails on the dropped RDS.BridgeK12StudentAssessmentAccommodations.
-		DELETE FROM RDS.BridgeK12StudentAssessmentAccessibilityFeatures
-		WHERE FactK12StudentAssessmentId IN (
-			SELECT FactK12StudentAssessmentId FROM RDS.FactK12StudentAssessments
-			WHERE SchoolYearId = @SchoolYearId
-			AND FactTypeId = @FactTypeId)
+			AND (@DebugMode = 0 OR (sar.StudentIdentifierState = @StudentIdentifierState AND sar.SchoolYear = @SchoolYear))
 
 	--Final insert into RDS.FactK12StudentAssessments table
-		DELETE RDS.FactK12StudentAssessments
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
+		IF @DebugMode = 1
+		BEGIN
+			SELECT
+				@StudentIdentifierState AS StudentIdentifierState
+				, sar.Id AS AssessmentResultStagingId
+				, CASE WHEN sar.Id IS NULL THEN 0 ELSE 1 END AS FoundInAssessmentResult
+				, CASE WHEN EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingAssessmentResultId = sar.Id) THEN 1 ELSE 0 END AS MadeItIntoFacts
+				, CASE
+					WHEN sar.Id IS NULL THEN 'Staging.AssessmentResult'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						WHERE ske.StudentIdentifierState = sar.StudentIdentifierState
+							AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
+							AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+							AND ske.SchoolYear = sar.SchoolYear
+					) THEN 'JOIN Staging.K12Enrollment'
+					WHEN NOT EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE sar.SchoolYear = rsy.SchoolYear AND rsy.SchoolYear = @SchoolYear) THEN 'JOIN RDS.DimSchoolYears'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						JOIN RDS.vwDimK12Demographics rdkd
+							ON ske.SchoolYear = rdkd.SchoolYear
+							AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+						WHERE ske.StudentIdentifierState = sar.StudentIdentifierState
+							AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
+							AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+							AND ske.SchoolYear = sar.SchoolYear
+					) THEN 'JOIN RDS.vwDimK12Demographics'
+					WHEN sar.AssessmentAdministrationStartDate IS NULL OR NOT EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)) THEN 'JOIN RDS.DimSeas'
+					WHEN NOT EXISTS (
+						SELECT 1
+						FROM Staging.K12Enrollment ske
+						WHERE ske.StudentIdentifierState = sar.StudentIdentifierState
+							AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
+							AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+							AND ske.SchoolYear = sar.SchoolYear
+							AND sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+					) THEN 'WHERE AssessmentAdministrationStartDate between EnrollmentEntryDate/EnrollmentExitDate'
+					WHEN NOT EXISTS (SELECT 1 FROM #Facts f WHERE f.StagingAssessmentResultId = sar.Id) THEN 'Unknown - all required joins matched but no #Facts row was inserted'
+					ELSE 'Inserted into #Facts'
+				END AS DebugResult
+				, (SELECT COUNT(1) FROM #Facts) AS FactsRowsForStudent
+				, CASE WHEN EXISTS (SELECT 1 FROM Staging.K12Enrollment ske WHERE ske.StudentIdentifierState = sar.StudentIdentifierState AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'') AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'') AND ske.SchoolYear = sar.SchoolYear) THEN 1 ELSE 0 END AS MatchedK12Enrollment
+				, CASE WHEN EXISTS (SELECT 1 FROM RDS.DimSchoolYears rsy WHERE sar.SchoolYear = rsy.SchoolYear AND rsy.SchoolYear = @SchoolYear) THEN 1 ELSE 0 END AS MatchedDimSchoolYears
+				, CASE WHEN sar.AssessmentAdministrationStartDate IS NOT NULL AND EXISTS (SELECT 1 FROM RDS.DimSeas rds WHERE sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)) THEN 1 ELSE 0 END AS MatchedDimSeas
+				, CASE WHEN EXISTS (
+					SELECT 1
+					FROM Staging.K12Enrollment ske
+					WHERE ske.StudentIdentifierState = sar.StudentIdentifierState
+						AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
+						AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+						AND ske.SchoolYear = sar.SchoolYear
+						AND sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+				) THEN 1 ELSE 0 END AS PassedAssessmentAdministrationEnrollmentFilter
+			FROM (SELECT @StudentIdentifierState AS StudentIdentifierState) debugStudent
+			LEFT JOIN #tempStagingAssessmentResults sar
+				ON sar.StudentIdentifierState = debugStudent.StudentIdentifierState
+				AND sar.SchoolYear = @SchoolYear
+			ORDER BY sar.Id
 
+			RETURN
+		END
+
+	--Clear the Fact and Bridge tables of the data about to be migrated  
+		IF ISNULL(@DebugMode, 0) = 0
+		BEGIN
+			--Fact
+			DELETE RDS.BridgeK12StudentAssessmentRaces
+			WHERE SchoolYearId = @SchoolYearId
+
+			--Fact
+			DELETE RDS.BridgeK12StudentAssessmentAccessibilityFeatures
+			WHERE SchoolYearId = @SchoolYearId
+
+			--Fact
+			DELETE RDS.FactK12StudentAssessments
+			WHERE SchoolYearId = @SchoolYearId
+				AND FactTypeId = @FactTypeId
+		END
+
+
+	--Final insert into RDS.FactK12StudentAssessments table
 		INSERT INTO RDS.FactK12StudentAssessments (
 			[SchoolYearId]							
 			, [FactTypeId]						
@@ -649,6 +729,7 @@ BEGIN
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
+			, [K12StudentId]
 			, [K12Student_CurrentId]							
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
@@ -689,6 +770,7 @@ BEGIN
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
+			, -1 										AS [K12StudentId]
 			, [K12Student_CurrentId]							
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
@@ -727,119 +809,104 @@ BEGIN
 
 	--Populate the assessment race bridge table
 		IF OBJECT_ID(N'tempdb..#raceHispanic') IS NOT NULL DROP TABLE #raceHispanic
-	IF OBJECT_ID(N'tempdb..#temp') IS NOT NULL DROP TABLE #temp
+		IF OBJECT_ID(N'tempdb..#temp') IS NOT NULL DROP TABLE #temp
 
-	SELECT 	
-		StudentIdentifierState
-		, LeaIdentifierSeaAccountability
-		, SchoolIdentifierSea
-	INTO #raceHispanic
-	FROM staging.K12Enrollment
-	WHERE HispanicLatinoEthnicity = 1
+		SELECT 	
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+		INTO #raceHispanic
+		FROM staging.K12Enrollment
+		WHERE HispanicLatinoEthnicity = 1
 
-	SELECT DISTINCT
-		  rfksa.FactK12StudentAssessmentId
-		, rdsy.SchoolYear
-		, CASE 
-			WHEN ISNULL(rh.StudentIdentifierState, '') <> '' or ISNULL(rhLEA.StudentIdentifierState,'') <> '' THEN 'HispanicOrLatinoEthnicity'
-			ELSE ISNULL(spr.RaceMap, 'MISSING')
-		  END AS RaceMap
-	INTO #temp
-	FROM RDS.FactK12StudentAssessments rfksa
-	JOIN RDS.DimSchoolYears rdsy
-		ON rfksa.SchoolYearId = rdsy.DimSchoolYearId
-	JOIN RDS.DimPeople_Current rdpc
-		ON rfksa.K12Student_CurrentId = rdpc.DimPersonId
-	JOIN RDS.DimK12Schools rdks
-		ON rfksa.K12SchoolId = rdks.DimK12SchoolId
-	JOIN RDS.DimLeas rdlsAcc
-		ON rfksa.LeaId = rdlsAcc.DimLeaID
+		SELECT DISTINCT
+			rfksa.FactK12StudentAssessmentId
+			, rdsy.SchoolYear
+			, CASE 
+				WHEN ISNULL(rh.StudentIdentifierState, '') <> '' or ISNULL(rhLEA.StudentIdentifierState,'') <> '' THEN 'HispanicOrLatinoEthnicity'
+				ELSE ISNULL(spr.RaceMap, 'MISSING')
+			END AS RaceMap
+		INTO #temp
+		FROM RDS.FactK12StudentAssessments rfksa
+		JOIN RDS.DimSchoolYears rdsy
+			ON rfksa.SchoolYearId = rdsy.DimSchoolYearId
+		JOIN RDS.DimPeople_Current rdpc
+			ON rfksa.K12Student_CurrentId = rdpc.DimPersonId
+		JOIN RDS.DimK12Schools rdks
+			ON rfksa.K12SchoolId = rdks.DimK12SchoolId
+		JOIN RDS.DimLeas rdlsAcc
+			ON rfksa.LeaId = rdlsAcc.DimLeaID
 
-	left JOIN #raceHispanic rhLEA
-		on rhLEA.StudentIdentifierState 						= rdpc.K12StudentStudentIdentifierState 
-		and ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') 	= rdlsAcc.LeaIdentifierSea
+		left JOIN #raceHispanic rhLEA
+			on rhLEA.StudentIdentifierState 						= rdpc.K12StudentStudentIdentifierState 
+			and ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') 	= rdlsAcc.LeaIdentifierSea
 
-	LEFT JOIN #raceHispanic rh
-		ON rh.StudentIdentifierState 						= rdpc.K12StudentStudentIdentifierState
-		and rhLEA.LeaIdentifierSeaAccountability 			= rh.LeaIdentifierSeaAccountability
-		AND ISNULL(rh.LeaIdentifierSeaAccountability, '') 	= rdlsAcc.LeaIdentifierSea
-		AND ISNULL(rh.SchoolIdentifierSea, '') 				= isnull(rdks.SchoolIdentifierSea, '')
-	--race (staging + function)	
-	LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
-		ON rdsy.SchoolYear = spr.SchoolYear
-		AND rdpc.K12StudentStudentIdentifierState 	= spr.StudentIdentifierState
-		AND (rdks.SchoolIdentifierSea 				= spr.SchoolIdentifierSea
-			OR rdlsAcc.LeaIdentifierSea 			= spr.LeaIdentifierSeaAccountability)
-			
-	INSERT INTO RDS.BridgeK12StudentAssessmentRaces (
-		FactK12StudentAssessmentId
-		, RaceId          
-	)
-	SELECT DISTINCT
-		t.FactK12StudentAssessmentId
-		, rdr.DimRaceId 
-	FROM #temp t 
-	JOIN #vwRaces rdr
-		ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
-
-	/* ---------------------------------------------------------------------------------------
-	   14.1 DEFERRED: assessment accommodations bridge.
-	   The 14.0 CEDS rebuild replaced the single "accommodation" model
-	   (RDS.BridgeK12StudentAssessmentAccommodations + RDS.vwAssessmentAccommodations +
-	   DimAssessmentAccommodations.DimAssessmentAccommodationId) with the granular
-	   RDS.BridgeK12StudentAssessmentAccessibilityFeatures (per-feature columns: Braille,
-	   Calculator, Break, ReadAloud, ExtendedTime, etc.). This block references the dropped
-	   objects and cannot be a 1:1 rename. Disabled so the core FactK12StudentAssessments
-	   population (above) succeeds; the accessibility-features bridge population is a separate
-	   reconciliation tracked in docs/edfacts-migration/BLOCKED.md.
-	   (The primary assessment reports are driven by FactK12StudentAssessments.AssessmentCount,
-	   not by this bridge, so deferring it does not block those reports.)
-
-	SELECT 	DISTINCT
-		  StudentIdentifierState
-		, LeaIdentifierSeaAccountability
-		, SchoolIdentifierSea
-		, vwAcc.AssessmentAccommodationCategoryCode
-		, vwAcc.DimAssessmentAccommodationId
-		, sar.AssessmentIdentifier
-	INTO #tempAccomodations
-	FROM #tempStagingAssessmentResults sar
-	INNER JOIN RDS.vwAssessmentAccommodations vwAcc
-		ON vwAcc.SchoolYear = @SchoolYear
-		AND ISNULL(sar.AssessmentAccommodationCategory, -1) = ISNULL(vwAcc.AssessmentAccommodationCategoryMap, -1)
-		AND ISNULL(sar.AccommodationType,-1) = ISNULL(vwAcc.AccommodationTypeMap, -1)
-
-	INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (
-		  FactK12StudentAssessmentId
-		  , AssessmentAccommodationId
+		LEFT JOIN #raceHispanic rh
+			ON rh.StudentIdentifierState 						= rdpc.K12StudentStudentIdentifierState
+			and rhLEA.LeaIdentifierSeaAccountability 			= rh.LeaIdentifierSeaAccountability
+			AND ISNULL(rh.LeaIdentifierSeaAccountability, '') 	= rdlsAcc.LeaIdentifierSea
+			AND ISNULL(rh.SchoolIdentifierSea, '') 				= isnull(rdks.SchoolIdentifierSea, '')
+		--race (staging + function)	
+		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
+			ON rdsy.SchoolYear = spr.SchoolYear
+			AND rdpc.K12StudentStudentIdentifierState 	= spr.StudentIdentifierState
+			AND (rdks.SchoolIdentifierSea 				= spr.SchoolIdentifierSea
+				OR rdlsAcc.LeaIdentifierSea 			= spr.LeaIdentifierSeaAccountability)
+				
+		INSERT INTO RDS.BridgeK12StudentAssessmentRaces (
+			FactK12StudentAssessmentId
+			, RaceId         
+			, SchoolYearId 
 		)
-	SELECT 	rfsa.FactK12StudentAssessmentId
-			, acc.DimAssessmentAccommodationId
-	FROM RDS.FactK12StudentAssessments rfsa
-			JOIN RDS.DimAssessments rda
-				ON rfsa.AssessmentId = rda.DimAssessmentId
-			JOIN RDS.DimLeas lea
-				ON rfsa.LeaId = lea.DimLeaID
-			JOIN RDS.DimK12Schools sch
-				ON rfsa.K12SchoolId = sch.DimK12SchoolId
-			JOIN RDS.DimPeople_Current students
-				ON rfsa.K12Student_CurrentId = students.DimPersonId
-			JOIN #tempAccomodations acc
-				ON lea.LeaIdentifierSea = acc.LeaIdentifierSeaAccountability
-				AND sch.SchoolIdentifierSea = acc.SchoolIdentifierSea
-				AND students.K12StudentStudentIdentifierState = acc.StudentIdentifierState
-				AND rda.AssessmentIdentifierState = acc.AssessmentIdentifier
-		WHERE rfsa.SchoolYearId = @SchoolYearId
-		AND acc.AssessmentAccommodationCategoryCode = 'TestAdministration'
-		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
-	--------------------------------------------------------------------------------------- */
+		SELECT DISTINCT
+			t.FactK12StudentAssessmentId
+			, rdr.DimRaceId 
+			, @SchoolYearId
+		FROM #temp t 
+		JOIN #vwRaces rdr
+			ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
 
-	--Update the Fact Assessment table with the Accomodation Id
-		--UPDATE f
-		--SET FactK12StudentAssessmentAccommodationId = rbsaa.FactK12StudentAssessmentAccommodationId
-		--FROM RDS.FactK12StudentAssessments f
-		--	JOIN RDS.BridgeK12StudentAssessmentAccommodations rbsaa
-		--		ON f.FactK12StudentAssessmentId = rbsaa.FactK12StudentAssessmentId
+	--Populate the assessment accessibility feature bridge table
+		IF OBJECT_ID(N'tempdb..#tempAccessibilityFeatures') IS NOT NULL DROP TABLE #tempAccessibilityFeatures
+
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, vdaf.AccessibilityFeatureTypeCode
+			, vdaf.DimAccessibilityFeatureId
+			, sar.AssessmentIdentifier
+		INTO #tempAccessibilityFeatures
+		FROM #tempStagingAssessmentResults sar
+		INNER JOIN RDS.vwDimAccessibilityFeatures vdaf
+			ON sar.SchoolYear = vdaf.SchoolYear
+			AND ISNULL(sar.AccessibilityFeatureType, -1) = ISNULL(vdaf.AccessibilityFeatureTypeMap, -1)
+
+		INSERT INTO RDS.BridgeK12StudentAssessmentAccessibilityFeatures (
+			FactK12StudentAssessmentId
+			, AccessibilityFeatureId
+			, SchoolYearId
+		)
+		SELECT 	
+			rfsa.FactK12StudentAssessmentId
+			, af.DimAccessibilityFeatureId
+			, @SchoolYearId
+		FROM RDS.FactK12StudentAssessments rfsa
+		JOIN RDS.DimAssessments rda
+			ON rfsa.AssessmentId = rda.DimAssessmentId
+		JOIN RDS.DimLeas lea 
+			ON rfsa.LeaId = lea.DimLeaID
+		JOIN RDS.DimK12Schools sch 
+			ON rfsa.K12SchoolId = sch.DimK12SchoolId
+		JOIN RDS.DimPeople_Current students 
+			ON rfsa.K12Student_CurrentId = students.DimPersonId
+		JOIN #tempAccessibilityFeatures af
+			ON lea.LeaIdentifierSea = af.LeaIdentifierSeaAccountability
+			AND sch.SchoolIdentifierSea = af.SchoolIdentifierSea
+			AND students.K12StudentStudentIdentifierState = af.StudentIdentifierState
+			AND rda.AssessmentIdentifierState = af.AssessmentIdentifier
+		WHERE rfsa.SchoolYearId = @SchoolYearId
+		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
 
 	END TRY
 	BEGIN CATCH

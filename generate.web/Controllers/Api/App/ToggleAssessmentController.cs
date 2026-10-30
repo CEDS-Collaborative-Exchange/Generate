@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace generate.web.Controllers.Api.App
@@ -13,6 +14,7 @@ namespace generate.web.Controllers.Api.App
     [Route("api/app/toggleassessments")]
     [ResponseCache(Duration = 0)]
     [ApiController]
+    [Authorize]
     public class ToggleAssessmentController : Controller
     {
         private IAppRepository _toggleAssessmentRepository;

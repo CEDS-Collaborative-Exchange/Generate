@@ -5,6 +5,9 @@
 /dist-server
 /tmp
 /out-tsc
+# stray tsc output next to the TypeScript sources (the Angular build reads the .ts files)
+/src/main.js
+/src/app/**/*.js
 
 # dependencies
 /node_modules

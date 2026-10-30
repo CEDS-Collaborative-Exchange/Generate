@@ -96,6 +96,17 @@
     text-align:center;
 }
 
+.generate-app-report__loading {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.generate-app-report__loading-label {
+    margin-top: 12px;
+    color: $color-primary-dark;
+    font-weight: 700;
+}
+
 .generate-app-report-controls__reportlevel-button-mgmt {
     width: 300px;
 }

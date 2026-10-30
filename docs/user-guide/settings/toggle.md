@@ -11,13 +11,13 @@ The information below explains how to use the various options within Toggle. To 
 
 To access Toggle, click on “Settings” then click “Toggle” from the submenu that displays.
 
-<figure><img src="../../.gitbook/assets/image (127).png" alt=""><figcaption><p>Toggle button</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (127).png" alt="Settings submenu with the Toggle option."><figcaption><p>Toggle button</p></figcaption></figure>
 
 ## Using Toggle <a href="#using_toggle" id="using_toggle"></a>
 
 Once you’ve selected Toggle from Settings, the Toggle home page will open.
 
-<figure><img src="../../.gitbook/assets/image (69).png" alt=""><figcaption><p>Toggle home page</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (69).png" alt="Generate Toggle home page with metadata setting sections."><figcaption><p>Toggle home page</p></figcaption></figure>
 
 There are several sections with options for metadata that can be toggled on or off depending on the state’s collection rules. Toggle sections include:
 
@@ -41,7 +41,7 @@ There are several sections with options for metadata that can be toggled on or o
 * Inclusion Time Period – Inclusion Time Period
 * IHE Enrollment – IHE Enrollment
 * Directory – Directory
-* Homeless – Homeless&#x20;
+* Homeless – Homeless
 
 There are several ways to use Toggle:
 
@@ -55,13 +55,11 @@ Options that require a selection of Yes or No default to “No.” Click on the 
 
 Toggle is set to No in answer to the question.
 
-<figure><img src="../../.gitbook/assets/image (91).png" alt=""><figcaption><p>Question toggle defaults to "No"</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (91).png" alt="Toggle question with the switch set to No."><figcaption><p>Question toggle defaults to "No"</p></figcaption></figure>
 
 Toggle is switched to Yes in answer to the question.
 
-<figure><img src="../../.gitbook/assets/image (71).png" alt="Toggle switched to &#x22;Yes&#x22; in answer to the question"><figcaption><p>Toggle switched to "Yes" in answer to the question.</p></figcaption></figure>
-
-
+<figure><img src="../../.gitbook/assets/image (71).png" alt="Toggle question with the switch set to Yes."><figcaption><p>Toggle switched to "Yes" in answer to the question.</p></figcaption></figure>
 
 Note that the reference period dates disappeared when Toggle was switched to Yes. If you Toggle to Yes, then Toggle back to No, the dates will display again. Change the date entries to match the collection schedule for your state.
 
@@ -75,9 +73,7 @@ To change a date field, follow the steps below.
 2. Click on the dropdown arrow next to the date field to display an interactive calendar.
    1. Click on a calendar date to select it.
 
-<figure><img src="../../.gitbook/assets/image (98).png" alt=""><figcaption><p>Click on dropdown calendar date to select it.</p></figcaption></figure>
-
-
+<figure><img src="../../.gitbook/assets/image (98).png" alt="Open calendar for selecting a Toggle date."><figcaption><p>Click on dropdown calendar date to select it.</p></figcaption></figure>
 
 ### Toggle Radio Buttons
 
@@ -85,7 +81,7 @@ To select and deselect radio buttons follow the steps below.
 
 1. If a radio button is not selected, click on it to select it.
 
-<figure><img src="../../.gitbook/assets/image (122).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (122).png" alt="Toggle question with selectable radio button options."><figcaption></figcaption></figure>
 
 2. If a radio button is selected, click on a different radio button to select a different option.
 3. If you none of the options are applicable for your state, click on the radio button called No Response.
@@ -94,13 +90,13 @@ To select and deselect radio buttons follow the steps below.
 When selecting Toggle options, pay attention to changes that occur based on your selections. For example, changing a Toggle setting from “No” to “Yes” may result in another field displaying where additional actions are necessary. In the example below, the Toggle has been changed from “No” to “Yes” resulting in a response required by the user.
 {% endhint %}
 
-<figure><img src="../../.gitbook/assets/image (64).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (64).png" alt="Toggle question before selecting Yes."><figcaption></figcaption></figure>
 
-<figure><img src="../../.gitbook/assets/image (116).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (116).png" alt="Toggle question showing the additional response field after selecting Yes."><figcaption></figcaption></figure>
 
 4. When all Toggle settings have been selected, click the Save button at the top or bottom of the page. If you make changes without saving and try to exit the Toggle page, the following warning message will display:
 
-<figure><img src="../../.gitbook/assets/image (99).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (99).png" alt="Warning dialog for leaving the Toggle page without saving changes."><figcaption></figcaption></figure>
 
 * Click OK to exit without saving your changes.
 * Click Cancel to remain on the Toggle page.
@@ -116,15 +112,15 @@ To access the Toggle | Assessment’s page, follow the steps below.
 
 1. Click on “Toggle” from the submenu under Settings.
 
-<figure><img src="../../.gitbook/assets/image (128).png" alt=""><figcaption><p>Toggle button in Setting submenu.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (128).png" alt="Settings submenu with the Toggle option."><figcaption><p>Toggle button in Setting submenu.</p></figcaption></figure>
 
 2. Click on the “Assessments” link.
 
-<figure><img src="../../.gitbook/assets/image (96).png" alt=""><figcaption><p>Assessments link</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (96).png" alt="Assessments link on the Toggle page."><figcaption><p>Assessments link</p></figcaption></figure>
 
 The **TOGGLE ASSESSMENTS** page will open.
 
-<figure><img src="../../.gitbook/assets/image (58).png" alt=""><figcaption><p>TOGGLE ASSESSMENTS page</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (58).png" alt="Toggle Assessments page listing configured assessments."><figcaption><p>TOGGLE ASSESSMENTS page</p></figcaption></figure>
 
 ### Add New Assessment
 
@@ -132,21 +128,21 @@ To add a new Assessment, follow the steps below.
 
 1. Click on the “**Add New Assessment**” icon at the top right corner of the page.
 
-<figure><img src="../../.gitbook/assets/image (125).png" alt=""><figcaption><p>Add New Assessment button.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (125).png" alt="Add New Assessment button on the Toggle Assessments page."><figcaption><p>Add New Assessment button.</p></figcaption></figure>
 
 The “**Add New Assessment**” page will open.
 
-![](<../../.gitbook/assets/image (55).png>)
+![Add New Assessment form with assessment configuration fields.](<../../.gitbook/assets/image (55).png>)
 
 2. Click on the dropdown arrow next to “**Assessment Type**” to display a list of available Assessments.
 
-<figure><img src="../../.gitbook/assets/image (73).png" alt=""><figcaption><p><strong>Assessment Type</strong> dropdown list of available assessments.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (73).png" alt="Assessment Type dropdown list of available assessments."><figcaption><p><strong>Assessment Type</strong> dropdown list of available assessments.</p></figcaption></figure>
 
 3. Select an **Assessment Type**
    1. Click on the dropdown arrow next to the Assessment Type field.
    2. Click on the type of assessment you want to add.
 
-<figure><img src="../../.gitbook/assets/image (54).png" alt=""><figcaption><p>The image shows the selection of “Alternate assessment based on modified achievement standards.”</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (54).png" alt="Assessment Type dropdown with Alternate assessment based on modified achievement standards selected."><figcaption><p>The image shows the selection of “Alternate assessment based on modified achievement standards.”</p></figcaption></figure>
 
 4. Enter the appropriate information into the following fields:
    1. **# of Performance Levels**
@@ -161,42 +157,36 @@ Assessment Name must be typed directly into the field.
 
 5. Once all fields have been entered, click the **OK** button.
 
-![](<../../.gitbook/assets/image (86).png>)
-
-
+![Completed Add New Assessment form with the OK button.](<../../.gitbook/assets/image (86).png>)
 
 6. Click the **CANCEL** button at any time to cancel your entries and start over.
 
 If you enter a number that is greater than the number entered in the “**At or Above Proficiency**” field, the system will display the error message shown below after you click the **OK** button.
 
-<img src="../../.gitbook/assets/image (106).png" alt="" data-size="original">
-
-
+<img src="../../.gitbook/assets/image (106).png" alt="Validation message for an invalid number of performance levels." data-size="original">
 
 You will need to fix the error as shown in the example below and click **OK** again.
 
-![](<../../.gitbook/assets/image (44).png>)
-
-
+![Corrected assessment form ready to save.](<../../.gitbook/assets/image (44).png>)
 
 When all entries have been entered successfully, the **Assessment** will appear on the “**TOGGLE ASSESSMENTS**” page.
 
-<figure><img src="../../.gitbook/assets/image (93).png" alt=""><figcaption><p>Assessment appears on the <strong>TOGGLE ASSESSMENT</strong> page.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (93).png" alt="New assessment listed on the Toggle Assessments page."><figcaption><p>Assessment appears on the <strong>TOGGLE ASSESSMENT</strong> page.</p></figcaption></figure>
 
 ### **To edit an Assessment:**
 
 1. Click on the “**edit**” icon next to the Assessment to be edited.
 
-<figure><img src="../../.gitbook/assets/image (45).png" alt=""><figcaption><p>Click on the "<strong>edit"</strong> icon to edit Assessments.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (45).png" alt="Edit icon beside an assessment entry."><figcaption><p>Click on the "<strong>edit"</strong> icon to edit Assessments.</p></figcaption></figure>
 
 ### **To delete an Assessment:**
 
 1. Click on the “**delete**” icon next to the Assessment to be deleted.
 
-<figure><img src="../../.gitbook/assets/image (118).png" alt=""><figcaption><p>Click on the "<strong>delete</strong>" icon to delete the Assessment.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (118).png" alt="Delete icon beside an assessment entry."><figcaption><p>Click on the "<strong>delete</strong>" icon to delete the Assessment.</p></figcaption></figure>
 
 2. Click **OK** on the “Delete Existing Assessment” message.
 
-![](<../../.gitbook/assets/image (52).png>)
+![Delete Existing Assessment confirmation dialog with the OK button.](<../../.gitbook/assets/image (52).png>)
 
 To return to the Toggle main page, click on Settings, then click on Toggle.

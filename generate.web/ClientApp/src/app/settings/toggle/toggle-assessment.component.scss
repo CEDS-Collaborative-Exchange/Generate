@@ -4,9 +4,38 @@
     margin-bottom: 10px;
 }
 
+.generate-app-toggle-assessment__filters {
+    margin-bottom: 4px;
+    align-items: end;
+}
+
+.generate-app-toggle-assessment__filters-actions {
+    margin-top: -4px;
+    margin-bottom: 4px;
+}
+
+
+.generate-app-toggle-assessment__clear-filters{
+    float:right;
+    margin-right:25px;
+    min-width: 40px !important;
+}
+
+.generate-app-toggle-assessment__back-link,
+.generate-app-toggle-assessment__back-link:visited,
+.generate-app-toggle-assessment__back-link:hover,
+.generate-app-toggle-assessment__back-link:focus {
+    color: $color-primary-dark;
+}
+
+.generate-app-toggle-assessment__paginator {
+    margin-top: -4px;
+    margin-bottom: 6px;
+}
+
 .generate-app-toggle__assesment {
     background-color: gainsboro;
-    ;
+    
 }
 
 .generate-app-toggle-assessment__report-icon{

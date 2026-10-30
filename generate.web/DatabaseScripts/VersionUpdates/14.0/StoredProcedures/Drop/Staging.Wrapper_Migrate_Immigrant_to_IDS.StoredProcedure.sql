@@ -1,0 +1,6 @@
+﻿IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'Staging' AND ROUTINE_NAME = 'Wrapper_Migrate_Immigrant_to_IDS') 
+BEGIN
+	DROP PROCEDURE [Staging].[Wrapper_Migrate_Immigrant_to_IDS]
+END
+
+

@@ -10,6 +10,7 @@ layout:
   cover:
     visible: true
     size: hero
+    mask: none
   title:
     visible: true
   description:
@@ -44,52 +45,52 @@ For states that do not have internet access from their Generate server, we have 
    * On your webserver, navigate to the location of the **`/web`** files and then go to **`/wwwroot/assests/config`**
 
 {% hint style="info" %}
-**NOTE**: There may be more than one file in that location depending on how you installed/configured Generate. Make the change to any config files in that location.&#x20;
+**NOTE**: There may be more than one file in that location depending on how you installed/configured Generate. Make the change to any config files in that location.
 {% endhint %}
 
-Run the update process from the UI as normal.&#x20;
+Run the update process from the UI as normal.
 
 ### Important Updates
 
 The below items do **NOT** require state action, but we wanted to bring your attention to:
 
-* If you are submitting Directory (FS029) through Generate and you run into an issue creating a csv submission file because there are commas in the incoming data, we have an open ticket to address escaping the commas. That work is not complete so if you do experience that issue you can either remove the commas from the incoming data or create a TAB delimited submission file.  &#x20;
-* We added a new Staging Table Snapshot utility. The documentation for this utility is available here -  [staging-table-snapshot.md](../../developer-guides/generate-utilities/staging-table-snapshot.md "mention")
+* If you are submitting Directory (FS029) through Generate and you run into an issue creating a csv submission file because there are commas in the incoming data, we have an open ticket to address escaping the commas. That work is not complete so if you do experience that issue you can either remove the commas from the incoming data or create a TAB delimited submission file.
+* We added a new Staging Table Snapshot utility. The documentation for this utility is available here - [staging-table-snapshot.md](../../developer-guides/generate-utilities/staging-table-snapshot.md "mention")
 * We now have a new way of displaying report data in the User Interface that will help us in promoting Generate to the Source Community. The new method is currently applied to most student-level reports only. The look and feel are slightly different, and we will be working on the next release making to make it faster as well. There is a new search feature will allow you to search for elements to filter to leverage for your data analysis. Turn on the search feature by selecting “Search” and then use categories to set filters.
 
 **How to Use the New Search Feature**
 
 1. Activate the search functionality by selecting the **“Search”** option.
 
-<figure><img src="../../.gitbook/assets/Release Notes 11.3_Search button highlight.png" alt="Screenshot of the EDFacts Submission Report UI, featuring a table of data. An arrow points to the search checkbox, highlighting its functionality within the interface."><figcaption><p>Select the search box to view the filters</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Release Notes 11.3_Search button highlight.png" alt="EDFacts submission report table with an arrow pointing to the Search checkbox."><figcaption><p>Select the search box to view the filters</p></figcaption></figure>
 
 2. Utilize categories to set filters, narrowing down your analysis to the most relevant data.
 
-<figure><img src="../../.gitbook/assets/image (208).png" alt="Screenshot of filter options for SEA (State Education Agency), SEA ID, Disability Category, Sex, and Racial Ethnic fields."><figcaption><p>Filter options displayed for SEA, SEA ID, Disability Category, Sex, and Racial Ethnic fields, facilitating refined data selection within the interface.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (208).png" alt="Filter controls for SEA, SEA ID, disability category, sex, and race or ethnicity."><figcaption><p>Filter options displayed for SEA, SEA ID, Disability Category, Sex, and Racial Ethnic fields, facilitating refined data selection within the interface.</p></figcaption></figure>
 
 {% hint style="warning" %}
-The **Search** feature is currently case and text specific.&#x20;
+The **Search** feature is currently case and text specific.
 
 **Example:** To filter by **Disability Category**, ensure you input the category name exactly as it appears. For instance, to filter for **Deaf-blindness**, type it with the capital 'D', the dash, and the lowercase 'b'.
 {% endhint %}
 
-<figure><img src="../../.gitbook/assets/image (206).png" alt="A computer screen displaying a table with filtered results. A red box highlights the &#x27;Disability Category&#x27; section, with &#x27;Deaf-blindness&#x27; typed in the text input field. The table below shows data filtered to display only &#x27;Deaf-blindness&#x27; category."><figcaption><p>Filtering by Disability Category: Ensure precise input for accurate results.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (206).png" alt="Report filter showing Deaf-blindness entered for Disability Category and matching results."><figcaption><p>Filtering by Disability Category: Ensure precise input for accurate results.</p></figcaption></figure>
 
 ***
 
-### Generate Enhancements &#x20;
+### Generate Enhancements
 
-The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
-#### Type of Impact:&#x20;
+#### Type of Impact:
 
-* **Data** – the changes will improve data quality and completeness.&#x20;
-* **User Interface** – the changes impact the Generate User Interface and/or migration process.&#x20;
-* **Source to Staging ETL** – the changes may require modifications to the SEA’s Source to Staging ETL&#x20;
-* **Performance** – the changes improve the performance of the application.&#x20;
-* **Migration** – the changes impact a data migration process.&#x20;
-* **Submission Files** – the changes may impact submission file(s)&#x20;
-* **Database** – changes to the Generate database structure.&#x20;
+* **Data** – the changes will improve data quality and completeness.
+* **User Interface** – the changes impact the Generate User Interface and/or migration process.
+* **Source to Staging ETL** – the changes may require modifications to the SEA’s Source to Staging ETL
+* **Performance** – the changes improve the performance of the application.
+* **Migration** – the changes impact a data migration process.
+* **Submission Files** – the changes may impact submission file(s)
+* **Database** – changes to the Generate database structure.
 
 {% tabs %}
 {% tab title="Directory" %}
@@ -97,7 +98,7 @@ The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
 {% endtab %}
 
 {% tab title="Assessment " %}
-<table><thead><tr><th width="98">Report</th><th width="327">Approved Change</th><th width="117">Ticket #</th><th>Type of Impact<select><option value="5F3rtp88NRMi" label="Data" color="blue"></option></select></th></tr></thead><tbody><tr><td><p>FS175 </p><p>FS178 <br>FS179 </p><p>FS185 </p><p>FS188 </p><p>FS189 </p></td><td>Added a Toggle setting to allow states to report combined results for Asian and NativeHawaiianorOtherPacificIslander as a single Major Race Category of “MAP”.</td><td>CIID-5973</td><td><span data-option="5F3rtp88NRMi">Data</span></td></tr><tr><td></td><td>The Assessment logic was not correctly handling English Learner participation, ‘PARTELP’, that needs to be included in FS188, that has been corrected.</td><td>CIID-6029</td><td><span data-option="5F3rtp88NRMi">Data</span></td></tr><tr><td> </td><td>Corrected an issue in the race handling logic that was excluding Hispanic students in Private Schools from Reports</td><td>CIID-6043</td><td><span data-option="5F3rtp88NRMi">Data</span></td></tr><tr><td></td><td>Updated this release with the Assessment hotfix changes discovered after the 11.2 release to update the order of the logic to apply Medically Exempt and English Learner Participation</td><td>CIID-6048</td><td><span data-option="5F3rtp88NRMi">Data</span></td></tr></tbody></table>
+<table><thead><tr><th width="98">Report</th><th width="327">Approved Change</th><th width="117">Ticket #</th><th>Type of Impact<select><option value="5F3rtp88NRMi" label="Data" color="blue"></option></select></th></tr></thead><tbody><tr><td><p>FS175</p><p>FS178<br>FS179</p><p>FS185</p><p>FS188</p><p>FS189</p></td><td>Added a Toggle setting to allow states to report combined results for Asian and NativeHawaiianorOtherPacificIslander as a single Major Race Category of “MAP”.</td><td>CIID-5973</td><td><span data-option="5F3rtp88NRMi">Data</span></td></tr><tr><td></td><td>The Assessment logic was not correctly handling English Learner participation, ‘PARTELP’, that needs to be included in FS188, that has been corrected.</td><td>CIID-6029</td><td><span data-option="5F3rtp88NRMi">Data</span></td></tr><tr><td></td><td>Corrected an issue in the race handling logic that was excluding Hispanic students in Private Schools from Reports</td><td>CIID-6043</td><td><span data-option="5F3rtp88NRMi">Data</span></td></tr><tr><td></td><td>Updated this release with the Assessment hotfix changes discovered after the 11.2 release to update the order of the logic to apply Medically Exempt and English Learner Participation</td><td>CIID-6048</td><td><span data-option="5F3rtp88NRMi">Data</span></td></tr></tbody></table>
 {% endtab %}
 
 {% tab title="Discipline " %}
@@ -105,7 +106,7 @@ The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
 {% endtab %}
 
 {% tab title="Child Count " %}
-<table><thead><tr><th width="98">Report</th><th width="310">Approved Change</th><th width="114">Ticket #</th><th>Type of Impact<select><option value="1FfC7v5SdxVI" label="Data" color="blue"></option></select></th></tr></thead><tbody><tr><td><p>FS002 </p><p>FS089 </p></td><td>Corrected an issue in 2 scripts to create appropriate zero counts in the LEA and SCH files.</td><td>CIID-6021</td><td><span data-option="1FfC7v5SdxVI">Data</span></td></tr></tbody></table>
+<table><thead><tr><th width="98">Report</th><th width="310">Approved Change</th><th width="114">Ticket #</th><th>Type of Impact<select><option value="1FfC7v5SdxVI" label="Data" color="blue"></option></select></th></tr></thead><tbody><tr><td><p>FS002</p><p>FS089</p></td><td>Corrected an issue in 2 scripts to create appropriate zero counts in the LEA and SCH files.</td><td>CIID-6021</td><td><span data-option="1FfC7v5SdxVI">Data</span></td></tr></tbody></table>
 {% endtab %}
 
 {% tab title="Immigrant" %}
@@ -113,7 +114,7 @@ The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
 {% endtab %}
 
 {% tab title="Title III " %}
-<table><thead><tr><th width="98">Report</th><th width="319">Approved Change</th><th width="112">Ticket #</th><th>Type of Impact<select><option value="4hDWMFlfhzbu" label="Data" color="blue"></option></select></th></tr></thead><tbody><tr><td>FS116 </td><td>Our internal automated collection of updated metadata did not contain the updates for FS116 so we manually pulled that data and added it to the script that will update the metadata for this release.</td><td>CIID-6445</td><td><span data-option="4hDWMFlfhzbu">Data</span></td></tr></tbody></table>
+<table><thead><tr><th width="98">Report</th><th width="319">Approved Change</th><th width="112">Ticket #</th><th>Type of Impact<select><option value="4hDWMFlfhzbu" label="Data" color="blue"></option></select></th></tr></thead><tbody><tr><td>FS116</td><td>Our internal automated collection of updated metadata did not contain the updates for FS116 so we manually pulled that data and added it to the script that will update the metadata for this release.</td><td>CIID-6445</td><td><span data-option="4hDWMFlfhzbu">Data</span></td></tr></tbody></table>
 {% endtab %}
 
 {% tab title="Staff" %}
@@ -125,13 +126,13 @@ The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
 {% endtab %}
 {% endtabs %}
 
-### Upgrade Procedure&#x20;
+### Upgrade Procedure
 
 No changes have been made to the Generate upgrade procedure for this release. Follow the standard Generate upgrade process to install version 11.3.
 
-### Compatible Systems &#x20;
+### Compatible Systems
 
-Generate was tested on the following operating systems and browsers: &#x20;
+Generate was tested on the following operating systems and browsers:
 
 * [x] Windows 10 Pro
 * [x] Google Chrome, Version 68 0.3440.106 (Official Build) (64-bit) and Firefox Quantum 61.01 (64 bit)

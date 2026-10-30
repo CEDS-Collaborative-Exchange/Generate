@@ -7,11 +7,13 @@ using generate.core.Dtos.ODS;
 using generate.core.Interfaces.Repositories.IDS;
 using generate.core.Interfaces.Repositories.RDS;
 using generate.infrastructure.Repositories.IDS;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/gradelevels")]
     [ApiController]
+    [Authorize]
     public class GradeLevelController : Controller
     {
         private IIDSRepository _idsRepository;

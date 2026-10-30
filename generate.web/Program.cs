@@ -18,18 +18,36 @@ using generate.web.Config;
 using generate.core.Interfaces.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Linq;
+using System.Security.Claims;
+using Microsoft.Extensions.FileProviders;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
+
+// Authentication scheme that accepts either an Azure AD bearer token or the username/password cookie
+const string OAuthOrPasswordScheme = "OAuthOrPassword";
 
 var builder = WebApplication.CreateBuilder(args);
 string environment_string = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + "_";
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory() + "/Config/")
+    // WebApplication.CreateBuilder's own default configuration only adds user secrets when
+    // IsDevelopment() is true, so connection strings (which live only in secrets.json, never in
+    // committed appsettings*.json) would be silently missing in any other environment without
+    // this explicit, unconditional call - matching generate.background's own Program.cs.
+    .AddUserSecrets(System.Reflection.Assembly.GetExecutingAssembly(), optional: true)
     .AddEnvironmentVariables(prefix: environment_string)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
@@ -53,6 +71,12 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 // Add MVC
 builder.Services.AddMvc()
     .AddMvcOptions(options => options.EnableEndpointRouting = false)
+    // Secure by default: any controller/action without an explicit [AllowAnonymous] requires an
+    // authenticated user. This app uses classic (non-endpoint) routing, so AuthorizationOptions'
+    // FallbackPolicy - which is only enforced via the endpoint-routing-aware AuthorizationMiddleware -
+    // would be a no-op here; a global MVC filter is the mechanism that actually applies in this pipeline.
+    .AddMvcOptions(options => options.Filters.Add(new AuthorizeFilter(
+        new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build())))
     .AddControllersAsServices()  //Injecting Controllers themselves thru DI   //For further info see: http://docs.autofac.org/en/latest/integration/aspnetcore.html#controllers-as-services
     .AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
@@ -80,15 +104,105 @@ if ("EMBEDDED".Equals(builder.Configuration.GetValue<string>("AppSettings:UserSt
 }
 else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:UserStoreType")))
 {
+    if (builder.Environment.IsDevelopment())
+    {
+        // Reveals the real reason behind JWT validation failures (normally redacted as PII) for local debugging.
+        Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+    }
+
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
     builder.Services.AddAuthorization();
 
+    // Entra ID app role values are mixed case (e.g. "Administrator"), but AppRoles and the embedded/AD user
+    // managers use upper case, and IsInRole is case-sensitive. Add an upper-case copy of each role claim so
+    // [Authorize(Roles = AppRoles.Administrator)] matches regardless of how the app role is cased in Azure.
+    builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.Events ??= new JwtBearerEvents();
+        var onTokenValidated = options.Events.OnTokenValidated;
+        options.Events.OnTokenValidated = async context =>
+        {
+            if (onTokenValidated != null)
+            {
+                await onTokenValidated(context);
+            }
 
-    builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddUserStore<ApplicationUserStore<ApplicationUser>>()
-    .AddRoleStore<ApplicationRoleStore>()
-    .AddUserManager<ApplicationUserManager>();
+            if (context.Principal?.Identity is ClaimsIdentity identity)
+            {
+                var missingRoles = identity.FindAll(identity.RoleClaimType)
+                    .Select(c => c.Value.ToUpperInvariant())
+                    .Where(role => !identity.HasClaim(identity.RoleClaimType, role))
+                    .Distinct()
+                    .ToList();
+
+                foreach (var role in missingRoles)
+                {
+                    identity.AddClaim(new Claim(identity.RoleClaimType, role));
+                }
+            }
+        };
+    });
+
+
+    // Optionally allow the embedded username/password accounts to sign in alongside Azure AD.
+    // Off by default: the embedded accounts use configured (often default) passwords, so this
+    // should only be enabled for local development.
+    var allowPasswordLogin = builder.Configuration.GetValue<bool>("AppSettings:AllowPasswordLoginWithOAuth");
+
+    if (allowPasswordLogin)
+    {
+        builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+        .AddUserStore<EmbeddedUserStore<ApplicationUser>>()
+        .AddRoleStore<ApplicationRoleStore>()
+        .AddUserManager<EmbeddedUserManager>();
+
+        // Requests carrying an Azure AD bearer token use JWT Bearer; everything else uses the
+        // Identity cookie issued by the username/password login.
+        builder.Services.AddAuthentication()
+            .AddPolicyScheme(OAuthOrPasswordScheme, OAuthOrPasswordScheme, options =>
+            {
+                options.ForwardDefaultSelector = context =>
+                    context.Request.Headers.Authorization.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                        ? JwtBearerDefaults.AuthenticationScheme
+                        : IdentityConstants.ApplicationScheme;
+            });
+
+        // Return 401/403 instead of redirecting to a login page, matching JWT Bearer behavior
+        // so the Angular app gets a status code rather than an HTML page.
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return Task.CompletedTask;
+            };
+        });
+    }
+    else
+    {
+        builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+        .AddUserStore<ApplicationUserStore<ApplicationUser>>()
+        .AddRoleStore<ApplicationRoleStore>()
+        .AddUserManager<ApplicationUserManager>();
+    }
+
+    // AddIdentity<>() above overrides DefaultAuthenticateScheme/DefaultChallengeScheme back to
+    // Identity.Application (cookies), even though AddAuthentication() was configured for JWT Bearer.
+    // Re-assert JWT Bearer (or the bearer-or-cookie policy scheme) as the default so [Authorize]
+    // validates bearer tokens in OAuth mode.
+    var defaultScheme = allowPasswordLogin ? OAuthOrPasswordScheme : JwtBearerDefaults.AuthenticationScheme;
+    builder.Services.Configure<AuthenticationOptions>(options =>
+    {
+        options.DefaultAuthenticateScheme = defaultScheme;
+        options.DefaultChallengeScheme = defaultScheme;
+        options.DefaultForbidScheme = defaultScheme;
+    });
 }
 else // AD Auth
 {
@@ -113,18 +227,71 @@ builder.Services
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment() && "OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:UserStoreType")))
+{
+    // Decodes the incoming bearer token's claims directly, bypassing Microsoft.IdentityModel's PII
+    // redaction, so the real audience/scope/issuer can be seen while diagnosing signature failures.
+    app.Use(async (context, next) =>
+    {
+        var header = context.Request.Headers.Authorization.ToString();
+        if (header.StartsWith("Bearer "))
+        {
+            var parts = header.Substring("Bearer ".Length).Split('.');
+            if (parts.Length >= 2)
+            {
+                try
+                {
+                    string Pad(string s) => s.PadRight(s.Length + (4 - s.Length % 4) % 4, '=').Replace('-', '+').Replace('_', '/');
+                    var header_ = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(Pad(parts[0])));
+                    var payload = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(Pad(parts[1])));
+                    app.Logger.LogInformation("OAuth diagnostic - token header: {Header}", header_);
+                    app.Logger.LogInformation("OAuth diagnostic - token payload: {Payload}", payload);
+                }
+                catch (Exception ex)
+                {
+                    app.Logger.LogWarning(ex, "OAuth diagnostic - failed to decode token");
+                }
+            }
+        }
+        await next();
+    });
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 //app.UseStaticFiles(new StaticFileOptions() { RequestPath = "/ClientApp/dist" });
 app.UseStaticFiles();
+
+bool useAngularDevServer = builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("CI");
+
+// A local (non-publish) build leaves the Angular output in ClientApp/dist/browser. A published
+// site has no ClientApp folder - PublishRunWebpack copies that output into wwwroot, which
+// UseStaticFiles() above and the SPA default page already serve.
+var distPath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp", "dist", "browser");
+bool serveClientAppDist = !useAngularDevServer && Directory.Exists(distPath);
+if (serveClientAppDist)
+{
+    app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(distPath) });
+}
+
 app.UseMvc();
 app.UseSpa(spa => {
 
-    if (builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("CI"))
+    if (useAngularDevServer)
     {
         spa.Options.SourcePath = "ClientApp";
         spa.Options.StartupTimeout = new TimeSpan(0, 6, 0);
         spa.UseAngularCliServer(npmScript: "start");
+    }
+    else if (serveClientAppDist)
+    {
+        // SpaDefaultPageMiddleware only consults DefaultPageStaticFileOptions.FileProvider for
+        // this fallback path; Options.SourcePath alone (used by the dev-server launchers) has no
+        // effect here. Without it, index.html comes from wwwroot.
+        spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(distPath)
+        };
     }
 });
 app.UseForwardedHeaders(new ForwardedHeadersOptions { 

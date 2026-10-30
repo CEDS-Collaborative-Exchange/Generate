@@ -55,7 +55,7 @@ Result before the test: 54,894 rows, 33,601 children, with identical counts in e
 
 The result is the same through the pipeline path (`Empty_Reports` then `Create_Reports 'discipline'` with only 006 locked).
 
-Objects packaged in `VersionUpdates/14.1`:
+Objects packaged in `VersionUpdates/14.1_prerelease`:
 - `Debug.vwDiscipline_FactTable`
 - `RDS.vwDiscipline_FactTable_006`
 - `Staging.vwDiscipline_StagingTables_006`

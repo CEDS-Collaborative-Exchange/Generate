@@ -22,10 +22,16 @@ BEGIN
 
 			SET IDENTITY_INSERT RDS.DimAssessmentPerformanceLevels ON
 
-			INSERT INTO RDS.DimAssessmentPerformanceLevels
-				(DimAssessmentPerformanceLevelId)
+			INSERT INTO RDS.DimAssessmentPerformanceLevels (
+				DimAssessmentPerformanceLevelId
+				, AssessmentPerformanceLevelIdentifier	
+				, AssessmentPerformanceLevelLabel		
+				, AssessmentPerformanceLevelScoreMetric	
+				, AssessmentPerformanceLevelLowerCutScore
+				, AssessmentPerformanceLevelUpperCutScore
+			)
 			VALUES
-				(-1)
+				(-1,'','','','','')
 	
 			SET IDENTITY_INSERT RDS.DimAssessmentPerformanceLevels off
 		END
@@ -67,7 +73,6 @@ BEGIN
 			ON ssrd.tablename = 'AssessmentPerformanceLevel_Identifier'
 			AND ssrd.InputCode = sar.AssessmentPerformanceLevelIdentifier
 			AND ssrd.SchoolYear = @SchoolYear
-
 
 		MERGE RDS.DimAssessmentPerformanceLevels AS trgt
 		USING #AssessmentPerformanceLevels AS src

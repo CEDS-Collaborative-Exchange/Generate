@@ -11,13 +11,13 @@ The new Metadata feature in Generate 12.0 provides an option to refresh the meta
 
 1. **Navigate to gear icon and select Metadata from the dropdown.**
 
-<figure><img src="../../.gitbook/assets/image (3).png" alt="" width="185"><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (3).png" alt="Settings menu with the Metadata option selected." width="185"><figcaption></figcaption></figure>
 
 2. **Single Click Operation:** Clicking the Metadata refresh button will initiate the process, and Generate will:
    * Retrieve the most current metadata file from EDPass.
    * Process the file and load the updated metadata into the relevant tables within the Generate environment.
 
-<figure><img src="../../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (2).png" alt="Metadata page with the refresh button for retrieving EDPass specifications."><figcaption></figcaption></figure>
 
 3. **Duration:** The process can take anywhere from 30 minutes to an hour, depending on system performance and the size of the metadata file.
 

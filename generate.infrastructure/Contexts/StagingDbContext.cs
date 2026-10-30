@@ -43,7 +43,6 @@ namespace generate.infrastructure.Contexts
         public virtual DbSet<OrganizationGradeOffered> OrganizationGradeOffered { get; set; }
         public virtual DbSet<OrganizationPhone> OrganizationPhone { get; set; }
         public virtual DbSet<OrganizationProgramType> OrganizationProgramType { get; set; }
-        public virtual DbSet<OrganizationSchoolComprehensiveAndTargetedSupport> OrganizationSchoolComprehensiveAndTargetedSupport { get; set; }
         public virtual DbSet<OrganizationSchoolIndicatorStatus> OrganizationSchoolIndicatorStatus { get; set; }
         public virtual DbSet<K12PersonRace> PersonRace { get; set; }
         public virtual DbSet<PersonStatus> PersonStatus { get; set; }
@@ -180,6 +179,10 @@ namespace generate.infrastructure.Contexts
                     .IsUnicode(false);
 
                 entity.Property(e => e.DataCollectionName).HasMaxLength(100);
+
+                entity.Property(e => e.EdFactsFormerEnglishLearnerYearStatus)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.GradeLevelWhenAssessed)
                     .HasMaxLength(100)
@@ -659,11 +662,6 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.School_CharterSecondaryAuthorizer)
                     .HasColumnName("School_CharterSecondaryAuthorizer")
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.School_ComprehensiveAndTargetedSupport)
-                    .HasColumnName("School_ComprehensiveAndTargetedSupport")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
@@ -1162,11 +1160,11 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.StatedDefinedCustomIndicatorStatusType)
+                entity.Property(e => e.StateDefinedCustomIndicatorStatusType)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.StatedDefinedIndicatorStatus)
+                entity.Property(e => e.StateDefinedIndicatorStatus)
                     .HasMaxLength(100)
                     .IsUnicode(false);
             });
@@ -1288,40 +1286,6 @@ namespace generate.infrastructure.Contexts
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<OrganizationSchoolComprehensiveAndTargetedSupport>(entity =>
-            {
-                entity.ToTable("OrganizationSchoolComprehensiveAndTargetedSupport", "Staging");
-
-                entity.Property(e => e.DataCollectionName).HasMaxLength(100);
-
-                entity.Property(e => e.RunDateTime).HasColumnType("datetime");
-
-                entity.Property(e => e.SchoolComprehensiveAndTargetedSupport)
-                    .HasColumnName("School_ComprehensiveAndTargetedSupport")
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.SchoolComprehensiveSupport)
-                    .HasColumnName("School_ComprehensiveSupport")
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.SchoolIdentifierState)
-                    .IsRequired()
-                    .HasColumnName("School_Identifier_State")
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.SchoolTargetedSupport)
-                    .HasColumnName("School_TargetedSupport")
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.SchoolYear)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-            });
-
             modelBuilder.Entity<OrganizationSchoolIndicatorStatus>(entity =>
             {
                 entity.ToTable("OrganizationSchoolIndicatorStatus", "Staging");
@@ -1360,7 +1324,7 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.StatedDefinedIndicatorStatus)
+                entity.Property(e => e.StateDefinedIndicatorStatus)
                     .HasMaxLength(100)
                     .IsUnicode(false);
             });

@@ -7,6 +7,7 @@ namespace generate.core.Models.Staging
     {
         public int Id { get; set; }
         public string OrganizationIdentifier { get; set; }
+        public string OrganizationType { get; set; }
         public string GradeOffered { get; set; }
         public DateTime? RecordStartDateTime { get; set; }
         public DateTime? RecordEndDateTime { get; set; }

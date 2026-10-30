@@ -1,4 +1,4 @@
-CREATE PROCEDURE [App].[FS194_TestCase]	
+ALTER PROCEDURE [App].[FS194_TestCase]	
 	@SchoolYear SMALLINT
 AS
 BEGIN

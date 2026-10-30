@@ -1,5 +1,6 @@
 ﻿using generate.core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace generate.web.Controllers.Api.App
 {
@@ -7,6 +8,7 @@ namespace generate.web.Controllers.Api.App
     [Route("api/app/about")]
     [ResponseCache(Duration = 0)]
     [ApiController]
+    [Authorize]
     public class AboutController : Controller
     {
 

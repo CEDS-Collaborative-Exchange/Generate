@@ -85,7 +85,7 @@ BEGIN
 		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
 		OR sop.OrganizationIdentifier IS NULL
 
-	SELECT 
+	SELECT
 		ske.LeaIdentifierSeaAccountability
 		, ISNULL(sppse.IDEAIndicator, 0) AS IDEAIndicator
 		, sd.EducationalServicesAfterRemoval
@@ -98,12 +98,19 @@ BEGIN
 		AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN ISNULL(ske.EnrollmentEntryDate, @SYStart) and ISNULL (ske.EnrollmentExitDate, @SYEnd)
+	-- Mirrors #tempIdeaStatus in Staging.Staging-to-FactK12StudentDisciplines, which is built
+	-- from ProgramParticipationSpecialEducation WHERE IDEAIndicator = 1 before being joined -
+	-- i.e. WDIS requires an actual matching active-IDEA record; anything else (including a
+	-- student with only an IDEAIndicator=0 row on file) falls through to WODIS. Joining
+	-- unfiltered here let an overlapping IDEAIndicator=0 row fan out a single discipline
+	-- record into both the WDIS and WODIS buckets.
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
 		ON sppse.StudentIdentifierState = ske.StudentIdentifierState
 		AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+		AND sppse.IDEAIndicator = 1
 		--Discipline Date within Program Participation range
-		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)
 			BETWEEN ISNULL(sppse.ProgramParticipationStartDate, @SYStart) AND ISNULL(sppse.ProgramParticipationExitDate, @SYEnd)
 	LEFT JOIN Staging.IdeaDisabilityType sidt
         ON ske.StudentIdentifierState = sidt.StudentIdentifierState
@@ -122,7 +129,7 @@ BEGIN
 					'KG_1', '01_1', '02_1', '03_1', '04_1', '05_1', '06_1', '07_1', '08_1', '09_1', '10_1', '11_1', '12_1')
 				)
 			)
-		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)
 			BETWEEN @SYStart AND @SYEnd
 
 --temp fix to address bad test records
@@ -131,6 +138,14 @@ BEGIN
 	GROUP BY ske.LeaIdentifierSeaAccountability
 		, ISNULL(sppse.IDEAIndicator, 0)
 		, sd.EducationalServicesAfterRemoval
+
+	-- Mirrors the real report's "Remove Missing Counts" step in RDS.Get_CountSQL for 144-*-CSA:
+	-- when any non-MISSING EducationalServicesAfterRemoval data exists, the MISSING rows are
+	-- dropped from the report entirely rather than shown as their own bucket.
+	IF EXISTS (SELECT 1 FROM #C144Staging WHERE EducationalServicesAfterRemoval IS NOT NULL)
+		DELETE FROM #C144Staging WHERE EducationalServicesAfterRemoval IS NULL
+	ELSE
+		DELETE FROM #C144Staging WHERE EducationalServicesAfterRemoval IS NOT NULL
 
 
 	/**********************************************************************

@@ -2,6 +2,7 @@ import { Component, Input, AfterViewInit, OnInit, OnChanges, SimpleChange, ViewC
 import { Router } from '@angular/router';
 
 import { GenerateReportService } from '../../services/app/generateReport.service';
+import { UserService } from '../../services/app/user.service';
 import { GenerateReport } from '../../models/app/generateReport';
 import { GenerateReportDto } from '../../models/app/generateReportDto';
 import { GenerateReportDataDto } from '../../models/app/generateReportDataDto';
@@ -71,7 +72,8 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
         private _router: Router,
         private _generateReportService: GenerateReportService,
         private _ngZone: NgZone,
-        private appConfig: AppConfig
+        private appConfig: AppConfig,
+        private _userService: UserService
     ) {
 
         this.appConfig.getConfig().subscribe((res: IAppConfig) => {
@@ -362,7 +364,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
         let sheetName = this.reportParameters.reportCode.toUpperCase();
         let reportCategorySetCode = this.reportParameters.reportCategorySetCode !== undefined ? this.reportParameters.reportCategorySetCode : '';
         let fileName = this.reportParameters.reportCode.toUpperCase() + ' - ' + this.reportParameters.reportYear + ' - ' + this.reportParameters.reportLevel.toUpperCase() + ' - ' + reportCategorySetCode + '.xlsx';
-        this.pivotComponent.exportToExcel(fileName);
+        this.pivotComponent.exportToExcel(fileName, this.reportParameters.reportCode);
         return;
     }
 
@@ -502,6 +504,11 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
 
         xhr.open('GET', url, true);
         xhr.responseType = 'blob';
+
+        const token: string = this._userService.getToken();
+        if (token) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        }
 
         xhr.onreadystatechange = function () {
 

@@ -268,10 +268,10 @@ namespace generate.web.Security
         {
 
             if (group == _reviewerGroup)
-                return "REVIEWER";
+                return AppRoles.Reviewer;
 
             if (group == _adminGroup)
-                return "ADMINISTRATOR";
+                return AppRoles.Administrator;
 
             else throw new Exception("Undefined LDAP Group");
         }

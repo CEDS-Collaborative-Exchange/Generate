@@ -1587,6 +1587,18 @@ namespace generate.infrastructure.Contexts
                 entity
                    .Property(x => x.AssessmentProgressLevelEdFactsCode)
                    .HasMaxLength(50);
+
+                entity
+                    .Property(x => x.FormerEnglishLearnerYearStatusCode)
+                    .HasMaxLength(50);
+
+                entity
+                   .Property(x => x.FormerEnglishLearnerYearStatusDescription)
+                   .HasMaxLength(100);
+
+                entity
+                   .Property(x => x.FormerEnglishLearnerYearStatusEdFactsCode)
+                   .HasMaxLength(50);
             });
 
             //DimK12StaffCategory
@@ -1716,10 +1728,6 @@ namespace generate.infrastructure.Contexts
                 entity
                    .Property(x => x.DimComprehensiveAndTargetedSupportId)
                    .IsRequired();
-
-                entity.Property(x => x.ComprehensiveAndTargetedSupportCode).HasMaxLength(50);
-                entity.Property(x => x.ComprehensiveAndTargetedSupportDescription).HasMaxLength(200);
-                entity.Property(x => x.ComprehensiveAndTargetedSupportEdFactsCode).HasMaxLength(50);
 
                 entity.Property(x => x.ComprehensiveSupportCode).HasMaxLength(50);
                 entity.Property(x => x.ComprehensiveSupportDescription).HasMaxLength(200);
@@ -4324,9 +4332,6 @@ namespace generate.infrastructure.Contexts
 
                 entity
                    .HasIndex(p => new { p.ReportCode, p.ReportYear, p.ReportLevel, p.CategorySetCode });
-
-                entity
-               .Property(x => x.ComprehensiveAndTargetedSupportCode);
 
                 entity
                .Property(x => x.ComprehensiveSupportCode);

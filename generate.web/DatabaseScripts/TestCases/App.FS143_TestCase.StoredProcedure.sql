@@ -197,13 +197,13 @@ BEGIN
 			WHEN spr.RaceMap = 'BlackorAfricanAmerican'					THEN 'BL7'
 			WHEN spr.RaceMap = 'NativeHawaiianorOtherPacificIslander'	THEN 'PI7'
 			WHEN spr.RaceMap = 'White'									THEN 'WH7'
-			WHEN spr.RaceMap = 'TwoorMoreRaces'							THEN 'MU7'
+			WHEN spr.RaceMap = 'DemographicRaceTwoOrMoreRaces'			THEN 'MU7'
 			WHEN spr.RaceMap = 'AmericanIndianorAlaskaNative_1'			THEN 'AM7'
 			WHEN spr.RaceMap = 'Asian_1'								THEN 'AS7'
 			WHEN spr.RaceMap = 'BlackorAfricanAmerican_1'				THEN 'BL7'
 			WHEN spr.RaceMap = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
 			WHEN spr.RaceMap = 'White_1'								THEN 'WH7'
-			WHEN spr.RaceMap = 'TwoorMoreRaces_1'						THEN 'MU7'
+			WHEN spr.RaceMap = 'DemographicRaceTwoOrMoreRaces_1'		THEN 'MU7'
 		END AS RaceEdFactsCode
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 

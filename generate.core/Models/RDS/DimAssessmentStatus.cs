@@ -17,6 +17,10 @@ namespace generate.core.Models.RDS
         public string AssessmentProgressLevelDescription { get; set; }
         public string AssessmentProgressLevelEdFactsCode { get; set; }
 
+        public string FormerEnglishLearnerYearStatusCode { get; set; }
+        public string FormerEnglishLearnerYearStatusDescription { get; set; }
+        public string FormerEnglishLearnerYearStatusEdFactsCode { get; set; }
+
         public List<FactK12StudentCount> FactStudentCounts { get; set; }
         public List<FactK12StudentAssessment> FactStudentAssessments { get; set; }
 

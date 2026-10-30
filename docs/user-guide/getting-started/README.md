@@ -1,14 +1,14 @@
 ---
-icon: display
 description: >-
   The Center for the Integration of IDEA Data (CIID) developed the Generate
   application to improve data quality and simplify EDFacts reporting for state
   education agencies (SEAs).
+icon: display
 ---
 
 # Getting Started
 
-<figure><img src="../../.gitbook/assets/image (50).png" alt=""><figcaption><p>Screenshot of the Home page. All resources and pages within Generate can be accessed from the Home page.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (50).png" alt="Screenshot of the Home page. All resources and pages within Generate can be accessed from the Home page."><figcaption><p>Screenshot of the Home page. All resources and pages within Generate can be accessed from the Home page.</p></figcaption></figure>
 
 The Center for the Integration of IDEA Data (CIID) developed the Generate application to improve data quality and simplify E&#x44;_&#x46;acts_ reporting for state education agencies (SEAs). Generate standardizes data, improves data use and reporting, and supports administrative and policy work to improve educational outcomes for all students and their families. The functionality for each of the reporting capabilities described in this guide is consistent across the various reporting options. Generate has the capability to produce reports for all E&#x44;_&#x46;acts_ files. It also includes a Data Population Summary report that provides a high-level summary of data within Generate, SPP/APR reports that provide the data needed to calculate selected indicators, and a Reports Library that includes student level data summary reports for exiting, graduation, participation in federal programs, proficiency rates, and educational environment.
 
@@ -61,4 +61,3 @@ This User Guide contains information for E&#x44;_&#x46;acts_ coordinators, other
 The following sections will walk through how to request Generate, create roles, log in and navigate Generate.
 
 <table data-view="cards"><thead><tr><th></th><th></th><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><mark style="color:green;"><strong>Requesting Generate</strong></mark></td><td>Learn more about how to request Generate</td><td></td><td><a href="requesting-generate.md">requesting-generate.md</a></td></tr><tr><td><mark style="color:green;"><strong>User Roles and Logging In</strong></mark></td><td>Learn about the User Roles and Logging In</td><td></td><td><a href="user-roles-and-logging-in.md">user-roles-and-logging-in.md</a></td></tr><tr><td><mark style="color:green;"><strong>Navigating Generate</strong></mark></td><td>Learn how to navigate the Home page, and the Resources available to support users</td><td></td><td><a href="navigating-generate.md">navigating-generate.md</a></td></tr></tbody></table>
-

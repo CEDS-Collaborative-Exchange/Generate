@@ -133,7 +133,6 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> RefNSLPStatusDistribution { get; set; }
         List<DataDistribution<string>> RefSchoolDangerousStatusDistribution { get; set; }
         List<DataDistribution<string>> RefProgressAchievingEnglishLanguageProficiencyIndicatorStatusDistribution { get; set; }
-        List<DataDistribution<string>> RefComprehensiveAndTargetedSupportDistribution { get; set; }
         List<DataDistribution<string>> RefComprehensiveSupportDistribution { get; set; }
         List<DataDistribution<string>> RefTargetedSupportDistribution { get; set; }
         List<DataDistribution<bool>> ConsolidatedMepFundsStatusDistribution { get; set; }
@@ -243,6 +242,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> AssessmentAccommodationCategoryDistribution { get; set; }
         List<DataDistribution<string>> AccessibilityFeatureTypeDistribution { get; set; }
         List<DataDistribution<string>> AccessibilityFeatureApplicationTypeDistribution { get; set; }
+        List<DataDistribution<string>> EdFactsFormerEnglishLearnerYearStatusDistribution { get; set; }
 
         List<DataDistribution<bool>> SpecialEdProgramParticipantNowDistribution { get; set; }
         List<DataDistribution<bool>> CteProgramParticipantNowDistribution { get; set; }
