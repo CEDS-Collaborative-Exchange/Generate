@@ -14,21 +14,26 @@
 -- same (CategoryCode, SourceEdFactsCode). No matching row => the source code passes through unchanged
 -- (so codes that already equal their permitted value need no entry).
 
-CREATE TABLE [App].[EdFactsCategoryCodeMap](
-	[EdFactsCategoryCodeMapId] [int] IDENTITY(1,1) NOT NULL,
-	[ReportCode] [varchar](10) NULL,                    -- NULL = applies to every report that uses this category
-	[CategoryCode] [varchar](50) NOT NULL,
-	[SourceEdFactsCode] [varchar](50) NOT NULL,         -- the value the fact/staging view surfaces
-	[TargetCategoryOptionCode] [varchar](50) NOT NULL,  -- the report's permitted CategoryOptionCode
- CONSTRAINT [PK_EdFactsCategoryCodeMap] PRIMARY KEY CLUSTERED
-(
-	[EdFactsCategoryCodeMapId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+-- Guarded so the script can be re-run (for example when a version update is reapplied).
+IF OBJECT_ID('App.EdFactsCategoryCodeMap', 'U') IS NULL
+BEGIN
+	CREATE TABLE [App].[EdFactsCategoryCodeMap](
+		[EdFactsCategoryCodeMapId] [int] IDENTITY(1,1) NOT NULL,
+		[ReportCode] [varchar](10) NULL,                    -- NULL = applies to every report that uses this category
+		[CategoryCode] [varchar](50) NOT NULL,
+		[SourceEdFactsCode] [varchar](50) NOT NULL,         -- the value the fact/staging view surfaces
+		[TargetCategoryOptionCode] [varchar](50) NOT NULL,  -- the report's permitted CategoryOptionCode
+	 CONSTRAINT [PK_EdFactsCategoryCodeMap] PRIMARY KEY CLUSTERED
+	(
+		[EdFactsCategoryCodeMapId] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+END
 GO
 
 -- Lookup index for the translation function (report-or-all, by category + source code).
-CREATE NONCLUSTERED INDEX [IX_EdFactsCategoryCodeMap_Lookup]
-	ON [App].[EdFactsCategoryCodeMap] ([CategoryCode], [SourceEdFactsCode], [ReportCode])
-	INCLUDE ([TargetCategoryOptionCode])
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('App.EdFactsCategoryCodeMap') AND name = 'IX_EdFactsCategoryCodeMap_Lookup')
+	CREATE NONCLUSTERED INDEX [IX_EdFactsCategoryCodeMap_Lookup]
+		ON [App].[EdFactsCategoryCodeMap] ([CategoryCode], [SourceEdFactsCode], [ReportCode])
+		INCLUDE ([TargetCategoryOptionCode])
 GO
