@@ -6,18 +6,21 @@
         <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
     </div>
 
-    <div *ngIf="!isAuthenticating && !userService.isLoggedIn() && !isDrawerOpen">
-        <div *ngIf="isOAuth" class="generate-app-shared-login__button-container" [ngClass]="{'drawer-open': isDrawerOpen}">
+    <div *ngIf="!isAuthenticating && !userService.isLoggedIn() && !isDrawerOpen" [ngClass]="{'generate-app-shared-login--combined': isOAuth && allowPasswordLogin}">
+        <div *ngIf="isOAuth" class="generate-app-shared-login__button-container generate-app-shared-login__azure" [ngClass]="{'drawer-open': isDrawerOpen}">
+            <!-- When the username/password form is also shown, these buttons get their own ids and come after it in tab order -->
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
-                    (click)="loginAzure()" autofocus id="loginButton-lg" tabindex="1">
-                Log in
+                    (click)="loginAzure()" [attr.autofocus]="allowPasswordLogin ? null : ''"
+                    [id]="allowPasswordLogin ? 'loginAzureButton-lg' : 'loginButton-lg'" [tabindex]="allowPasswordLogin ? 4 : 1">
+                {{ allowPasswordLogin ? 'Log in with Microsoft' : 'Log in' }}
             </button>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
-                    (click)="loginAzure()" autofocus id="loginButton-sm" tabindex="1">
-                <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
+                    (click)="loginAzure()" [attr.autofocus]="allowPasswordLogin ? null : ''"
+                    [id]="allowPasswordLogin ? 'loginAzureButton-sm' : 'loginButton-sm'" [tabindex]="allowPasswordLogin ? 4 : 1">
+                <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">{{ allowPasswordLogin ? 'Log in with Microsoft' : 'Log in' }}</span>
             </button>
         </div>
-        <form *ngIf="!isOAuth" (submit)="login($event, username.value, userpassword.value)">
+        <form *ngIf="!isOAuth || allowPasswordLogin" (submit)="login($event, username.value, userpassword.value)">
 
             <div>
                 <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">

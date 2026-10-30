@@ -7,7 +7,7 @@ using generate.core.Models.RDS;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class DimStateDefinedStatusHelper
+    public static class DimStateDefinedStatusHelper
     {
         public static List<DimStateDefinedStatus> GetData()
         {

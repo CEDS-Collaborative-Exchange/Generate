@@ -115,7 +115,6 @@ BEGIN
 			FederalProgramCode,
 			ISNULL(FederalFundAllocated, 0) as FederalFundAllocated,
 			ComprehensiveSupportCode,
-			ComprehensiveAndTargetedSupportCode,
 			ComprehensiveSupportImprovementCode,
 			TargetedSupportImprovementCode,
 			TargetedSupportCode,
@@ -256,7 +255,6 @@ BEGIN
 			FederalProgramCode,
 			ISNULL(FederalFundAllocated, 0) as FederalFundAllocated,
 			ComprehensiveSupportCode,
-			ComprehensiveAndTargetedSupportCode,
 			ComprehensiveSupportImprovementCode,
 			TargetedSupportImprovementCode,
 			TargetedSupportCode,
@@ -517,18 +515,6 @@ BEGIN
 			FederalProgramCode,
 			ISNULL(FederalFundAllocated, 0) as FederalFundAllocated,
 			ComprehensiveSupportCode,
-			CASE 
-				WHEN (ComprehensiveSupportImprovementCode = 'CSI' AND TargetedSupportImprovementCode = 'NOTTSI') THEN 'CSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSI' AND TargetedSupportImprovementCode = 'TSI') THEN 'CSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSI' AND TargetedSupportImprovementCode = 'TSIEXIT') THEN 'CSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSIEXIT' AND TargetedSupportImprovementCode = 'NOTTSI') THEN 'CSIEXIT'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSIEXIT' AND TargetedSupportImprovementCode = 'TSI') THEN 'TSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSIEXIT' AND TargetedSupportImprovementCode = 'TSIEXIT') THEN 'CSIEXIT'
-				WHEN (ComprehensiveSupportImprovementCode = 'NOTCSI' AND TargetedSupportImprovementCode = 'NOTTSI') THEN 'NOTCSITSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'NOTCSI' AND TargetedSupportImprovementCode = 'TSI') THEN 'TSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'NOTCSI' AND TargetedSupportImprovementCode = 'TSIEXIT') THEN 'TSIEXIT'
-			ELSE 'MISSING'
-			END	AS	ComprehensiveAndTargetedSupportCode,
 			ComprehensiveSupportImprovementCode,
 			TargetedSupportImprovementCode,
 			TargetedSupportCode,
@@ -648,7 +634,6 @@ BEGIN
 			FederalProgramCode,
 			ISNULL(FederalFundAllocated, 0) as FederalFundAllocated,
 			NULL AS ComprehensiveSupportCode,
-			NULL AS ComprehensiveAndTargetedSupportCode,
 			NULL AS ComprehensiveSupportImprovementCode,
 			NULL AS TargetedSupportImprovementCode,
 			NULL AS TargetedSupportCode,
@@ -776,18 +761,6 @@ BEGIN
 			FederalProgramCode,
 			ISNULL(FederalFundAllocated, 0) as FederalFundAllocated,
 			ComprehensiveSupportCode,
-			CASE 
-				WHEN (ComprehensiveSupportImprovementCode = 'CSI' AND TargetedSupportImprovementCode = 'NOTTSI') THEN 'CSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSI' AND TargetedSupportImprovementCode = 'TSI') THEN 'CSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSI' AND TargetedSupportImprovementCode = 'TSIEXIT') THEN 'CSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSIEXIT' AND TargetedSupportImprovementCode = 'NOTTSI') THEN 'CSIEXIT'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSIEXIT' AND TargetedSupportImprovementCode = 'TSI') THEN 'TSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'CSIEXIT' AND TargetedSupportImprovementCode = 'TSIEXIT') THEN 'CSIEXIT'
-				WHEN (ComprehensiveSupportImprovementCode = 'NOTCSI' AND TargetedSupportImprovementCode = 'NOTTSI') THEN 'NOTCSITSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'NOTCSI' AND TargetedSupportImprovementCode = 'TSI') THEN 'TSI'
-				WHEN (ComprehensiveSupportImprovementCode = 'NOTCSI' AND TargetedSupportImprovementCode = 'TSIEXIT') THEN 'TSIEXIT'
-			ELSE 'MISSING'
-			END	AS	ComprehensiveAndTargetedSupportCode,
 			ComprehensiveSupportImprovementCode,
 			TargetedSupportImprovementCode,
 			TargetedSupportCode,

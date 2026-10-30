@@ -7,7 +7,7 @@ using generate.core.Models.RDS;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class DimCteStatusHelper
+    public static class DimCteStatusHelper
     {
         public static List<DimCteStatus> GetData()
         {

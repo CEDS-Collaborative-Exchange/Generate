@@ -1285,7 +1285,6 @@ BEGIN
 						, [ReportLevel]
 						, [ReportYear]
 						, [FederalFundAllocated]
-						--, [ComprehensiveAndTargetedSupportCode]
 						, [ComprehensiveSupportImprovementCode]
 						, [TargetedSupportImprovementCode]
 						, [ComprehensiveSupportCode]
@@ -1304,7 +1303,6 @@ BEGIN
 						, @reportLevel
 						, @reportYear
 						, ISNULL(FederalProgramsFundingAllocation, 0) as FederalFundAllocated
-						--, statuses.ComprehensiveAndTargetedSupportCode
 						, statuses.ComprehensiveSupportAndImprovementStatusCode
 						, statuses.TargetedSupportAndImprovementStatusCode				
 						, '' -- JW 6/26/2023 Not sure      statuses.ComprehensiveSupportCode

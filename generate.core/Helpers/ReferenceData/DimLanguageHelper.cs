@@ -7,7 +7,7 @@ using generate.core.Models.RDS;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class DimLanguageHelper
+    public static class DimLanguageHelper
     {
         public static List<DimLanguage> GetData()
         {

@@ -1,6 +1,4 @@
-﻿
-
-CREATE VIEW [RDS].[vwStateAssessments]
+﻿CREATE VIEW [RDS].[vwStateAssessments]
   AS 
   
     SELECT 
@@ -27,14 +25,20 @@ CREATE VIEW [RDS].[vwStateAssessments]
       , f.MilitaryStatusId
 	  , f.PrimaryDisabilityTypeId
 	  , race.RaceId
+	  , dbaaf.AccessibilityFeatureId
       , f.FactK12StudentAssessmentId
       , f.AssessmentCount
 	  , ISNULL(proficiency.ProficiencyStatus, 'MISSING') as ProficiencyStatus
     FROM rds.FactK12StudentAssessments f
-	inner join rds.DimLeas lea on f.LeaId = lea.DimLeaID
-	inner join rds.DimK12Schools sch on f.K12SchoolId = sch.DimK12SchoolId
-	left join (select distinct FactK12StudentAssessmentId, RaceId from rds.BridgeK12StudentAssessmentRaces) race on f.FactK12StudentAssessmentId = race.FactK12StudentAssessmentId
-	left join (
+	INNER JOIN rds.DimLeas lea 
+		ON f.LeaId = lea.DimLeaID
+	INNER JOIN rds.DimK12Schools sch 
+		ON f.K12SchoolId = sch.DimK12SchoolId
+	LEFT JOIN (select distinct FactK12StudentAssessmentId, RaceId from rds.BridgeK12StudentAssessmentRaces) race 
+		ON f.FactK12StudentAssessmentId = race.FactK12StudentAssessmentId
+	LEFT JOIN (select distinct FactK12StudentAssessmentId, AccessibilityFeatureId from rds.BridgeK12StudentAssessmentAccessibilityFeatures) dbaaf 
+		ON f.FactK12StudentAssessmentId = dbaaf.FactK12StudentAssessmentId
+	LEFT JOIN (
 			select distinct  fact.K12StudentId,  fact.SchoolYearId, fact.AssessmentPerformanceLevelId,
 			case 
 				WHEN assmntPerfLevl.AssessmentPerformanceLevelIdentifier ='MISSING' THEN 'MISSING'

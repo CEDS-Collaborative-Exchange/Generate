@@ -6,10 +6,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using generate.core.Interfaces.Helpers;
 using generate.core.Interfaces.Repositories.App;
+using generate.core.Interfaces.Repositories.RDS;
 using generate.core.Interfaces.Services;
 using generate.infrastructure.Contexts;
 using generate.infrastructure.Helpers;
 using generate.infrastructure.Repositories.App;
+using generate.infrastructure.Repositories.RDS;
 using generate.infrastructure.Services;
 using generate.infrastructure.Utilities;
 using Microsoft.AspNetCore.Builder;
@@ -23,7 +25,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using RestSharp;
 using Serilog;
 
 namespace generate.update
@@ -60,14 +61,16 @@ namespace generate.update
 
             // Repositories
             services.AddScoped<IAppRepository, AppRepository>();
+            services.AddScoped<IRDSRepository, RDSRepository>();
 
-            // Services            
+            // Services
             services.AddScoped<IAppUpdateService, AppUpdateService>();
+            services.AddScoped<IFSMetadataUpdateService, MetadataUpdateService>();
 
             services.AddScoped<IHangfireHelper, HangfireHelper>();
             services.AddScoped<IFileSystem, FileSystem>();
-            services.AddScoped<RestClient, RestClient>();
             services.AddScoped<IZipFileHelper, ZipFileHelper>();
+            services.AddScoped<IAppDeploymentHelper, AzureAppDeploymentHelper>();
 
 
         }

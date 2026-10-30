@@ -108,7 +108,6 @@ namespace generate.core.Models.RDS
         public string FederalProgramCode { get; set; }
         public int? FederalFundAllocated { get; set; }
 
-        public string ComprehensiveAndTargetedSupportCode { get; set; }
         public string ComprehensiveSupportCode { get; set; }
         public string TargetedSupportCode { get; set; }
         public string AdditionalTargetedSupportandImprovementCode { get; set; }

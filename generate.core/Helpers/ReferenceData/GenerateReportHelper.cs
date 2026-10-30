@@ -7,7 +7,7 @@ using generate.core.Models.App;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class GenerateReportHelper
+    public static class GenerateReportHelper
     {
         public static List<GenerateReport> GetData()
         {

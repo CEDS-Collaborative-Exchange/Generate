@@ -7,7 +7,7 @@ using System.Text;
 
 namespace generate.testdata.TestCaseData
 {
-    public class FS150TestCaseData
+    public static class FS150TestCaseData
     {
         public static void AppendTestCaseData(StagingTestDataObject testData, Random rnd, ITestDataHelper testDataHelper, int schoolYear)
         {//Test data for FS150 test case#1

@@ -143,7 +143,6 @@ namespace generate.core.Models.IDS
             RefCommunityBasedType = new HashSet<RefCommunityBasedType>();
             RefCompetencySetCompletionCriteria = new HashSet<RefCompetencySetCompletionCriteria>();
 			RefComprehensiveSupport = new HashSet<RefComprehensiveSupport>();
-			RefComprehensiveAndTargetedSupport = new HashSet<RefComprehensiveAndTargetedSupport>();
             RefComprehensiveSupportImprovement = new HashSet<RefComprehensiveSupportImprovement>();
             RefContentStandardType = new HashSet<RefContentStandardType>();
             RefContinuationOfServices = new HashSet<RefContinuationOfServices>();
@@ -684,7 +683,6 @@ namespace generate.core.Models.IDS
         public virtual ICollection<RefCommunityBasedType> RefCommunityBasedType { get; set; }
         public virtual ICollection<RefCompetencySetCompletionCriteria> RefCompetencySetCompletionCriteria { get; set; }
 		public virtual ICollection<RefComprehensiveSupport> RefComprehensiveSupport { get; set; }
-		public virtual ICollection<RefComprehensiveAndTargetedSupport> RefComprehensiveAndTargetedSupport { get; set; }
         public virtual ICollection<RefComprehensiveSupportImprovement> RefComprehensiveSupportImprovement { get; set; }
         public virtual ICollection<RefContentStandardType> RefContentStandardType { get; set; }
         public virtual ICollection<RefContinuationOfServices> RefContinuationOfServices { get; set; }

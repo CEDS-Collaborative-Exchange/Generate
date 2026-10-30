@@ -620,23 +620,6 @@ BEGIN TRY
 			    )
 			    exec [RDS].[Migrate_DimTitleIStatuses_School] @SchoolDateQuery, @dataCollectionId
 
-			    -- migrate ComprehensiveAndTargetedSupport
-			    --DECLARE @ComprehensiveAndTargetedSupport AS table (
-				   -- DimCountDateId INT,
-				   -- DimK12SchoolId INT,
-				   -- ComprehensiveAndTargetedSupportCode VARCHAR(50),
-				   -- ComprehensiveSupportCode VARCHAR(50),
-				   -- TargetedSupportCode VARCHAR(50)
-			    --)
-			    --INSERT INTO @ComprehensiveAndTargetedSupport (
-				   -- DimCountDateId
-				   -- , DimK12SchoolId
-				   -- , ComprehensiveAndTargetedSupportCode
-				   -- , ComprehensiveSupportCode
-				   -- , TargetedSupportCode
-			    --)
-			    --exec [RDS].[Migrate_DimComprehensiveAndTargetedSupport_School] @SchoolDateQuery, @dataCollectionId
-
 			    Declare @SchImprovementFundQuery AS table (
 				    DimCountDateId INT,
 				    DimK12SchoolId INT,
@@ -821,7 +804,6 @@ BEGIN TRY
 
 				OrgCount INT,
 				--SchImprovementAllocations INT,
-				--ComprehensiveAndTargetedSupportCode VARCHAR(50),
 				--ComprehensiveSupportCode VARCHAR(50),
 				--TargetedSupportCode VARCHAR(50),
 				--SubgroupCode varchar(50),
@@ -850,7 +832,6 @@ BEGIN TRY
 				, McKinneyVentoSubgrantRecipient
 				, OrgCount 
 				--, SchImprovementAllocations
-				--, ComprehensiveAndTargetedSupportCode
 				--, ComprehensiveSupportCode
 				--, TargetedSupportCode
 				--, SubgroupCode
@@ -878,7 +859,6 @@ BEGIN TRY
 				, ISNULL(organizationStatus.McKinneyVentoSubgrantRecipient ,'MISSING')
 				, 1		
 				--, round(SchImprovementFund,0)
-				--, ISNULL(cts.ComprehensiveAndTargetedSupportCode ,'MISSING')
 				--, ISNULL(cts.ComprehensiveSupportCode ,'MISSING')
 				--, ISNULL(cts.TargetedSupportCode ,'MISSING')
 				--, ISNULL(tsit.SubgroupCode,'MISSING')
@@ -896,9 +876,6 @@ BEGIN TRY
 			LEFT JOIN @organizationStatusSchoolQuery organizationStatus 
 				ON s.DimSchoolId = organizationStatus.DimK12SchoolId 
 				AND s.DimSchoolYearId = organizationStatus.DimCountDateId
-			--LEFT JOIN @ComprehensiveAndTargetedSupport cts 
-			--	ON s.DimSchoolId = cts.DimK12SchoolId 
-			--	AND s.DimSchoolYearId = cts.DimCountDateId
 		 --   LEFT JOIN @ComprehensiveSupportIdentificationType csit
 			--    ON s.DimSchoolId = csit.DimK12SchoolId 
 			--    AND s.DimSchoolYearId = csit.DimSchoolYearId
@@ -924,7 +901,6 @@ BEGIN TRY
 				,[CharterSchoolSecondaryApproverAgencyId]
 				,[CharterSchoolUpdatedManagerOrganizationId]
 				--,[SCHOOLIMPROVEMENTFUNDS]
-				--,[ComprehensiveAndTargetedSupportId]
 				--,[FederalFundAllocated]
 				--,[DimSubgroupId]
 				--,[DimComprehensiveSupportReasonApplicabilityId]
@@ -946,7 +922,6 @@ BEGIN TRY
 				, ISNULL(@dimCharterSchoolSecondaryAuthorizerId, -1) AS 'DimCharterSchoolSecondaryApproverAgencyId'
 				, ISNULL(@dimCharterSchoolSecondaryManagerId, -1) AS 'DimCharterSchoolUpdatedManagerOrganizationId'
 				--, ISNULL(q.SchImprovementAllocations,0)
-				--, ISNULL(cts.DimComprehensiveAndTargetedSupportId,-1) AS 'DimComprehensiveAndTargetedSupportId'
 				--, ISNULL(q.SchImprovementAllocations,0)
 				--, ISNULL(sg.DimSubgroupId,-1) as 'DimSubgroupId'
 				--, ISNULL(csra.DimComprehensiveSupportReasonApplicabilityId,-1) as 'DimComprehensiveSupportReasonApplicabilityId'
@@ -972,10 +947,6 @@ BEGIN TRY
 				AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = q.GraduationRateCode
 				AND organizationStatus.REAPAlternativeFundingStatusCode = q.REAPAlternativeFundingStatusCode
 				AND organizationStatus.McKinneyVentoSubgrantRecipientCode = q.McKinneyVentoSubgrantRecipient
-			--LEFT JOIN rds.DimComprehensiveAndTargetedSupports cts 
-			--	ON cts.ComprehensiveAndTargetedSupportCode = q.ComprehensiveAndTargetedSupportCode
-			--	AND cts.ComprehensiveSupportCode = q.ComprehensiveSupportCode
-			--	AND cts.TargetedSupportCode = q.TargetedSupportCode
 			-- LEFT JOIN rds.DimSubgroups sg
 			--	ON q.SubgroupCode = sg.SubgroupCode
 			-- LEFT JOIN rds.DimComprehensiveSupportReasonApplicabilities csra
@@ -986,7 +957,6 @@ BEGIN TRY
 			DELETE FROM @schoolStatusQuery
 			DELETE FROM @title1StatusQuery
 			DELETE FROM @organizationStatusSchoolQuery
-			--DELETE FROM @ComprehensiveAndTargetedSupport
 			DROP table #queryOutput
 
 		FETCH NEXT FROM SCH_Cursor INTO @DimK12SchoolId, @schoolStateIdentifier			

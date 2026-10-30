@@ -49,7 +49,6 @@ CREATE TABLE Staging.Organization (
 	, School_SchoolDangerousStatus  VARCHAR(100)
 	, SchoolYear VARCHAR(100)
 	, TitleIPartASchoolDesignation VARCHAR(100)
-	, School_ComprehensiveAndTargetedSupport VARCHAR(100)
 	, School_ComprehensiveSupport VARCHAR(100)
 	, School_TargetedSupport  VARCHAR(100)
 	, ConsolidatedMepFundsStatus BIT

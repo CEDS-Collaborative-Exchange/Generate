@@ -1,4 +1,4 @@
-﻿using generate.core.Dtos.App;
+using generate.core.Dtos.App;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +21,21 @@ namespace generate.core.Interfaces.Services
         bool IsValidUpdatePackageDto(string updatePath, string packagePath, string packageFileName);
         bool IsValidPrerequisite(string UpdatePackageDtoJsonFile);
 
-        void ExecuteSiteUpdate(string sourcePath, string destinationPath);
+        /// <summary>
+        /// Deploys the given app's own part (appFolderName is "web" or "background") of any
+        /// pending update package(s) found under {sourcePath}\Updates. Uses Azure Blob Storage +
+        /// WEBSITE_RUN_FROM_PACKAGE when AppSettings:EnableAzureDeployment is true - in that mode
+        /// the app always deploys itself via its own App Service's Managed Identity, so it never
+        /// touches the other app's package or App Service resource/filesystem. Otherwise falls
+        /// back to the legacy in-place file-copy mechanism (backup/offline/copy/restore), which -
+        /// because it writes directly to disk rather than through each app's own deployment
+        /// identity - targets legacyDestinationPath (the *other* app's content root) instead of
+        /// sourcePath: a running process can never overwrite its own currently-loaded binaries,
+        /// so each app applies the legacy update to its counterpart's files, and vice versa.
+        /// </summary>
+        void ExecuteSiteUpdate(string sourcePath, string appFolderName, string legacyDestinationPath = null);
 
-        void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath);
+        void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath, string appFolderName);
 
         void BackupSite(string updatePath, string pathToBackup);
         void RestoreBackup(string updatePath, string targetPath);

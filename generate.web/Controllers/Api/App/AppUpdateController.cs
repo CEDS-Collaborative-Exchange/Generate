@@ -1,4 +1,4 @@
-﻿using generate.core.Interfaces.Repositories.App;
+using generate.core.Interfaces.Repositories.App;
 using generate.core.Models.App;
 using Microsoft.AspNetCore.Mvc;
 using generate.core.Interfaces.Services;
@@ -7,11 +7,14 @@ using generate.core.Config;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading;
 using RestSharp;
 using generate.core.Dtos.App;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using Azure.Core;
+using Azure.Identity;
 using generate.web.Security;
 
 namespace generate.web.Controllers.Api.App
@@ -24,6 +27,7 @@ namespace generate.web.Controllers.Api.App
         private readonly IHostEnvironment _hostingEnvironment;
         private readonly ILogger<AppUpdateController> _logger;
         private readonly IAppUpdateService _appUpdateService;
+        private readonly ManagedIdentityCredential _credential = new ManagedIdentityCredential();
 
         public AppUpdateController(
             ILogger<AppUpdateController> logger,
@@ -38,40 +42,57 @@ namespace generate.web.Controllers.Api.App
             _appSettings = appSettings;
         }
 
+        /// <summary>
+        /// A RestSharp client for generate.background's own protected update API, authenticated
+        /// with a token acquired via this app's managed identity, scoped to background's Azure
+        /// AD app registration.
+        /// </summary>
+        private RestClient GetBackgroundClient()
+        {
+            var backgroundUrl = _appSettings.Value.BackgroundUrl;
+            var options = new RestClientOptions(backgroundUrl + "/api/backgroundUpdate/");
+
+            // Managed Identity is only available when actually running in Azure, and
+            // BackgroundApiScope is only configured there - skip the token acquisition for the
+            // legacy/local path (EnableAzureDeployment = false) so this controller keeps working
+            // outside Azure instead of throwing on every call.
+            if (_appSettings.Value.EnableAzureDeployment)
+            {
+                var scope = _appSettings.Value.BackgroundApiScope;
+                var token = _credential.GetToken(new TokenRequestContext(new[] { scope }), CancellationToken.None).Token;
+                options.Authenticator = new RestSharp.Authenticators.JwtAuthenticator(token);
+            }
+
+            return new RestClient(options);
+        }
+
         [HttpGet("")]
         public ActionResult<IEnumerable<UpdatePackageDto>> DownloadedUpdates()
         {
             _logger.LogInformation("DownloadedUpdates - Initiated - " + _hostingEnvironment.ContentRootPath);
 
             // Get downloaded updates on web server
-
             List<UpdatePackageDto> updatesOnWebServer = _appUpdateService.GetDownloadedUpdates(_hostingEnvironment.ContentRootPath);
 
             // Get downloaded updates on background server
-            var backgroundUrl = _appSettings.Value.BackgroundUrl;
-            var client = new RestClient(backgroundUrl + "/api/backgroundUpdate/");
+            var client = GetBackgroundClient();
             var request = new RestRequest("", Method.Get);
 
-            _logger.LogInformation("DownloadedUpdates - Calling " + backgroundUrl + "/api/backgroundUpdate/");
-
+            _logger.LogInformation("DownloadedUpdates - Calling " + _appSettings.Value.BackgroundUrl + "/api/backgroundUpdate/");
             var response = client.Get(request);
-
             _logger.LogInformation("DownloadedUpdates - Response status code = " + response.StatusCode);
 
             if (response.IsSuccessful)
             {
                 var updatesOnBackgroundServer = JsonConvert.DeserializeObject<List<UpdatePackageDto>>(response.Content);
-                
                 if (updatesOnWebServer.Count == updatesOnBackgroundServer.Count)
                 {
                     _logger.LogInformation("DownloadedUpdates - Successful - " + updatesOnWebServer.Count + " available update(s)");
-
                     return updatesOnWebServer;
-                } 
+                }
                 else
                 {
                     _logger.LogError("DownloadedUpdates - Update count mismatch - Web = " + updatesOnWebServer.Count + " / Background = " + updatesOnBackgroundServer.Count);
-
                     return BadRequest();
                 }
             }
@@ -80,12 +101,9 @@ namespace generate.web.Controllers.Api.App
                 _logger.LogError("DownloadedUpdates - Background API call failed");
                 _logger.LogError("DownloadedUpdates - Response ErrorMessage = " + response.ErrorMessage);
                 _logger.LogError("DownloadedUpdates - Response Content = " + response.Content);
-
                 return BadRequest();
             }
-
         }
-
 
         [HttpGet("pending")]
         public ActionResult<IEnumerable<UpdatePackageDto>> PendingUpdates()
@@ -96,11 +114,9 @@ namespace generate.web.Controllers.Api.App
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
-
         }
-
 
         [HttpGet("status")]
         public ActionResult<UpdateStatusDto> UpdateStatus()
@@ -111,11 +127,9 @@ namespace generate.web.Controllers.Api.App
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
-
         }
-
 
         [HttpPost("download")]
         public IActionResult DownloadUpdates()
@@ -124,20 +138,13 @@ namespace generate.web.Controllers.Api.App
             _appUpdateService.DownloadUpdates(_hostingEnvironment.ContentRootPath);
 
             // Download web updates to background server
-            var backgroundUrl = _appSettings.Value.BackgroundUrl;
-            var client = new RestClient(backgroundUrl + "/api/backgroundUpdate/");
+            var client = GetBackgroundClient();
             var request = new RestRequest("download", Method.Post);
             var response = client.Post(request);
 
-            if (response.IsSuccessful)
-            {
-                return Ok();
-            } else
-            {
-                return BadRequest();
-            }
+            if (response.IsSuccessful) return Ok();
+            else return BadRequest();
         }
-
 
         [HttpPost("clear")]
         public IActionResult ClearUpdates()
@@ -146,66 +153,47 @@ namespace generate.web.Controllers.Api.App
             _appUpdateService.ClearUpdates(_hostingEnvironment.ContentRootPath);
 
             // Delete web updates from background server
-            var backgroundUrl = _appSettings.Value.BackgroundUrl;
-            var client = new RestClient(backgroundUrl + "/api/backgroundUpdate/");
+            var client = GetBackgroundClient();
             var request = new RestRequest("clear", Method.Post);
             var response = client.Post(request);
 
-            if (response.IsSuccessful)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            if (response.IsSuccessful) return Ok();
+            else return BadRequest();
         }
 
         [HttpPut("execute")]
         public IActionResult ExecuteUpdate()
         {
-            // Apply update on background server using web server
-
             try
             {
-                var backgroundAppPath = _hostingEnvironment.ContentRootPath;
-
+                // Azure path: deploys this app's own ("web") part to itself via Azure Blob
+                // Storage + ARM, using its own Managed Identity - never touches
+                // generate.background's package or App Service resource directly.
+                // Legacy path: a running process can never overwrite its own currently-loaded
+                // binaries, so the in-place file copy targets generate.background's content root
+                // instead (ignored entirely by the Azure path).
+                var backgroundAppPath = _appSettings.Value.BackgroundAppPath;
                 if (_hostingEnvironment.IsDevelopment())
                 {
-                    backgroundAppPath = backgroundAppPath.Replace("generate.web", "generate.background");
-                    backgroundAppPath += @"\bin\Debug\netcoreapp2.2";
-                }
-                else
-                {
-                    backgroundAppPath = _appSettings.Value.BackgroundAppPath;
+                    // Use this app's own build output folder (e.g. bin\Debug\net10.0) for the background app
+                    var buildOutputPath = System.IO.Path.GetRelativePath(_hostingEnvironment.ContentRootPath, AppContext.BaseDirectory);
+                    backgroundAppPath = System.IO.Path.Combine(_hostingEnvironment.ContentRootPath.Replace("generate.web", "generate.background"), buildOutputPath).TrimEnd('\\');
                 }
 
-                _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, backgroundAppPath);
+                _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, "web", backgroundAppPath);
 
-                // Apply update on web server using background server
-                var backgroundUrl = _appSettings.Value.BackgroundUrl;
-                var client = new RestClient(backgroundUrl + "/api/backgroundUpdate/");
+                // Ask background to apply its own ("background") part to itself the same way
+                var client = GetBackgroundClient();
                 var request = new RestRequest("execute", Method.Put);
                 var response = client.Put(request);
 
-                if (response.IsSuccessful)
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest();
-                }
-
-
+                if (response.IsSuccessful) return Ok();
+                else return BadRequest();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
-
-
         }
-
     }
 }

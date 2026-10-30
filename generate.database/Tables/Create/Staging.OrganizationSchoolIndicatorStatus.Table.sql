@@ -6,7 +6,7 @@ CREATE TABLE Staging.OrganizationSchoolIndicatorStatus (
 	[IndicatorStatus] [varchar](100) NULL,
 	[IndicatorStatusSubgroupType] [varchar](100) NULL,
 	[IndicatorStatusSubgroup] [varchar](100) NULL,
-	[StatedDefinedIndicatorStatus] [varchar](100) NULL,
+	[StateDefinedIndicatorStatus] [varchar](100) NULL,
 	[RecordStartDateTime] [DATE] NULL,
     [RecordEndDateTime] [DATE] NULL
 );

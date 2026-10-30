@@ -54,7 +54,7 @@ namespace generate.overnighttest
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="services"></param>
-        private void ConfigureServices(IConfigurationRoot configuration, IServiceCollection services)
+        private static void ConfigureServices(IConfigurationRoot configuration, IServiceCollection services)
         {
             services.AddOptions();
             services.Configure<AppSettings>(configuration.GetSection("AppSettings"));

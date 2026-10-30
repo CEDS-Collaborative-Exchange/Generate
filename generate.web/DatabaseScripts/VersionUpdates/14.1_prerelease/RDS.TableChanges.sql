@@ -509,36 +509,36 @@ END;
 
 -- END;
 
-IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
-   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECONOMICDISADVANTAGESTATUS') IS NOT NULL
-   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECODISSTATUS') IS NULL
-BEGIN
-	EXEC sp_rename
-		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[ECONOMICDISADVANTAGESTATUS]',
-		N'ECODISSTATUS',
-		N'COLUMN';
-END;
+-- IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
+--    AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECONOMICDISADVANTAGESTATUS') IS NOT NULL
+--    AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECODISSTATUS') IS NULL
+-- BEGIN
+-- 	EXEC sp_rename
+-- 		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[ECONOMICDISADVANTAGESTATUS]',
+-- 		N'ECODISSTATUS',
+-- 		N'COLUMN';
+-- END;
 
-IF EXISTS (
-    SELECT 1
-	FROM sys.default_constraints dc
-	WHERE dc.name = N'DF_FactOrganizationCounts_HomelessChildrenandYouthReservation'
-      AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactOrganizationCounts]')
-)
-BEGIN
-	ALTER TABLE [RDS].[FactOrganizationCounts]
-	DROP CONSTRAINT [DF_FactOrganizationCounts_HomelessChildrenandYouthReservation];
-END;
+-- IF EXISTS (
+--     SELECT 1
+-- 	FROM sys.default_constraints dc
+-- 	WHERE dc.name = N'DF_FactOrganizationCounts_HomelessChildrenandYouthReservation'
+--       AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactOrganizationCounts]')
+-- )
+-- BEGIN
+-- 	ALTER TABLE [RDS].[FactOrganizationCounts]
+-- 	DROP CONSTRAINT [DF_FactOrganizationCounts_HomelessChildrenandYouthReservation];
+-- END;
 
-IF OBJECT_ID(N'[RDS].[FactOrganizationCounts]', N'U') IS NOT NULL
-BEGIN
-	IF COL_LENGTH(N'[RDS].[FactOrganizationCounts]', N'HomelessChildrenandYouthReservation') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[FactOrganizationCounts]
-		DROP COLUMN [HomelessChildrenandYouthReservation];
-	END;
+-- IF OBJECT_ID(N'[RDS].[FactOrganizationCounts]', N'U') IS NOT NULL
+-- BEGIN
+-- 	IF COL_LENGTH(N'[RDS].[FactOrganizationCounts]', N'HomelessChildrenandYouthReservation') IS NOT NULL
+-- 	BEGIN
+-- 		ALTER TABLE [RDS].[FactOrganizationCounts]
+-- 		DROP COLUMN [HomelessChildrenandYouthReservation];
+-- 	END;
 
-END;
+-- END;
 
 --Add default constraints to DimAssessmentRegistrations table
 IF OBJECT_ID(N'[RDS].[FactK12AcademicCalendarEvents]', N'U') IS NOT NULL
@@ -791,6 +791,16 @@ END;
 
 Update rds.DimRaces set RaceEdFactsCode = 'MU7' where RaceCode = 'DemographicRaceTwoOrMoreRaces'
 
+--Fix misspelled SubgroupCode (Purto -> Puerto) and the OutputCode that maps to it in RDS.vwDimSubgroups
+UPDATE RDS.DimSubgroups
+SET SubgroupCode = 'HispanicNotPuertoRican'
+WHERE SubgroupCode = 'HispanicNotPurtoRican'
+
+UPDATE Staging.SourceSystemReferenceData
+SET OutputCode = 'HispanicNotPuertoRican'
+WHERE TableName = 'RefSubgroup'
+	AND OutputCode = 'HispanicNotPurtoRican'
+
 --Add SchoolYear to the bridge tables
 IF COL_LENGTH(N'[RDS].[BridgeK12StudentAssessmentAccessibilityFeatures]', N'SchoolYearId') IS NULL
 BEGIN
@@ -803,3 +813,28 @@ BEGIN
 	ALTER TABLE RDS.BridgeK12StudentAssessmentRaces
 	ADD SchoolYearId INT DEFAULT -1 NOT NULL
 END;
+-- Correct misspelled STATEDDEFINEDSTATUSCODE column to STATEDEFINEDSTATUSCODE
+IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'STATEDDEFINEDSTATUSCODE') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'STATEDEFINEDSTATUSCODE') IS NULL
+BEGIN
+	EXEC sp_rename
+		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[STATEDDEFINEDSTATUSCODE]',
+		N'STATEDEFINEDSTATUSCODE',
+		N'COLUMN';
+END;
+
+--Remove the deprecated combined Comprehensive and Targeted Support element.
+--It has been replaced by Comprehensive Support and Improvement, Targeted Support and Improvement,
+--and Additional Targeted Support and Improvement.
+IF COL_LENGTH(N'[RDS].[ReportEDFactsOrganizationCounts]', N'ComprehensiveAndTargetedSupportCode') IS NOT NULL
+BEGIN
+	ALTER TABLE RDS.ReportEDFactsOrganizationCounts DROP COLUMN ComprehensiveAndTargetedSupportCode;
+END;
+
+--Our 14.0 backup doesn't have this column in the table but the standard 14.0 version does
+-- so I have to add the column (again) to ensure it exists in the table
+    IF COL_LENGTH('RDS.FactOrganizationCounts', 'HomelessChildrenandYouthReservation') IS NULL
+    BEGIN
+        ALTER TABLE RDS.FactOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
+    END

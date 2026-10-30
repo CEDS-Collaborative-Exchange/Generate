@@ -137,7 +137,6 @@ BEGIN
     VALUES
     ('13.3','14.0','K12Enrollment','K12Enrollment','RenameColumn','NumberOfSchoolDays','NumberOfDaysInAttendance',NULL,1),
     ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','Homelessness_StatusEndDate','Homelessness_StatusExitDate',NULL,1),
-    ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','HomelessNightimeResidence_BeginDate','HomelessNightimeResidence_StartDate',NULL,1),
     ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','HomelessNightTimeResidence_EndDate','HomelessNightTimeResidence_ExitDate',NULL,1),
     ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','EconomicDisadvantage_StatusEndDate','EconomicDisadvantage_StatusExitDate',NULL,1),
     ('13.3','14.0','PersonStatus','PersonStatus','RenameColumn','Migrant_StatusEndDate','Migrant_StatusExitDate',NULL,1),
@@ -210,14 +209,21 @@ BEGIN
     ('13.3','14.0','K12StaffAssignment','K12StaffAssignment','AddColumn',NULL,'ClassroomPositionTypeCode','NVARCHAR (50) NULL',0),
     ('13.3','14.0','K12StaffAssignment','K12StaffAssignment','AddColumn',NULL,'ClassroomPositionTypeDescription','NVARCHAR (200) NULL',0),
     ('13.3','14.0','K12StaffAssignment','K12StaffAssignment','AddColumn',NULL,'PrimaryAssignmentIndicatorCode','NVARCHAR (50) NULL',0),
-    ('13.3','14.0','K12Organization','K12Organization','AddColumn',NULL,'School_CharterSchoolStateAppropriationMethod','NVARCHAR(100) NULL',0),
+    -- CIID-9108: removed duplicate AddColumn for School_CharterSchoolStateAppropriationMethod - it was genuinely added in 13.3 (above) and already existed at the 13.3 baseline, so this 14.0 add was phantom.
     ('13.3','14.0','K12Organization','K12Organization','AddColumn',NULL,'SchoolIdentifierAct','NVARCHAR (50) NULL',0),
     ('13.3','14.0','K12Organization','K12Organization','AddColumn',NULL,'SchoolIdentifierSat','NVARCHAR (50) NULL',0),
     ('13.3','14.0','SourceSystemReferenceData','SourceSystemReferenceData','AddColumn',NULL,'GlobalId','NVARCHAR (20) NULL',0),
     ('13.3','14.0','SourceSystemReferenceData','SourceSystemReferenceData','AddColumn',NULL,'ElementName','NVARCHAR (150) NULL',0),
     ('13.3','14.0','K12SchoolComprehensiveSupportIdentificationType','K12SchoolComprehensiveSupportIdentificationType','AddColumn',NULL,'DataCollectionName','NVARCHAR (100) NULL',0),
     ('13.3','14.0','AssessmentResult','AssessmentResult','AddColumn',NULL,'AccessibilityFeatureType','VARCHAR(100) NULL',0),
-    ('13.3','14.0','AssessmentResult','AssessmentResult','AddColumn',NULL,'AccessibilityFeatureApplicationType','VARCHAR(100) NULL',0)
-
+    ('13.3','14.0','AssessmentResult','AssessmentResult','AddColumn',NULL,'AccessibilityFeatureApplicationType','VARCHAR(100) NULL',0),
+    ('13.3','14.0','Disability','Disability','RenameColumn','Disability_StatusEndDate','Disability_StatusExitDate',NULL,1),
+    -- RunDateTime genuine first-time adds (churn exception): recorded for ProgramParticipationNorD/TitleIII, missed for these three.
+    ('13.3','14.0','K12Enrollment','K12Enrollment','AddColumn',NULL,'RunDateTime','DATETIME NULL',0),
+    ('13.3','14.0','OrganizationFederalFunding','OrganizationFederalFunding','AddColumn',NULL,'RunDateTime','DATETIME NULL',0),
+    ('13.3','14.0','AssessmentResult','AssessmentResult','AddColumn',NULL,'RunDateTime','DATETIME NULL',0),
+    ('13.3','14.0','AssessmentResult','AssessmentResult','AddColumn',NULL,'EdFactsFormerEnglishLearnerYearStatus','VARCHAR(100) NULL',1),
+    ('13.3','14.0','OrganizationGradeOffered','OrganizationGradeOffered','AddColumn',NULL,'OrganizationType','NVARCHAR(10) NULL',0)
+   
 END
 

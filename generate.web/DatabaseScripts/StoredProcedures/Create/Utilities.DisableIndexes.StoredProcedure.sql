@@ -33,7 +33,6 @@ BEGIN
 	ALTER INDEX ALL ON Staging.OrganizationGradeOffered								  DISABLE;
 	ALTER INDEX ALL ON Staging.OrganizationPhone									  DISABLE;
 	ALTER INDEX ALL ON Staging.OrganizationProgramType								  DISABLE;
-	ALTER INDEX ALL ON Staging.OrganizationSchoolComprehensiveAndTargetedSupport	  DISABLE;
 	ALTER INDEX ALL ON Staging.OrganizationSchoolIndicatorStatus					  DISABLE;
 	ALTER INDEX ALL ON Staging.PersonRace											  DISABLE;
 	ALTER INDEX ALL ON Staging.PersonStatus											  DISABLE;

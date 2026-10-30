@@ -81,7 +81,6 @@ namespace generate.core.Models.RDS
         public string PROGRESSACHIEVINGENGLISHLANGUAGE { get; set; }
         public string STATEDEFINEDSTATUS { get; set; }
 
-        public string ComprehensiveAndTargetedSupportCode { get; set; }
         public string ComprehensiveSupportCode { get; set; }
         public string TargetedSupportCode { get; set; }
         public string AdditionalTargetedSupportandImprovementCode { get; set; }

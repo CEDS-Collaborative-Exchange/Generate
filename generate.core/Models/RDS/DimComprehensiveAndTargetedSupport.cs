@@ -8,11 +8,6 @@ namespace generate.core.Models.RDS
     {
 		public int DimComprehensiveAndTargetedSupportId { get; set; }
 
-        public int ComprehensiveAndTargetedSupportId { get; set; }
-        public string ComprehensiveAndTargetedSupportCode { get; set; }
-		public string ComprehensiveAndTargetedSupportDescription { get; set; }
-		public string ComprehensiveAndTargetedSupportEdFactsCode { get; set; }
-
         public int ComprehensiveSupportId { get; set; }
         public string ComprehensiveSupportCode { get; set; }
         public string ComprehensiveSupportDescription { get; set; }

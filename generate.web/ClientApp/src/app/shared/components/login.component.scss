@@ -18,6 +18,22 @@
     padding-top: 15px;
 }
 
+// Username/password form and Azure AD button shown together: keep them on one row,
+// with the password form first and the Azure button after it.
+.generate-app-shared-login--combined {
+    display: flex;
+    align-items: flex-start;
+
+    form {
+        order: 1;
+    }
+
+    .generate-app-shared-login__azure {
+        order: 2;
+        margin-left: 8px;
+    }
+}
+
 :host-context(app-app-drawer) .generate-app-shared-login__button-container {
   margin-left: 20px;
 }

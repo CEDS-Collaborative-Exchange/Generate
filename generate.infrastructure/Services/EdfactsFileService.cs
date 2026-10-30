@@ -198,7 +198,7 @@ namespace generate.infrastructure.Services
             }
         }
 
-        private string GetSubmissionFieldName(FileSubmissionColumnDto column, string factTableName, string reportCode, string reportLevel, string factFieldName)
+        private static string GetSubmissionFieldName(FileSubmissionColumnDto column, string factTableName, string reportCode, string reportLevel, string factFieldName)
         {
             if (column.ColumnName == "StateLEAIDNumber" || column.ColumnName == "StateSchoolIDNumber")
             {

@@ -7,7 +7,7 @@ using generate.core.Models.RDS;
 
 namespace generate.core.Helpers.ReferenceData
 {
-    public class DimRaceHelper
+    public static class DimRaceHelper
     {
         public static List<DimRace> GetData()
         {

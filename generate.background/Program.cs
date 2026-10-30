@@ -27,15 +27,16 @@ using generate.testdata.Helpers;
 using generate.testdata.Interfaces;
 using generate.testdata.Profiles;
 using generate.testdata;
-using RestSharp;
 using System.IO.Abstractions;
 using generate.infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using generate.background.Filters;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
-var builder = WebApplication.CreateBuilder();
+var builder = WebApplication.CreateBuilder(args);
 string environment_string = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + "_";
 
 builder.Configuration
@@ -57,9 +58,25 @@ builder.Logging.AddSerilog(new LoggerConfiguration()
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.Configure<DataSettings>(builder.Configuration.GetSection("Data"));
 
+bool enableAzureDeployment = builder.Configuration.GetValue<bool>("AppSettings:EnableAzureDeployment");
 
-builder.Services.AddMvc()
+var mvcBuilder = builder.Services.AddMvc()
         .AddMvcOptions(options => options.EnableEndpointRouting = false);
+
+if (enableAzureDeployment)
+{
+    // generate.web calls this app's own update API using a token acquired via managed identity,
+    // scoped to this Azure AD app registration - validated here the same way generate.web
+    // validates its own OAuth users. Only meaningful (and only configured) when actually
+    // deployed to Azure; AzureAd:ClientId is empty for local/legacy runs, so this whole stack
+    // stays off for them rather than crashing on every request.
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+    builder.Services.AddAuthorization();
+
+    mvcBuilder.AddMvcOptions(options => options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter(
+        new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build())));
+}
 
 builder.Services.AddHangfire(options =>
     options
@@ -115,8 +132,8 @@ builder.Services.AddScoped<IDataMigrationHistoryService, DataMigrationHistorySer
 
 builder.Services.AddScoped<IFileSystem, FileSystem>();
 builder.Services.AddScoped<IHangfireHelper, HangfireHelper>();
-builder.Services.AddScoped<RestClient, RestClient>();
 builder.Services.AddScoped<IZipFileHelper, ZipFileHelper>();
+builder.Services.AddScoped<IAppDeploymentHelper, AzureAppDeploymentHelper>();
 
 builder.Services
     .AddDbContext<AppDbContext>(options =>
@@ -142,6 +159,12 @@ else
 
 
 app.UseCors("CorsPolicy");
+
+if (enableAzureDeployment)
+{
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
 
 app.UseMvc();
 
