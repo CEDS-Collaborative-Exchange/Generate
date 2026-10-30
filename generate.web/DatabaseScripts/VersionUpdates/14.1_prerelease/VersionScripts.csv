@@ -27,6 +27,8 @@ StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.
 StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql, 0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql, 0
 StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.RebuildIndexes.StoredProcedure.sql,0
