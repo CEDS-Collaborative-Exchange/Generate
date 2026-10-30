@@ -513,15 +513,15 @@ END;
 
 -- END;
 
--- IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
---    AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECONOMICDISADVANTAGESTATUS') IS NOT NULL
---    AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECODISSTATUS') IS NULL
--- BEGIN
--- 	EXEC sp_rename
--- 		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[ECONOMICDISADVANTAGESTATUS]',
--- 		N'ECODISSTATUS',
--- 		N'COLUMN';
--- END;
+IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECONOMICDISADVANTAGESTATUS') IS NOT NULL
+   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECODISSTATUS') IS NULL
+BEGIN
+	EXEC sp_rename
+		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[ECONOMICDISADVANTAGESTATUS]',
+		N'ECODISSTATUS',
+		N'COLUMN';
+END;
 
 -- IF EXISTS (
 --     SELECT 1
