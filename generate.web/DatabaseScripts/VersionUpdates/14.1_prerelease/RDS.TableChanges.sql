@@ -513,36 +513,36 @@ END;
 
 -- END;
 
-IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
-   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECONOMICDISADVANTAGESTATUS') IS NOT NULL
-   AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECODISSTATUS') IS NULL
-BEGIN
-	EXEC sp_rename
-		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[ECONOMICDISADVANTAGESTATUS]',
-		N'ECODISSTATUS',
-		N'COLUMN';
-END;
+-- IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
+--    AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECONOMICDISADVANTAGESTATUS') IS NOT NULL
+--    AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECODISSTATUS') IS NULL
+-- BEGIN
+-- 	EXEC sp_rename
+-- 		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[ECONOMICDISADVANTAGESTATUS]',
+-- 		N'ECODISSTATUS',
+-- 		N'COLUMN';
+-- END;
 
-IF EXISTS (
-    SELECT 1
-	FROM sys.default_constraints dc
-	WHERE dc.name = N'DF_FactOrganizationCounts_HomelessChildrenandYouthReservation'
-      AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactOrganizationCounts]')
-)
-BEGIN
-	ALTER TABLE [RDS].[FactOrganizationCounts]
-	DROP CONSTRAINT [DF_FactOrganizationCounts_HomelessChildrenandYouthReservation];
-END;
+-- IF EXISTS (
+--     SELECT 1
+-- 	FROM sys.default_constraints dc
+-- 	WHERE dc.name = N'DF_FactOrganizationCounts_HomelessChildrenandYouthReservation'
+--       AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactOrganizationCounts]')
+-- )
+-- BEGIN
+-- 	ALTER TABLE [RDS].[FactOrganizationCounts]
+-- 	DROP CONSTRAINT [DF_FactOrganizationCounts_HomelessChildrenandYouthReservation];
+-- END;
 
-IF OBJECT_ID(N'[RDS].[FactOrganizationCounts]', N'U') IS NOT NULL
-BEGIN
-	IF COL_LENGTH(N'[RDS].[FactOrganizationCounts]', N'HomelessChildrenandYouthReservation') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[FactOrganizationCounts]
-		DROP COLUMN [HomelessChildrenandYouthReservation];
-	END;
+-- IF OBJECT_ID(N'[RDS].[FactOrganizationCounts]', N'U') IS NOT NULL
+-- BEGIN
+-- 	IF COL_LENGTH(N'[RDS].[FactOrganizationCounts]', N'HomelessChildrenandYouthReservation') IS NOT NULL
+-- 	BEGIN
+-- 		ALTER TABLE [RDS].[FactOrganizationCounts]
+-- 		DROP COLUMN [HomelessChildrenandYouthReservation];
+-- 	END;
 
-END;
+-- END;
 
 --Add default constraints to DimAssessmentRegistrations table
 IF OBJECT_ID(N'[RDS].[FactK12AcademicCalendarEvents]', N'U') IS NOT NULL
@@ -836,3 +836,10 @@ IF COL_LENGTH(N'[RDS].[ReportEDFactsOrganizationCounts]', N'ComprehensiveAndTarg
 BEGIN
 	ALTER TABLE RDS.ReportEDFactsOrganizationCounts DROP COLUMN ComprehensiveAndTargetedSupportCode;
 END;
+
+--Our 14.0 backup doesn't have this column in the table but the standard 14.0 version does
+-- so I have to add the column (again) to ensure it exists in the table
+    IF COL_LENGTH('RDS.FactOrganizationCounts', 'HomelessChildrenandYouthReservation') IS NULL
+    BEGIN
+        ALTER TABLE RDS.FactOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
+    END
