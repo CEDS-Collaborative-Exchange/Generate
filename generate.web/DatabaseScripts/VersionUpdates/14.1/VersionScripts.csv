@@ -119,5 +119,13 @@ VersionUpdates\14.1,RDS.DimIdeaStatuses-IDEAtoWDIS.sql,0
 VersionUpdates\14.1\Tables\Create,App.EdFactsCategoryCodeMap.Table.sql,0
 VersionUpdates\14.1\Functions\Drop,RDS.Get_TranslatedReportCategoryCode.UserDefinedFunction.sql,0
 VersionUpdates\14.1\Functions\Create,RDS.Get_TranslatedReportCategoryCode.UserDefinedFunction.sql,0
+VersionUpdates\14.1\Views\Drop,Debug.vwDiscipline_FactTable.View.sql,0
+VersionUpdates\14.1\Views\Drop,RDS.vwDiscipline_FactTable_006.View.sql,0
+VersionUpdates\14.1\Views\Drop,Staging.vwDiscipline_StagingTables_006.View.sql,0
+VersionUpdates\14.1\Views\Create,Debug.vwDiscipline_FactTable.View.sql,0
+VersionUpdates\14.1\Views\Create,RDS.vwDiscipline_FactTable_006.View.sql,0
+VersionUpdates\14.1\Views\Create,Staging.vwDiscipline_StagingTables_006.View.sql,0
+VersionUpdates\14.1\StoredProcedures\Drop,RDS.Create_Reports.StoredProcedure.sql,0
+VersionUpdates\14.1\StoredProcedures\Create,RDS.Create_Reports.StoredProcedure.sql,0
 VersionUpdates\14.1,App.Metadata-RollForward-2027.sql,0
 VersionUpdates\14.1,UpdateDbVersion.sql,0

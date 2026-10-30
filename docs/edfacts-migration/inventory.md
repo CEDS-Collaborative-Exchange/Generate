@@ -27,7 +27,7 @@ Sources scanned (all under `generate.web/DatabaseScripts`):
 |---|---|:--:|:--:|:--:|---|
 | 002 | ChildCount | Y | N | Y | Done |
 | 005 | Discipline | Y | N | Y | Done |
-| 006 | Discipline | Y | N | Y | Done |
+| 006 | Discipline | Y | Y | Y | Done — e2e GREEN on 2026 (16,969), see [FS006](FS006-IDEASuspensionsExpulsions.md) |
 | 007 | Discipline | Y | N | Y | Done |
 | 009 | Exiting | Y | N | Y | Done |
 | 029 | Directory | N | N | Y | Needs conversion |
@@ -100,13 +100,13 @@ Sources scanned (all under `generate.web/DatabaseScripts`):
 | Needs conversion | 9 |
 | **Total** | **65** |
 
-- **Wired to `Insert_CountsIntoReportTable`** (new populator): 8 — `218, 219, 220, 221, 222, 224, 225, 226`. None yet has a SQL test on disk, so all 8 fall under *Needs test*.
+- **Wired to `Insert_CountsIntoReportTable`** (new populator): 9 — `006, 218, 219, 220, 221, 222, 224, 225, 226`. FS006 is green via `Staging.RunEndToEndTest`; the other 8 have no bespoke test proc on disk, so they fall under *Needs test*.
 
 ## View coverage note
 
 `HasNewProcessViews = Y` does not distinguish staging-side vs fact-side coverage. From the view files on disk:
 
-- **Both staging + fact views** (fully scaffolded): `002, 005, 007, 009, 089, 119, 210, 218, 219, 220, 221, 222, 224, 225, 226`.
+- **Both staging + fact views** (fully scaffolded): `002, 005, 006, 007, 009, 089, 119, 210, 218, 219, 220, 221, 222, 224, 225, 226`.
 - **Staging view only** (Directory reports): `129, 223`.
 - **Fact view only**: all other `Y` rows. Their tests, where present, are bespoke `App.FS<code>_TestCase` procs rather than the generic `Staging.RunEndToEndTest` path (which requires a staging view).
 

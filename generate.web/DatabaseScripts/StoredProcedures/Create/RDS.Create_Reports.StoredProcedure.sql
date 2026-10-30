@@ -763,7 +763,12 @@ begin try
 				(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - 006')
 
-				exec [RDS].[Create_ReportData]	@reportCode = '006', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
+				exec [RDS].[Insert_CountsIntoReportTable]
+						@ReportCode  = '006',
+						@SubmissionYear = @SchoolYear,
+						@IdentifierToCount = 'K12StudentStudentIdentifierState',
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 	
 			if exists (select 'c' from app.GenerateReports where ReportCode = '007' and IsLocked = 1 and UseLegacyReportMigration = 1)

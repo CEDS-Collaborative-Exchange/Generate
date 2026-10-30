@@ -25,6 +25,7 @@ AS
 				
 			, Ages.AgeValue
 			, Races.RaceEdFactsCode
+			, Demo.SexEdFactsCode
 			, Grades.GradeLevelEdFactsCode
 			
 			--English Learner Status
