@@ -26,9 +26,9 @@ Sources scanned (all under `generate.web/DatabaseScripts`):
 | ReportCode | FactType | HasNewProcessViews | WiredInCreate_Reports | HasTestCase | Likely status |
 |---|---|:--:|:--:|:--:|---|
 | 002 | ChildCount | Y | N | Y | Done |
-| 005 | Discipline | Y | N | Y | Done |
+| 005 | Discipline | Y | N | Y | Done (fact view WDIS fix 2026-10-30; still legacy populator) |
 | 006 | Discipline | Y | Y | Y | Done — e2e GREEN on 2026 (16,969), see [FS006](FS006-IDEASuspensionsExpulsions.md) |
-| 007 | Discipline | Y | N | Y | Done |
+| 007 | Discipline | Y | N | Y | Done (fact view WDIS fix 2026-10-30; still legacy populator) |
 | 009 | Exiting | Y | N | Y | Done |
 | 029 | Directory | N | N | Y | Needs conversion |
 | 032 | Dropout | Y | N | Y | Done |

@@ -24,7 +24,7 @@ AS
 			, f.[IdeaInterimRemovalReasonEdFactsCode]
 			, f.[DisciplineCount]
 	FROM [debug].[vwDiscipline_FactTable] f
-	WHERE IdeaIndicatorEdFactsCode = 'IDEA'
+	WHERE IdeaIndicatorEdFactsCode = 'WDIS'
 			AND AgeValue >= 3
 			AND AgeValue <= 21
 			AND IdeaInterimRemovalEdFactsCode = ('REMDW')
