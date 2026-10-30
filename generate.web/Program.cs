@@ -263,11 +263,14 @@ app.UseAuthorization();
 app.UseStaticFiles();
 
 bool useAngularDevServer = builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("CI");
-if (!useAngularDevServer)
+
+// A local (non-publish) build leaves the Angular output in ClientApp/dist/browser. A published
+// site has no ClientApp folder - PublishRunWebpack copies that output into wwwroot, which
+// UseStaticFiles() above and the SPA default page already serve.
+var distPath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp", "dist", "browser");
+bool serveClientAppDist = !useAngularDevServer && Directory.Exists(distPath);
+if (serveClientAppDist)
 {
-    // No dev server outside Development - serve the pre-built Angular output's JS/CSS/assets
-    // directly, the same way wwwroot is served above.
-    var distPath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp", "dist", "browser");
     app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(distPath) });
 }
 
@@ -280,12 +283,11 @@ app.UseSpa(spa => {
         spa.Options.StartupTimeout = new TimeSpan(0, 6, 0);
         spa.UseAngularCliServer(npmScript: "start");
     }
-    else
+    else if (serveClientAppDist)
     {
         // SpaDefaultPageMiddleware only consults DefaultPageStaticFileOptions.FileProvider for
         // this fallback path; Options.SourcePath alone (used by the dev-server launchers) has no
-        // effect here.
-        var distPath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp", "dist", "browser");
+        // effect here. Without it, index.html comes from wwwroot.
         spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(distPath)
