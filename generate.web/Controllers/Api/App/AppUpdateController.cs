@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Azure.Core;
 using Azure.Identity;
 using generate.web.Security;
+using System.Net;
 
 namespace generate.web.Controllers.Api.App
 {
@@ -66,6 +67,37 @@ namespace generate.web.Controllers.Api.App
             return new RestClient(options);
         }
 
+        /// <summary>
+        /// Calls generate.background's update API. Uses Execute rather than RestSharp's
+        /// Get/Post/Put extensions, which throw on any non-success status - background answers
+        /// 503 while an update has it offline (app_offline.htm), and that must surface as a
+        /// handled error rather than an unhandled exception.
+        /// </summary>
+        private RestResponse CallBackground(string resource, Method method, string caller)
+        {
+            var client = GetBackgroundClient();
+            var response = client.Execute(new RestRequest(resource, method));
+
+            if (!response.IsSuccessful)
+            {
+                _logger.LogError(caller + " - Background API call failed - Status = " + response.StatusCode);
+                _logger.LogError(caller + " - Response ErrorMessage = " + response.ErrorMessage);
+                _logger.LogError(caller + " - Response Content = " + response.Content);
+            }
+
+            return response;
+        }
+
+        private BadRequestObjectResult BackgroundFailed(RestResponse response)
+        {
+            if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
+            {
+                return BadRequest("The background site is offline, most likely because an update is in progress. Try again in a few minutes.");
+            }
+
+            return BadRequest("The background site could not be reached (" + (response.ErrorMessage ?? response.StatusCode.ToString()) + ").");
+        }
+
         [HttpGet("")]
         public ActionResult<IEnumerable<UpdatePackageDto>> DownloadedUpdates()
         {
@@ -75,33 +107,22 @@ namespace generate.web.Controllers.Api.App
             List<UpdatePackageDto> updatesOnWebServer = _appUpdateService.GetDownloadedUpdates(_hostingEnvironment.ContentRootPath);
 
             // Get downloaded updates on background server
-            var client = GetBackgroundClient();
-            var request = new RestRequest("", Method.Get);
-
             _logger.LogInformation("DownloadedUpdates - Calling " + _appSettings.Value.BackgroundUrl + "/api/backgroundUpdate/");
-            var response = client.Get(request);
+            var response = CallBackground("", Method.Get, "DownloadedUpdates");
             _logger.LogInformation("DownloadedUpdates - Response status code = " + response.StatusCode);
 
-            if (response.IsSuccessful)
+            if (!response.IsSuccessful) return BackgroundFailed(response);
+
+            var updatesOnBackgroundServer = JsonConvert.DeserializeObject<List<UpdatePackageDto>>(response.Content);
+            if (updatesOnWebServer.Count == updatesOnBackgroundServer.Count)
             {
-                var updatesOnBackgroundServer = JsonConvert.DeserializeObject<List<UpdatePackageDto>>(response.Content);
-                if (updatesOnWebServer.Count == updatesOnBackgroundServer.Count)
-                {
-                    _logger.LogInformation("DownloadedUpdates - Successful - " + updatesOnWebServer.Count + " available update(s)");
-                    return updatesOnWebServer;
-                }
-                else
-                {
-                    _logger.LogError("DownloadedUpdates - Update count mismatch - Web = " + updatesOnWebServer.Count + " / Background = " + updatesOnBackgroundServer.Count);
-                    return BadRequest();
-                }
+                _logger.LogInformation("DownloadedUpdates - Successful - " + updatesOnWebServer.Count + " available update(s)");
+                return updatesOnWebServer;
             }
             else
             {
-                _logger.LogError("DownloadedUpdates - Background API call failed");
-                _logger.LogError("DownloadedUpdates - Response ErrorMessage = " + response.ErrorMessage);
-                _logger.LogError("DownloadedUpdates - Response Content = " + response.Content);
-                return BadRequest();
+                _logger.LogError("DownloadedUpdates - Update count mismatch - Web = " + updatesOnWebServer.Count + " / Background = " + updatesOnBackgroundServer.Count);
+                return BadRequest("Downloaded updates do not match - web has " + updatesOnWebServer.Count + ", background has " + updatesOnBackgroundServer.Count + ". Clear the updates and download them again.");
             }
         }
 
@@ -138,12 +159,10 @@ namespace generate.web.Controllers.Api.App
             _appUpdateService.DownloadUpdates(_hostingEnvironment.ContentRootPath);
 
             // Download web updates to background server
-            var client = GetBackgroundClient();
-            var request = new RestRequest("download", Method.Post);
-            var response = client.Post(request);
+            var response = CallBackground("download", Method.Post, "DownloadUpdates");
 
             if (response.IsSuccessful) return Ok();
-            else return BadRequest();
+            else return BackgroundFailed(response);
         }
 
         [HttpPost("clear")]
@@ -153,12 +172,10 @@ namespace generate.web.Controllers.Api.App
             _appUpdateService.ClearUpdates(_hostingEnvironment.ContentRootPath);
 
             // Delete web updates from background server
-            var client = GetBackgroundClient();
-            var request = new RestRequest("clear", Method.Post);
-            var response = client.Post(request);
+            var response = CallBackground("clear", Method.Post, "ClearUpdates");
 
             if (response.IsSuccessful) return Ok();
-            else return BadRequest();
+            else return BackgroundFailed(response);
         }
 
         [HttpPut("execute")]
@@ -183,12 +200,10 @@ namespace generate.web.Controllers.Api.App
                 _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, "web", backgroundAppPath);
 
                 // Ask background to apply its own ("background") part to itself the same way
-                var client = GetBackgroundClient();
-                var request = new RestRequest("execute", Method.Put);
-                var response = client.Put(request);
+                var response = CallBackground("execute", Method.Put, "ExecuteUpdate");
 
                 if (response.IsSuccessful) return Ok();
-                else return BadRequest();
+                else return BackgroundFailed(response);
             }
             catch (Exception ex)
             {
