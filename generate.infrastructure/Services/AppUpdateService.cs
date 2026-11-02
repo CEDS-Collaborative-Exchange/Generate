@@ -28,6 +28,12 @@ namespace generate.infrastructure.Services
         private readonly IZipFileHelper _zipFileHelper;
         private readonly IAppDeploymentHelper _appDeploymentHelper;
 
+        // Site-specific directories (relative to the site root) that a legacy file-copy update
+        // must never delete or overwrite: server config, open log files, downloaded packages and
+        // backups, and the Angular client's per-environment config (authType, redirectUri, ...).
+        private const string ClientConfigDirectory = @"wwwroot\assets\config";
+        private static readonly string[] PreservedDirectories = { "config", "logs", "updates", ClientConfigDirectory };
+
         public AppUpdateService(
             IFileSystem fileSystem,
             IAppRepository appRepository,
@@ -643,7 +649,7 @@ namespace generate.infrastructure.Services
                             else
                             {
                                 _logger.LogInformation("Update - Copying directory - " + updateDirectoryAndPath + " / " + destDirectory);
-                                FileUtilities.DirectoryCopy(_fileSystem, updateDirectoryAndPath, destDirectory, true);
+                                FileUtilities.DirectoryCopy(_fileSystem, updateDirectoryAndPath, destDirectory, true, _fileSystem.Path.Combine(updateSourcePath, ClientConfigDirectory));
                             }
 
                         }
@@ -849,6 +855,38 @@ namespace generate.infrastructure.Services
 
         }
 
+        /// <summary>
+        /// Removes every subdirectory of <paramref name="directory"/> except the PreservedDirectories
+        /// (relative to <paramref name="siteRoot"/>). A directory that contains a preserved one
+        /// (e.g. wwwroot, for wwwroot\assets\config) is emptied around it instead of removed.
+        /// </summary>
+        private void DeleteDirectoriesExceptPreserved(string siteRoot, string directory)
+        {
+            foreach (string directoryToDelete in _fileSystem.Directory.GetDirectories(directory))
+            {
+                var relativePath = _fileSystem.Path.GetRelativePath(siteRoot, directoryToDelete).ToLower();
+
+                if (PreservedDirectories.Contains(relativePath))
+                {
+                    _logger.LogInformation("Update - Skipping - " + directoryToDelete);
+                }
+                else if (PreservedDirectories.Any(p => p.StartsWith(relativePath + "\\")))
+                {
+                    foreach (string fileToDelete in _fileSystem.Directory.GetFiles(directoryToDelete))
+                    {
+                        _logger.LogInformation("Update - Deleting file -" + fileToDelete);
+                        _fileSystem.File.Delete(fileToDelete);
+                    }
+                    this.DeleteDirectoriesExceptPreserved(siteRoot, directoryToDelete);
+                }
+                else
+                {
+                    _logger.LogInformation("Update - Removing directory - " + directoryToDelete);
+                    _fileSystem.Directory.Delete(directoryToDelete, true);
+                }
+            }
+        }
+
         public void DeleteObsoleteFiles(string packagePath, string listFileName, string destinationPath)
         {
             // Get list of files
@@ -900,24 +938,9 @@ namespace generate.infrastructure.Services
                             }
                         }
 
-                        var directoriesToDelete = _fileSystem.Directory.GetDirectories(destinationPath);
-
-                        foreach (string directoryToDelete in directoriesToDelete)
-                        {
-                            // logs is held open by the target site (IIS/ANCM stdout and Serilog
-                            // files) even while it is offline, so deleting it fails the whole
-                            // update; Updates holds downloaded packages and backups, not build output.
-                            var directoryName = _fileSystem.Path.GetFileName(directoryToDelete.TrimEnd('\\', '/')).ToLower();
-                            if (directoryName == "config" || directoryName == "logs" || directoryName == "updates")
-                            {
-                                _logger.LogInformation("Update - Skipping - " + directoryToDelete);
-                            }
-                            else
-                            {
-                                _logger.LogInformation("Update - Removing directory - " + directoryToDelete);
-                                _fileSystem.Directory.Delete(directoryToDelete, true);
-                            }
-                        }
+                        // logs is held open by the target site (IIS/ANCM stdout and Serilog files)
+                        // even while it is offline, so deleting it would fail the whole update.
+                        this.DeleteDirectoriesExceptPreserved(destinationPath, destinationPath);
 
                         break;
                     }
