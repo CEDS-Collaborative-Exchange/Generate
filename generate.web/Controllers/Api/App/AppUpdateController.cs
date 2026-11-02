@@ -29,6 +29,8 @@ namespace generate.web.Controllers.Api.App
         private readonly ILogger<AppUpdateController> _logger;
         private readonly IAppUpdateService _appUpdateService;
         private readonly ManagedIdentityCredential _credential = new ManagedIdentityCredential();
+        private static readonly TimeSpan BackgroundRetryInterval = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan BackgroundRestartTimeout = TimeSpan.FromMinutes(2);
 
         public AppUpdateController(
             ILogger<AppUpdateController> logger,
@@ -72,11 +74,21 @@ namespace generate.web.Controllers.Api.App
         /// Get/Post/Put extensions, which throw on any non-success status - background answers
         /// 503 while an update has it offline (app_offline.htm), and that must surface as a
         /// handled error rather than an unhandled exception.
+        /// With <paramref name="retryWhileUnavailable"/>, a 503 is retried every few seconds until
+        /// that much time has passed.
         /// </summary>
-        private RestResponse CallBackground(string resource, Method method, string caller)
+        private RestResponse CallBackground(string resource, Method method, string caller, TimeSpan? retryWhileUnavailable = null)
         {
             var client = GetBackgroundClient();
+            var giveUpAt = DateTime.UtcNow + (retryWhileUnavailable ?? TimeSpan.Zero);
             var response = client.Execute(new RestRequest(resource, method));
+
+            while (response.StatusCode == HttpStatusCode.ServiceUnavailable && DateTime.UtcNow < giveUpAt)
+            {
+                _logger.LogInformation(caller + " - Background site unavailable, retrying in " + BackgroundRetryInterval.TotalSeconds + " seconds");
+                Thread.Sleep(BackgroundRetryInterval);
+                response = client.Execute(new RestRequest(resource, method));
+            }
 
             if (!response.IsSuccessful)
             {
@@ -200,7 +212,10 @@ namespace generate.web.Controllers.Api.App
                 _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, "web", backgroundAppPath);
 
                 // Ask background to apply its own ("background") part to itself the same way
-                var response = CallBackground("execute", Method.Put, "ExecuteUpdate");
+                // Background was just brought back online by the update above - IIS keeps serving
+                // app_offline.htm (503) until it notices the file is gone and the site restarts,
+                // so give it time instead of failing the second half of the update.
+                var response = CallBackground("execute", Method.Put, "ExecuteUpdate", BackgroundRestartTimeout);
 
                 if (response.IsSuccessful) return Ok();
                 else return BackgroundFailed(response);
