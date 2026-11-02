@@ -1842,6 +1842,34 @@ namespace generate.test.Infrastructure.Services
 
         }
 
+        [Fact]
+        public void DeleteAllFiles_KeepsConfigLogsAndUpdatesDirectories()
+        {
+
+            // Arrange
+            var fileSystem = SetupFileSystem_AllFilesToBeDeleted();
+            fileSystem.AddFile(@"c:\generate.web\logs\log-20261102.txt", new MockFileData("log"));
+            fileSystem.AddFile(@"c:\generate.web\Config\appsettings.json", new MockFileData("{}"));
+            fileSystem.AddFile(@"c:\generate.web\wwwroot\site.css", new MockFileData("css"));
+            var logger = Mock.Of<ILogger<AppUpdateService>>();
+            var appRepository = Mock.Of<IAppRepository>();
+            var appSettings = Mock.Of<IOptions<AppSettings>>();
+            var zipFileHelper = Mock.Of<IZipFileHelper>();
+
+
+            var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
+
+            // Act
+            service.DeleteObsoleteFiles(@"c:\generate.web\Updates\generate_3.0", "web_tobedeleted.csv", @"c:\generate.web\");
+
+            // Assert
+            Assert.True(fileSystem.FileExists(@"c:\generate.web\logs\log-20261102.txt"));
+            Assert.True(fileSystem.FileExists(@"c:\generate.web\Config\appsettings.json"));
+            Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0\web_tobedeleted.csv"));
+            Assert.False(fileSystem.Directory.Exists(@"c:\generate.web\wwwroot"));
+
+        }
+
         #endregion
 
     }

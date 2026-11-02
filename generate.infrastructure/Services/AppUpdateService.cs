@@ -904,7 +904,11 @@ namespace generate.infrastructure.Services
 
                         foreach (string directoryToDelete in directoriesToDelete)
                         {
-                            if (directoryToDelete.ToLower().EndsWith("config"))
+                            // logs is held open by the target site (IIS/ANCM stdout and Serilog
+                            // files) even while it is offline, so deleting it fails the whole
+                            // update; Updates holds downloaded packages and backups, not build output.
+                            var directoryName = _fileSystem.Path.GetFileName(directoryToDelete.TrimEnd('\\', '/')).ToLower();
+                            if (directoryName == "config" || directoryName == "logs" || directoryName == "updates")
                             {
                                 _logger.LogInformation("Update - Skipping - " + directoryToDelete);
                             }
