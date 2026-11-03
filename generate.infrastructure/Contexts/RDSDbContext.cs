@@ -3443,10 +3443,6 @@ namespace generate.infrastructure.Contexts
                .HasMaxLength(50);
 
                 entity
-               .Property(x => x.FORMERENGLISHLEARNERYEARSTATUS)
-               .HasMaxLength(50);
-
-                entity
                .Property(x => x.REPRESENTATIONSTATUS)
                .HasMaxLength(50);
 
@@ -4047,10 +4043,6 @@ namespace generate.infrastructure.Contexts
 
                 entity
                .Property(x => x.PROFICIENCYSTATUS)
-               .HasMaxLength(50);
-
-                entity
-               .Property(x => x.FORMERENGLISHLEARNERYEARSTATUS)
                .HasMaxLength(50);
 
                 entity
