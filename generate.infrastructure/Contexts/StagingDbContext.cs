@@ -1195,6 +1195,8 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.ParentalInvolvementReservationFunds).HasColumnType("numeric(12, 2)");
 
+                entity.Property(e => e.HomelessChildrenandYouthReservation).HasColumnType("numeric(12, 2)");
+
                 entity.Property(e => e.ReapAlternativeFundingStatusCode)
                     .HasColumnName("ReapAlternativeFundingStatusCode")
                     .HasMaxLength(100)
