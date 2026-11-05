@@ -843,3 +843,23 @@ END;
     BEGIN
         ALTER TABLE RDS.FactOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
     END
+
+--------------------------------------------------
+--RDS.DimAssessmentStatuses
+--------------------------------------------------
+-- CIID-7234 added these in 14.0_prerelease, but they were lost when that folder was merged into the
+-- 14.0 release, so neither the 14.0 release nor our 14.0 backup has them.
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusCode') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusCode VARCHAR (50) NULL;
+END;
+
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusDescription') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusDescription VARCHAR (100) NULL;
+END;
+
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusEdFactsCode') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusEdFactsCode VARCHAR (50) NULL;
+END;
