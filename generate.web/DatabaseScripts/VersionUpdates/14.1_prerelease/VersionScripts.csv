@@ -17,6 +17,8 @@ Views\\Drop,Debug.vwStudentSexConflicts.View.sql,0
 Views\\Create,Debug.vwStudentSexConflicts.View.sql,0
 Views\\Drop,Debug.vwStudentDisabilityConflicts.View.sql,0
 Views\\Create,Debug.vwStudentDisabilityConflicts.View.sql,0
+Views\\Drop,Debug.vwSignificantDisproportionality_006.View.sql,0
+Views\\Create,Debug.vwSignificantDisproportionality_006.View.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
