@@ -100,6 +100,7 @@
   * [Rebuild Indexes](developer-guides/generate-utilities/rebuild-indexes.md)
   * [Cleanup Grades Offered](developer-guides/generate-utilities/cleanup-grades-offered.md)
   * [Cleanup Debug Tables](developer-guides/generate-utilities/cleanup-debug-tables.md)
+  * [Cleanup Data Migration Histories](developer-guides/generate-utilities/cleanup-data-migration-histories.md)
   * [Source System Reference Data Mapping Utility](developer-guides/generate-utilities/source-system-reference-data-mapping-utility/README.md)
     * [Source System Reference Data](developer-guides/generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md)
   * [Staging Table Snapshot](developer-guides/generate-utilities/staging-table-snapshot.md)
