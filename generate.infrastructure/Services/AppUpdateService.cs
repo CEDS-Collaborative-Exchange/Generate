@@ -159,6 +159,12 @@ namespace generate.infrastructure.Services
             this.SetAppUpdateConfigValue(PhaseKey(appFolderName), phase);
         }
 
+        public void SetUpdateStatus(string appFolderName, string status, string phase)
+        {
+            this.SetAppUpdateConfigValue(StatusKey(appFolderName), status);
+            this.SetPhase(appFolderName, phase);
+        }
+
         public List<UpdatePackageDto> CheckForPendingUpdates()
         {
             // Get current version

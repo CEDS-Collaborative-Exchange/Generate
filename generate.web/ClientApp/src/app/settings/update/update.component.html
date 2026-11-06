@@ -40,6 +40,9 @@
         <div class="generate-app-update__available-text" *ngIf="formatFailureMessage(updateStatus.backgroundStatus) as backgroundError">
             Background: {{backgroundError}}
         </div>
+        <div class="generate-app-update__available-text" *ngIf="backgroundStartTimedOut">
+            Background: The background update did not start, possibly because the web site restarted before it could start it.
+        </div>
         <div class="generate-app-update__available-text">
             Please check the log files for additional information.
         </div>
