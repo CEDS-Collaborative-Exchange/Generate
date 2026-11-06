@@ -2428,6 +2428,8 @@ namespace generate.testdata.DataGenerators
                 o.School_SharedTimeIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.SharedTimeOrganizationIndicatorValueDistribution);
                 o.School_VirtualSchoolStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefVirtualSchoolStatusDistribution);
                 o.School_NationalSchoolLunchProgramStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefNSLPStatusDistribution);
+                //FS206 column (CIID-6987): ADDLTSI or NOTADDLTSI
+                o.School_AdditionalTargetedSupport = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAdditionalTargetedSupportDistribution);
 
                 if ((bool)o.School_CharterSchoolIndicator == true) {
                     o.School_CharterContractIDNumber = _testDataHelper.GetRandomIntInRange(rnd, 1000, 100000).ToString();
