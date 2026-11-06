@@ -120,4 +120,3 @@ AS
 
 	SELECT		*
 	FROM		StudentC006			AS c006
-GO
