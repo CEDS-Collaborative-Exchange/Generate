@@ -49,7 +49,7 @@ AS
 		AND Races.RaceEdFactsCode <> 'MISSING'
 		AND Ages.AgeValue >= 3 and Ages.AgeValue <= 21
 	),
-AggregateC006
+Aggregate006
 AS
 	(
 		SELECT		 fact.K12StudentId
@@ -74,49 +74,49 @@ AS
 		HAVING 		SUM(fact.DurationOfDisciplinaryAction) >= 0.5 
 		
 	),
-FlattenedC006
+Flattened006
 AS
 	(
-		SELECT		c006.K12StudentId
-					,c006.PrimaryDisabilityTypeId					
-					,c006.SchoolYearId
-					,c006.LeaId
-					,c006.RaceId
-					,c006.LeaIdentifierSea
-					,c006.LeaIdentifierNces
-					,c006.IdeaStatusId
-					,c006.GradeLevelId
-					,c006.AgeId
+		SELECT		rc006.K12StudentId
+					,rc006.PrimaryDisabilityTypeId					
+					,rc006.SchoolYearId
+					,rc006.LeaId
+					,rc006.RaceId
+					,rc006.LeaIdentifierSea
+					,rc006.LeaIdentifierNces
+					,rc006.IdeaStatusId
+					,rc006.GradeLevelId
+					,rc006.AgeId
 					
 					,SUM(CASE WHEN REMOVALLENGTH ='LTOREQ10' AND DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode = 'INSCHOOL' THEN 1 ELSE 0 END) AS INSCHOOL_LTOREQ10
 					,SUM(CASE WHEN REMOVALLENGTH ='GREATER10' AND DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode = 'INSCHOOL' THEN 1 ELSE 0 END) AS INSCHOOL_GREATER10
 					,SUM(CASE WHEN REMOVALLENGTH ='LTOREQ10' AND DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode = 'OUTOFSCHOOL' THEN 1 ELSE 0 END) AS OUTOFSCHOOL_LTOREQ10
 					,SUM(CASE WHEN REMOVALLENGTH ='GREATER10' AND DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode = 'OUTOFSCHOOL' THEN 1 ELSE 0 END) AS OUTOFSCHOOL_GREATER10
 					
-		FROM		AggregateC006 AS c006
+		FROM		Aggregate006 AS rc006
 		WHERE DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> 'Missing'
-		GROUP BY	c006.SchoolYearId, c006.K12StudentId, c006.LeaId, c006.RaceId, c006.PrimaryDisabilityTypeId,c006.SchoolYearId,c006.LeaIdentifierSea ,c006.LeaIdentifierNces,c006.IdeaStatusId,c006.GradeLevelId
-					,c006.AgeId
+		GROUP BY	rc006.SchoolYearId, rc006.K12StudentId, rc006.LeaId, rc006.RaceId, rc006.PrimaryDisabilityTypeId,rc006.SchoolYearId,rc006.LeaIdentifierSea ,rc006.LeaIdentifierNces,rc006.IdeaStatusId,rc006.GradeLevelId
+					,rc006.AgeId
 	),
-StudentC006
+Student006
 AS 
 	(
-		SELECT		c006.K12StudentId
-					,c006.PrimaryDisabilityTypeId					
-					,c006.SchoolYearId
-					,c006.LeaId
-					,c006.RaceId
-					,c006.LeaIdentifierSea
-					,c006.LeaIdentifierNces
-					,c006.IdeaStatusId
-					,c006.GradeLevelId
-					,c006.AgeId
-					,c006.INSCHOOL_LTOREQ10
-					,c006.INSCHOOL_GREATER10
-					,c006.OUTOFSCHOOL_LTOREQ10
-					,c006.OUTOFSCHOOL_GREATER10
-		FROM		FlattenedC006 AS c006
+		SELECT		rc006.K12StudentId
+					,rc006.PrimaryDisabilityTypeId					
+					,rc006.SchoolYearId
+					,rc006.LeaId
+					,rc006.RaceId
+					,rc006.LeaIdentifierSea
+					,rc006.LeaIdentifierNces
+					,rc006.IdeaStatusId
+					,rc006.GradeLevelId
+					,rc006.AgeId
+					,rc006.INSCHOOL_LTOREQ10
+					,rc006.INSCHOOL_GREATER10
+					,rc006.OUTOFSCHOOL_LTOREQ10
+					,rc006.OUTOFSCHOOL_GREATER10
+		FROM		Flattened006 AS rc006
 	)
 
 	SELECT		*
-	FROM		StudentC006			AS c006
+	FROM		Student006			AS rc006
