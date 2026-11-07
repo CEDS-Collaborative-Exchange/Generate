@@ -863,3 +863,20 @@ IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusEdFact
 BEGIN
 	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusEdFactsCode VARCHAR (50) NULL;
 END;
+
+--------------------------------------------------
+--New Fact Type changes
+--------------------------------------------------
+insert into rds.DimFactTypes (
+	FactTypeCode
+	,FactTypeDescription
+	,FactTypeLabel
+)
+values ('englishlearnerassessment', 'ENGLISHLEARNERASSESSMENT - 050,126,137,138,139', 'English Learner Assessment'),
+('ideapartc', 'IDEAPARTC - ', 'IDEA Part C')
+
+--remove the files that are being moved to the new Fact Type
+update rds.DimFactTypes
+set FactTypeDescription = 'ASSESSMENT - 113,125,175,178,179,185,188,189,224,225'
+where FactTypeCode = 'assessment';
+

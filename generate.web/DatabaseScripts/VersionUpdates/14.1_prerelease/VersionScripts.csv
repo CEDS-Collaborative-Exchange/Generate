@@ -5,6 +5,20 @@ VersionUpdates\\14.1_prerelease,CEDS.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,JunkTablePopulation.sql,0
+Views\\Drop,Debug.vwEnglishLearnerAssessment_StagingTables.View.sql,0
+Views\\Create,Debug.vwEnglishLearnerAssessment_StagingTables.View.sql,0
+Views\\Drop,Debug.vwEnglishLearnerAssessment_FactTable.View.sql,0
+Views\\Create,Debug.vwEnglishLearnerAssessment_FactTable.View.sql,0
+Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_050.View.sql,0
+Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_050.View.sql,0
+Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_126.View.sql,0
+Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_126.View.sql,0
+Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_137.View.sql,0
+Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_137.View.sql,0
+Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_138.View.sql,0
+Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_138.View.sql,0
+Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_139.View.sql,0
+Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_139.View.sql,0
 Views\\Drop,RDS.vwDimAssessmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimAssessmentStatuses.View.sql,0
 Views\\Drop,RDS.vwStateAssessments.View.sql,0
@@ -19,16 +33,18 @@ Views\\Drop,Debug.vwStudentSexConflicts.View.sql,0
 Views\\Create,Debug.vwStudentSexConflicts.View.sql,0
 Views\\Drop,Debug.vwStudentDisabilityConflicts.View.sql,0
 Views\\Create,Debug.vwStudentDisabilityConflicts.View.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
-StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
-StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment_EnglishLearnerAssessment.StoredProcedure.sql, 0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment_EnglishLearnerAssessment.StoredProcedure.sql, 0
+StoredProcedures\\Drop,App.Wrapper_Migrate_EnglishLearnerAssessment_to_RDS.StoredProcedure.sql, 0
+StoredProcedures\\Create,App.Wrapper_Migrate_EnglishLearnerAssessment_to_RDS.StoredProcedure.sql, 0
 StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql, 0
 StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql, 0
 StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql, 0
 StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql, 0
-Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
-Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql, 0
 StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql, 0
 StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
