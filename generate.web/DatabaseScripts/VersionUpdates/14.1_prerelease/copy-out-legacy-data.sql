@@ -16,43 +16,6 @@ BEGIN
 	DROP TABLE Upgrade.FactK12StudentAssessments_v14_1
 END
 
---temp code not to be included
-update f
-set f.TitleIIIStatusId = 80
-from rds.FactK12StudentCounts f
-	inner join rds.dimPeople_Current p
-		on f.K12Student_CurrentId = p.DimPersonId
-where p.K12StudentStudentIdentifierState like '%1'
-
-update f
-set f.TitleIIIStatusId = 116
-from rds.FactK12StudentCounts f
-	inner join rds.dimPeople_Current p
-		on f.K12Student_CurrentId = p.DimPersonId
-where p.K12StudentStudentIdentifierState like '%2'
-
-update f
-set f.TitleIIIStatusId = 212
-from rds.FactK12StudentCounts f
-	inner join rds.dimPeople_Current p
-		on f.K12Student_CurrentId = p.DimPersonId
-where p.K12StudentStudentIdentifierState like '%3'
-
-update f
-set f.TitleIIIStatusId = 325
-from rds.FactK12StudentCounts f
-	inner join rds.dimPeople_Current p
-		on f.K12Student_CurrentId = p.DimPersonId
-where p.K12StudentStudentIdentifierState like '%4'
-
-update f
-set f.TitleIIIStatusId = 418
-from rds.FactK12StudentCounts f
-	inner join rds.dimPeople_Current p
-		on f.K12Student_CurrentId = p.DimPersonId
-where p.K12StudentStudentIdentifierState like '%5'
---end of temp code not to be included
-
 --FactK12StudentCounts
 CREATE TABLE Upgrade.FactK12StudentCounts_v14_1 (
 	FactK12StudentCountId INT

@@ -1,8 +1,8 @@
 --Copy the fact table data from the upgrade tables back into the main RDS fact tables
 --FactK12StudentCounts
 update f
-set TitleIIIStatusId = t.TitleIIIStatusId
-from upgrade.FactK12StudentCounts_14_1 b
+set TitleIIIStatusId = t.DimTitleIIIStatusId
+from upgrade.FactK12StudentCounts_v14_1 b
 	inner join rds.DimTitleIIIStatuses t
 		on b.ProgramParticipationTitleIIILiepCode = t.ProgramParticipationTitleIIILiepCode
 		and b.TitleIIIImmigrantParticipationStatusCode = t.TitleIIIImmigrantParticipationStatusCode
@@ -16,8 +16,8 @@ from upgrade.FactK12StudentCounts_14_1 b
 
 --FactK12StudentDisciplines
 update f
-set TitleIIIStatusId = t.TitleIIIStatusId
-from upgrade.FactK12StudentDisciplines_14_1 b
+set TitleIIIStatusId = t.DimTitleIIIStatusId
+from upgrade.FactK12StudentDisciplines_v14_1 b
 	inner join rds.DimTitleIIIStatuses t
 		on b.ProgramParticipationTitleIIILiepCode = t.ProgramParticipationTitleIIILiepCode
 		and b.TitleIIIImmigrantParticipationStatusCode = t.TitleIIIImmigrantParticipationStatusCode
@@ -31,8 +31,8 @@ from upgrade.FactK12StudentDisciplines_14_1 b
 
 --FactK12StudentAssessments
 update f
-set TitleIIIStatusId = t.TitleIIIStatusId
-from upgrade.FactK12StudentAssessments_14_1 b
+set TitleIIIStatusId = t.DimTitleIIIStatusId
+from upgrade.FactK12StudentAssessments_v14_1 b
 	inner join rds.DimTitleIIIStatuses t
 		on b.ProgramParticipationTitleIIILiepCode = t.ProgramParticipationTitleIIILiepCode
 		and b.TitleIIIImmigrantParticipationStatusCode = t.TitleIIIImmigrantParticipationStatusCode
