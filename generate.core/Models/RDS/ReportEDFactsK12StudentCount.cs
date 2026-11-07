@@ -70,7 +70,6 @@ namespace generate.core.Models.RDS
         public string RACE { get; set; }
 
         public string TITLEIIIACCOUNTABILITYPROGRESSSTATUS { get; set; }
-        public string FORMERENGLISHLEARNERYEARSTATUS { get; set; }
         public string TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE { get; set; }
         public string PROFICIENCYSTATUS { get; set; }
 

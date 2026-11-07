@@ -1012,8 +1012,11 @@ namespace generate.testdata.DataGenerators
                     };
                     if (LeaFedFunds.FederalProgramCode == "84.010")
                     {
-                        LeaFedFunds.ParentalInvolvementReservationFunds = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
-                        // LeaFedFunds.HomelessChildrenandYouthReservation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
+                        //Reservations are set aside from the Title I, Part A allocation, so keep each between 1% and 10% of it
+                        //(GetRandomDecimalInRange takes cents, so 1% of the allocation in dollars is the allocation value in cents)
+                        var allocation = (int)LeaFedFunds.FederalProgramsFundingAllocation.Value;
+                        LeaFedFunds.ParentalInvolvementReservationFunds = _testDataHelper.GetRandomDecimalInRange(rnd, allocation, allocation * 10);
+                        LeaFedFunds.HomelessChildrenandYouthReservation = _testDataHelper.GetRandomDecimalInRange(rnd, allocation, allocation * 10);
                     }
                     testData.OrganizationFederalFundings.Add(LeaFedFunds);
                 }

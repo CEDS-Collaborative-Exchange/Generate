@@ -2,7 +2,8 @@ import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { GenerateUpdateService } from '../../services/app/generate-update.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { UpdatePackage } from '../../models/app/update-package';
 
 import { UpdateStatus } from 'src/app/models/app/update-status';
@@ -15,6 +16,14 @@ declare const moment: any;
 const IDLE_POLL_MS = 30000;
 const ACTIVE_POLL_MS = 3000;
 const FAILED_PREFIX = 'FAILED - ';
+// How long after starting an update, or after the last IN_PROGRESS status, failed checks are
+// treated as the sites restarting rather than shown as errors.
+const UPDATE_RESTART_GRACE_MS = 5 * 60 * 1000;
+// Set by AppUpdateController.ExecuteUpdate while web asks background to start its half. Web
+// retries that call for a couple of minutes and then records a failure, so a status stuck on
+// this phase for longer means web restarted before it could finish.
+const WAITING_FOR_BACKGROUND_PHASE = 'Waiting for Background Site to Start';
+const BACKGROUND_START_TIMEOUT_MS = 5 * 60 * 1000;
 
 @Component({
     selector: 'generate-app-settings-update',
@@ -37,6 +46,13 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
     callService: boolean = false;
 
     updateStatus: UpdateStatus;
+
+    // While an update runs, web and background take each other offline and restart, so the
+    // update API calls fail (503) or briefly disagree on the downloaded updates until it ends.
+    private quietUntil = 0;
+
+    private backgroundWaitStartedAt = 0;
+    backgroundStartTimedOut = false;
 
     constructor(
         private _router: Router,
@@ -66,10 +82,14 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
             clearTimeout(this.pollTimeout);
         }
 
-        const delay = this.isUpdateInProgress() ? ACTIVE_POLL_MS : IDLE_POLL_MS;
+        const delay = this.isUpdateInProgress() || this.updateProcessing ? ACTIVE_POLL_MS : IDLE_POLL_MS;
 
         this.pollTimeout = setTimeout(() => {
-            this.checkAvailable();
+            // Web and background download the update one after the other, so their downloaded
+            // lists disagree until the download finishes. download() checks again once it's done.
+            if (!this.downloadingUpdates) {
+                this.checkAvailable();
+            }
             this.schedulePoll();
         }, delay);
     }
@@ -81,13 +101,13 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
     }
 
     isUpdateInProgress(): boolean {
-        return this.updateStatus != null &&
+        return this.updateStatus != null && !this.backgroundStartTimedOut &&
             (this.updateStatus.webStatus === 'IN_PROGRESS' || this.updateStatus.backgroundStatus === 'IN_PROGRESS');
     }
 
     hasUpdateFailed(): boolean {
-        return this.updateStatus != null &&
-            (this.isFailedStatus(this.updateStatus.webStatus) || this.isFailedStatus(this.updateStatus.backgroundStatus));
+        return this.updateStatus != null && (this.backgroundStartTimedOut ||
+            this.isFailedStatus(this.updateStatus.webStatus) || this.isFailedStatus(this.updateStatus.backgroundStatus));
     }
 
     formatFailureMessage(status: string): string {
@@ -101,6 +121,54 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
         return status?.startsWith(FAILED_PREFIX) ?? false;
     }
 
+    private isUpdateRunning(): boolean {
+        return this.isUpdateInProgress() || (this.updateProcessing && Date.now() < this.quietUntil);
+    }
+
+    private applyStatus(status: UpdateStatus) {
+        this.updateStatus = status;
+        this.checkBackgroundStartTimeout();
+        if (this.isUpdateInProgress()) {
+            this.quietUntil = Date.now() + UPDATE_RESTART_GRACE_MS;
+        }
+    }
+
+    // Reports the update as failed when background has been waiting to start for too long,
+    // instead of polling "Update in Progress" forever.
+    private checkBackgroundStartTimeout() {
+        if (this.updateStatus?.backgroundStatus !== 'IN_PROGRESS' || this.updateStatus.backgroundPhase !== WAITING_FOR_BACKGROUND_PHASE) {
+            this.backgroundWaitStartedAt = 0;
+            this.backgroundStartTimedOut = false;
+            return;
+        }
+
+        if (!this.backgroundWaitStartedAt) {
+            this.backgroundWaitStartedAt = Date.now();
+        } else if (!this.backgroundStartTimedOut && Date.now() - this.backgroundWaitStartedAt > BACKGROUND_START_TIMEOUT_MS) {
+            this.backgroundStartTimedOut = true;
+            // Show the failure directly; going through the "update finished" reload would just
+            // restart the wait.
+            this.updateProcessing = false;
+        }
+    }
+
+    // Lets the status still come back when the update lists can't be read, so a running or
+    // failed update is reported instead of the list error.
+    private captureError<T>(request: Observable<T>, onError: (error: any) => void): Observable<T> {
+        return request.pipe(catchError(error => {
+            onError(error);
+            return of(null as T);
+        }));
+    }
+
+    private showCheckError(error: any) {
+        if (this.isUpdateRunning() && !this.hasUpdateFailed()) {
+            return;
+        }
+        this.updateProcessing = false;
+        this.errorMessage = error;
+    }
+
     filesUploaded($event) {
         if (this.callService)
         { this.checkAvailable(); }
@@ -110,13 +178,20 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
 
     checkAvailable() {
 
+        let listError: any = null;
         forkJoin(
             this._generateUpdateService.getStatus(),
-            this._generateUpdateService.getPendingUpdates(),
-            this._generateUpdateService.getDownloadedUpdates(),
+            this.captureError(this._generateUpdateService.getPendingUpdates(), error => listError = error),
+            this.captureError(this._generateUpdateService.getDownloadedUpdates(), error => listError = error),
         ).subscribe(data => {
 
-            this.updateStatus = data[0];
+            this.applyStatus(data[0]);
+            if (listError) {
+                this.showCheckError(listError);
+                return;
+            }
+            this.errorMessage = null;
+
             let pending = data[1];
             let downloaded = data[2];
             
@@ -159,17 +234,24 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
             }
 
         },
-        error => this.errorMessage = <any>error);
+        error => this.showCheckError(error));
     }
 
     checkAvailableOffline() {
 
+        let listError: any = null;
         forkJoin(
             this._generateUpdateService.getStatus(),
-            this._generateUpdateService.getDownloadedUpdates()
+            this.captureError(this._generateUpdateService.getDownloadedUpdates(), error => listError = error)
         ).subscribe(data => {
 
-            this.updateStatus = data[0];
+            this.applyStatus(data[0]);
+            if (listError) {
+                this.showCheckError(listError);
+                return;
+            }
+            this.errorMessage = null;
+
             let downloaded = data[1];
 
             this.downloadedUpdates = downloaded;
@@ -185,7 +267,7 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
             }
 
         },
-        error => this.errorMessage = <any>error);
+        error => this.showCheckError(error));
     }
 
     ngAfterViewInit() {
@@ -225,6 +307,7 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
         }
 
         this.updateProcessing = true;
+        this.quietUntil = Date.now() + UPDATE_RESTART_GRACE_MS;
         this.errorMessage = null;
 
         this._generateUpdateService.applyDownloadedUpdates()
