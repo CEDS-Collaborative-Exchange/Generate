@@ -227,3 +227,35 @@ BEGIN
    
 END
 
+---------------------------------------------
+--Changes for new Fact Types
+---------------------------------------------
+
+--update the report to fact type mapping
+update app.GenerateReport_FactType
+set FactTypeId = 28
+where GenerateReportId in (59,68,72,73,74)
+
+insert into app.GenerateReport_GenerateStagingXREF (
+    GenerateReportId
+    , StagingTableId
+)
+values
+    (59, 2),
+    (59, 17),
+    (59, 36),
+    (59, 39),
+    (68, 2),
+    (68, 17),
+    (68, 36),
+    (68, 39),
+    (72, 2),
+    (72, 17),
+    (72, 36),
+    (73, 2),
+    (73, 17),
+    (73, 36),
+    (73, 39),
+    (74, 2),
+    (74, 17),
+    (74, 36)
