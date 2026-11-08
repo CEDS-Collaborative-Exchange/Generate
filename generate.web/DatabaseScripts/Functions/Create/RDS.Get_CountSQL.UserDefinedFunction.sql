@@ -1,4 +1,11 @@
-CREATE FUNCTION [RDS].[Get_CountSQL] (
+USE [generate]
+GO
+/****** Object:  UserDefinedFunction [RDS].[Get_CountSQL]    Script Date: 11/8/2026 11:47:26 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+ALTER FUNCTION [RDS].[Get_CountSQL] (
 	@reportCode as nvarchar(150),
 	@reportLevel as nvarchar(10),
 	@reportYear as nvarchar(10),
@@ -986,6 +993,123 @@ BEGIN
 				where sch.ReportedFederally <> 1'
 
 				select @sql = @sql + char(10)
+
+			end
+
+			if @reportCode = '006'
+			begin
+				select @sql = @sql + char(10)
+				select @sql = @sql + '
+				select rdp.K12StudentStudentIdentifierState'
+
+				if @reportLevel = 'lea'
+				begin
+					select @sql = @sql + 
+					', LeaId '
+				end 
+				select @sql = @sql + ' 
+				into #Students
+				from RDS.FactK12StudentDisciplines rfksd '
+
+				if @reportLevel = 'lea'
+				begin
+					select @sql = @sql + 
+					'inner join rds.DimLeas dl
+						on dl.DimLeaId = rfksd.LeaId' + char(10)
+				end 
+				select @sql = @sql + 
+				'inner join rds.DimPeople_Current rdp 
+					on rfksd.K12Student_CurrentId = rdp.DimPersonId
+					and rfksd.SchoolYearId = @dimSchoolYearId
+					and rfksd.FactTypeId = @dimFactTypeId
+				inner join rds.DimIdeaStatuses rdis 
+					on rfksd.IdeaStatusId = rdis.DimIdeaStatusId
+				inner join rds.DimDisciplineStatuses rdd 
+					on rfksd.DisciplineStatusId = rdd.DimDisciplineStatusId
+				where rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
+					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
+					and (rdd.DisciplineMethodOfChildrenWithDisabilitiesCode <> ''MISSING''
+						or rdd.DisciplinaryActionTakenCode IN (''03086'', ''03087''))
+					and rdd.IdeaInterimRemovalCode = ''MISSING''
+				group by rdp.K12StudentStudentIdentifierState '
+
+				if @reportLevel = 'lea'
+				begin
+					select @sql = @sql + 
+					', LeaId' + char(10)
+				end 
+
+				select @sql = @sql + 
+				'having sum(rfksd.DurationOfDisciplinaryAction) >= 0.5' + char(10)
+
+				select @sql = @sql + char(10) + '
+				CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
+
+				--Create the #rules temp table 
+				select @sql = @sql + char(10) + char(9) + char(9) + char(9)
+				select @sql = @sql + 'IF OBJECT_ID(''tempdb..#rules'') IS NOT NULL DROP TABLE #rules' + char(10) 
+
+				select @sql = @sql + '
+				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId
+				into #rules
+				from rds.' + @factTable + ' fact '
+
+				if @reportLevel = 'lea'
+				begin
+					set @sql = @sql + '
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sql = @sql + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+				end
+
+				set @sql = @sql + '
+					inner join rds.DimPeople_Current rdp
+						on fact.K12Student_CurrentId = rdp.DimPersonId
+					inner join #Students Students
+						on Students.K12StudentStudentIdentifierState = rdp.K12StudentStudentIdentifierState '
+
+				if @reportLevel = 'lea'
+				begin
+					select @sql = @sql + '
+						and Students.LeaId = fact.LeaId'                             
+				end
+
+				set @sql = @sql + '
+					inner join rds.DimAges age 
+						on fact.AgeId = age.DimAgeId
+						and age.AgeValue >= 3 
+						and age.AgeValue <= 21
+					inner join rds.DimK12Schools s 
+						on fact.K12SchoolId = s.DimK12SchoolId
+						and fact.SchoolYearId = @dimSchoolYearId
+						and fact.FactTypeId = @dimFactTypeId
+						and CASE 
+							WHEN fact.K12SchoolId > 0 THEN fact.K12SchoolId
+							WHEN fact.LeaId > 0 THEN fact.LeaId
+							WHEN fact.SeaId > 0 THEN fact.SeaId
+							ELSE -1
+						END <> -1
+					inner join rds.DimIdeaStatuses rdis
+						on fact.IdeaStatusId = rdis.DimIdeaStatusId
+					inner join rds.DimDisciplineStatuses rdds
+						on fact.DisciplineStatusId = rdds.DimDisciplineStatusId
+					where rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
+						and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
+						and rdds.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'')
+				'
+				 + char(10) + char(10)
+
+				select @sql = @sql + '
+				CREATE INDEX IDX_Rules ON #Rules (K12StudentStudentIdentifierState, DimIdeaStatusId, DimDisciplineStatusId)' + char(10) + char(10)
 
 			end
 
@@ -2103,22 +2227,25 @@ BEGIN
 			-- TODO - make use of IsCalculated field to drive this via metadata
 			if @categoryCode = 'REMOVALLENSUS'
 			begin
-				-- REMOVALLENSUS is report-006-only (FS006). Its length bucket must reflect the
-				-- child's SUM of ALL in- and out-of-school suspensions/expulsions, not the
-				-- duration within just this one category-breakdown bucket (e.g. one discipline
-				-- method) - otherwise a student split across removal types that individually
-				-- total less than 0.5 days would show as ''MISSING'' (and get filtered out) in
-				-- every bucket even though their combined total qualifies them for inclusion.
-				-- fact.zzStudentTotalDuration is that per-student total (see the report-006
-				-- #categorySet build above); every row for a given student carries the same
-				-- value, so MAX() here is just a way to reference it through the GROUP BY.
-				set @sqlCategoryReturnField = '
-				case
-					when max(fact.zzStudentTotalDuration) < 0.5 then ''MISSING''
-					when max(fact.zzStudentTotalDuration) <= 10.0 then ''LTOREQ10''
-					else ''GREATER10''
-				end'
-				set @categoryReturnFieldIsAggregate = 1
+				if @reportCode = '006'
+				begin
+					set @sqlCategoryReturnField = '
+					case 
+						when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) <= 10.0 then ''LTOREQ10''
+						else ''GREATER10''
+					end'
+					set @categoryReturnFieldIsAggregate = 1
+				end	
+				else
+				begin
+					set @sqlCategoryReturnField = '
+					case 
+						when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) < 0.5 then ''MISSING''
+						when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) <= 10.0 then ''LTOREQ10''
+						else ''GREATER10''
+					end'
+					set @categoryReturnFieldIsAggregate = 1
+				end
 			end
 			else if @categoryCode = 'REMOVALLENIDEA'
 			begin
@@ -3304,55 +3431,9 @@ BEGIN
 		begin
 			-- Ages 3-21, Has Disability, Duration >= 0.5 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join (
-					select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId
-					from rds.' + @factTable + ' fact '
-
-			if @reportLevel = 'lea'
-			begin
-				set @sqlCountJoins = @sqlCountJoins + '
-				inner join RDS.DimLeas org 
-					on fact.LeaId = org.DimLeaId
-					AND org.ReportedFederally = 1
-					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
-			end 
-			if @reportLevel = 'sch'
-			begin
-				set @sqlCountJoins = @sqlCountJoins + '
-				inner join RDS.DimK12Schools org 
-					on fact.K12SchoolId = org.DimK12SchoolId
-					AND org.ReportedFederally = 1
-					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
-			end
-
-			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople_Current rdp
-					on fact.K12Student_CurrentId = rdp.DimPersonId
-				inner join rds.DimAges age 
-					on fact.AgeId = age.DimAgeId
-					and age.AgeValue >= 3 
-					and age.AgeValue <= 21
-				inner join rds.DimK12Schools s 
-					on fact.K12SchoolId = s.DimK12SchoolId
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and CASE 
-						WHEN fact.K12SchoolId > 0 THEN fact.K12SchoolId
-						WHEN fact.LeaId > 0 THEN fact.LeaId
-						WHEN fact.SeaId > 0 THEN fact.SeaId
-						ELSE -1
-					END <> -1
-				inner join rds.DimIdeaStatuses rdis 
-					on fact.IdeaStatusId = rdis.DimIdeaStatusId
-				inner join rds.DimDisciplineStatuses rdds 
-					on fact.DisciplineStatusId = rdds.DimDisciplineStatusId
-				where rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
-					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
-					and rdds.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'')
-			) rules 
-				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState
-				and fact.IdeaStatusId = rules.DimIdeaStatusId '
-
+				inner join #rules rules
+					on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState
+					and fact.IdeaStatusId = rules.DimIdeaStatusId '
 		end
 		else if @reportCode in ('088', '143')
 		begin
@@ -5868,22 +5949,14 @@ BEGIN
 								else 'fact.K12SchoolId,'
 				end + 'fact.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubSelectDimensionFields + ',
 				sum(isnull(fact.' + @factField + ', 0))
-				from ( select * from ( select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
-								when @reportLevel = 'lea' then 'fact.LeaId,'
+				from ( select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+								when @reportLevel = 'lea' then 'fact.LeaId,' 
 								else 'fact.K12SchoolId,'
-				end + 'stu.K12StudentStudentIdentifierState, fact.DisciplineCount, fact.DurationOfDisciplinaryAction'
-				+ @sqlCategoryQualifiedSubDimensionFields + ',
-				-- FS006 spec: a child''s inclusion is based on the SUM of ALL of their in- and
-				-- out-of-school suspensions/expulsions, not any single discipline method or
-				-- category alone - a student split across removal types that individually total
-				-- less than 0.5 days must still be included. Compute that total per student here,
-				-- independent of the category-breakdown fields, instead of folding it into the
-				-- GROUP BY/HAVING below (which would threshold each category bucket separately).
-				SUM(fact.DurationOfDisciplinaryAction) OVER (PARTITION BY ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
-								when @reportLevel = 'lea' then 'fact.LeaId,'
-								else 'fact.K12SchoolId,'
-				end + 'stu.K12StudentStudentIdentifierState) AS zzStudentTotalDuration'
-				+ ' from rds.' + @factTable + ' fact '
+				end + 'stu.K12StudentStudentIdentifierState
+				, sum(fact.DisciplineCount) as DisciplineCount
+				, sum(fact.DurationOfDisciplinaryAction) as DurationOfDisciplinaryAction' 
+				+ @sqlCategoryQualifiedSubDimensionFields + 
+				' from rds.' + @factTable + ' fact '
 				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
 				+ @sqlCountJoins
 				+ ' ' + @reportFilterJoin + '
@@ -5892,10 +5965,12 @@ BEGIN
 				and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
 								when @reportLevel = 'lea' then 'fact.LeaId <> -1'
 								else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' end   + '
-				) detail
-				where detail.zzStudentTotalDuration >= 0.5
-				) as fact
 				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
+									when @reportLevel = 'lea' then 'fact.LeaId,'
+								else 'fact.K12SchoolId,'
+								end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubDimensionFields +
+				' ) as fact '
+				+ ' group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
 								end + 'fact.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubGroupDimensionFields + '
