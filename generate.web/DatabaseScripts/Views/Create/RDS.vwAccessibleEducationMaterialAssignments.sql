@@ -1,4 +1,5 @@
 CREATE VIEW [RDS].[vwAccessibleEducationMaterialAssignments]
+  
   AS 
   
     SELECT 
