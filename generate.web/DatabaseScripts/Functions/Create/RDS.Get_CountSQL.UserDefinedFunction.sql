@@ -728,7 +728,6 @@ BEGIN
 						AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 						AND ISNULL(ske.LEAIdentifierSeaAccountability,'''') = ISNULL(sppse.LeaIdentifierSeaAccountability,'''')
 						AND ISNULL(ske.SchoolIdentifierSea,'''') = ISNULL(sppse.SchoolIdentifierSea,'''')
-					
 					LEFT JOIN staging.SourceSystemReferenceData sssrd
 						ON sssrd.InputCode = sppse.SpecialEducationExitReason 
 						AND sssrd.TableName = ''RefSpecialEducationExitReason''
