@@ -65,7 +65,7 @@ values
 
 delete 
 from ceds.CedsOptionSetMapping
-where CedsElementTechnicalName = 'AccessibilityFormatType';
+where CedsElementTechnicalName = 'AccessibleFormatType';
 
 insert into ceds.CedsOptionSetMapping (
 	[CedsElementName]
@@ -78,15 +78,51 @@ insert into ceds.CedsOptionSetMapping (
 	,[EdFactsOptionSetCode]
 )
 values 
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1000','Audio', 'Audio format is human-recorded or synthetic voice narration to present information. Audio can be stored and transmitted through both analog and digital means.',NULL,'MISSING'),
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1001','Audio Described Video', 'Audio description is the verbal explanation of essential visual elements in a video or other multimedia resource, providing access to the visual content when the audio component alone is insufficient for perceiving on-screen actions. (Note: While video is not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING'),
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1002','Braille', 'Braille code is a tactile system of raised dots that enables students who are blind or have low vision to read through touch. Braille consists of patterns of raised dots arranged in cells of up to six dots in a 3x2 configuration. Each cell represents letters of the alphabet, punctuation, numbers, and whole words. (iii) In the case of a child who is blind or visually impaired, provide for instruction in Braille and the use of Braille unless the IEP Team determines, after an evaluation of the childs reading and writing skills, needs, and appropriate reading and writing media (including an evaluation of the childs future needs for instruction in Braille or the use of Braille), that instruction in Braille or the use of Braille is not appropriate for the child; Sec. 300.324 (a) (2) (iii)',NULL,'MISSING'),
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1003','Captioned Video', 'Captions are the text representation of the audio content in a video or other multimedia production. Captions are synced with the video and include the words spoken, as well as other important information in the audio track. (Note: While video is not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING'),
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1004','Digital Text', 'Digital text format refers to accessible file formats that contain both text and images. An accessible digital text file must be usable by the student requiring this format. Examples of file types include accessible EPUB, HTML, MathML, and tagged PDF.',NULL,'MISSING'),
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1005','Large Print', 'Large print format is provided in a hard copy document containing a font size of 18 points or larger. Additional formatting considerations pertain to styles used for font face and punctuation; format options; use of color; paper selection; and document size.',NULL,'MISSING'),
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1006','Tactile Graphics', 'Tactile graphics convey non-textual information to people who are blind or have low vision. These may include tactile representations of pictures, maps, graphs, diagrams and other images. Students who are blind or have low vision can feel these raised lines and surfaces to access the same information as students who are sighted. (Note: While graphics are not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING'),
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1007','Text Transcripts of Audio','Transcripts are a text version of the speech and non-speech audio information needed to understand the content in an audio-only file. (Note: While audio is not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING'),
-('Accessibility Format Type', 'AccessibilityFormatType', '002089','1008','Video with Synchronized American Sign Language (ASL)','Synchronized ASL is pre-produced sign language interpretation of audio content in a video or other multimedia resource. ASL is synchronized with and displayed alongside media, integrated into the media (picture-in-picture), displayed in a separate window, or displayed on a second screen. (Note: While audio is not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING')
+('Accessible Format Type', 'AccessibleFormatType', '002089','1000','Audio', 'Audio format is human-recorded or synthetic voice narration to present information. Audio can be stored and transmitted through both analog and digital means.',NULL,'MISSING'),
+('Accessible Format Type', 'AccessibleFormatType', '002089','1001','Audio Described Video', 'Audio description is the verbal explanation of essential visual elements in a video or other multimedia resource, providing access to the visual content when the audio component alone is insufficient for perceiving on-screen actions. (Note: While video is not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING'),
+('Accessible Format Type', 'AccessibleFormatType', '002089','1002','Braille', 'Braille code is a tactile system of raised dots that enables students who are blind or have low vision to read through touch. Braille consists of patterns of raised dots arranged in cells of up to six dots in a 3x2 configuration. Each cell represents letters of the alphabet, punctuation, numbers, and whole words. (iii) In the case of a child who is blind or visually impaired, provide for instruction in Braille and the use of Braille unless the IEP Team determines, after an evaluation of the childs reading and writing skills, needs, and appropriate reading and writing media (including an evaluation of the childs future needs for instruction in Braille or the use of Braille), that instruction in Braille or the use of Braille is not appropriate for the child; Sec. 300.324 (a) (2) (iii)',NULL,'MISSING'),
+('Accessible Format Type', 'AccessibleFormatType', '002089','1003','Captioned Video', 'Captions are the text representation of the audio content in a video or other multimedia production. Captions are synced with the video and include the words spoken, as well as other important information in the audio track. (Note: While video is not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING'),
+('Accessible Format Type', 'AccessibleFormatType', '002089','1004','Digital Text', 'Digital text format refers to accessible file formats that contain both text and images. An accessible digital text file must be usable by the student requiring this format. Examples of file types include accessible EPUB, HTML, MathML, and tagged PDF.',NULL,'MISSING'),
+('Accessible Format Type', 'AccessibleFormatType', '002089','1005','Large Print', 'Large print format is provided in a hard copy document containing a font size of 18 points or larger. Additional formatting considerations pertain to styles used for font face and punctuation; format options; use of color; paper selection; and document size.',NULL,'MISSING'),
+('Accessible Format Type', 'AccessibleFormatType', '002089','1006','Tactile Graphics', 'Tactile graphics convey non-textual information to people who are blind or have low vision. These may include tactile representations of pictures, maps, graphs, diagrams and other images. Students who are blind or have low vision can feel these raised lines and surfaces to access the same information as students who are sighted. (Note: While graphics are not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING'),
+('Accessible Format Type', 'AccessibleFormatType', '002089','1007','Text Transcripts of Audio','Transcripts are a text version of the speech and non-speech audio information needed to understand the content in an audio-only file. (Note: While audio is not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING'),
+('Accessible Format Type', 'AccessibleFormatType', '002089','1008','Video with Synchronized American Sign Language (ASL)','Synchronized ASL is pre-produced sign language interpretation of audio content in a video or other multimedia resource. ASL is synchronized with and displayed alongside media, integrated into the media (picture-in-picture), displayed in a separate window, or displayed on a second screen. (Note: While audio is not covered by Section 121/Chafee Amendment of the Copyright Act, it is a material that can be enhanced for accessibility for use by students with disabilities.)',NULL,'MISSING')
+
+delete 
+from ceds.CedsOptionSetMapping
+where CedsElementTechnicalName = 'AccessibleFormatIssuedIndicator';
+
+insert into ceds.CedsOptionSetMapping (
+	[CedsElementName]
+	,[CedsElementTechnicalName]
+	,[CedsGlobalId]
+	,[CedsOptionSetCode]
+	,[CedsOptionSetDescription]
+	,[CedsOptionSetDefinition]
+	,[EdFactsElementName]
+	,[EdFactsOptionSetCode]
+)
+values 
+('Accessible Format Issued Indicator', 'AccessibleFormatIssuedIndicator', '002088','No','No', NULL,NULL,'MISSING'),
+('Accessible Format Issued Indicator', 'AccessibleFormatIssuedIndicator', '002088','Yes','Yes', NULL,NULL,'MISSING')
+
+delete 
+from ceds.CedsOptionSetMapping
+where CedsElementTechnicalName = 'AccessibleFormatRequiredIndicator';
+
+insert into ceds.CedsOptionSetMapping (
+	[CedsElementName]
+	,[CedsElementTechnicalName]
+	,[CedsGlobalId]
+	,[CedsOptionSetCode]
+	,[CedsOptionSetDescription]
+	,[CedsOptionSetDefinition]
+	,[EdFactsElementName]
+	,[EdFactsOptionSetCode]
+)
+values 
+('Accessible Format Required Indicator', 'AccessibleFormatRequiredIndicator', '002092','No','No', NULL,NULL,'MISSING'),
+('Accessible Format Required Indicator', 'AccessibleFormatRequiredIndicator', '002092','Yes','Yes', NULL,NULL,'MISSING'),
+('Accessible Format Required Indicator', 'AccessibleFormatRequiredIndicator', '002092','Unknown','Unknown', NULL,NULL,'MISSING')
 
 print 'CEDS.TableChanges.sql executed for 14.1.'
-
