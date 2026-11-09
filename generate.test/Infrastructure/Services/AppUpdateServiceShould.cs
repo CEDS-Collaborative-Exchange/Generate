@@ -462,7 +462,36 @@ namespace generate.test.Infrastructure.Services
                 // Assert - no update has ever run, so every value falls back to its default
                 Assert.Equal("OK", currentStatus.WebStatus);
                 Assert.Equal("OK", currentStatus.BackgroundStatus);
+                Assert.False(currentStatus.BackgroundWaitingToStart);
 
+            }
+        }
+
+        [Fact]
+        public void GetStatus_BackgroundWaitingToStart()
+        {
+            using (var context = GetContextWithData())
+            {
+                // Arrange
+                var fileSystem = SetupFileSystem_SingleValidUpdate();
+                var logger = Mock.Of<ILogger<AppUpdateService>>();
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
+                var appSettings = new Mock<IOptions<AppSettings>>();
+                var zipFileHelper = Mock.Of<IZipFileHelper>();
+
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
+
+                // Act - the settings page keys off this flag, not the phase wording
+                service.SetUpdateStatus(UpdateStatusValues.BackgroundApp, UpdateStatusValues.InProgress, UpdateStatusValues.PhaseWaitingForBackgroundStart);
+                var waitingStatus = service.GetUpdateStatus();
+
+                service.SetUpdateStatus(UpdateStatusValues.BackgroundApp, UpdateStatusValues.InProgress, UpdateStatusValues.PhaseValidatingPackage);
+                var startedStatus = service.GetUpdateStatus();
+
+                // Assert
+                Assert.True(waitingStatus.BackgroundWaitingToStart);
+                Assert.False(startedStatus.BackgroundWaitingToStart);
             }
         }
 
@@ -1485,6 +1514,43 @@ namespace generate.test.Infrastructure.Services
             }
         }
 
+        [Fact]
+        public void ExecuteSiteUpdate_LegacyPath_AppliesOtherAppsHalfToLegacyDestination()
+        {
+            using (var context = GetContextWithData())
+            {
+                // Arrange - web updating background, whose folder name doesn't contain "generate.background"
+                var fileSystem = SetupFileSystem_SingleValidUpdate();
+                fileSystem.Directory.CreateDirectory(@"d:\apps\bg-stage");
+                var logger = Mock.Of<ILogger<AppUpdateService>>();
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
+                var appSettings = Mock.Of<IOptions<AppSettings>>(x => x.Value == new AppSettings());
+                var zipFileHelperMock = new Mock<IZipFileHelper>();
+
+                zipFileHelperMock.Setup(x => x.UncompressFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) =>
+                {
+                    this.MockUncompressValidUpdatePackage(fileSystem, p, q);
+                    fileSystem.File.CreateText(@"c:\generate.web\Updates\generate_3.0\background\newbackgroundfile.htm").Dispose();
+                });
+                zipFileHelperMock.Setup(x => x.CompressDirectory(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((p, q) => this.MockCompressSite(fileSystem, p, q));
+
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
+
+                // Act
+                service.ExecuteSiteUpdate(@"c:\generate.web", UpdateStatusValues.WebApp, @"d:\apps\bg-stage");
+
+                // Assert - the background half (not web's) lands in the destination, backed up under background's name,
+                // and progress is recorded under the calling app
+                Assert.True(fileSystem.FileExists(@"d:\apps\bg-stage\newbackgroundfile.htm"));
+                Assert.False(fileSystem.FileExists(@"d:\apps\bg-stage\newfile.htm"));
+                Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\Backups\generate.background_backup.zip"));
+
+                var status = context.GenerateConfigurations.Single(x => x.GenerateConfigurationCategory == "AppUpdate" && x.GenerateConfigurationKey == "WebStatus");
+                Assert.Equal(UpdateStatusValues.Ok, status.GenerateConfigurationValue);
+            }
+        }
+
 
 
         [Fact]
@@ -1607,7 +1673,7 @@ namespace generate.test.Infrastructure.Services
             var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
-            service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.web");
+            service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.web", "web");
 
             // Assert
             Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\Backups\generate.web_backup.zip"));
@@ -1636,7 +1702,7 @@ namespace generate.test.Infrastructure.Services
             var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
-            service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.background");
+            service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.background", "background");
 
             // Assert
             Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\Backups\generate.background_backup.zip"));
@@ -1668,7 +1734,7 @@ namespace generate.test.Infrastructure.Services
             var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
-            service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.web");
+            service.BackupSite(@"c:\generate.web\Updates", @"c:\generate.web", "web");
 
             // Assert
             Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\Backups\generate.web_backup.zip"));
@@ -1702,7 +1768,7 @@ namespace generate.test.Infrastructure.Services
             var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
-            service.RestoreBackup(@"c:\generate.web\Updates", @"c:\generate.web");
+            service.RestoreBackup(@"c:\generate.web\Updates", @"c:\generate.web", "web");
 
             // Assert
             Assert.False(fileSystem.Directory.Exists(@"c:\generate.web\Updates\Backups\generate.web_backup"));
@@ -1735,7 +1801,7 @@ namespace generate.test.Infrastructure.Services
             var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings, zipFileHelperMock.Object, Mock.Of<IAppDeploymentHelper>());
 
             // Act
-            service.RestoreBackup(@"c:\generate.web\Updates", @"c:\generate.background");
+            service.RestoreBackup(@"c:\generate.web\Updates", @"c:\generate.background", "background");
 
             // Assert
             Assert.False(fileSystem.Directory.Exists(@"c:\generate.web\Updates\Backups\generate.background_backup"));

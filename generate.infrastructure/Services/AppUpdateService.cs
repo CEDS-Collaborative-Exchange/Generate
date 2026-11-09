@@ -100,13 +100,18 @@ namespace generate.infrastructure.Services
 
         public UpdateStatusDto GetUpdateStatus()
         {
-            return new UpdateStatusDto()
+            var status = new UpdateStatusDto()
             {
-                WebStatus = this.GetAppUpdateConfigValue("WebStatus", "OK"),
+                WebStatus = this.GetAppUpdateConfigValue("WebStatus", UpdateStatusValues.Ok),
                 WebPhase = this.GetAppUpdateConfigValue("WebPhase", ""),
-                BackgroundStatus = this.GetAppUpdateConfigValue("BackgroundStatus", "OK"),
+                BackgroundStatus = this.GetAppUpdateConfigValue("BackgroundStatus", UpdateStatusValues.Ok),
                 BackgroundPhase = this.GetAppUpdateConfigValue("BackgroundPhase", "")
             };
+
+            status.BackgroundWaitingToStart = status.BackgroundStatus == UpdateStatusValues.InProgress
+                && status.BackgroundPhase == UpdateStatusValues.PhaseWaitingForBackgroundStart;
+
+            return status;
         }
 
         private string GetAppUpdateConfigValue(string key, string defaultValue)
@@ -150,8 +155,10 @@ namespace generate.infrastructure.Services
             _appRepository.Save();
         }
 
-        private static string StatusKey(string appFolderName) => appFolderName == "web" ? "WebStatus" : "BackgroundStatus";
-        private static string PhaseKey(string appFolderName) => appFolderName == "web" ? "WebPhase" : "BackgroundPhase";
+        private static string StatusKey(string appFolderName) => appFolderName == UpdateStatusValues.WebApp ? "WebStatus" : "BackgroundStatus";
+        private static string PhaseKey(string appFolderName) => appFolderName == UpdateStatusValues.WebApp ? "WebPhase" : "BackgroundPhase";
+        private static string OtherApp(string appFolderName) => appFolderName == UpdateStatusValues.WebApp ? UpdateStatusValues.BackgroundApp : UpdateStatusValues.WebApp;
+        private static string BackupName(string targetAppFolderName) => "generate." + targetAppFolderName + "_backup";
 
         private void SetPhase(string appFolderName, string phase)
         {
@@ -421,17 +428,18 @@ namespace generate.infrastructure.Services
 
         public void ExecuteSiteUpdate(string sourcePath, string appFolderName, string legacyDestinationPath = null)
         {
-            this.SetAppUpdateConfigValue(StatusKey(appFolderName), "IN_PROGRESS");
-            this.SetPhase(appFolderName, "Validating Update Package");
+            this.SetAppUpdateConfigValue(StatusKey(appFolderName), UpdateStatusValues.InProgress);
+            this.SetPhase(appFolderName, UpdateStatusValues.PhaseValidatingPackage);
 
             string updatePath = _fileSystem.Path.Combine(sourcePath, "Updates");
 
-            // The legacy in-place copy writes directly to disk, so it can never overwrite this
-            // app's own currently-loaded binaries - it targets the *other* app's content root
-            // (legacyDestinationPath). The Azure path doesn't use destinationPath at all (it
-            // always deploys sourcePath/this app via its own Managed Identity), so sourcePath is
-            // just a harmless fallback there.
+            // appFolderName is always the app running this update, and status/phase rows are
+            // recorded under it. The legacy in-place copy can never overwrite this app's own
+            // currently-loaded binaries, so when given legacyDestinationPath it writes the *other*
+            // app's half onto that app's content root. The Azure path doesn't use destinationPath
+            // or targetAppFolderName at all (it always deploys this app to itself).
             string destinationPath = legacyDestinationPath ?? sourcePath;
+            string targetAppFolderName = legacyDestinationPath != null ? OtherApp(appFolderName) : appFolderName;
 
             try
             {
@@ -452,32 +460,32 @@ namespace generate.infrastructure.Services
                         // copying/zipping the whole site can take far longer than IIS/ANCM's
                         // shutdownTimeLimit allows once app_offline.htm is in place, which would
                         // otherwise get this step (and the request running it) killed mid-copy.
-                        this.SetPhase(appFolderName, "Backing up Generate Website");
-                        this.BackupSite(updatePath, destinationPath);
+                        this.SetPhase(appFolderName, UpdateStatusValues.PhaseBackingUpSite);
+                        this.BackupSite(updatePath, destinationPath, targetAppFolderName);
 
                         // Take site offline
-                        this.SetPhase(appFolderName, "Taking Generate Website Offline");
+                        this.SetPhase(appFolderName, UpdateStatusValues.PhaseTakingSiteOffline);
                         this.TakeSiteOffline(updatePath, destinationPath);
 
                         // Pause to give time for site to shutdown
                         Thread.Sleep(500);
 
                         // Apply updates
-                        this.SetPhase(appFolderName, "Updating Generate Files");
-                        this.ApplyUpdates(packagesAvailable, updatePath, destinationPath, appFolderName);
+                        this.SetPhase(appFolderName, UpdateStatusValues.PhaseUpdatingFiles);
+                        this.ApplyUpdates(packagesAvailable, updatePath, destinationPath, targetAppFolderName, appFolderName);
 
                         // Bring site back online
-                        this.SetPhase(appFolderName, "Bringing Generate Website Online");
+                        this.SetPhase(appFolderName, UpdateStatusValues.PhaseBringingSiteOnline);
                         this.BringSiteOnline(destinationPath);
                     }
                 }
 
-                this.SetPhase(appFolderName, "Update Complete");
-                this.SetAppUpdateConfigValue(StatusKey(appFolderName), "OK");
+                this.SetPhase(appFolderName, UpdateStatusValues.PhaseComplete);
+                this.SetAppUpdateConfigValue(StatusKey(appFolderName), UpdateStatusValues.Ok);
             }
             catch (Exception ex)
             {
-                this.SetAppUpdateConfigValue(StatusKey(appFolderName), "FAILED - " + ex.Message);
+                this.SetAppUpdateConfigValue(StatusKey(appFolderName), UpdateStatusValues.FailedPrefix + ex.Message);
 
                 _logger.LogError(ex, "Update of Generate failed");
                 // If exception occurs, bring site back online (harmless no-op if the legacy
@@ -510,10 +518,10 @@ namespace generate.infrastructure.Services
                 var packagePath = _fileSystem.Path.Combine(updatePath, packageFileName.Replace(".zip", ""));
                 var appSourcePath = _fileSystem.Path.Combine(packagePath, appFolderName);
 
-                if (appFolderName == "web")
+                if (appFolderName == UpdateStatusValues.WebApp)
                 {
-                    // Database - Execute sql scripts
-                    this.SetPhase(appFolderName, "Updating Generate Database");
+                    // Database - Execute sql scripts (always run with the web half)
+                    this.SetPhase(appFolderName, UpdateStatusValues.PhaseUpdatingDatabase);
                     var databasePath = _fileSystem.Path.Combine(packagePath, "database");
                     this.ExecuteDatabaseUpdate(databasePath);
 
@@ -521,7 +529,7 @@ namespace generate.infrastructure.Services
                 }
 
                 // Repackage this app's own files as a clean, self-contained deployment zip
-                this.SetPhase(appFolderName, "Packaging Generate Deployment");
+                this.SetPhase(appFolderName, UpdateStatusValues.PhasePackagingDeployment);
                 var deployZipFile = _fileSystem.Path.Combine(updatePath, appFolderName + "_deploy.zip");
                 if (_fileSystem.File.Exists(deployZipFile))
                 {
@@ -529,7 +537,7 @@ namespace generate.infrastructure.Services
                 }
                 _zipFileHelper.CompressDirectory(appSourcePath, deployZipFile);
 
-                this.SetPhase(appFolderName, "Uploading Package to Azure");
+                this.SetPhase(appFolderName, UpdateStatusValues.PhaseUploadingToAzure);
                 _appDeploymentHelper.DeployPackage(deployZipFile);
                 _fileSystem.File.Delete(deployZipFile);
 
@@ -538,16 +546,9 @@ namespace generate.infrastructure.Services
             }
         }
 
-        public void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath, string appFolderName)
+        public void ApplyUpdates(List<string> packagesAvailable, string updatePath, string destinationPath, string targetAppFolderName, string statusAppFolderName)
         {
-
-            // appFolderName identifies the CALLING app (used for status/phase tracking elsewhere
-            // in ExecuteSiteUpdate), but which half of the package to apply - "web" or
-            // "background" - must be decided from the DESTINATION being written to, not the
-            // caller's own identity: the legacy path's whole purpose is writing the *other* app's
-            // half onto the *other* app's folder (a running process can never overwrite its own
-            // loaded binaries), so destinationPath, not appFolderName, says which half is correct.
-            bool isWebUpdate = !destinationPath.Contains("generate.background");
+            bool isWebUpdate = targetAppFolderName == UpdateStatusValues.WebApp;
 
             try
             {
@@ -582,16 +583,8 @@ namespace generate.infrastructure.Services
                         var updateSourcePath = packagePath;
                         var toDeleteFileName = "todelete.csv";
 
-                        if (isWebUpdate)
-                        {
-                            updateSourcePath = _fileSystem.Path.Combine(packagePath, "web");
-                            toDeleteFileName = "web_todelete.csv";
-                        }
-                        else
-                        {
-                            updateSourcePath = _fileSystem.Path.Combine(packagePath, "background");
-                            toDeleteFileName = "background_todelete.csv";
-                        }
+                        updateSourcePath = _fileSystem.Path.Combine(packagePath, targetAppFolderName);
+                        toDeleteFileName = targetAppFolderName + "_todelete.csv";
 
 
 
@@ -666,8 +659,8 @@ namespace generate.infrastructure.Services
 
                         if (isWebUpdate)
                         {
-                            // Database - Execute sql scripts
-                            this.SetPhase(appFolderName, "Updating Generate Database");
+                            // Database - Execute sql scripts (always run with the web half)
+                            this.SetPhase(statusAppFolderName, UpdateStatusValues.PhaseUpdatingDatabase);
                             var databasePath = _fileSystem.Path.Combine(packagePath, "database");
                             this.ExecuteDatabaseUpdate(databasePath);
 
@@ -688,22 +681,17 @@ namespace generate.infrastructure.Services
             {
                 _logger.LogError(ex, "Update of Generate failed");
                 // If exception occurs during copy, revert to backup
-                this.RestoreBackup(updatePath, destinationPath);
+                this.RestoreBackup(updatePath, destinationPath, targetAppFolderName);
 
                 throw;
             }
         }
 
-        public void BackupSite(string updatePath, string pathToBackup)
+        public void BackupSite(string updatePath, string pathToBackup, string targetAppFolderName)
         {
             _logger.LogInformation("Update - Backup site / updatePath = " + updatePath + " / pathToBackup = " + pathToBackup);
 
-            string backupName = "generate.web_backup";
-
-            if (pathToBackup.Contains("generate.background"))
-            {
-                backupName = "generate.background_backup";
-            }
+            string backupName = BackupName(targetAppFolderName);
 
             string backupPath = _fileSystem.Path.Combine(updatePath, "Backups");
             string backupDirectory = _fileSystem.Path.Combine(backupPath, backupName);
@@ -717,17 +705,12 @@ namespace generate.infrastructure.Services
             _fileSystem.Directory.Delete(backupDirectory, true);
         }
 
-        public void RestoreBackup(string updatePath, string targetPath)
+        public void RestoreBackup(string updatePath, string targetPath, string targetAppFolderName)
         {
 
             _logger.LogInformation("Update - Restore backup / updatePath = " + updatePath + " / targetPath = " + targetPath);
 
-            string backupName = "generate.web_backup";
-
-            if (targetPath.Contains("generate.background"))
-            {
-                backupName = "generate.background_backup";
-            }
+            string backupName = BackupName(targetAppFolderName);
 
             string backupPath = _fileSystem.Path.Combine(updatePath, "Backups");
             string backupDirectory = _fileSystem.Path.Combine(backupPath, backupName);
