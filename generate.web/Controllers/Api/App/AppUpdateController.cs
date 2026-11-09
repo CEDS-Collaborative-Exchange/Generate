@@ -31,6 +31,7 @@ namespace generate.web.Controllers.Api.App
         private readonly ManagedIdentityCredential _credential = new ManagedIdentityCredential();
         private static readonly TimeSpan BackgroundRetryInterval = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan BackgroundRestartTimeout = TimeSpan.FromMinutes(2);
+        private const string BackgroundAppFolder = "background";
 
         public AppUpdateController(
             ILogger<AppUpdateController> logger,
@@ -209,7 +210,24 @@ namespace generate.web.Controllers.Api.App
                     backgroundAppPath = System.IO.Path.Combine(_hostingEnvironment.ContentRootPath.Replace("generate.web", "generate.background"), buildOutputPath).TrimEnd('\\');
                 }
 
-                _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, "web", backgroundAppPath);
+                // Background only records its own status once its half starts, after the web half
+                // finishes and it comes back online. Mark it as waiting up front so the settings
+                // page keeps showing the update as running through that gap, and so a phase left
+                // over from a previous update isn't shown.
+                _appUpdateService.SetUpdateStatus(BackgroundAppFolder, "IN_PROGRESS", "Waiting for Web Update to Finish");
+
+                try
+                {
+                    _appUpdateService.ExecuteSiteUpdate(_hostingEnvironment.ContentRootPath, "web", backgroundAppPath);
+                }
+                catch
+                {
+                    // The background half never starts, so don't leave it marked as waiting
+                    _appUpdateService.SetUpdateStatus(BackgroundAppFolder, "OK", "");
+                    throw;
+                }
+
+                _appUpdateService.SetUpdateStatus(BackgroundAppFolder, "IN_PROGRESS", "Waiting for Background Site to Start");
 
                 // Ask background to apply its own ("background") part to itself the same way
                 // Background was just brought back online by the update above - IIS keeps serving
@@ -218,7 +236,10 @@ namespace generate.web.Controllers.Api.App
                 var response = CallBackground("execute", Method.Put, "ExecuteUpdate", BackgroundRestartTimeout);
 
                 if (response.IsSuccessful) return Ok();
-                else return BackgroundFailed(response);
+
+                var failed = BackgroundFailed(response);
+                _appUpdateService.SetUpdateStatus(BackgroundAppFolder, "FAILED - " + failed.Value, "Background Update Not Started");
+                return failed;
             }
             catch (Exception ex)
             {

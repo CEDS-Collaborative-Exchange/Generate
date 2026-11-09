@@ -843,3 +843,40 @@ END;
     BEGIN
         ALTER TABLE RDS.FactOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
     END
+
+--------------------------------------------------
+--RDS.DimAssessmentStatuses
+--------------------------------------------------
+-- CIID-7234 added these in 14.0_prerelease, but they were lost when that folder was merged into the
+-- 14.0 release, so neither the 14.0 release nor our 14.0 backup has them.
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusCode') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusCode VARCHAR (50) NULL;
+END;
+
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusDescription') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusDescription VARCHAR (100) NULL;
+END;
+
+IF COL_LENGTH('RDS.DimAssessmentStatuses', 'FormerEnglishLearnerYearStatusEdFactsCode') IS NULL
+BEGIN
+	ALTER TABLE RDS.DimAssessmentStatuses ADD FormerEnglishLearnerYearStatusEdFactsCode VARCHAR (50) NULL;
+END;
+
+--------------------------------------------------
+--New Fact Type changes
+--------------------------------------------------
+insert into rds.DimFactTypes (
+	FactTypeCode
+	,FactTypeDescription
+	,FactTypeLabel
+)
+values ('englishlearnerassessment', 'ENGLISHLEARNERASSESSMENT - 050,126,137,138,139', 'English Learner Assessment'),
+('ideapartc', 'IDEAPARTC - ', 'IDEA Part C')
+
+--remove the files that are being moved to the new Fact Type
+update rds.DimFactTypes
+set FactTypeDescription = 'ASSESSMENT - 113,125,175,178,179,185,188,189,224,225'
+where FactTypeCode = 'assessment';
+

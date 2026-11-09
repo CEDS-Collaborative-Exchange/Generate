@@ -12,6 +12,12 @@ namespace generate.core.Interfaces.Services
         string GetCurrentVersion();
         string GetUpdateUrl();
         UpdateStatusDto GetUpdateStatus();
+
+        /// <summary>
+        /// Records the status and phase that the settings page shows for the given app
+        /// (appFolderName is "web" or "background").
+        /// </summary>
+        void SetUpdateStatus(string appFolderName, string status, string phase);
         List<UpdatePackageDto> CheckForPendingUpdates();
         List<UpdatePackageDto> GetPendingUpdates(string contentRootPath, int currentMajorVersion = 0, int currentMinorVersion = 0);
         List<UpdatePackageDto> GetDownloadedUpdates(string appPath);

@@ -19,6 +19,11 @@ const FAILED_PREFIX = 'FAILED - ';
 // How long after starting an update, or after the last IN_PROGRESS status, failed checks are
 // treated as the sites restarting rather than shown as errors.
 const UPDATE_RESTART_GRACE_MS = 5 * 60 * 1000;
+// Set by AppUpdateController.ExecuteUpdate while web asks background to start its half. Web
+// retries that call for a couple of minutes and then records a failure, so a status stuck on
+// this phase for longer means web restarted before it could finish.
+const WAITING_FOR_BACKGROUND_PHASE = 'Background Site is starting to apply the update. This may take a few minutes.';
+const BACKGROUND_START_TIMEOUT_MS = 5 * 60 * 1000;
 
 @Component({
     selector: 'generate-app-settings-update',
@@ -45,6 +50,9 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
     // While an update runs, web and background take each other offline and restart, so the
     // update API calls fail (503) or briefly disagree on the downloaded updates until it ends.
     private quietUntil = 0;
+
+    private backgroundWaitStartedAt = 0;
+    backgroundStartTimedOut = false;
 
     constructor(
         private _router: Router,
@@ -77,7 +85,11 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
         const delay = this.isUpdateInProgress() || this.updateProcessing ? ACTIVE_POLL_MS : IDLE_POLL_MS;
 
         this.pollTimeout = setTimeout(() => {
-            this.checkAvailable();
+            // Web and background download the update one after the other, so their downloaded
+            // lists disagree until the download finishes. download() checks again once it's done.
+            if (!this.downloadingUpdates) {
+                this.checkAvailable();
+            }
             this.schedulePoll();
         }, delay);
     }
@@ -89,13 +101,13 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
     }
 
     isUpdateInProgress(): boolean {
-        return this.updateStatus != null &&
+        return this.updateStatus != null && !this.backgroundStartTimedOut &&
             (this.updateStatus.webStatus === 'IN_PROGRESS' || this.updateStatus.backgroundStatus === 'IN_PROGRESS');
     }
 
     hasUpdateFailed(): boolean {
-        return this.updateStatus != null &&
-            (this.isFailedStatus(this.updateStatus.webStatus) || this.isFailedStatus(this.updateStatus.backgroundStatus));
+        return this.updateStatus != null && (this.backgroundStartTimedOut ||
+            this.isFailedStatus(this.updateStatus.webStatus) || this.isFailedStatus(this.updateStatus.backgroundStatus));
     }
 
     formatFailureMessage(status: string): string {
@@ -115,8 +127,28 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
 
     private applyStatus(status: UpdateStatus) {
         this.updateStatus = status;
+        this.checkBackgroundStartTimeout();
         if (this.isUpdateInProgress()) {
             this.quietUntil = Date.now() + UPDATE_RESTART_GRACE_MS;
+        }
+    }
+
+    // Reports the update as failed when background has been waiting to start for too long,
+    // instead of polling "Update in Progress" forever.
+    private checkBackgroundStartTimeout() {
+        if (this.updateStatus?.backgroundStatus !== 'IN_PROGRESS' || this.updateStatus.backgroundPhase !== WAITING_FOR_BACKGROUND_PHASE) {
+            this.backgroundWaitStartedAt = 0;
+            this.backgroundStartTimedOut = false;
+            return;
+        }
+
+        if (!this.backgroundWaitStartedAt) {
+            this.backgroundWaitStartedAt = Date.now();
+        } else if (!this.backgroundStartTimedOut && Date.now() - this.backgroundWaitStartedAt > BACKGROUND_START_TIMEOUT_MS) {
+            this.backgroundStartTimedOut = true;
+            // Show the failure directly; going through the "update finished" reload would just
+            // restart the wait.
+            this.updateProcessing = false;
         }
     }
 
