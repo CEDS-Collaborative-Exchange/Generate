@@ -485,6 +485,7 @@ namespace generate.testdata.Helpers
 
                 output.AppendLine("truncate table rds.BridgeK12AccessibleEducationMaterialAssignmentIdeaDisabilityTypes");
                 output.AppendLine("truncate table rds.BridgeK12AccessibleEducationMaterialRaces");
+                output.AppendLine("truncate table rds.BridgeK12StudentAssessmentAccessibilityFeatures");
                 output.AppendLine("truncate table rds.BridgeLeaGradeLevels");
                 output.AppendLine("truncate table rds.BridgeK12SchoolGradeLevels");
                 output.AppendLine("truncate table rds.BridgeK12StudentAssessmentRaces");

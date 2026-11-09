@@ -5,6 +5,7 @@ CREATE VIEW [RDS].[vwAccessibleEducationMaterialAssignments]
         rfaema.SchoolYearId
       , rfaema.CountDateId
       , rfaema.K12StudentId
+	    , rfaema.K12Student_CurrentId 
       , rfaema.SeaId
       , rfaema.IeuId
       , rfaema.LeaId
@@ -39,7 +40,7 @@ CREATE VIEW [RDS].[vwAccessibleEducationMaterialAssignments]
 	    , rddCourseEntryDate.DateValue AS CourseSectionEntryDate
 	    , rddCourseExitDate.DateValue AS CourseSectionExitDate
 	    , rfaema.AssignmentCount
-    FROM [RDS].FactK12AccessibleEducationMaterialAssignments rfaema
+   FROM [RDS].FactK12AccessibleEducationMaterialAssignments rfaema
     LEFT JOIN RDS.DimDates rddEnrollmentEntryDate
       ON rfaema.EnrollmentEntryDateId = rddEnrollmentEntryDate.DimDateId
     LEFT JOIN RDS.DimDates rddEnrollmentExitDate
