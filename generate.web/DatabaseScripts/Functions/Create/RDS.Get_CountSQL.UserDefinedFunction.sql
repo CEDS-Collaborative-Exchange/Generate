@@ -991,6 +991,9 @@ BEGIN
 
 			if @reportCode = '006'
 			begin
+				select @sql = @sql + '
+				if OBJECT_ID(''tempdb..#Students'') is not null drop table #Students' + char(10)
+
 				select @sql = @sql + char(10)
 				select @sql = @sql + '
 				select rdp.K12StudentStudentIdentifierState'
@@ -1102,7 +1105,7 @@ BEGIN
 				 + char(10) + char(10)
 
 				select @sql = @sql + '
-				CREATE INDEX IDX_Rules ON #Rules (K12StudentStudentIdentifierState, DimIdeaStatusId, DimDisciplineStatusId)' + char(10) + char(10)
+				CREATE INDEX IDX_Rules ON #Rules (K12StudentStudentIdentifierState, DimIdeaStatusId)' + char(10) + char(10)
 
 			end
 
