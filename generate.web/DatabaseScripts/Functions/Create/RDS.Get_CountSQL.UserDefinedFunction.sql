@@ -1,11 +1,4 @@
-USE [generate]
-GO
-/****** Object:  UserDefinedFunction [RDS].[Get_CountSQL]    Script Date: 11/8/2026 11:47:26 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-ALTER FUNCTION [RDS].[Get_CountSQL] (
+CREATE FUNCTION [RDS].[Get_CountSQL] (
 	@reportCode as nvarchar(150),
 	@reportLevel as nvarchar(10),
 	@reportYear as nvarchar(10),
