@@ -22,7 +22,7 @@ const UPDATE_RESTART_GRACE_MS = 5 * 60 * 1000;
 // Set by AppUpdateController.ExecuteUpdate while web asks background to start its half. Web
 // retries that call for a couple of minutes and then records a failure, so a status stuck on
 // this phase for longer means web restarted before it could finish.
-const WAITING_FOR_BACKGROUND_PHASE = 'Waiting for Background Site to Start';
+const WAITING_FOR_BACKGROUND_PHASE = 'Background Site is starting to apply the update. This may take a few minutes.';
 const BACKGROUND_START_TIMEOUT_MS = 5 * 60 * 1000;
 
 @Component({
