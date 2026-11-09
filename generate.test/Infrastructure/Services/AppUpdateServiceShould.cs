@@ -462,7 +462,36 @@ namespace generate.test.Infrastructure.Services
                 // Assert - no update has ever run, so every value falls back to its default
                 Assert.Equal("OK", currentStatus.WebStatus);
                 Assert.Equal("OK", currentStatus.BackgroundStatus);
+                Assert.False(currentStatus.BackgroundWaitingToStart);
 
+            }
+        }
+
+        [Fact]
+        public void GetStatus_BackgroundWaitingToStart()
+        {
+            using (var context = GetContextWithData())
+            {
+                // Arrange
+                var fileSystem = SetupFileSystem_SingleValidUpdate();
+                var logger = Mock.Of<ILogger<AppUpdateService>>();
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
+                var appSettings = new Mock<IOptions<AppSettings>>();
+                var zipFileHelper = Mock.Of<IZipFileHelper>();
+
+                var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelper, Mock.Of<IAppDeploymentHelper>());
+
+                // Act - the settings page keys off this flag, not the phase wording
+                service.SetUpdateStatus(UpdateStatusValues.BackgroundApp, UpdateStatusValues.InProgress, UpdateStatusValues.PhaseWaitingForBackgroundStart);
+                var waitingStatus = service.GetUpdateStatus();
+
+                service.SetUpdateStatus(UpdateStatusValues.BackgroundApp, UpdateStatusValues.InProgress, UpdateStatusValues.PhaseValidatingPackage);
+                var startedStatus = service.GetUpdateStatus();
+
+                // Assert
+                Assert.True(waitingStatus.BackgroundWaitingToStart);
+                Assert.False(startedStatus.BackgroundWaitingToStart);
             }
         }
 

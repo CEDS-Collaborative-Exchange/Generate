@@ -86,7 +86,7 @@ namespace generate.background.Controllers
                     webAppPath = System.IO.Path.Combine(_hostingEnvironment.ContentRootPath.Replace("generate.background", "generate.web"), buildOutputPath).TrimEnd('\\');
                 }
 
-                _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, "background", webAppPath);
+                _hangfireHelper.TriggerSiteUpdate(_hostingEnvironment.ContentRootPath, UpdateStatusValues.BackgroundApp, webAppPath);
 
                 return Ok();
 
