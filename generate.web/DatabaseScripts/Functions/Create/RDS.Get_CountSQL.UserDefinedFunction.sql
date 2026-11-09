@@ -720,10 +720,20 @@ BEGIN
 
 					select @sql = @sql + 
 					'
-					select distinct ske.StudentIdentifierState
-					into #excludeStudents
-					from Staging.K12Enrollment ske
-					where isnull(ske.EnrollmentExitDate, ''' + @calculatedSYEndDate + ''') >= ''' + @calculatedSYEndDate + '''
+					SELECT distinct ske.StudentIdentifierState
+					INTO #excludeStudents
+					FROM Staging.K12Enrollment ske
+					JOIN Staging.ProgramParticipationSpecialEducation sppse
+						ON ske.SchoolYear = sppse.SchoolYear
+						AND ske.StudentIdentifierState = sppse.StudentIdentifierState
+						AND ISNULL(ske.LEAIdentifierSeaAccountability,'''') = ISNULL(sppse.LeaIdentifierSeaAccountability,'''')
+						AND ISNULL(ske.SchoolIdentifierSea,'''') = ISNULL(sppse.SchoolIdentifierSea,'''')
+					LEFT JOIN staging.SourceSystemReferenceData sssrd
+						ON sssrd.InputCode = sppse.SpecialEducationExitReason 
+						AND sssrd.TableName = ''RefSpecialEducationExitReason''
+						AND ske.SchoolYear = sssrd.SchoolYear
+					WHERE isnull(ske.EnrollmentExitDate, ''' + @calculatedSYEndDate + ''') >= ''' + @calculatedSYEndDate + '''
+					AND sssrd.OutputCode = ''MovedAndContinuing''
 					' + char(10)
 
 					select @sql = @sql + 
@@ -2100,15 +2110,11 @@ BEGIN
 				begin
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 						-- Remove MKC counts for Students still in SPED at SY End' + char(10) + '
-						if exists (select 1 from #categorySet
-							where ' + @reportField + ' = ''MKC'')
-						begin
+						
 							delete c from #categorySet c
 							left join #excludeStudents e 
 								on c.K12StudentStudentIdentifierState = e.StudentIdentifierState
-							where ' + @reportField + ' = ''MKC''
-							and e.StudentIdentifierState is not null
-						end
+							where e.StudentIdentifierState is not null						
 					'
 				end
 			end
