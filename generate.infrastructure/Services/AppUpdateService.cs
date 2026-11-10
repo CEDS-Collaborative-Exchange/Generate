@@ -100,13 +100,18 @@ namespace generate.infrastructure.Services
 
         public UpdateStatusDto GetUpdateStatus()
         {
-            return new UpdateStatusDto()
+            var status = new UpdateStatusDto()
             {
-                WebStatus = this.GetAppUpdateConfigValue("WebStatus", "OK"),
+                WebStatus = this.GetAppUpdateConfigValue("WebStatus", UpdateStatusValues.Ok),
                 WebPhase = this.GetAppUpdateConfigValue("WebPhase", ""),
-                BackgroundStatus = this.GetAppUpdateConfigValue("BackgroundStatus", "OK"),
+                BackgroundStatus = this.GetAppUpdateConfigValue("BackgroundStatus", UpdateStatusValues.Ok),
                 BackgroundPhase = this.GetAppUpdateConfigValue("BackgroundPhase", "")
             };
+
+            status.BackgroundWaitingToStart = status.BackgroundStatus == UpdateStatusValues.InProgress
+                && status.BackgroundPhase == UpdateStatusValues.PhaseWaitingForBackgroundStart;
+
+            return status;
         }
 
         private string GetAppUpdateConfigValue(string key, string defaultValue)
@@ -421,8 +426,8 @@ namespace generate.infrastructure.Services
 
         public void ExecuteSiteUpdate(string sourcePath, string appFolderName, string legacyDestinationPath = null)
         {
-            this.SetAppUpdateConfigValue(StatusKey(appFolderName), "IN_PROGRESS");
-            this.SetPhase(appFolderName, "Validating Update Package");
+            this.SetAppUpdateConfigValue(StatusKey(appFolderName), UpdateStatusValues.InProgress);
+            this.SetPhase(appFolderName, UpdateStatusValues.PhaseValidatingPackage);
 
             string updatePath = _fileSystem.Path.Combine(sourcePath, "Updates");
 
@@ -452,32 +457,32 @@ namespace generate.infrastructure.Services
                         // copying/zipping the whole site can take far longer than IIS/ANCM's
                         // shutdownTimeLimit allows once app_offline.htm is in place, which would
                         // otherwise get this step (and the request running it) killed mid-copy.
-                        this.SetPhase(appFolderName, "Backing up Generate Website");
+                        this.SetPhase(appFolderName, UpdateStatusValues.PhaseBackingUpSite);
                         this.BackupSite(updatePath, destinationPath);
 
                         // Take site offline
-                        this.SetPhase(appFolderName, "Taking Generate Website Offline");
+                        this.SetPhase(appFolderName, UpdateStatusValues.PhaseTakingSiteOffline);
                         this.TakeSiteOffline(updatePath, destinationPath);
 
                         // Pause to give time for site to shutdown
                         Thread.Sleep(500);
 
                         // Apply updates
-                        this.SetPhase(appFolderName, "Updating Generate Files");
+                        this.SetPhase(appFolderName, UpdateStatusValues.PhaseUpdatingFiles);
                         this.ApplyUpdates(packagesAvailable, updatePath, destinationPath, appFolderName);
 
                         // Bring site back online
-                        this.SetPhase(appFolderName, "Bringing Generate Website Online");
+                        this.SetPhase(appFolderName, UpdateStatusValues.PhaseBringingSiteOnline);
                         this.BringSiteOnline(destinationPath);
                     }
                 }
 
-                this.SetPhase(appFolderName, "Update Complete");
-                this.SetAppUpdateConfigValue(StatusKey(appFolderName), "OK");
+                this.SetPhase(appFolderName, UpdateStatusValues.PhaseComplete);
+                this.SetAppUpdateConfigValue(StatusKey(appFolderName), UpdateStatusValues.Ok);
             }
             catch (Exception ex)
             {
-                this.SetAppUpdateConfigValue(StatusKey(appFolderName), "FAILED - " + ex.Message);
+                this.SetAppUpdateConfigValue(StatusKey(appFolderName), UpdateStatusValues.FailedPrefix + ex.Message);
 
                 _logger.LogError(ex, "Update of Generate failed");
                 // If exception occurs, bring site back online (harmless no-op if the legacy
@@ -513,7 +518,7 @@ namespace generate.infrastructure.Services
                 if (appFolderName == "web")
                 {
                     // Database - Execute sql scripts
-                    this.SetPhase(appFolderName, "Updating Generate Database");
+                    this.SetPhase(appFolderName, UpdateStatusValues.PhaseUpdatingDatabase);
                     var databasePath = _fileSystem.Path.Combine(packagePath, "database");
                     this.ExecuteDatabaseUpdate(databasePath);
 
@@ -521,7 +526,7 @@ namespace generate.infrastructure.Services
                 }
 
                 // Repackage this app's own files as a clean, self-contained deployment zip
-                this.SetPhase(appFolderName, "Packaging Generate Deployment");
+                this.SetPhase(appFolderName, UpdateStatusValues.PhasePackagingDeployment);
                 var deployZipFile = _fileSystem.Path.Combine(updatePath, appFolderName + "_deploy.zip");
                 if (_fileSystem.File.Exists(deployZipFile))
                 {
@@ -529,7 +534,7 @@ namespace generate.infrastructure.Services
                 }
                 _zipFileHelper.CompressDirectory(appSourcePath, deployZipFile);
 
-                this.SetPhase(appFolderName, "Uploading Package to Azure");
+                this.SetPhase(appFolderName, UpdateStatusValues.PhaseUploadingToAzure);
                 _appDeploymentHelper.DeployPackage(deployZipFile);
                 _fileSystem.File.Delete(deployZipFile);
 
@@ -667,7 +672,7 @@ namespace generate.infrastructure.Services
                         if (isWebUpdate)
                         {
                             // Database - Execute sql scripts
-                            this.SetPhase(appFolderName, "Updating Generate Database");
+                            this.SetPhase(appFolderName, UpdateStatusValues.PhaseUpdatingDatabase);
                             var databasePath = _fileSystem.Path.Combine(packagePath, "database");
                             this.ExecuteDatabaseUpdate(databasePath);
 

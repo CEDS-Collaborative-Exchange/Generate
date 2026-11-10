@@ -3,4 +3,5 @@ export interface UpdateStatus {
     webPhase: string;
     backgroundStatus: string;
     backgroundPhase: string;
+    backgroundWaitingToStart: boolean;
 }
