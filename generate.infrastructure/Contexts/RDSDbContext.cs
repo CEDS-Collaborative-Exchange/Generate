@@ -102,6 +102,10 @@ namespace generate.infrastructure.Contexts
                    .IsRequired();
 
                 entity
+                   .Property(x => x.FactTypeLabel)
+                   .HasMaxLength(100);
+
+                entity
                    .HasIndex(p => new { p.FactTypeCode });
 
 
