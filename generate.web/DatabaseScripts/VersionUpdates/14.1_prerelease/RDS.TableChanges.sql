@@ -869,11 +869,11 @@ END;
 --------------------------------------------------
 insert into rds.DimFactTypes (
 	FactTypeCode
-	,FactTypeDescription
-	,FactTypeLabel
+	, FactTypeDescription
+	, FactTypeLabel
 )
 values ('englishlearnerassessment', 'ENGLISHLEARNERASSESSMENT - 050,126,137,138,139', 'English Learner Assessment'),
-('ideapartc', 'IDEAPARTC - ', 'IDEA Part C')
+('ideapartc', 'IDEAPARTC - ', NULL)
 
 --remove the files that are being moved to the new Fact Type
 update rds.DimFactTypes
