@@ -38,19 +38,21 @@ BEGIN
 		DROP TABLE IF EXISTS #k12Staff
 
 		CREATE TABLE #k12Staff (
-			FirstName										NVARCHAR(75) NULL
-			, MiddleName									NVARCHAR(75) NULL
-			, LastOrSurname									NVARCHAR(75) NULL
-			, BirthDate										DATE NULL
-			, K12StaffStaffMemberIdentifierState			NVARCHAR(40) NULL
-			, IsActiveK12Staff 								BIT NULL
-			, PositionTitle									NVARCHAR(200) NULL
-			, RecordStartDateTime							DATE NULL
-			, RecordEndDateTime								DATE NULL
+			RowId										INT
+			, FirstName									NVARCHAR(75) NULL
+			, MiddleName								NVARCHAR(75) NULL
+			, LastOrSurname								NVARCHAR(75) NULL
+			, BirthDate									DATE NULL
+			, K12StaffStaffMemberIdentifierState		NVARCHAR(40) NULL
+			, IsActiveK12Staff 							BIT NULL
+			, PositionTitle								NVARCHAR(200) NULL
+			, RecordStartDateTime						DATE NULL
+			, RecordEndDateTime							DATE NULL
 		)
 		
 		INSERT INTO #k12Staff (
-			FirstName
+			RowId
+			, FirstName
 			, MiddleName
 			, LastOrSurname
 			, BirthDate
@@ -61,7 +63,8 @@ BEGIN
 			, RecordEndDateTime
 		)		
 		SELECT DISTINCT
-			FirstName
+			Id
+			, FirstName
 			, MiddleName
 			, LastOrSurname
 			, BirthDate

@@ -13,5 +13,8 @@ namespace generate.core.Dtos.App
         public string WebPhase { get; set; }
         public string BackgroundStatus { get; set; }
         public string BackgroundPhase { get; set; }
+
+        // True while web has finished its half and is waiting for background to start its own.
+        public bool BackgroundWaitingToStart { get; set; }
     }
 }

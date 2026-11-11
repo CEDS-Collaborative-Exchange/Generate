@@ -471,3 +471,108 @@
 	WHERE main.DimAssessmentStatusId IS NULL
 
 	DROP TABLE #FormerEnglishLearnerYearStatus
+
+	------------------------------------------------------------------------------
+	-- Populate DimAccessibleEducationMaterialStatuses   
+	------------------------------------------------------------------------------
+	--clear the DimAccessibleEducationMaterialStatuses table for the junk record if it exists
+	DELETE FROM RDS.DimAccessibleEducationMaterialStatuses WHERE DimAccessibleEducationMaterialStatusId <> -1
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimAccessibleEducationMaterialStatuses d WHERE d.DimAccessibleEducationMaterialStatusId = -1) BEGIN
+		SET IDENTITY_INSERT rds.DimAccessibleEducationMaterialStatuses ON
+
+			INSERT INTO rds.DimAccessibleEducationMaterialStatuses(
+				DimAccessibleEducationMaterialStatusId
+				, AccessibleFormatIssuedIndicatorCode
+				, AccessibleFormatIssuedIndicatorDescription
+				, AccessibleFormatRequiredIndicatorCode
+				, AccessibleFormatRequiredIndicatorDescription
+				, AccessibleFormatTypeCode
+				, AccessibleFormatTypeDescription
+			)
+			VALUES (
+				-1
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+			)
+
+		SET IDENTITY_INSERT rds.DimAccessibleEducationMaterialStatuses OFF
+	END
+	
+	IF OBJECT_ID('tempdb..#AccessibleFormatIssuedIndicatorCode') IS NOT NULL
+		DROP TABLE #AccessibleFormatIssuedIndicatorCode
+
+	CREATE TABLE #AccessibleFormatIssuedIndicatorCode (AccessibleFormatIssuedIndicatorCode VARCHAR(50), AccessibleFormatIssuedIndicatorDescription VARCHAR(200))
+
+	INSERT INTO #AccessibleFormatIssuedIndicatorCode VALUES ('MISSING', 'MISSING')
+	INSERT INTO #AccessibleFormatIssuedIndicatorCode
+	SELECT 
+	 	CedsOptionSetCode
+	 	, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'AccessibleFormatIssuedIndicator'
+	ORDER BY CedsOptionSetCode
+
+	IF OBJECT_ID('tempdb..#AccessibleFormatRequiredIndicatorCode') IS NOT NULL
+		DROP TABLE #AccessibleFormatRequiredIndicatorCode
+
+	CREATE TABLE #AccessibleFormatRequiredIndicatorCode (AccessibleFormatRequiredIndicatorCode VARCHAR(50), AccessibleFormatRequiredIndicatorDescription VARCHAR(200))
+
+	INSERT INTO #AccessibleFormatRequiredIndicatorCode VALUES ('MISSING', 'MISSING')
+	INSERT INTO #AccessibleFormatRequiredIndicatorCode 
+	SELECT 
+	 	CedsOptionSetCode
+	 	, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'AccessibleFormatRequiredIndicator'
+	ORDER BY CedsOptionSetCode
+
+	IF OBJECT_ID('tempdb..#AccessibleFormatTypeCode') IS NOT NULL
+		DROP TABLE #AccessibleFormatTypeCode
+
+	CREATE TABLE #AccessibleFormatTypeCode (AccessibleFormatTypeCode VARCHAR(50), AccessibleFormatTypeDescription VARCHAR(200))
+
+	INSERT INTO #AccessibleFormatTypeCode VALUES ('MISSING', 'MISSING')
+	INSERT INTO #AccessibleFormatTypeCode 
+	SELECT 
+	 	CedsOptionSetCode
+	 	, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'AccessibleFormatType'
+	ORDER BY CedsOptionSetCode
+
+	-- Insert into DimAccessibleEducationMaterialStatuses table
+	INSERT INTO [RDS].[DimAccessibleEducationMaterialStatuses] (
+		[AccessibleFormatIssuedIndicatorCode],
+		[AccessibleFormatIssuedIndicatorDescription],
+		[AccessibleFormatRequiredIndicatorCode],
+		[AccessibleFormatRequiredIndicatorDescription],
+		[AccessibleFormatTypeCode],
+		[AccessibleFormatTypeDescription]
+	)
+	SELECT
+		a.AccessibleFormatIssuedIndicatorCode,
+		a.AccessibleFormatIssuedIndicatorDescription,
+		b.AccessibleFormatRequiredIndicatorCode,
+		b.AccessibleFormatRequiredIndicatorDescription,
+		c.AccessibleFormatTypeCode,
+		c.AccessibleFormatTypeDescription
+	FROM
+		#AccessibleFormatIssuedIndicatorCode a
+		CROSS JOIN #AccessibleFormatRequiredIndicatorCode b
+		CROSS JOIN #AccessibleFormatTypeCode c
+		LEFT JOIN [RDS].[DimAccessibleEducationMaterialStatuses] main
+			ON a.AccessibleFormatIssuedIndicatorCode = main.AccessibleFormatIssuedIndicatorCode
+			AND b.AccessibleFormatRequiredIndicatorCode = main.AccessibleFormatRequiredIndicatorCode
+			AND c.AccessibleFormatTypeCode = main.AccessibleFormatTypeCode
+		WHERE main.DimAccessibleEducationMaterialStatusId IS NULL
+
+	-- Drop temp tables
+	DROP TABLE #AccessibleFormatIssuedIndicatorCode
+	DROP TABLE #AccessibleFormatRequiredIndicatorCode
+	DROP TABLE #AccessibleFormatTypeCode
+

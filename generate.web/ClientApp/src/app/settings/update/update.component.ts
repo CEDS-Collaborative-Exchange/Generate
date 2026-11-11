@@ -19,10 +19,9 @@ const FAILED_PREFIX = 'FAILED - ';
 // How long after starting an update, or after the last IN_PROGRESS status, failed checks are
 // treated as the sites restarting rather than shown as errors.
 const UPDATE_RESTART_GRACE_MS = 5 * 60 * 1000;
-// Set by AppUpdateController.ExecuteUpdate while web asks background to start its half. Web
-// retries that call for a couple of minutes and then records a failure, so a status stuck on
-// this phase for longer means web restarted before it could finish.
-const WAITING_FOR_BACKGROUND_PHASE = 'Waiting for Background Site to Start';
+// Web asks background to start its half and retries for a couple of minutes before recording a
+// failure, so backgroundWaitingToStart staying true for longer means web restarted before it
+// could finish.
 const BACKGROUND_START_TIMEOUT_MS = 5 * 60 * 1000;
 
 @Component({
@@ -136,7 +135,7 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
     // Reports the update as failed when background has been waiting to start for too long,
     // instead of polling "Update in Progress" forever.
     private checkBackgroundStartTimeout() {
-        if (this.updateStatus?.backgroundStatus !== 'IN_PROGRESS' || this.updateStatus.backgroundPhase !== WAITING_FOR_BACKGROUND_PHASE) {
+        if (!this.updateStatus?.backgroundWaitingToStart) {
             this.backgroundWaitStartedAt = 0;
             this.backgroundStartTimedOut = false;
             return;
