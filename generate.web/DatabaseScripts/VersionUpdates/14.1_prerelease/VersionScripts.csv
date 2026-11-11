@@ -47,6 +47,12 @@ Views\\Drop,Debug.vwSignificantDisproportionality_Placement.View.sql,0
 Views\\Create,Debug.vwSignificantDisproportionality_Placement.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql, 0
+StoredProcedures\\Create,RDS.Empty_RDS.StoredProcedure.sql, 0  
+StoredProcedures\\Drop,RDS.Empty_Reports.StoredProcedure.sql, 0
+StoredProcedures\\Create,RDS.Empty_Reports.StoredProcedure.sql, 0
+StoredProcedures\\Drop,RDS.CreateReports.StoredProcedure.sql, 0
+StoredProcedures\\Create,RDS.CreateReports.StoredProcedure.sql, 0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment_EnglishLearnerAssessment.StoredProcedure.sql, 0
