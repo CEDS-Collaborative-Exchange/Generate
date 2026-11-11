@@ -7,6 +7,7 @@ VersionUpdates\\14.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\14.1_prerelease,JunkTablePopulation.sql,0
+VersionUpdates\\14.1_prerelease,copy-in-legacy-data.sql,0
 Views\\Drop,Debug.vwEnglishLearnerAssessment_StagingTables.View.sql,0
 Views\\Create,Debug.vwEnglishLearnerAssessment_StagingTables.View.sql,0
 Views\\Drop,Debug.vwEnglishLearnerAssessment_FactTable.View.sql,0
@@ -21,7 +22,6 @@ Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_138.View.sql,0
 Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_138.View.sql,0
 Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_139.View.sql,0
 Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_139.View.sql,0
-VersionUpdates\\14.1_prerelease,copy-in-legacy-data.sql,0
 Views\\Drop,RDS.vwDimAssessmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimAssessmentStatuses.View.sql,0
 Views\\Drop,RDS.vwStateAssessments.View.sql,0
