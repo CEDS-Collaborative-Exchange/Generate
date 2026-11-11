@@ -9,6 +9,7 @@ namespace generate.core.Models.RDS
 
         public string FactTypeCode { get; set; }
         public string FactTypeDescription { get; set; }
+        public string FactTypeLabel { get; set; }
 
         public List<FactK12StudentCount> FactStudentCounts { get; set; }
         public List<FactK12StudentDiscipline> FactStudentDisciplines { get; set; }
