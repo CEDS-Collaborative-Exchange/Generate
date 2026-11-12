@@ -80,7 +80,7 @@ If a Snapshot table does not yet exist for a Staging table, it will be created. 
 
 The Snapshot Utility could be coded within an ETL to automatically make a backup copy of the related Staging Tables each time the ETL is executed. The following diagram shows how this feature might be leveraged at a State to reuse a Directory snapshot for Child Count reporting.
 
-<figure><img src="../../.gitbook/assets/Staging Snapshot Process.jpg" alt="Flowchart showing Directory data moving from source to staging, then through the Snapshot Utility. Child Count ETL reuses organization data from snapshot tables instead of the source directory system."><figcaption><p>Directory snapshot data flow.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Directory snapshot data flow.png" alt="Flowchart showing Directory data moving from source to staging, then through the Snapshot Utility. Child Count ETL reuses organization data from snapshot tables instead of the source directory system."><figcaption><p>Directory snapshot data flow.</p></figcaption></figure>
 
 1. In the Source-to-Staging\_Directory ETL, the Snapshot Utility could be embedded to run automatically to create a copy of all Directory data.
 2. The Snapshot Utility will run automatically and create/update backup copies of the Staging tables in the Source schema.
@@ -216,7 +216,7 @@ TRUNCATE TABLE Staging.K12Organization
 			SchoolYear
 		from source.K12Organization
 		where SchoolYear = @SchoolYear
-		and ReportCode = 'C029'
+		and ReportCode = '029'
 
 ```
 
