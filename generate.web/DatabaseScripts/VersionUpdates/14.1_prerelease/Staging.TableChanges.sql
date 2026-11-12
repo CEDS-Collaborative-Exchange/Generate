@@ -39,6 +39,26 @@ BEGIN
 	DROP TABLE Staging.OrganizationSchoolComprehensiveAndTargetedSupport;
 END;
 
+--Doesn't belong here but didn't want to create a separate script for it.
+IF NOT EXISTS (select *
+				from sys.procedures p 
+					join sys.schemas s
+						on p.schema_id = s.schema_id
+				where s.name = 'Source'
+				and p.name = 'Source-to-Staging_EnglishLearnerAssessment'
+)
+BEGIN
+	EXEC ('CREATE PROCEDURE [Source].[Source-to-Staging_EnglishLearnerAssessment] 
+	@schoolYear smallint
+AS
+--BEGIN
+	--State specific ETL code here
+--END
+')
+END
+
+
+
 --Add Additional Targeted Support and Improvement for FS206 (CIID-6987).
 --FS206 reports Comprehensive, Targeted, and Additional Targeted Support; staging only had the first two.
 IF COL_LENGTH(N'[Staging].[K12Organization]', N'School_AdditionalTargetedSupport') IS NULL

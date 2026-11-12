@@ -869,14 +869,22 @@ END;
 --------------------------------------------------
 insert into rds.DimFactTypes (
 	FactTypeCode
-	,FactTypeDescription
-	,FactTypeLabel
+	, FactTypeDescription
+	, FactTypeLabel
 )
 values ('englishlearnerassessment', 'ENGLISHLEARNERASSESSMENT - 050,126,137,138,139', 'English Learner Assessment'),
-('ideapartc', 'IDEAPARTC - ', 'IDEA Part C')
+('ideapartc', 'IDEAPARTC - ', NULL)
 
 --remove the files that are being moved to the new Fact Type
 update rds.DimFactTypes
 set FactTypeDescription = 'ASSESSMENT - 113,125,175,178,179,185,188,189,224,225'
 where FactTypeCode = 'assessment';
 
+--reassign files that were moved previously
+update rds.DimFactTypes
+set FactTypeDescription = 'Directory related reports - 029,035,039,129,130,131,132,163,170,190,193,196,197,198,207,223'
+where FactTypeCode = 'directory';
+
+update rds.DimFactTypes
+set FactTypeDescription = 'COMPSUPPORT - 206,212'
+where FactTypeCode = 'compsupport';

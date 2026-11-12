@@ -259,3 +259,41 @@ values
     (74, 2),
     (74, 17),
     (74, 36)
+
+insert into app.DataMigrationTasks values
+(5,1,0,0,'Staging.StagingValidation_Execute @SchoolYear, @FactTypeOrReportCode',327,1,'Staging Validation for englishlearnerassessment',null,28),
+(3,1,0,0,'rds.Empty_Reports ''englishlearnerassessment''',255,1,NULL, NULL,	28),
+(3,1,0,0,'rds.create_reports ''englishlearnerassessment'', 0',256,1,NULL, NULL,28),
+(2,1,0,0,'App.Wrapper_Migrate_EnglishLearnerAssessment_to_RDS',124,1,'050,126,137,138,139',NULL,28),
+(1,1,0,0,'[Source].[Source-to-Staging_EnglishLearnerAssessment] @SchoolYear',20,0,'050,126,137,138,139',NULL,28)
+
+
+--reorder the Exiting 
+update app.ToggleQuestions
+set QuestionSequence = 110
+where EmapsQuestionAbbrv = 'DEFEXMOVCONLEA'
+
+update app.ToggleQuestions
+set QuestionSequence = 111
+where EmapsQuestionAbbrv = 'DEFEXMOVCONLEA'
+
+update app.ToggleQuestions
+set QuestionSequence = 108
+where EmapsQuestionAbbrv = 'DEFEXDLPDIS'
+
+update app.ToggleQuestions
+set QuestionSequence = 109
+where EmapsQuestionAbbrv = 'DEFEXCERT'
+
+update app.ToggleSections
+set SectionSequence = '105'
+where EmapsSurveySectionAbbrv = 'ALTDLPMA'
+
+update app.ToggleSections
+set SectionSequence = '106'
+where EmapsSurveySectionAbbrv = 'CERT'
+
+update app.ToggleSections
+set SectionSequence = '107'
+where EmapsSurveySectionAbbrv = 'MOVCONTIN'
+
