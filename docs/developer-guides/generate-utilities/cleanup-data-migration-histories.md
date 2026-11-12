@@ -9,5 +9,6 @@ The App.DataMigrationHistories table is used by the migration process and severa
 The procedure removes every record before the specified `@cleanupDate`.
 
 ```sql
-EXEC Utilities.Cleanup\_DataMigrationHistories @cleanupDate = '2026-09-10';
+EXEC Utilities.Cleanup_DataMigrationHistories @cleanupDate = '2026-09-10';
 ```
+
