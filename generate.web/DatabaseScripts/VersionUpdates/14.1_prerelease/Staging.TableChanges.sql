@@ -59,4 +59,10 @@ END
 
 
 
+--Add Additional Targeted Support and Improvement for FS206 (CIID-6987).
+--FS206 reports Comprehensive, Targeted, and Additional Targeted Support; staging only had the first two.
+IF COL_LENGTH(N'[Staging].[K12Organization]', N'School_AdditionalTargetedSupport') IS NULL
+BEGIN
+	ALTER TABLE Staging.K12Organization ADD School_AdditionalTargetedSupport VARCHAR(100) NULL;
+END;
 -- Staging table updates for release 14.1

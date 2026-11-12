@@ -766,6 +766,11 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
+                entity.Property(e => e.School_AdditionalTargetedSupport)
+                    .HasColumnName("School_AdditionalTargetedSupport")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.School_Type)
                     .HasColumnName("School_Type")
                     .HasMaxLength(100)

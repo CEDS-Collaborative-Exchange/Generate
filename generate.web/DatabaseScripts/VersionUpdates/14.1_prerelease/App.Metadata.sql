@@ -102,3 +102,39 @@ delete from app.Categories where CategoryId in (select CategoryId from @ctsCateg
 delete from app.Dimensions where DimensionId = @ctsDimensionId
 
 delete from Staging.SourceSystemReferenceData where TableName = 'RefComprehensiveAndTargetedSupport'
+
+-- CIID-6916: Toggle category "CCD - Staff Category" with the question that controls whether
+-- FS059 Staff FTE includes the Ungraded Teachers (UGTCH) permitted value. Per the FS059
+-- file spec, a state that does not use ungraded teachers must not include UGTCH records.
+-- RDS.Get_CountSQL reads the response by EmapsQuestionAbbrv 'CCDUNGRADEDTCH'.
+declare @ccdStaffSectionTypeId as int, @ccdStaffParentSectionId as int, @ccdStaffSectionId as int
+
+select @ccdStaffSectionTypeId = ToggleSectionTypeId from app.ToggleSectionTypes where EmapsSurveyTypeAbbrv = 'CCDSTAFF'
+if @ccdStaffSectionTypeId is null
+begin
+	insert into app.ToggleSectionTypes (EmapsSurveyTypeAbbrv, SectionTypeName, SectionTypeSequence, SectionTypeShortName)
+	values ('CCDSTAFF', 'CCD Staff Category', 3, 'CCD')
+	set @ccdStaffSectionTypeId = SCOPE_IDENTITY()
+end
+
+select @ccdStaffParentSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CCDSTAFFPARENT'
+if @ccdStaffParentSectionId is null
+begin
+	insert into app.ToggleSections (EmapsParentSurveySectionAbbrv, EmapsSurveySectionAbbrv, SectionName, SectionSequence, SectionTitle, ToggleSectionTypeId)
+	values (NULL, 'CCDSTAFFPARENT', 'B2', 1150, 'Staff Category', @ccdStaffSectionTypeId)
+	set @ccdStaffParentSectionId = SCOPE_IDENTITY()
+end
+
+select @ccdStaffSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CCDSTAFF'
+if @ccdStaffSectionId is null
+begin
+	insert into app.ToggleSections (EmapsParentSurveySectionAbbrv, EmapsSurveySectionAbbrv, SectionName, SectionSequence, SectionTitle, ToggleSectionTypeId)
+	values ('CCDSTAFFPARENT', 'CCDSTAFF', 'B21', 1151, 'Staff Category', @ccdStaffSectionTypeId)
+	set @ccdStaffSectionId = SCOPE_IDENTITY()
+end
+
+if not exists (select 1 from app.ToggleQuestions where EmapsQuestionAbbrv = 'CCDUNGRADEDTCH')
+begin
+	insert into app.ToggleQuestions (EmapsQuestionAbbrv, ParentToggleQuestionId, QuestionSequence, QuestionText, ToggleQuestionTypeId, ToggleSectionId)
+	values ('CCDUNGRADEDTCH', NULL, 1151, 'Are any teachers identified as teachers for ungraded classes?', 7, @ccdStaffSectionId)
+end

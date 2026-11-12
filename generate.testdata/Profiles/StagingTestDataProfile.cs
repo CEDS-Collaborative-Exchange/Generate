@@ -1418,15 +1418,15 @@ namespace generate.testdata.Profiles
             this.AccessibleFormatRequiredIndicatorDistribution.Add(new DataDistribution<string>() { Option = "Unknown", ExpectedDistribution = 100 });
 
             this.AccessibleFormatTypeDistribution = new List<DataDistribution<string>>();
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Audio", ExpectedDistribution = 10 });
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Audio Described Video", ExpectedDistribution = 20 });
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Braille", ExpectedDistribution = 30 });
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Captioned Video", ExpectedDistribution = 40 });
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Digital Text", ExpectedDistribution = 50 });
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Large Print", ExpectedDistribution = 60 });
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Tactile Graphics", ExpectedDistribution = 70 });
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Text Transcripts of Audio", ExpectedDistribution = 80 });
-            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "Video with Synchronized American Sign Language", ExpectedDistribution = 100 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1000", ExpectedDistribution = 10 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1001", ExpectedDistribution = 20 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1002", ExpectedDistribution = 30 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1003", ExpectedDistribution = 40 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1004", ExpectedDistribution = 50 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1005", ExpectedDistribution = 60 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1006", ExpectedDistribution = 70 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1007", ExpectedDistribution = 80 });
+            this.AccessibleFormatTypeDistribution.Add(new DataDistribution<string>() { Option = "1008", ExpectedDistribution = 100 });
 
             this.ERSRuralUrbanContinuumCodeDistribution = new List<DataDistribution<string>>();
             this.ERSRuralUrbanContinuumCodeDistribution.Add(new DataDistribution<string>() { Option = "1", ExpectedDistribution = 11 });
