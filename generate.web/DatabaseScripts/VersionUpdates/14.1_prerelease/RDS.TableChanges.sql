@@ -1,26 +1,22 @@
---Add PSEnrollmentStatus to the Fact table
-IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NULL
-BEGIN
-	ALTER TABLE RDS.FactK12StudentCounts ADD PsEnrollmentStatusId BIGINT NULL;
-END;
+-----------------------------------------------
+--Title III changes	
+-----------------------------------------------
 
-if not exists (
-	select *
-	from sys.all_columns c
-	join sys.tables t 
-		on t.object_id = c.object_id
-	join sys.schemas s 
-		on s.schema_id = t.schema_id
-	join sys.default_constraints d 
-		on c.default_object_id = d.object_id
-	where t.name = 'FactK12StudentCounts'
-	and c.name = 'PsEnrollmentStatusId'
-	and s.name = 'RDS'
-	and d.type = 'D'
-)
-BEGIN 
-	ALTER TABLE [RDS].[FactK12StudentCounts] ADD CONSTRAINT [DF_FactK12StudentCounts_PsEnrollmentStatusId] DEFAULT ((-1)) FOR [PsEnrollmentStatusId];
-END;
+	--Add Title III English Learner Participation Status
+    IF COL_LENGTH('RDS.DimTitleIIIStatuses', 'TitleIIIEnglishLearnerParticipationStatusCode') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimTitleIIIStatuses ADD TitleIIIEnglishLearnerParticipationStatusCode VARCHAR(50) NULL;
+    END
+	
+    IF COL_LENGTH('RDS.DimTitleIIIStatuses', 'TitleIIIEnglishLearnerParticipationStatusDescription') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimTitleIIIStatuses ADD TitleIIIEnglishLearnerParticipationStatusDescription VARCHAR(200) NULL;
+    END
+
+    IF COL_LENGTH('RDS.DimTitleIIIStatuses', 'TitleIIIEnglishLearnerParticipationStatusEdFactsCode') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimTitleIIIStatuses ADD TitleIIIEnglishLearnerParticipationStatusEdFactsCode VARCHAR(50) NULL;
+    END
 
 
 IF OBJECT_ID(N'[RDS].[BridgeCredentialAwardRelatedCredentialAwards]', N'U') IS NOT NULL
@@ -817,7 +813,6 @@ BEGIN
 	ALTER TABLE RDS.BridgeK12StudentAssessmentRaces
 	ADD SchoolYearId INT DEFAULT -1 NOT NULL
 END;
-
 -- Correct misspelled STATEDDEFINEDSTATUSCODE column to STATEDEFINEDSTATUSCODE
 IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
    AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'STATEDDEFINEDSTATUSCODE') IS NOT NULL

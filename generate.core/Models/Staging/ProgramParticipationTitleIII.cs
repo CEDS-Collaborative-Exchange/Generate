@@ -25,7 +25,7 @@ namespace generate.core.Models.Staging
         public Boolean TitleIIIImmigrantParticipationStatus { get; set; }
         public string Proficiency_TitleIII { get; set; }
         public string TitleIIIAccountabilityProgressStatus { get; set; }
-        public bool? EnglishLearnerParticipation { get; set; }
+        public bool? TitleIIIEnglishLearnerParticipationStatus { get; set; }
         public bool? TitleIIIImmigrantStatus { get; set; }
         public string TitleIIILanguageInstructionProgramType { get; set; }
         public DateTime? TitleIIIImmigrantStatus_StartDate { get; set; }

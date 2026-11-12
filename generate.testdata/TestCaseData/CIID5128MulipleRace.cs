@@ -166,7 +166,7 @@ namespace generate.testdata.TestCaseData
                 TitleIIIAccountabilityProgressStatus = "PROGRESS",
                 ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 ProgramParticipationExitDate = DateTime.Parse("11/25/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearnerParticipation = true,
+                TitleIIIEnglishLearnerParticipationStatus = true,
                 TitleIIILanguageInstructionProgramType = "DualLanguage",
                 TitleIIIImmigrantStatus_EndDate = DateTime.Parse("7/15/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture)
             };
@@ -180,7 +180,7 @@ namespace generate.testdata.TestCaseData
                 TitleIIIAccountabilityProgressStatus = "PROGRESS",
                 ProgramParticipationStartDate = DateTime.Parse("11/26/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
                 ProgramParticipationExitDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearnerParticipation = true,
+                TitleIIIEnglishLearnerParticipationStatus = true,
                 TitleIIILanguageInstructionProgramType = "DualLanguage",
                 TitleIIIImmigrantStatus_EndDate = DateTime.Parse("7/15/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture)
             };

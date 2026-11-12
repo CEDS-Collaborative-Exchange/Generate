@@ -1459,7 +1459,7 @@ namespace generate.testdata.DataGenerators
                 {
                     var prog = new core.Models.Staging.ProgramParticipationTitleIII()
                     {
-                        EnglishLearnerParticipation = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepProgramParticipantNowDistribution),
+                        TitleIIIEnglishLearnerParticipationStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepProgramParticipantNowDistribution),
                         TitleIIILanguageInstructionProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIiilanguageInstructionProgramTypeDistribution),
                         LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
                         SchoolIdentifierSea = s.SchoolIdentifierSea,
@@ -1945,7 +1945,7 @@ namespace generate.testdata.DataGenerators
                 {
                     var prog = new core.Models.Staging.ProgramParticipationTitleIII()
                     {
-                        EnglishLearnerParticipation = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepProgramParticipantNowDistribution),
+                        TitleIIIEnglishLearnerParticipationStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepProgramParticipantNowDistribution),
                         TitleIIILanguageInstructionProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIiilanguageInstructionProgramTypeDistribution),
                         LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
                         SchoolIdentifierSea = s.SchoolIdentifierSea,
