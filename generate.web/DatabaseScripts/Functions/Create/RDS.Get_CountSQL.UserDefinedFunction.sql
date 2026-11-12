@@ -2124,7 +2124,6 @@ BEGIN
 			begin
 				if @reportCode = '009' 
 					and @toggleCatchmentSea = 'Entire state (students moving out of state)'
-					and @reportField = 'SpecialEducationExitReason'
 				begin
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 						-- Remove MKC counts for Students still in SPED at SY End' + char(10) + '
