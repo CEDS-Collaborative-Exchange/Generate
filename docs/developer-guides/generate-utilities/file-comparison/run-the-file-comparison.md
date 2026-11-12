@@ -8,7 +8,7 @@ A different procedure will be executed depending on the E&#x44;_&#x46;acts_ file
 
 ### Comparing Directory Files
 
-To compare C029 or C039 files, execute the following:
+To compare 029 or 039 files, execute the following:
 
 ```sql
 exec Utilities.Compare_DIRECTORY 
@@ -47,7 +47,7 @@ exec Utilities.Compare_CHILDCOUNT
 @SubmissionYear = 2022, 		-- The report year
 @ReportCode = '089', -- EdFacts File Number – either 002 or 089
 @ReportLevel = 'LEA', -- 'SEA', 'LEA', 'SCH' 
-@LegacyTableName = 'Generate.XX.C089_LEA_2022_Legacy', -- Legacy table
+@LegacyTableName = 'Generate.XX.089_LEA_2022_Legacy', -- Legacy table
 @ShowSQL = 0
 ```
 

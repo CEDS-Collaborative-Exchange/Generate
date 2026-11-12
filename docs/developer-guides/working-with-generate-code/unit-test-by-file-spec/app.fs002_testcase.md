@@ -125,7 +125,7 @@ Annually during EDFacts reporting preparation
 
 ### Temporary Tables
 
-#### #c002Staging
+#### #002Staging
 
 **Purpose:** Stores transformed student data for testing
 
@@ -235,15 +235,15 @@ SELECT ske.StudentIdentifierState, ske.LeaIdentifierSeaAccountability, ... INTO 
 
 #### Step 6: Handle race reporting rules
 
-**Input Data:** #c002Staging, Staging.K12PersonRace
+**Input Data:** #002Staging, Staging.K12PersonRace
 
 **Transformations:** Multiple race detection and standardization
 
-UPDATE stg SET RaceEdFactsCode = 'MU7' FROM #c002Staging stg INNER JOIN #TempRacesUpdate tru...
+UPDATE stg SET RaceEdFactsCode = 'MU7' FROM #002Staging stg INNER JOIN #TempRacesUpdate tru...
 
 #### Step 7: Execute test cases for each category set and organizational level
 
-**Input Data:** #c002Staging, RDS.ReportEDFactsK12StudentCounts
+**Input Data:** #002Staging, RDS.ReportEDFactsK12StudentCounts
 
 **Transformations:** Grouping and aggregation
 

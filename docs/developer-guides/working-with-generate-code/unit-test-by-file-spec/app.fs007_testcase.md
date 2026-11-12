@@ -2,7 +2,7 @@
 
 ### Overview & Purpose
 
-This stored procedure is designed to test and validate the accuracy of EDFacts reporting for discipline data related to students with disabilities under IDEA (Individuals with Disabilities Education Act). It specifically focuses on testing the C007 report which tracks interim removals of students with disabilities for various reasons (drugs, weapons, serious bodily injury). The procedure creates test cases, compares expected vs. actual results, and logs the outcomes in a unit testing framework.
+This stored procedure is designed to test and validate the accuracy of EDFacts reporting for discipline data related to students with disabilities under IDEA (Individuals with Disabilities Education Act). It specifically focuses on testing the 007 report which tracks interim removals of students with disabilities for various reasons (drugs, weapons, serious bodily injury). The procedure creates test cases, compares expected vs. actual results, and logs the outcomes in a unit testing framework.
 
 #### Main Functions:
 

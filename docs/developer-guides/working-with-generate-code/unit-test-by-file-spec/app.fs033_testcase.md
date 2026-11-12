@@ -47,7 +47,7 @@ Test case results stored in App.SqlUnitTestCaseResult table, indicating whether 
 
 #### Result Usage:
 
-Validates the accuracy of C033 report data before submission to federal education authorities
+Validates the accuracy of 033 report data before submission to federal education authorities
 
 #### Execution Frequency:
 

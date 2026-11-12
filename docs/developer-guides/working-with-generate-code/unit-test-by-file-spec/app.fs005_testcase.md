@@ -2,7 +2,7 @@
 
 ### Overview & Purpose
 
-This stored procedure is designed to test the accuracy of student discipline data reporting for students with disabilities under IDEA (Individuals with Disabilities Education Act). It specifically validates data for the EDFacts report C005, which focuses on disciplinary actions involving students with disabilities who received interim removals. The procedure creates test data, compares it with actual report data, and logs the results of these comparisons.
+This stored procedure is designed to test the accuracy of student discipline data reporting for students with disabilities under IDEA (Individuals with Disabilities Education Act). It specifically validates data for the EDFacts report 005, which focuses on disciplinary actions involving students with disabilities who received interim removals. The procedure creates test data, compares it with actual report data, and logs the results of these comparisons.
 
 #### Main Functions:
 

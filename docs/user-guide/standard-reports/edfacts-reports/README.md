@@ -32,7 +32,7 @@ Each report includes the following selection fields for displaying the data. The
 
 ### Level
 
-There are three report levels (SEA, LEA, and School), for which E&#x44;_&#x46;acts_ reports can be generated. The availability of each report level is based on guidance found in the file specification for that report. For example, if you select C002 (Child Count), you will see Levels for SEA, LEAS, and SCHOOLS because the E&#x44;_&#x46;acts_ file specification requires reporting at all three levels. If you select C007 (Children with Disabilities (IDEA) Reasons for Unilateral Removal), you will only see Levels for SEA and LEAS because only SEA and LEA levels are required for reporting.
+There are three report levels (SEA, LEA, and School), for which E&#x44;_&#x46;acts_ reports can be generated. The availability of each report level is based on guidance found in the file specification for that report. For example, if you select 002 (Child Count), you will see Levels for SEA, LEAS, and SCHOOLS because the E&#x44;_&#x46;acts_ file specification requires reporting at all three levels. If you select 007 (Children with Disabilities (IDEA) Reasons for Unilateral Removal), you will only see Levels for SEA and LEAS because only SEA and LEA levels are required for reporting.
 
 To select the Level, click on the corresponding button. The SEA level is selected below.
 
@@ -59,7 +59,7 @@ Once selected, the report will run based on this selection.
 
 ### Category Set
 
-Category sets will differ for each E&#x44;_&#x46;acts_ report and are specific to the guidance found in the file specification. When a category set is selected by the user, the page will run the report based on the permitted values for that specific category, including a subtotal and/or total of the education unit if required by the E&#x44;_&#x46;acts_ file specification. Using C002 as an example, when the user selects Category Set C, the report displays data aggregated by _Racial Ethnic_ and by _Education Environment (IDEA) SA._ Screenshots showing both the 2021 E&#x44;_&#x46;acts_ file specification and Generate report are shown below, respectively.
+Category sets will differ for each E&#x44;_&#x46;acts_ report and are specific to the guidance found in the file specification. When a category set is selected by the user, the page will run the report based on the permitted values for that specific category, including a subtotal and/or total of the education unit if required by the E&#x44;_&#x46;acts_ file specification. Using 002 as an example, when the user selects Category Set C, the report displays data aggregated by _Racial Ethnic_ and by _Education Environment (IDEA) SA._ Screenshots showing both the 2021 E&#x44;_&#x46;acts_ file specification and Generate report are shown below, respectively.
 
 **ED**_**Facts**_**&#x20;File Specification**
 
@@ -91,7 +91,7 @@ To run a specific report:
 1. Click on the dropdown arrow below the Report field.
 2. Click on a report name.
 
-Report C002 is being selected below.
+Report 002 is being selected below.
 
 <figure><img src="../../../.gitbook/assets/image (100).png" alt="EDFacts Report dropdown with C002 selected."><figcaption><p>Selected EDFacts report.</p></figcaption></figure>
 
