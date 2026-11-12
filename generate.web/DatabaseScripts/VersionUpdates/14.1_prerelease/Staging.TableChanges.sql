@@ -109,8 +109,6 @@ AS
 ')
 END
 
-
-
 --Add Additional Targeted Support and Improvement for FS206 (CIID-6987).
 --FS206 reports Comprehensive, Targeted, and Additional Targeted Support; staging only had the first two.
 IF COL_LENGTH(N'[Staging].[K12Organization]', N'School_AdditionalTargetedSupport') IS NULL
