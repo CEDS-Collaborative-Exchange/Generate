@@ -4289,6 +4289,10 @@ namespace generate.infrastructure.Contexts
                     .IsRequired();
 
                 entity
+                    .Property(x => x.HomelessChildrenandYouthReservation)
+                    .IsRequired();
+
+                entity
                    .Property(x => x.PROGRESSACHIEVINGENGLISHLANGUAGE)
                    .HasMaxLength(50);
 
