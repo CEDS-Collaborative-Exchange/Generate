@@ -242,7 +242,8 @@ namespace generate.web.Controllers.Api.App
         public JsonResult GetFactTypes()
         {
             List<DimFactType> factTypes = _rdsRepository.GetAll<DimFactType>()
-                                                        .Where(t => t.DimFactTypeId > 0)
+                                                        // Retired fact types (e.g. sppapr, other) have no label
+                                                        .Where(t => t.DimFactTypeId > 0 && t.FactTypeLabel != null)
                                                         .OrderBy(t => t.FactTypeCode)
                                                         .ToList();
             return Json(factTypes);
@@ -265,6 +266,11 @@ namespace generate.web.Controllers.Api.App
                         DataMigrationTask task = _appRepository.GetById<DataMigrationTask>(taskId);
                         factType = _rdsRepository.GetById<DimFactType>(task.FactTypeId);
 
+                        // The page preselects this fact type, so don't return one the dropdown doesn't list
+                        if (factType != null && factType.FactTypeLabel == null)
+                        {
+                            factType = null;
+                        }
                     }
                 }
             }

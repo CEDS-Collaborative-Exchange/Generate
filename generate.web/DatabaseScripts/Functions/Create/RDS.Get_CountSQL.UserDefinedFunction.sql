@@ -110,6 +110,7 @@ BEGIN
 
 	declare @toggleGrade13 as bit
  	declare @toggleUngraded as bit
+	declare @toggleUngradedTeachers as bit
 	declare @toggleAdultEd as bit
 	declare @istoggleGradOther as bit
 	declare @toggleEnglishLearnerProf as bit
@@ -160,6 +161,15 @@ BEGIN
 	left outer join app.ToggleResponses r 
 		on r.ToggleQuestionId = q.ToggleQuestionId
 	where q.EmapsQuestionAbbrv = 'CCDUNGRADED'
+
+	-- CCD Staff Category toggle: when the state has no teachers of ungraded classes, FS059
+	-- must not include records for the Ungraded Teachers (UGTCH) permitted value.
+	-- Defaults to 0 (exclude) when the question has not been answered.
+	select @toggleUngradedTeachers = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0)
+	from app.ToggleQuestions q
+	left outer join app.ToggleResponses r
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	where q.EmapsQuestionAbbrv = 'CCDUNGRADEDTCH'
 
 	select @toggleGrade13 = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0) 
 	from app.ToggleQuestions q 
@@ -2061,6 +2071,14 @@ BEGIN
 				and o.CategoryOptionCode NOT IN (''PPPS'') '
 			end
 		end 
+		else if @reportCode in ('059')
+		begin
+			if @categoryCode = 'STAFFCATGCCD' AND ISNULL(@toggleUngradedTeachers, 0) = 0
+			begin
+				set @sqlCategoryOptions = @sqlCategoryOptions + '
+				and o.CategoryOptionCode NOT IN (''UGTCH'') '
+			end
+		end
 		else if @reportCode in ('137')
 		begin
 			if @categoryCode = 'PARTSTATUS' AND @toggleEnglishLearnerProf = 0
@@ -5526,6 +5544,14 @@ BEGIN
 						and fact.SchoolYearId = @dimSchoolYearId
 						and fact.FactTypeId = @dimFactTypeId
 						and fact.LeaId <> -1'
+
+			-- Leave out Ungraded Teachers (UGTCH) staff unless the CCD Staff Category toggle says
+			-- the state has them (the matching category option is removed above as well)
+			if ISNULL(@toggleUngradedTeachers, 0) = 0
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+						and s.K12StaffClassificationCode <> ''UngradedTeachers'''
+			end
 
 			if @reportLevel = 'sch'
 			begin

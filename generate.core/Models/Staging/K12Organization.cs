@@ -66,6 +66,7 @@ namespace generate.core.Models.Staging
         public string School_SchoolDangerousStatus { get; set; }
         public string School_ComprehensiveSupport { get; set; }
         public string School_TargetedSupport { get; set; }
+        public string School_AdditionalTargetedSupport { get; set; }
         public bool? School_ConsolidatedMigrantEducationProgramFundsStatus { get; set; }
         public string School_MigrantEducationProgramProjectType { get; set; }
         public string School_TitleISchoolStatus { get; set; }

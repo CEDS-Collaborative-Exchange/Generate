@@ -6,6 +6,7 @@ Description: Migrates Organization Data from Staging to RDS.FactOrganizationCoun
 NOTE: This Stored Procedure processes files: 029, 035, 039, 103, 129, 130, 131, 163, 170, 190, 193, 196, 197, 198, 205, 206
 
 1/10/2024 JW CIID-5731
+11/4/2026 MG CIID-6987 - Populate ComprehensiveAndTargetedSupportId for schools (FS206)
 ************************************************************************/
 CREATE PROCEDURE Staging.[Staging-to-FactOrganizationCounts]
 	@SchoolYear smallint 
@@ -418,7 +419,7 @@ BEGIN
 			, -1														AS FederalProgramsFundingAllocationType
 			, -1														AS FederalProgramCode
 			, -1 														AS FederalProgramsFundingAllocation
-			, -1														AS ComprehensiveAndTargetedSupportId
+			, ISNULL(cts.DimComprehensiveAndTargetedSupportId,-1)		AS ComprehensiveAndTargetedSupportId
 			, ISNULL(cs.DimCharterSchoolStatusId,-1)					AS CharterSchoolStatusId
 			, -1														AS SubgroupId
 			, 1															AS OrganizationCount
@@ -460,6 +461,12 @@ BEGIN
 			AND organizationStatus.McKinneyVentoSubgrantRecipientCode = 'MISSING' 
 		LEFT JOIN rds.vwDimCharterSchoolStatuses cs
 			ON isnull(cs.AppropriationMethodMap, cs.AppropriationMethodCode) = isnull(sk12o.School_CharterSchoolStateAppropriationMethod, 'MISSING')
+		--CIID-6987: FS206 Comprehensive, Targeted, and Additional Targeted Support and Improvement status
+		LEFT JOIN rds.vwDimComprehensiveAndTargetedSupports cts
+			ON cts.SchoolYear = sk12o.SchoolYear
+			AND isnull(cts.ComprehensiveSupportAndImprovementStatusMap, cts.ComprehensiveSupportAndImprovementStatusCode) = isnull(sk12o.School_ComprehensiveSupport, 'MISSING')
+			AND isnull(cts.TargetedSupportAndImprovementStatusMap, cts.TargetedSupportAndImprovementStatusCode) = isnull(sk12o.School_TargetedSupport, 'MISSING')
+			AND isnull(cts.AdditionalTargetedSupportAndImprovementStatusMap, cts.AdditionalTargetedSupportAndImprovementStatusCode) = isnull(sk12o.School_AdditionalTargetedSupport, 'MISSING')
 		LEFT JOIN #DimCharterSchoolAuthorizers_Primary CSAP
 			ON CSAP.SchoolIdentifierSea = sk12o.SchoolIdentifierSea
 		LEFT JOIN #DimCharterSchoolAuthorizers_Secondary CSAS
