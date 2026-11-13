@@ -494,6 +494,11 @@ BEGIN
 										else ' AND CONVERT(date,s.SchoolOperationalStatusEffectiveDate,101)' 
 									end  
 									+  ' between CONVERT(date, ''' + @calculatedSYStartDate + ''',101) AND CONVERT(date, ''' + @toggleChildCountDate + ''',101)'
+
+				-- Only use the current school year's LEA/School record. Without this, a prior year DimLeas/DimK12Schools
+				-- row with the same operational status effective date can be selected and carry over that year's
+				-- ReportedFederally and other qualifiers (e.g. an LEA set to ReportedFederally = 0 this year still shows up).
+				set @sql = @sql + ' AND s.RecordStartDateTime >= ''' + @calculatedSYStartDate + ''''
 			end
 			else
 			begin
