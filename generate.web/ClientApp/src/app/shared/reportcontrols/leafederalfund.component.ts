@@ -10,6 +10,7 @@ import { OrganizationLevelDto } from '../../models/app/organizationLevelDto';
 import { CategoryOptionDto } from '../../models/app/categoryOptionDto';
 import { GenerateReportParametersDto } from '../../models/app/generateReportParametersDto';
 import { CategorySetDto } from '../../models/app/categorySetDto';
+import { FlextableComponent } from '../components/flextable/flextable.component';
 import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs'
 
@@ -52,7 +53,8 @@ export class LeaFederalFundComponent implements AfterViewInit, OnChanges, OnInit
 
     @ViewChild('reportGrid', { static: false }) reportGrid: any;
     @ViewChildren('reportGrid') reportGrids: QueryList<any>;
-  
+    @ViewChild(FlextableComponent) flextableComponent: FlextableComponent;
+
     constructor(
         private _router: Router,
         private _generateReportService: GenerateReportService,
@@ -132,8 +134,8 @@ export class LeaFederalFundComponent implements AfterViewInit, OnChanges, OnInit
                         this.setPageArray();
 
 
-                        //console.log(this.cvData.itemCount);
-                        if (this.cvData.itemCount > 0) { this.hasRecords = true; }
+                        // cvData is the plain data array (no CollectionView), so check its length
+                        if (this.cvData?.length > 0) { this.hasRecords = true; }
                         else if (this.reportDataDto.dataCount === -1) { this.hasRecords = true; }
                         else { this.hasRecords = false; }
                     }
@@ -249,17 +251,33 @@ export class LeaFederalFundComponent implements AfterViewInit, OnChanges, OnInit
     }
    
     export() {
+        if (!this.flextableComponent || !this.reportDataDto) {
+            return;
+        }
 
-        let self = this;
+        let fileName = this.reportParameters.reportCode.toUpperCase() + ' - ' + this.reportParameters.reportYear + ' - ' + this.reportParameters.reportLevel.toUpperCase() + '.xlsx';
 
-        let sheetName = this.reportParameters.reportCode.toUpperCase();
-        let fileName = this.reportParameters.reportCode.toUpperCase() + ' - ' + this.reportParameters.reportYear + ' - ' + this.reportParameters.reportLevel.toUpperCase();
+        let reportTitle = this.reportDataDto.reportTitle;
+        let reportYearCaption = this.reportDataDto.reportYear;
+        let totalCaption = this.dataCountCaption() + ' ' + this.reportDataDto.dataCount;
 
-        //if (this.reportParameters.reportCategorySet !== undefined) {
-        //    fileName += ' - ' + this.reportParameters.reportCategorySet.categorySetName.replace('?', '');
-        //}
+        // Organization name plus the three amount columns
+        let reportCaptionCol = 4;
+        let reportCols = [
+            { wpx: 300 },
+            { wpx: 200 },
+            { wpx: 220 },
+            { wpx: 260 }
+        ];
 
-
+        let reportRows = [
+            { hpx: 45 },
+            { hpx: 23 },
+            { hpx: 20 },
+            { hpx: 20 },
+            { hpx: 45 },
+        ];
+        this.flextableComponent.exportToExcel(fileName, reportTitle, reportYearCaption, totalCaption, reportCols, reportRows, reportCaptionCol);
     }
 
     private _filterFunction(item: any) {

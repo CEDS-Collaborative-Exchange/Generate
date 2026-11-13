@@ -68,8 +68,8 @@
 
 <div *ngIf="!isLoading || !hasRecords">
     <generate-app-table #reportGrid [itemsSource]="reportDataDto"
-                        [headers]="['Organization Name','Title I, Part A Allocations','Parental involvement reservation']"
-                        [bindings]="['organizationName','titleiPartaAllocations','titleiParentalInvolveRes']"
+                        [headers]="['Organization Name','Title I, Part A Allocations','Parental involvement reservation','Homeless children and youth reservation']"
+                        [bindings]="['organizationName','titleiPartaAllocations','titleiParentalInvolveRes','homelessChildrenandYouthReservation']"
                         class="generate-app-leafederalfund__grid">
     </generate-app-table>
 </div>

@@ -137,7 +137,68 @@ namespace generate.infrastructure.Services
                 }
             }
 
+            if (reportCode == "193")
+            {
+                return GetTitleIAllocationSubmissionData(dataRows, fileSubmissioncolumns, factTableName, reportCode, reportLevel, reportYear, factFieldName);
+            }
+
             dynamicRows = GetSubmissionData(dataRows, fileSubmissioncolumns, factTableName, reportCode, reportLevel, factFieldName);
+            return dynamicRows;
+        }
+
+        // FS193 table types, in file order, with the report field holding each one's amount
+        private static readonly (string TableType, string AmountField)[] TitleIAllocationTableTypes =
+        {
+            ("PARINRES", nameof(ReportEDFactsOrganizationCount.TitleiParentalInvolveRes)),
+            ("TITLEIPALL", nameof(ReportEDFactsOrganizationCount.TitleiPartaAllocations)),
+            ("RESHOMELESS", nameof(ReportEDFactsOrganizationCount.HomelessChildrenandYouthReservation))
+        };
+
+        /// <summary>
+        /// FS193 stores one row per LEA holding every amount, but the file needs one record per
+        /// table type. Writes a record for each table type that has a category set for this year.
+        /// </summary>
+        private List<ExpandoObject> GetTitleIAllocationSubmissionData(dynamic dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns, string factTableName, string reportCode, string reportLevel, string reportYear, string factFieldName)
+        {
+            HashSet<string> yearTableTypes = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode
+                    && c.SubmissionYear == reportYear
+                    && c.OrganizationLevel.LevelCode == reportLevel
+                    && c.TableTypeId != null, 0, 0, c => c.TableType)
+                .Select(c => c.TableType.TableTypeAbbrv)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var tableTypes = TitleIAllocationTableTypes.Where(t => yearTableTypes.Contains(t.TableType)).ToList();
+
+            int fileRecordNumber = 0;
+            var dynamicRows = new List<ExpandoObject>();
+
+            foreach (var dataRow in dataRows)
+            {
+                foreach (var tableType in tableTypes)
+                {
+                    ++fileRecordNumber;
+                    var fileDataRow = new ExpandoObject();
+                    foreach (var column in fileSubmissioncolumns)
+                    {
+                        if (column.ColumnName == "TableTypeAbbrv")
+                        {
+                            DynamicClassObject.AddProperty(column.ColumnName, tableType.TableType, fileDataRow);
+                        }
+                        else if (column.ColumnName == "Amount")
+                        {
+                            PropertyInfo prop = dataRow.GetType().GetProperty(tableType.AmountField);
+                            DynamicClassObject.AddProperty(column.ColumnName, prop?.GetValue(dataRow, null) ?? "", fileDataRow);
+                        }
+                        else
+                        {
+                            AddSubmissionColumn(dataRow, fileDataRow, column, factTableName, reportCode, reportLevel, factFieldName, fileRecordNumber);
+                        }
+                    }
+
+                    dynamicRows.Add(fileDataRow);
+                }
+            }
+
             return dynamicRows;
         }
 

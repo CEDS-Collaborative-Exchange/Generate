@@ -102,6 +102,7 @@ BEGIN
 			case when fact.UpdatedOperationalStatusId <= 0 then '' else fact.UpdatedOperationalStatusId end as UpdatedOperationalStatusId,
 			CAST(isnull(fact.TitleiParentalInvolveRes,'') as int) as TitleiParentalInvolveRes,
 			CAST(isnull(fact.TitleiPartaAllocations,'') as int) as TitleiPartaAllocations,
+			CAST(isnull(fact.HomelessChildrenandYouthReservation,0) as int) as HomelessChildrenandYouthReservation,
 			fact.LeaStateIdentifier,
 			fact.LeaNcesIdentifier,												
 			ISNULL(fact.ManagementOrganizationType,'') as ManagementOrganizationType,
@@ -242,6 +243,7 @@ BEGIN
 			case when fact.UpdatedOperationalStatusId <= 0 then '' else fact.UpdatedOperationalStatusId end as UpdatedOperationalStatusId,
 			CAST(isnull(fact.TitleiParentalInvolveRes,'') as int) as TitleiParentalInvolveRes,
 			CAST(isnull(fact.TitleiPartaAllocations,'') as int) as TitleiPartaAllocations,
+			CAST(isnull(fact.HomelessChildrenandYouthReservation,0) as int) as HomelessChildrenandYouthReservation,
 			fact.LeaStateIdentifier,
 			fact.LeaNcesIdentifier,												
 			ISNULL(ManagementOrganizationType,'') as ManagementOrganizationType,
@@ -404,7 +406,7 @@ BEGIN
 								GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
 								FROM rds.ReportEDFactsOrganizationCounts b 
 								WHERE b.OrganizationStateId = a.OrganizationStateId
-								and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+								and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode in ('205','193') THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
 								and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
 								FOR XML PATH('')), 1, 2, '') as varchar(100))
 				FROM rds.ReportEDFactsOrganizationCounts a
@@ -502,6 +504,7 @@ BEGIN
 			case when fact.UpdatedOperationalStatusId <= 0 then '' else fact.UpdatedOperationalStatusId end as UpdatedOperationalStatusId,
 			CAST(isnull(fact.TitleiParentalInvolveRes,'') as int) as TitleiParentalInvolveRes,
 			CAST(isnull(fact.TitleiPartaAllocations,'') as int) as TitleiPartaAllocations,
+			CAST(isnull(fact.HomelessChildrenandYouthReservation,0) as int) as HomelessChildrenandYouthReservation,
 			fact.LeaStateIdentifier,
 			fact.LeaNcesIdentifier,												
 			ISNULL(ManagementOrganizationType,'') as ManagementOrganizationType,
@@ -526,7 +529,7 @@ BEGIN
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'Charter', @StartDate, @EndDate) dcsaa on fact.OrganizationStateId = dcsaa.OrganizationIdentifierState
 		where reportcode = @reportCode and ReportLevel = @reportLevel 
-		and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+		and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode in ('205','193') THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
 		AND LEN (
 			CASE 
 				WHEN (fact.ReportYear = '2018-19' AND fact.ManagementOrganizationType IN ('CMO','EMO','Other')) THEN fact.ManagementOrganizationType
@@ -538,7 +541,7 @@ BEGIN
                             GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
                             FROM rds.ReportEDFactsOrganizationCounts b 
                             WHERE b.OrganizationStateId = a.OrganizationStateId
-                            and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+                            and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode in ('205','193') THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
                             and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
                             FOR XML PATH('')), 1, 2, '') as varchar(50))
                 FROM rds.ReportEDFactsOrganizationCounts a
@@ -621,6 +624,7 @@ BEGIN
 			NULL AS UpdatedOperationalStatusId,
 			0 AS TitleiParentalInvolveRes,
 			0 AS TitleiPartaAllocations,
+			0 AS HomelessChildrenandYouthReservation,
 			fact.LeaStateIdentifier,
 			fact.LeaNcesIdentifier,												
 			NULL AS ManagementOrganizationType,
@@ -748,6 +752,7 @@ BEGIN
 			case when fact.UpdatedOperationalStatusId <= 0 then '' else fact.UpdatedOperationalStatusId end as UpdatedOperationalStatusId,
 			CAST(isnull(fact.TitleiParentalInvolveRes,'') as int) as TitleiParentalInvolveRes,
 			CAST(isnull(fact.TitleiPartaAllocations,'') as int) as TitleiPartaAllocations,
+			CAST(isnull(fact.HomelessChildrenandYouthReservation,0) as int) as HomelessChildrenandYouthReservation,
 			fact.LeaStateIdentifier,
 			fact.LeaNcesIdentifier,												
 			ISNULL(ManagementOrganizationType,'') as ManagementOrganizationType,
@@ -772,14 +777,14 @@ BEGIN
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
 		where reportcode = case when @reportCode = '039' then '029' else @ReportCode end
 		and ReportLevel = @reportLevel 
-		and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+		and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode in ('205','193') THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
 		) organizationInfo     
         inner join (SELECT OrganizationStateId,[ReportYear], reportLevel, 
                             GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
                             FROM rds.ReportEDFactsOrganizationCounts b 
                             WHERE b.OrganizationStateId = a.OrganizationStateId
                             and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear 
-							and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+							and [CategorySetCode] = (case when @reportCode in ('205','193') THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
                             and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
                             FOR XML PATH('')), 1, 2, '') as varchar(100))
                 FROM rds.ReportEDFactsOrganizationCounts a

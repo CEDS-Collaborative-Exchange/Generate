@@ -699,7 +699,12 @@ BEGIN
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
 				else if (@reportCode = '193')
-				BEGIN		
+				BEGIN
+					-- FS193 has one TOT category set per table type (PARINRES, TITLEIPALL, RESHOMELESS),
+					-- but each LEA row already carries every amount. Insert the rows once; the
+					-- submission file writes one record per table type from them.
+					IF NOT EXISTS (SELECT 1 FROM [RDS].[ReportEDFactsOrganizationCounts]
+									WHERE ReportCode = @reportCode AND ReportYear = @reportYear AND ReportLevel = @reportLevel)
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
 						, [OrganizationCount]
@@ -716,9 +721,12 @@ BEGIN
 						, [TitleiPartaAllocations]
 						, [HomelessChildrenandYouthReservation]
 					)
-					select distinct @categorySetCode
+					-- An LEA has one fact row per federal funding record, and only the Title I
+					-- (84.010) row carries these amounts; the rest hold 0. Take the max per LEA
+					-- so each LEA gets one row with its amounts.
+					select @categorySetCode
 						, 1 as OrganizationCount
-						, lea.LeaOrganizationName as OrganizationName 
+						, lea.LeaOrganizationName as OrganizationName
 						, lea.LeaIdentifierSea
 						, @reportCode
 						, @reportLevel
@@ -727,18 +735,23 @@ BEGIN
 						, lea.StateAbbreviationCode
 						, lea.StateAbbreviationDescription
 						, 0 as TotalIndicator
-						, ISNULL(TitleiParentalInvolveRes, -1)
-						, TitleiPartaAllocations
-						, HomelessChildrenandYouthReservation
+						, ISNULL(MAX(fact.TitleiParentalInvolveRes), -1)
+						, MAX(fact.TitleiPartaAllocations)
+						, MAX(fact.HomelessChildrenandYouthReservation)
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 							on fact.SchoolYearId = d.DimSchoolYearId
-						inner join rds.DimLeas lea 
+						inner join rds.DimLeas lea
 							on fact.LeaId = lea.DimLeaID
-					where d.SchoolYear = @reportYear 
-					and lea.DimLeaID <> -1 
+					where d.SchoolYear = @reportYear
+					and lea.DimLeaID <> -1
 					and ISNULL(lea.ReportedFederally, 1) = 1
 					and lea.LeaOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+					group by lea.LeaOrganizationName
+						, lea.LeaIdentifierSea
+						, lea.StateANSICode
+						, lea.StateAbbreviationCode
+						, lea.StateAbbreviationDescription
 				END
 				else if (@reportCode = '198')
 				BEGIN

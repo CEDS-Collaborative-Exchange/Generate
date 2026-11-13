@@ -88,6 +88,7 @@ namespace generate.core.Models.RDS
         public int OrganizationCount { get; set; }
         public int TitleiParentalInvolveRes { get; set; }
         public int TitleiPartaAllocations { get; set; }
+        public int HomelessChildrenandYouthReservation { get; set; }
 
         //lea
         public string LeaStateIdentifier { get; set; }
