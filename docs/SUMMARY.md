@@ -47,6 +47,7 @@
   * [Subfolder configuration](developer-guides/installation/subfolder-configuration.md)
   * [Optional Installations](developer-guides/installation/optional-installations.md)
   * [Docker (Azure/AWS) Installation Guide](developer-guides/installation/docker-installation-guide.md)
+  * [Azure Deployment Configuration](developer-guides/installation/azure-deployment-configuration.md)
   * [Installation FAQ](developer-guides/installation/installation-faq.md)
   * [Generate Security Protocols](developer-guides/installation/generate-security-protocols.md)
   * [Upgrade](developer-guides/installation/upgrade/README.md)
