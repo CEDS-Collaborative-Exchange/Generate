@@ -1,6 +1,11 @@
 -- App metadata updates for release 14.1
 -- Add release-specific metadata changes in this file.
 
+IF SCHEMA_ID('BI') IS NULL
+BEGIN
+	EXEC('CREATE SCHEMA BI');
+END
+
 -- Defensive guard: the metadata update below assumes Staging.AssessmentResult already
 -- carries EdFactsFormerEnglishLearnerYearStatus, added by 14.0's own Staging.TableChanges.sql.
 -- A generate_14.0.bak snapshot taken before that script ran won't have it, which breaks
@@ -10,8 +15,6 @@ BEGIN
 	ALTER TABLE Staging.AssessmentResult
 	ADD EdFactsFormerEnglishLearnerYearStatus VARCHAR (100) NULL;
 END
-
-print 'App.Metadata.sql executed for 14.1.'
 
 -- declare @toggleSectionId as int
 -- SELECT @toggleSectionId = ToggleSectionId from app.ToggleSections where EmapsSurveySectionAbbrv = 'CERTIF'
@@ -138,3 +141,6 @@ begin
 	insert into app.ToggleQuestions (EmapsQuestionAbbrv, ParentToggleQuestionId, QuestionSequence, QuestionText, ToggleQuestionTypeId, ToggleSectionId)
 	values ('CCDUNGRADEDTCH', NULL, 1151, 'Are any teachers identified as teachers for ungraded classes?', 7, @ccdStaffSectionId)
 end
+
+print 'App.Metadata.sql executed for 14.1.'
+

@@ -1,4 +1,4 @@
-﻿CREATE VIEW RDS.vwAssessmentsSummaryByRace
+﻿CREATE VIEW BI.vwAssessmentsSummaryByRace
   AS 
   
     SELECT 
