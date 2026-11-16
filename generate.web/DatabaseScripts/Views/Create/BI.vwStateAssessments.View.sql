@@ -1,4 +1,4 @@
-﻿CREATE VIEW [RDS].[vwStateAssessments]
+﻿CREATE VIEW [BI].[vwStateAssessments]
   AS 
   
     SELECT 

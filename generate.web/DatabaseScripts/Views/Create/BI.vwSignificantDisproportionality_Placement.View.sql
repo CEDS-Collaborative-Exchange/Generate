@@ -1,4 +1,4 @@
-CREATE VIEW [RDS].[vwSignificantDisproportionality_Placement] AS
+CREATE VIEW [BI].[vwSignificantDisproportionality_Placement] AS
 
 --================================================================================================
 -- Placement Child Count

@@ -1,4 +1,4 @@
-CREATE VIEW [RDS].[vwSignificantDisproportionality_Membership] AS
+CREATE VIEW [BI].[vwSignificantDisproportionality_Membership] AS
   
 
 --================================================================================================
@@ -9,16 +9,16 @@ MembershipData
 AS
 	(
 		SELECT		Fact.FactK12StudentCountId
-					,Fact.K12StudentId
-					,Fact.SchoolYearId
-					,Fact.LeaId
-					,LEAs.LeaIdentifierSea
-					,LEAs.LeaIdentifierNces
-					,Fact.RaceId
-					,Fact.IdeaStatusId			
-					,Fact.GradeLevelId
-					,Fact.AgeId
-					,1 AS MembershipStudentCount
+					, Fact.K12StudentId
+					, Fact.SchoolYearId
+					, Fact.LeaId
+					, LEAs.LeaIdentifierSea
+					, LEAs.LeaIdentifierNces
+					, Fact.RaceId
+					, Fact.IdeaStatusId			
+					, Fact.GradeLevelId
+					, Fact.AgeId
+					, 1 AS MembershipStudentCount
 
  		FROM		RDS.FactK12StudentCounts			Fact
 		JOIN		RDS.DimSchoolYears					SchoolYears			ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	

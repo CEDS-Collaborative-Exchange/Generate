@@ -862,13 +862,29 @@ END;
 --------------------------------------------------
 --New Fact Type changes
 --------------------------------------------------
-insert into rds.DimFactTypes (
-	FactTypeCode
-	, FactTypeDescription
-	, FactTypeLabel
-)
-values ('englishlearnerassessment', 'ENGLISHLEARNERASSESSMENT - 050,126,137,138,139', 'English Learner Assessment'),
-('ideapartc', 'IDEAPARTC - ', NULL)
+
+delete from rds.DimFactTypes
+where FactTypeCode in ('englishlearnerassessment', 'ideapartc');
+
+if (select count(*) from rds.DimFactTypes where FactTypeCode = 'englishlearnerassessment') = 0
+begin
+	insert into rds.DimFactTypes (
+		FactTypeCode
+		, FactTypeDescription
+		, FactTypeLabel
+	)
+	values ('englishlearnerassessment', 'ENGLISHLEARNERASSESSMENT - 050,126,137,138,139', 'English Learner Assessment')
+end
+
+if (select count(*) from rds.DimFactTypes where FactTypeCode = 'ideapartc') = 0
+begin
+	insert into rds.DimFactTypes (
+		FactTypeCode
+		, FactTypeDescription
+		, FactTypeLabel
+	)
+	values ('ideapartc', 'IDEAPARTC - ', NULL);
+end
 
 --remove the files that are being moved to the new Fact Type
 update rds.DimFactTypes
@@ -883,3 +899,8 @@ where FactTypeCode = 'directory';
 update rds.DimFactTypes
 set FactTypeDescription = 'COMPSUPPORT - 206,212'
 where FactTypeCode = 'compsupport';
+
+--Fix fact type description
+update rds.DimFactTypes
+set FactTypeDescription = 'CHRONICABSENTEEISM - 195'
+where FactTypeCode = 'chronicabsenteeism';

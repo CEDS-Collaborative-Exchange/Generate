@@ -1,4 +1,4 @@
-CREATE VIEW [RDS].[vwSignificantDisproportionality_ChildCount] AS
+CREATE VIEW [BI].[vwSignificantDisproportionality_ChildCount] AS
 
 --================================================================================================
 -- Child Count
@@ -6,13 +6,13 @@ CREATE VIEW [RDS].[vwSignificantDisproportionality_ChildCount] AS
 
 with ChildCount_Fact AS (
 SELECT		Fact.K12StudentId
-			,Fact.FactK12StudentCountId
-			,Fact.PrimaryDisabilityTypeId 
-			,Fact.SchoolYearId
-			,Fact.RaceId
-			,Fact.IdeaStatusId
-			,Fact.GradeLevelId
-			,Fact.AgeId			
+			, Fact.FactK12StudentCountId
+			, Fact.PrimaryDisabilityTypeId 
+			, Fact.SchoolYearId
+			, Fact.RaceId
+			, Fact.IdeaStatusId
+			, Fact.GradeLevelId
+			, Fact.AgeId			
 			, LEAs.LeaIdentifierSea
 			, LEAs.DimLeaID AS LeaId
 			, LEAs.SeaOrganizationIdentifierSea AS SeaId
@@ -46,17 +46,17 @@ SELECT		Fact.K12StudentId
 
 FactType_ChildCount_002 AS (SELECT
 		FactK12StudentCountId
-		,PrimaryDisabilityTypeID
-		,cte.K12StudentId
-		,SchoolYearId
-		,LeaId
-		,RaceId	
-		,LeaIdentifierSea
-		,LeaIdentifierNces
-		,IdeaStatusId
-		,GradeLevelId
-		,AgeId
-		,1 AS ChildCountStudentCount
+		, PrimaryDisabilityTypeID
+		, cte.K12StudentId
+		, SchoolYearId
+		, LeaId
+		, RaceId	
+		, LeaIdentifierSea
+		, LeaIdentifierNces
+		, IdeaStatusId
+		, GradeLevelId
+		, AgeId
+		, 1 AS ChildCountStudentCount
 	FROM ChildCount_Fact cte
 	LEFT JOIN (
 		select distinct K12StudentId
