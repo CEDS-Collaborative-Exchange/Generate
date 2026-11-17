@@ -50,6 +50,8 @@ Views\\Drop,BI.vwSignificantDisproportionality_Placement.View.sql,0
 Views\\Create,BI.vwSignificantDisproportionality_Placement.View.sql,0
 Views\\Drop,RDS.vwAccessibleEducationMaterialAssignments.View.sql,0
 Views\\Create,RDS.vwAccessibleEducationMaterialAssignments.View.sql,0
+Views\\Drop,RDS.vwDimFirearmDisciplineStatuses.View.sql,0
+Views\\Create,RDS.vwDimFirearmDisciplineStatuses.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql, 0

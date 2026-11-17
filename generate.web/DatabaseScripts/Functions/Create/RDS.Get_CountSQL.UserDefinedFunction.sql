@@ -724,6 +724,55 @@ BEGIN
 
 			end
 
+			if @reportCode in ('086')
+			begin
+
+				set @sql = @sql + '
+				IF OBJECT_ID(''tempdb..#students'') IS NOT NULL DROP TABLE #students' + char(10)
+
+				set @sql = @sql + '
+				select p.K12StudentStudentIdentifierState
+					, fact.IncidentIdentifier
+					, max(fact.DisciplinaryActionStartDateId) as DisciplinaryActionStartDateId
+					, df.DimFirearmId
+				into #students 
+				from rds.FactK12StudentDisciplines fact
+					inner join rds.dimPeople_Current p
+						on fact.K12Student_CurrentId = p.DimPersonId
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId'
+
+				if @reportLevel = 'lea'
+				begin
+				set @sql = @sql + '
+						and fact.LeaId <> -1
+						and org.ReportedFederally = 1
+						and org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+
+				set @sql = @sql + '
+					inner join rds.DimFirearms df 
+						on fact.FirearmId = df.DimFirearmId
+				where fact.SchoolYearId = @dimSchoolYearId
+				and fact.FactTypeId = @dimFactTypeId
+				and df.FirearmTypeEdFactsCode <> ''MISSING'''
+				if @reportLevel = 'sea'
+				begin
+				set @sql = @sql + '
+				and fact.SeaId <> -1'
+				end 
+
+				set @sql = @sql + '
+				group by p.K12StudentStudentIdentifierState
+					, fact.IncidentIdentifier
+					, df.DimFirearmId
+				order by p.K12StudentStudentIdentifierState' + char(10) 
+
+				select @sql = @sql + char(10) + '
+				CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState, IncidentIdentifier, DisciplinaryActionStartDateId, DimFirearmId)' + char(10) + char(10)
+
+			end 
+
 			if @reportCode in ('009')
 			begin
 
@@ -3280,48 +3329,12 @@ BEGIN
 		else if @reportCode = '086'
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join (
-					select distinct rdp.K12StudentStudentIdentifierState, df.DimFirearmId, fact.IncidentIdentifier
-					from rds.' + @factTable + ' fact '
-
-			if @reportLevel = 'lea'
-			begin
-				set @sqlCountJoins = @sqlCountJoins + '
-				inner join RDS.DimLeas org 
-					on fact.LeaId = org.DimLeaId
-					AND org.ReportedFederally = 1
-					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
-			end 
-			if @reportLevel = 'sch'
-			begin
-				set @sqlCountJoins = @sqlCountJoins + '
-				inner join RDS.DimK12Schools org 
-					on fact.K12SchoolId = org.DimK12SchoolId
-					AND org.ReportedFederally = 1
-					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
-			end
-
-			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople_Current rdp 
-					on fact.K12Student_CurrentId = rdp.DimPersonId
-				inner join rds.DimLeas l 
-					on fact.LeaId = l.DimLeaId
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and CASE 
-						WHEN fact.K12SchoolId > 0 THEN fact.K12SchoolId
-						WHEN fact.LeaId > 0 THEN fact.LeaId
-						WHEN fact.SeaId > 0 THEN fact.SeaId
-						ELSE -1
-					END <> -1
-				inner join rds.DimFirearms df 
-					on fact.FirearmId = df.DimFirearmId
-				where df.FirearmTypeEdFactsCode <> ''MISSING''
-			) rules 
-				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
-				and fact.FirearmId = rules.DimFirearmId 
-				and fact.IncidentIdentifier = rules.IncidentIdentifier'
-		end
+				inner join #students rules
+					on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
+					and fact.FirearmId = rules.DimFirearmId 
+					and fact.IncidentIdentifier = rules.IncidentIdentifier 
+					and fact.DisciplinaryActionStartDateId = rules.DisciplinaryActionStartDateId'
+		end	
 		else if @reportCode in ('089','edenvironmentdisabilitiesage3-5')
 		begin
 			if @year > 2019
