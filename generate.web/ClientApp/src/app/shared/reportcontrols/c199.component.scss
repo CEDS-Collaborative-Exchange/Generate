@@ -21,7 +21,10 @@
 .generate-app-c199-controls__export-container
 {
     float: right;
-    width: 160px;
+
+    .mdl-button {
+        white-space: nowrap;
+    }
 }
 
 .generate-app-c199-controls__createfile-container
