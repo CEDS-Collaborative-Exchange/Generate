@@ -45,9 +45,13 @@
 .generate-app-leafederalfund__filter{}
 
 
+// Size to the button so its label isn't clipped to "Export to"
 .generate-app-leafederalfund-controls__export-container{
     float: right;
-    width: 160px;
+
+    .mdl-button {
+        white-space: nowrap;
+    }
 }
 
 .generate-app-leafederalfund_connectionLink

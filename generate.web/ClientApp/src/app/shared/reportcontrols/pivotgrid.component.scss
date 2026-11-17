@@ -21,7 +21,10 @@
 .generate-app-pivotgrid-controls__export-container
 {
     float: right;
-    width: 180px;
+
+    .mdl-button {
+        white-space: nowrap;
+    }
 }
 
 .generate-app-pivotgrid-controls__createfile-container

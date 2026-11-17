@@ -14,7 +14,10 @@
 .generate-app-flexgrid-controls__export-container
 {
     float: right;
-    width: 160px;
+
+    .mdl-button {
+        white-space: nowrap;
+    }
 }
 
 .generate-app-flexgrid__grid-header
