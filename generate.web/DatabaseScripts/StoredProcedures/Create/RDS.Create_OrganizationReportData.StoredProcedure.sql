@@ -734,7 +734,8 @@ BEGIN
 						, lea.StateANSICode
 						, lea.StateAbbreviationCode
 						, lea.StateAbbreviationDescription
-						, 0 as TotalIndicator
+						-- Every FS193 record is an education unit total (TOT category set)
+						, 'Y' as TotalIndicator
 						, ISNULL(MAX(fact.TitleiParentalInvolveRes), -1)
 						, MAX(fact.TitleiPartaAllocations)
 						, MAX(fact.HomelessChildrenandYouthReservation)
