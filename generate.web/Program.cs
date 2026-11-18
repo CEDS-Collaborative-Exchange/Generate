@@ -101,6 +101,7 @@ if ("EMBEDDED".Equals(builder.Configuration.GetValue<string>("AppSettings:UserSt
     .AddUserStore<EmbeddedUserStore<ApplicationUser>>()
     .AddRoleStore<ApplicationRoleStore>()
     .AddUserManager<EmbeddedUserManager>();
+    ReturnStatusCodesForApiCookieChallenges(builder.Services);
 }
 else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:UserStoreType")))
 {
@@ -212,6 +213,40 @@ else // AD Auth
     .AddUserStore<ApplicationUserStore<ApplicationUser>>()
     .AddRoleStore<ApplicationRoleStore>()
     .AddUserManager<ApplicationUserManager>();
+    ReturnStatusCodesForApiCookieChallenges(builder.Services);
+}
+
+// By default the Identity cookie answers an unauthenticated or forbidden request with a 302 to
+// /Account/Login (or AccessDenied). For API calls the Angular app follows that redirect without
+// knowing, gets the login page HTML instead of JSON and fails to parse it - e.g. the update page
+// couldn't tell that web's restart had ended the session. Return 401/403 for /api requests instead
+// and keep the redirect for page navigation.
+static void ReturnStatusCodesForApiCookieChallenges(IServiceCollection services)
+{
+    services.ConfigureApplicationCookie(options =>
+    {
+        var redirectToLogin = options.Events.OnRedirectToLogin;
+        var redirectToAccessDenied = options.Events.OnRedirectToAccessDenied;
+
+        options.Events.OnRedirectToLogin = context =>
+        {
+            if (!context.Request.Path.StartsWithSegments("/api"))
+            {
+                return redirectToLogin(context);
+            }
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            if (!context.Request.Path.StartsWithSegments("/api"))
+            {
+                return redirectToAccessDenied(context);
+            }
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        };
+    });
 }
 
 
