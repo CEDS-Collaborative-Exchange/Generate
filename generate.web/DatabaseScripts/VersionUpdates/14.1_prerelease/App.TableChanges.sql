@@ -231,16 +231,16 @@ END
 --Changes for new Fact Types
 ---------------------------------------------
 
---update the report to fact type mapping
-update app.GenerateReport_FactType
-set FactTypeId = 28
-where GenerateReportId in (59,68,72,73,74)
+--The report to fact type mapping and the englishlearnerassessment migration tasks are set in
+--RDS.TableChanges.sql, after the fact type is created: its DimFactTypeId is an identity value,
+--so it can't be hardcoded here.
 
 insert into app.GenerateReport_GenerateStagingXREF (
     GenerateReportId
     , StagingTableId
 )
-values
+select x.GenerateReportId, x.StagingTableId
+from (values
     (59, 2),
     (59, 17),
     (59, 36),
@@ -259,13 +259,12 @@ values
     (74, 2),
     (74, 17),
     (74, 36)
-
-insert into app.DataMigrationTasks values
-(5,1,0,0,'Staging.StagingValidation_Execute @SchoolYear, @FactTypeOrReportCode',327,1,'Staging Validation for englishlearnerassessment',null,28),
-(3,1,0,0,'rds.Empty_Reports ''englishlearnerassessment''',255,1,NULL, NULL,	28),
-(3,1,0,0,'rds.create_reports ''englishlearnerassessment'', 0',256,1,NULL, NULL,28),
-(2,1,0,0,'App.Wrapper_Migrate_EnglishLearnerAssessment_to_RDS',124,1,'050,126,137,138,139',NULL,28),
-(1,1,0,0,'[Source].[Source-to-Staging_EnglishLearnerAssessment] @SchoolYear',20,0,'050,126,137,138,139',NULL,28)
+) x (GenerateReportId, StagingTableId)
+where not exists (
+    select 1 from app.GenerateReport_GenerateStagingXREF e
+    where e.GenerateReportId = x.GenerateReportId
+        and e.StagingTableId = x.StagingTableId
+)
 
 
 --reorder the Exiting 
