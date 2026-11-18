@@ -1,11 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, map, tap, throwError } from 'rxjs';
 import { AppConfig } from '../../app.config';
 import { UpdatePackage } from '../../models/app/update-package';
 import { UpdateStatus } from '../../models/app/update-status';
 import { BaseService } from '../base.service';
+
+/**
+ * Error from one of the update page's polling calls. Displays as the usual user-facing message,
+ * but keeps the HTTP status so the page can tell "web is still offline" (0/502/503/504) apart
+ * from "web is back but rejected the request" (e.g. 401 after a restart dropped the session).
+ */
+export class UpdateRequestError {
+    constructor(public readonly message: string, public readonly status: number) { }
+
+    toString(): string {
+        return this.message;
+    }
+}
 
 @Injectable()
 export class GenerateUpdateService extends BaseService {
@@ -15,6 +28,11 @@ export class GenerateUpdateService extends BaseService {
     }
 
     private _apiUrl = 'api/app/appupdate';
+
+    private handleUpdateError = (error: HttpErrorResponse) =>
+        this.handleError(error).pipe(
+            catchError(message => throwError(() => new UpdateRequestError(message, error.status)))
+        );
 
 
     getStatus(): Observable<UpdateStatus> {
@@ -29,7 +47,7 @@ export class GenerateUpdateService extends BaseService {
                 tap(resp => {
                     this.log(`getStatus`);
                 }),
-                catchError(this.handleError)
+                catchError(this.handleUpdateError)
             );
 
     }
@@ -48,7 +66,7 @@ export class GenerateUpdateService extends BaseService {
                 tap(resp => {
                     this.log(`getPendingUpdates`);
                 }),
-                catchError(this.handleError)
+                catchError(this.handleUpdateError)
             );
 
 
@@ -76,7 +94,7 @@ export class GenerateUpdateService extends BaseService {
                 tap(resp => {
                     this.log(`getDownloadedUpdates`);
                 }),
-                catchError(this.handleError)
+                catchError(this.handleUpdateError)
             );
 
 
