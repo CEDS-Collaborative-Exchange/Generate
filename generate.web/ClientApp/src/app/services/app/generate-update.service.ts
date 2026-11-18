@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { catchError, map, tap, throwError } from 'rxjs';
 import { AppConfig } from '../../app.config';
 import { UpdatePackage } from '../../models/app/update-package';
@@ -40,6 +40,19 @@ export class GenerateUpdateService extends BaseService {
 
     private _apiUrl = 'api/app/appupdate';
 
+    /**
+     * A server that answers an expired session with a redirect (instead of a 401) lands the browser
+     * on /Account/Login, which returns an empty 200. That parses as a null body rather than an error,
+     * so without this check the page would treat it as a successful, empty answer. Turn it into the
+     * 401 it really is.
+     */
+    private bodyUnlessLoginRedirect = <T>(resp: HttpResponse<T>): T => {
+        if (resp.url?.toLowerCase().includes('/account/login')) {
+            throw new HttpErrorResponse({ status: 401, statusText: 'Unauthorized', url: resp.url });
+        }
+        return resp.body;
+    };
+
     private handleUpdateError = (error: HttpErrorResponse) =>
         this.handleError(error).pipe(
             catchError(message => throwError(() => new UpdateRequestError(message, UpdateRequestError.statusOf(error))))
@@ -52,9 +65,7 @@ export class GenerateUpdateService extends BaseService {
 
         return this.http.get<UpdateStatus>(url, { observe: 'response' })
             .pipe(
-                map(resp => {
-                    return resp.body;
-                }),
+                map(this.bodyUnlessLoginRedirect),
                 tap(resp => {
                     this.log(`getStatus`);
                 }),
@@ -71,9 +82,7 @@ export class GenerateUpdateService extends BaseService {
 
         return this.http.get<UpdatePackage[]>(url, { observe: 'response' })
             .pipe(
-                map(resp => {
-                    return resp.body;
-                }),
+                map(this.bodyUnlessLoginRedirect),
                 tap(resp => {
                     this.log(`getPendingUpdates`);
                 }),
@@ -99,9 +108,7 @@ export class GenerateUpdateService extends BaseService {
 
         return this.http.get<UpdatePackage[]>(url, { observe: 'response' })
             .pipe(
-                map(resp => {
-                    return resp.body;
-                }),
+                map(this.bodyUnlessLoginRedirect),
                 tap(resp => {
                     this.log(`getDownloadedUpdates`);
                 }),
