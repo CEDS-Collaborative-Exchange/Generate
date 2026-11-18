@@ -23,6 +23,10 @@ const UPDATE_RESTART_GRACE_MS = 5 * 60 * 1000;
 // failure, so backgroundWaitingToStart staying true for longer means web restarted before it
 // could finish.
 const BACKGROUND_START_TIMEOUT_MS = 5 * 60 * 1000;
+// Statuses meaning the web site itself is unreachable or offline (app_offline.htm) - expected
+// while background replaces web's files, so they never end the wait on their own.
+const SITE_OFFLINE_STATUSES = new Set([0, 502, 503, 504]);
+const UNAUTHORIZED = 401;
 
 @Component({
     selector: 'generate-app-settings-update',
@@ -52,6 +56,10 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
 
     private backgroundWaitStartedAt = 0;
     backgroundStartTimedOut = false;
+
+    // When the update status was last read. updateStatus keeps the last value read, so without
+    // this a status call that keeps failing leaves the page trusting a stale IN_PROGRESS forever.
+    private lastStatusAt = 0;
 
     constructor(
         private _router: Router,
@@ -126,6 +134,7 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
 
     private applyStatus(status: UpdateStatus) {
         this.updateStatus = status;
+        this.lastStatusAt = Date.now();
         this.checkBackgroundStartTimeout();
         if (this.isUpdateInProgress()) {
             this.quietUntil = Date.now() + UPDATE_RESTART_GRACE_MS;
@@ -161,11 +170,34 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
     }
 
     private showCheckError(error: any) {
+        if (this.shouldReloadAfterUpdate(error)) {
+            // Web is back but the update API can't be used from this page any more - most likely
+            // the update finished and web's restart dropped the session. Reload to show the real
+            // result (or the login prompt) instead of "Update in Progress" forever.
+            window.location.reload();
+            return;
+        }
         if (this.isUpdateRunning() && !this.hasUpdateFailed()) {
             return;
         }
         this.updateProcessing = false;
         this.errorMessage = error;
+    }
+
+    private shouldReloadAfterUpdate(error: any): boolean {
+        if (!this.updateProcessing) {
+            return false;
+        }
+
+        const status: number | undefined = error?.status;
+        if (status === UNAUTHORIZED) {
+            return true;
+        }
+
+        // While web is offline or restarting, keep waiting however long the update takes. Once it
+        // answers again, give up on a status that hasn't been readable for the whole grace period.
+        const siteOffline = status === undefined || SITE_OFFLINE_STATUSES.has(status);
+        return !siteOffline && Date.now() - this.lastStatusAt > UPDATE_RESTART_GRACE_MS;
     }
 
     filesUploaded($event) {
@@ -307,6 +339,7 @@ export class UpdateComponent implements AfterViewInit, OnDestroy {
 
         this.updateProcessing = true;
         this.quietUntil = Date.now() + UPDATE_RESTART_GRACE_MS;
+        this.lastStatusAt = Date.now();
         this.errorMessage = null;
 
         this._generateUpdateService.applyDownloadedUpdates()
