@@ -863,9 +863,9 @@ END;
 --New Fact Type changes
 --------------------------------------------------
 
-delete from rds.DimFactTypes
-where FactTypeCode in ('englishlearnerassessment', 'ideapartc');
-
+--Create the new fact types only if they're missing. Deleting and re-inserting them gives them a
+--new identity value on every run (orphaning the reports and migration tasks that point at the
+--old one), and fails once facts reference them.
 if (select count(*) from rds.DimFactTypes where FactTypeCode = 'englishlearnerassessment') = 0
 begin
 	insert into rds.DimFactTypes (
@@ -874,6 +874,13 @@ begin
 		, FactTypeLabel
 	)
 	values ('englishlearnerassessment', 'ENGLISHLEARNERASSESSMENT - 050,126,137,138,139', 'English Learner Assessment')
+end
+else
+begin
+	update rds.DimFactTypes
+	set FactTypeDescription = 'ENGLISHLEARNERASSESSMENT - 050,126,137,138,139'
+		, FactTypeLabel = 'English Learner Assessment'
+	where FactTypeCode = 'englishlearnerassessment'
 end
 
 if (select count(*) from rds.DimFactTypes where FactTypeCode = 'ideapartc') = 0
@@ -885,6 +892,50 @@ begin
 	)
 	values ('ideapartc', 'IDEAPARTC - ', NULL);
 end
+
+--Point the EL assessment reports and migration tasks at the fact type's actual id. This also
+--repairs databases where an earlier run of this script left them pointing at a stale id.
+declare @englishLearnerAssessmentFactTypeId int
+select @englishLearnerAssessmentFactTypeId = DimFactTypeId
+from rds.DimFactTypes
+where FactTypeCode = 'englishlearnerassessment'
+
+update rft
+set FactTypeId = @englishLearnerAssessmentFactTypeId
+from app.GenerateReport_FactType rft
+	join app.GenerateReports r
+		on r.GenerateReportId = rft.GenerateReportId
+where r.ReportCode in ('050','126','137','138','139')
+
+--Replace the migration tasks so a re-run doesn't duplicate them
+delete from app.DataMigrationTasks
+where StoredProcedureName in (
+		'rds.Empty_Reports ''englishlearnerassessment'''
+		, 'rds.create_reports ''englishlearnerassessment'', 0'
+		, 'App.Wrapper_Migrate_EnglishLearnerAssessment_to_RDS'
+		, '[Source].[Source-to-Staging_EnglishLearnerAssessment] @SchoolYear'
+	)
+	or (StoredProcedureName = 'Staging.StagingValidation_Execute @SchoolYear, @FactTypeOrReportCode'
+		and Description = 'Staging Validation for englishlearnerassessment')
+
+insert into app.DataMigrationTasks (
+	DataMigrationTypeId
+	, IsActive
+	, RunAfterGenerateMigration
+	, RunBeforeGenerateMigration
+	, StoredProcedureName
+	, TaskSequence
+	, IsSelected
+	, Description
+	, TaskName
+	, FactTypeId
+)
+values
+	(5,1,0,0,'Staging.StagingValidation_Execute @SchoolYear, @FactTypeOrReportCode',327,1,'Staging Validation for englishlearnerassessment',NULL,@englishLearnerAssessmentFactTypeId),
+	(3,1,0,0,'rds.Empty_Reports ''englishlearnerassessment''',255,1,NULL,NULL,@englishLearnerAssessmentFactTypeId),
+	(3,1,0,0,'rds.create_reports ''englishlearnerassessment'', 0',256,1,NULL,NULL,@englishLearnerAssessmentFactTypeId),
+	(2,1,0,0,'App.Wrapper_Migrate_EnglishLearnerAssessment_to_RDS',124,1,'050,126,137,138,139',NULL,@englishLearnerAssessmentFactTypeId),
+	(1,1,0,0,'[Source].[Source-to-Staging_EnglishLearnerAssessment] @SchoolYear',20,0,'050,126,137,138,139',NULL,@englishLearnerAssessmentFactTypeId)
 
 --remove the files that are being moved to the new Fact Type
 update rds.DimFactTypes

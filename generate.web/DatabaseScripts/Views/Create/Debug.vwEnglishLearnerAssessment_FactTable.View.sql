@@ -59,4 +59,4 @@ AS
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2023
 		
-	AND Fact.FactTypeId = 28
+	AND Fact.FactTypeId = (SELECT DimFactTypeId FROM RDS.DimFactTypes WHERE FactTypeCode = 'englishlearnerassessment')
