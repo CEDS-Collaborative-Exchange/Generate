@@ -18,6 +18,17 @@ export class UpdateRequestError {
     toString(): string {
         return this.message;
     }
+
+    /**
+     * A server that answers an expired session with a redirect to the login page (instead of a 401)
+     * hands the browser that page's HTML, which then fails to parse as JSON with a 200 status.
+     * Report it as the 401 it really is.
+     */
+    static statusOf(error: HttpErrorResponse): number {
+        const redirectedToLogin = error.url?.toLowerCase().includes('/account/login') ?? false;
+        const unparsableSuccess = error.status >= 200 && error.status < 300;
+        return redirectedToLogin || unparsableSuccess ? 401 : error.status;
+    }
 }
 
 @Injectable()
@@ -31,7 +42,7 @@ export class GenerateUpdateService extends BaseService {
 
     private handleUpdateError = (error: HttpErrorResponse) =>
         this.handleError(error).pipe(
-            catchError(message => throwError(() => new UpdateRequestError(message, error.status)))
+            catchError(message => throwError(() => new UpdateRequestError(message, UpdateRequestError.statusOf(error))))
         );
 
 
