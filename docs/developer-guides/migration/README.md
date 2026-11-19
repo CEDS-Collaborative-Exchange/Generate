@@ -30,7 +30,7 @@ These stored procedures can be run from the Generate Web Application using the S
 
 The Generate Web Application “[Data Store](../../user-guide/settings/data-store.md)” migration pages use the `App.DataMigrationTasks`table to determine what stored procedures can be run from the web interface. Using one of these template scripts is recommended for new SEA Source to Staging ETL because no updates to `App.DataMigrationTasks`records is needed to migrate using one of these stored procedures. These stored procedures can be run from the Generate Web Application using the Staging Migration option.
 
-Reference the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074)[ ](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074)for each domain to get a list of the tables/fields that need to be populated to create this ETL.
+Reference the [ETL Documentation Template](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/fact-type-table/etl-documentation-templates-overview/etl-documentation-templates)[ ](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074)for each domain to get a list of the tables/fields that need to be populated to create this ETL.
 
 These stored procedures have a school year parameter that should be passed in if run from SQL Server Management Studio (note: the @SchoolYear SMALLINT parameter lines up with how the Generate Web App calls these scripts). For example, to run with 2023 school year data:
 

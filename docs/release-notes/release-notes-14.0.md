@@ -2,7 +2,7 @@
 description: >-
   Technical enhancements, reporting updates, and upgrade actions in Generate
   14.0.
-icon: sparkles
+icon: memo-pad
 cover: ../.gitbook/assets/GenerateBanner14_0.avif
 coverY: 0
 layout:
