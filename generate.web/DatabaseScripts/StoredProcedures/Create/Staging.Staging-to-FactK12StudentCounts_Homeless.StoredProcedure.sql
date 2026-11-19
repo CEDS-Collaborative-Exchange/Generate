@@ -35,6 +35,7 @@ BEGIN
 		@FactTypeId INT,
 		@SchoolYearId INT,
 		@SYStartDate DATE,
+		@SYEndDate DATE,
 		@HomelessAgeDate DATE
 		
 		SELECT @SchoolYearId = DimSchoolYearId 
