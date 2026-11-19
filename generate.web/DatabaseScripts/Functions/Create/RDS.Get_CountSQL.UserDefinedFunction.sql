@@ -8409,7 +8409,6 @@ BEGIN
 									and a.AssessmentAcademicSubject = b.Subject
 									and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = replace(b.AssessmentTypeCode, ''ASS'', ''PART''))'
 
-
 			set @sql = @sql + ' 
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
@@ -8430,7 +8429,6 @@ BEGIN
 									and a.AssessmentAcademicSubject = b.Subject
 									and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = replace(b.AssessmentTypeCode, ''ASS'', ''PART''))'
 
-
 			set @sql = @sql + ' 
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
@@ -8439,7 +8437,9 @@ BEGIN
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
-									and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = (''P'' + replace(b.AssessmentTypeCode, ''ASMT'', ''ASM'')))'
+									and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = (''P'' + 
+										replace(replace(b.AssessmentTypeCode, ''HSREGASMT'', ''HSRGASM''), ''ASMT'', ''ASM'')))'
+
 
 			set @sql = @sql + ' 
 				delete a from @reportData a
