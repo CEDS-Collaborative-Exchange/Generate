@@ -689,7 +689,7 @@ export class PivottableComponent {
                             selectedFilter[column] = filters[key];
 
                             bindings.push(column);
-                            headers.push('TableTypeAbbrv');
+                            headers.push(reportCode === '033' ? 'Data Group' : 'TableTypeAbbrv');
                         }
                         //if (column === 'gradelevel') {
                         //    let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionCode === filters[key]);
