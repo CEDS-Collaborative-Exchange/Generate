@@ -100,6 +100,7 @@ Previously, this logic relied on the Basis of Exit value. That value is unavaila
 #### Utilities
 
 * Added `[Utilities].[Cleanup_DataMigrationHistories]`. See [Cleanup Data Migration Histories](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/cleanup-data-migration-histories).
+* Updated `[Utilities].[CreateSnapshotFromStaging]` to reconcile snapshot tables with Staging schema changes. See [Create Snapshot from Staging](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-table-snapshot).&#x20;
 
 #### Migrations and data quality
 

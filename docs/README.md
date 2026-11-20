@@ -37,11 +37,11 @@ Improves consistency across states for IDEA data.
 
 {% columns %}
 {% column %}
-#### Generate v14.0
+#### Generate v14.1
 
-Released September 2026.
+Released November 2026.
 
-<a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/release-notes/release-notes-14.0" class="button primary" data-icon="file-lines">Read release notes</a>
+<a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/release-notes/release-notes-14.1" class="button primary" data-icon="file-lines">Read release notes</a>
 
 <a href="https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/user-guide" class="button secondary" data-icon="book">User Guide</a>
 {% endcolumn %}
@@ -51,7 +51,7 @@ Released September 2026.
 
 Find links to Supplemental Release, HotFix, and Metadata files in GitHub.
 
-<a href="https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av14.0" class="button secondary" data-icon="ticket">View release tickets</a>
+<a href="https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av14.1" class="button secondary" data-icon="ticket">View release tickets</a>
 
 <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/installation/upgrade/generate-file-storage" class="button secondary" data-icon="folder-open">File storage</a>
 {% endcolumn %}
@@ -137,9 +137,9 @@ Find links to Supplemental Release, HotFix, and Metadata files in GitHub.
 ### Coming next
 
 {% hint style="success" %}
-#### November 2026 — Generate v14.1
+#### May 2027 — Generate v14.2
 
-**Includes file updates for Discipline, Exiting, and Staff.**
+**Includes file updates for Child Count.**
 {% endhint %}
 
 ### Explore more of Generate
