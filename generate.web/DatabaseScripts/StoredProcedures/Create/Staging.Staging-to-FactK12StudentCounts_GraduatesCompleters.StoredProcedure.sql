@@ -17,7 +17,7 @@ BEGIN
 
 	IF @DebugMode = 1 AND ISNULL(@StudentIdentifierState, '') = ''
 	BEGIN
-		THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
+		;THROW 50000, 'StudentIdentifierState is required when DebugMode is enabled.', 1;
 	END
 
 	BEGIN TRY
