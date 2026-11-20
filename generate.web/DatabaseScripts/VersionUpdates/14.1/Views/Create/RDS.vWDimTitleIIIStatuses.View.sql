@@ -1,0 +1,67 @@
+CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
+	SELECT
+		  rdt3s.DimTitleIIIStatusId
+		, rsy.SchoolYear
+
+		,rdt3s.TitleIIIImmigrantParticipationStatusCode
+		,CASE rdt3s.TitleIIIImmigrantParticipationStatusCode
+			WHEN 'Yes' then 1
+			WHEN 'No' then 0
+			ELSE -1
+		END	as TitleIIIImmigrantParticipationStatusMap
+
+		, rdt3s.ProgramParticipationTitleIIILiepCode
+		, CASE rdt3s.ProgramParticipationTitleIIILiepCode
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS ProgramParticipationTitleIIILiepMap
+
+		, rdt3s.ProficiencyStatusCode
+		, sssrd3.InputCode AS ProficiencyStatusMap
+
+		, rdt3s.TitleIIIAccountabilityProgressStatusCode
+		, sssrd4.InputCode as TitleIIIAccountabilityProgressStatusMap
+
+		, rdt3s.TitleIIILanguageInstructionProgramTypeCode
+		, sssrd5.InputCode as TitleIIILanguageInstructionProgramTypeMap
+		, rdt3s.EnglishLearnerExitedStatusCode
+		, CASE rdt3s.EnglishLearnerExitedStatusCode
+			WHEN 'Yes' THEN 1
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS EnglishLearnerExitedStatusMap
+  	FROM rds.DimTitleIIIStatuses rdt3s
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
+	--ProficiencyStatusCode
+	LEFT JOIN staging.SourceSystemReferenceData sssrd1
+		ON rdt3s.ProficiencyStatusCode = sssrd1.OutputCode
+		AND sssrd1.TableName = 'RefTitleIIIProfessionalDevelopmentType'
+		AND rsy.SchoolYear = sssrd1.SchoolYear
+		
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd2
+		ON rdt3s.TitleIIIAccountabilityProgressStatusCode = sssrd2.OutputCode
+		AND sssrd2.TableName = 'RefTitleIIIAccountability'
+		AND rsy.SchoolYear = sssrd2.SchoolYear
+
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd3
+		ON rdt3s.ProficiencyStatusCode = sssrd3.OutputCode
+		AND sssrd3.TableName = 'RefProficiencyStatus'
+		AND rsy.SchoolYear = sssrd3.SchoolYear
+
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd4
+		ON rdt3s.TitleIIIAccountabilityProgressStatusCode = sssrd4.OutputCode
+		AND sssrd4.TableName = 'RefTitleIIIAccountability'
+		AND rsy.SchoolYear = sssrd4.SchoolYear
+
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd5
+		ON rdt3s.TitleIIILanguageInstructionProgramTypeCode = sssrd5.OutputCode
+		AND sssrd5.TableName = 'RefTitleIIILanguageInstructionProgramType'
+		AND rsy.SchoolYear = sssrd5.SchoolYear
+

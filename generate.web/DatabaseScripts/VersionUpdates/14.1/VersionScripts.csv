@@ -1,0 +1,104 @@
+VersionUpdates\\14.1,Restore 14.0.sql,0
+VersionUpdates\\14.1,copy-out-legacy-data.sql,0
+VersionUpdates\\14.1,App.Metadata.sql,0
+VersionUpdates\\14.1,App.TableChanges.sql,0
+VersionUpdates\\14.1,CEDS.TableChanges.sql,0
+VersionUpdates\\14.1,Staging.TableChanges.sql,0
+VersionUpdates\\14.1,RDS.TableChanges.sql,0
+VersionUpdates\\14.1,Staging.TableChanges.sql,0
+VersionUpdates\\14.1,JunkTablePopulation.sql,0
+VersionUpdates\\14.1,copy-in-legacy-data.sql,0
+VersionUpdates\\14.1\\Views\\Drop,Debug.vwEnglishLearnerAssessment_StagingTables.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,Debug.vwEnglishLearnerAssessment_StagingTables.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,Debug.vwEnglishLearnerAssessment_FactTable.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,Debug.vwEnglishLearnerAssessment_FactTable.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_050.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_050.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_126.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_126.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_137.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_137.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_138.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_138.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwEnglishLearnerAssessment_FactTable_139.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwEnglishLearnerAssessment_FactTable_139.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwDimAssessmentStatuses.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwDimAssessmentStatuses.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,BI.vwStateAssessments.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,BI.vwStateAssessments.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,BI.vwAssessmentsSummaryByRace.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,BI.vwAssessmentsSummaryByRace.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwDimAccessibilityFeatures.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwDimAccessibilityFeatures.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,Debug.vwStudentRaceConflicts.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,Debug.vwStudentRaceConflicts.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,Debug.vwStudentSexConflicts.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,Debug.vwStudentSexConflicts.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,Debug.vwStudentDisabilityConflicts.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,Debug.vwStudentDisabilityConflicts.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,BI.vwSignificantDisproportionality_006.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,BI.vwSignificantDisproportionality_006.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,BI.vwSignificantDisproportionality_143.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,BI.vwSignificantDisproportionality_143.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,BI.vwSignificantDisproportionality_143_StudentDetails.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,BI.vwSignificantDisproportionality_143_StudentDetails.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,BI.vwSignificantDisproportionality_ChildCount.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,BI.vwSignificantDisproportionality_ChildCount.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,BI.vwSignificantDisproportionality_Membership.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,BI.vwSignificantDisproportionality_Membership.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,BI.vwSignificantDisproportionality_Placement.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,BI.vwSignificantDisproportionality_Placement.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwAccessibleEducationMaterialAssignments.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwAccessibleEducationMaterialAssignments.View.sql,0
+VersionUpdates\\14.1\\Views\\Drop,RDS.vwDimFirearmDisciplineStatuses.View.sql,0
+VersionUpdates\\14.1\\Views\\Create,RDS.vwDimFirearmDisciplineStatuses.View.sql,0
+VersionUpdates\\14.1\\Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+VersionUpdates\\14.1\\Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Empty_RDS.StoredProcedure.sql, 0  
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Empty_Reports.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Empty_Reports.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment_EnglishLearnerAssessment.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment_EnglishLearnerAssessment.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChronicAbsenteeism.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_ChronicAbsenteeism.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Dropout.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Dropout.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Exiting.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Exiting.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Homeless.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Homeless.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,App.Wrapper_Migrate_EnglishLearnerAssessment_to_RDS.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,App.Wrapper_Migrate_EnglishLearnerAssessment_to_RDS.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Utilities.RebuildIndexes.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Utilities.RebuildIndexes.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Utilities.Cleanup_DataMigrationHistories.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Utilities.Cleanup_DataMigrationHistories.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
+VersionUpdates\\14.1,UpdateDbVersion.sql,0
