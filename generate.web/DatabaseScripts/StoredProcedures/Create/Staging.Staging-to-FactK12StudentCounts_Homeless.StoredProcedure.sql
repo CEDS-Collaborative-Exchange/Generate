@@ -35,7 +35,8 @@ BEGIN
 		@FactTypeId INT,
 		@SchoolYearId INT,
 		@SYStartDate DATE,
-		@SYEndDate DATE
+		@SYEndDate DATE,
+		@HomelessAgeDate DATE
 		
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
@@ -44,7 +45,17 @@ BEGIN
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
-	-- No longer using #dimPeople temp table - direct join to DimPeople_Current
+		--Get the date to be used for the age calculation
+		SELECT @HomelessAgeDate = tr.ResponseValue
+		FROM App.ToggleQuestions tq
+		JOIN App.ToggleResponses tr
+			ON tq.ToggleQuestionId = tr.ToggleQuestionId
+		WHERE tq.EmapsQuestionAbbrv = 'HOMELESSAGE'
+
+		IF ISNULL(@HomelessAgeDate, '') = ''
+		BEGIN
+			SELECT @HomelessAgeDate = CAST(CAST(@SchoolYear AS CHAR(4)) + '-06-30' AS DATE)
+		END
 
 	--Create the temp views (and any relevant indexes) needed for this domain
 		SELECT *
@@ -212,7 +223,7 @@ BEGIN
 			ON hmStatus.Homelessness_StatusStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--age
 		JOIN RDS.DimAges rda
-			ON RDS.Get_Age(ske.Birthdate, @SYStartDate) = rda.AgeValue
+			ON RDS.Get_Age(ske.Birthdate, @HomelessAgeDate) = rda.AgeValue
 	--demographics			
 		JOIN RDS.vwDimK12Demographics rdkd
  			ON rsy.SchoolYear = rdkd.SchoolYear
