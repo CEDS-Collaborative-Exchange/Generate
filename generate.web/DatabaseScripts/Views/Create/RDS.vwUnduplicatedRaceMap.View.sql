@@ -12,7 +12,7 @@ AS
             , LeaIdentifierSeaAccountability
             , SchoolIdentifierSea
             , CASE
-                WHEN COUNT(InputCode) > 1 OR MAX(sssrd.OutputCode) = 'DemographicRaceTwoOrMoreRaces'
+                WHEN COUNT(DISTINCT InputCode) > 1 OR MAX(sssrd.OutputCode) = 'DemographicRaceTwoOrMoreRaces'
                     -- Either the student has multiple distinct race records, or their single
                     -- record is already self-identified as multi-race (whichever InputCode
                     -- spelling was used) - normalize both to the current canonical InputCode
