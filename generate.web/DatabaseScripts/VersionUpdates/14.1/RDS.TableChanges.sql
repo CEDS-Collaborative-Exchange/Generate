@@ -142,21 +142,6 @@ BEGIN
 	ADD [SchoolIdentifierSat] NVARCHAR (50) NULL;
 END;
 
-IF OBJECT_ID(N'[RDS].[DimK12StaffCategories]', N'U') IS NOT NULL
-BEGIN
-	IF COL_LENGTH(N'[RDS].[DimK12StaffCategories]', N'TitleIIILanguageInstructionIndicatorCode') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[DimK12StaffCategories]
-		DROP COLUMN [TitleIIILanguageInstructionIndicatorCode];
-	END;
-
-	IF COL_LENGTH(N'[RDS].[DimK12StaffCategories]', N'TitleIIILanguageInstructionIndicatorDescription') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[DimK12StaffCategories]
-		DROP COLUMN [TitleIIILanguageInstructionIndicatorDescription];
-	END;
-END;
-
 IF OBJECT_ID(N'[RDS].[DimLeas]', N'U') IS NOT NULL
 BEGIN
 	IF COL_LENGTH(N'[RDS].[DimLeas]', N'NameOfInstitution') IS NOT NULL
