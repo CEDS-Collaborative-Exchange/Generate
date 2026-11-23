@@ -227,6 +227,20 @@ BEGIN
    
 END
 
+IF NOT EXISTS (SELECT 1 FROM App.StagingSchemaChange WHERE NewGenerateVersion = '14.1')
+BEGIN
+    INSERT App.StagingSchemaChange
+        (OldGenerateVersion, NewGenerateVersion, OldTableName, NewTableName, ChangeType, OldColumnName, NewColumnName, NewDataDefinition, IsRequiredForEDFacts)
+    VALUES
+    ('14.0','14.1','ProgramParticipationTitleIII','ProgramParticipationTitleIII','RenameColumn','EnglishLearnerParticipation','TitleIIIEnglishLearnerParticipationStatus',NULL,1),
+    ('14.0','14.1','OrganizationCustomSchoolIndicatorStatusType','OrganizationCustomSchoolIndicatorStatusType','RenameColumn','StatedDefinedIndicatorStatus','StateDefinedIndicatorStatus',NULL,0),
+    ('14.0','14.1','OrganizationCustomSchoolIndicatorStatusType','OrganizationCustomSchoolIndicatorStatusType','RenameColumn','StatedDefinedCustomIndicatorStatusType','StateDefinedCustomIndicatorStatusType',NULL,0),
+    ('14.0','14.1','OrganizationSchoolIndicatorStatus','OrganizationSchoolIndicatorStatus','RenameColumn','StatedDefinedIndicatorStatus','StateDefinedIndicatorStatus',NULL,0),
+    ('14.0','14.1','K12Organization','K12Organization','DropColumn','School_ComprehensiveAndTargetedSupport',NULL,NULL,1),
+    ('14.0','14.1','OrganizationSchoolComprehensiveAndTargetedSupport','OrganizationSchoolComprehensiveAndTargetedSupport','DropTable',NULL,NULL,NULL,1),
+    ('14.0','14.1','K12Organization','K12Organization','AddColumn',NULL,'School_AdditionalTargetedSupport','VARCHAR(100) NULL',1)
+END
+
 ---------------------------------------------
 --Changes for new Fact Types
 ---------------------------------------------
