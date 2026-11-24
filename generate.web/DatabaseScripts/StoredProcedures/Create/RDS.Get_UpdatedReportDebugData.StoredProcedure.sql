@@ -49,7 +49,9 @@ BEGIN
 	END
 
 	
-	SET @WHERE = ' WHERE SchoolYear = ''' + @reportYear + '''';
+	-- @reportYear and @parameters values come from the HTTP request: identifiers are QUOTENAME'd and
+	-- values have single quotes doubled before being concatenated into the dynamic SQL.
+	SET @WHERE = ' WHERE SchoolYear = ''' + REPLACE(@reportYear, '''', '''''') + '''';
 
 
 	-- Cursor over columns
@@ -92,9 +94,9 @@ BEGIN
 
 		IF ISNULL(@ParamName, '') <> ''
 		BEGIN
-			SET @selectSQL += ', ' + @ParamName;
-			SET @groupBySQL += ', ' + @ParamName;
-			SET @WHERE += ' AND ' + @ParamName + ' = ''' + @ParamValue + '''';
+			SET @selectSQL += ', ' + QUOTENAME(@ParamName);
+			SET @groupBySQL += ', ' + QUOTENAME(@ParamName);
+			SET @WHERE += ' AND ' + QUOTENAME(@ParamName) + ' = ''' + REPLACE(@ParamValue, '''', '''''') + '''';
 		END
 
 		FETCH NEXT FROM tblcur INTO @ColumnName;
@@ -105,7 +107,7 @@ BEGIN
 
 	-- Build final SQL
 	SET @sql = @selectSQL 
-			 + ' FROM rds.' + @debugView
+			 + ' FROM rds.' + QUOTENAME(@debugView)
 			 + @WHERE 
 			 + @groupBySQL;
 

@@ -33,15 +33,16 @@ BEGIN
 	end
 
 	--report logic goes here
-	declare @sql varchar(max)
+	-- Request-supplied values are passed to sp_executesql as parameters, never concatenated into the SQL text.
+	declare @sql nvarchar(max)
 
 	set @sql = '
-	SELECT 
+	SELECT
 		  CAST(ROW_NUMBER() OVER(ORDER BY ISNULL(a.OrganizationName, b.OrganizationName) ASC) AS INT) as FactCustomCountId
-		, ''' + @reportCode + ''' as ReportCode
-		, ''' + @reportYear + ''' as ReportYear
-		, ''' + @reportLevel + ''' as ReportLevel
-		, ''' + @categorySetCode + ''' as CategorySetCode
+		, @reportCode as ReportCode
+		, @reportYear as ReportYear
+		, @reportLevel as ReportLevel
+		, @categorySetCode as CategorySetCode
 		, NULL as ReportFilter
 		, ISNULL(a.StateANSICode			, b.StateANSICode			 ) AS StateANSICode			  
 		, ISNULL(a.StateCode				, b.StateCode				 ) AS StateAbbreviationCode				 
@@ -110,13 +111,15 @@ BEGIN
 				THEN '''C002'')'
 			ELSE '''C002'',''C089'')'
 		END + '
-	AND a.ReportYear = ''' + @reportYear + '''
-	AND a.ReportLevel = ''' + @reportLevel + ''' 
-	AND a.CategorySetCode = ''' + @reportCategorySubtotal + '''
+	AND a.ReportYear = @reportYear
+	AND a.ReportLevel = @reportLevel
+	AND a.CategorySetCode = @reportCategorySubtotal
 	ORDER BY a.ReportCode
 	'
 
 --	print (@sql)
-	execute (@sql)
+	execute sp_executesql @sql,
+		N'@reportCode varchar(50), @reportYear varchar(50), @reportLevel varchar(50), @categorySetCode varchar(50), @reportCategorySubtotal varchar(20)',
+		@reportCode = @reportCode, @reportYear = @reportYear, @reportLevel = @reportLevel, @categorySetCode = @categorySetCode, @reportCategorySubtotal = @reportCategorySubtotal
 
 END

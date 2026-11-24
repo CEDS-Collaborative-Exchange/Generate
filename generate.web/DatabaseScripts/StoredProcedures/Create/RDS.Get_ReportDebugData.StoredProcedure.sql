@@ -9,9 +9,12 @@ BEGIN
 
 	SET NOCOUNT ON;
 
+	-- @parameters values come from the HTTP request: identifiers are QUOTENAME'd and values have
+	-- single quotes doubled before being concatenated. @sql/@WHERE are nvarchar(max) so the escaped
+	-- text can never be silently truncated (truncation could split a doubled quote and reopen injection).
 	declare @debugTable varchar(200)
-	declare @sql varchar(500)
-	declare @WHERE varchar(200) = ''
+	declare @sql nvarchar(max)
+	declare @WHERE nvarchar(max) = ''
 	declare @tableTypeAbbrv as varchar(50)
 
 	DECLARE @QueryParam TABLE
@@ -82,11 +85,11 @@ BEGIN
 
 	IF @reportCode in ('175','178','179','185','188','189')
 	BEGIN
-		SET @sql = 'SELECT  + '''  + @tableTypeAbbrv +  ''' as TableTypeAbbrv, * FROM ' + '[debug].[' + @debugTable + ']'
+		SET @sql = 'SELECT  + '''  + REPLACE(@tableTypeAbbrv, '''', '''''') +  ''' as TableTypeAbbrv, * FROM ' + '[debug].' + QUOTENAME(@debugTable)
 	END
 	ELSE
 	BEGIN
-		SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']'
+		SET @sql = 'SELECT * FROM ' + '[debug].' + QUOTENAME(@debugTable)
 	END
 
 	WHILE @@FETCH_STATUS = 0
@@ -98,7 +101,7 @@ BEGIN
 			SET @WHERE += ' AND '
 
 		IF ISNULL(@ParamName, '') <> ''
-			SET @WHERE += @ParamName + ' = ''' + @ParamValue + ''''
+			SET @WHERE += QUOTENAME(@ParamName) + ' = ''' + REPLACE(@ParamValue, '''', '''''') + ''''
 		
 		FETCH NEXT FROM tblcur INTO @ColumnName;
 	END
@@ -124,12 +127,12 @@ BEGIN
 			SET @orgName = 'schoolIdentifierSea'
 
 		IF ISNULL(@orgName, '') <> ''
-			SET @WHERE += @orgName + ' = ''' + @orgValue + ''''
+			SET @WHERE += QUOTENAME(@orgName) + ' = ''' + REPLACE(@orgValue, '''', '''''') + ''''
 
 	END
 
-	DECLARE @OrderBy varchar(200)
-	SELECT @OrderBy = ' ORDER BY ' + @SortedColumnName
+	DECLARE @OrderBy nvarchar(max)
+	SELECT @OrderBy = ' ORDER BY ' + QUOTENAME(@SortedColumnName)
 
 	--Select @sql + @WHERE
 	SET @sql = @sql + @WHERE + @OrderBy

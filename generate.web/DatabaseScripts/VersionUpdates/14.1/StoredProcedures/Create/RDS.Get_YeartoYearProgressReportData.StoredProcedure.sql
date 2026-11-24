@@ -163,12 +163,12 @@ BEGIN
 
 		IF @reportLevel = 'lea' and @reportLea <> 'all' and LEN(@reportLea) > 0
 		BEGIN
-			SET @SQL = @SQL + ' and  LeaStateIdentifier = ' + @reportLea
+			SET @SQL = @SQL + ' and  LeaStateIdentifier = @reportLea'
 		END
 
 		IF @reportLevel = 'sch' and @reportSchool <> 'all' and LEN(@reportSchool) > 0
 		BEGIN
-			SET @SQL = @SQL + ' and  SchoolStateIdentifier = ' + @reportSchool
+			SET @SQL = @SQL + ' and  SchoolStateIdentifier = @reportSchool'
 		END
 	
 
@@ -498,9 +498,9 @@ BEGIN
 
 		declare @ParmDefinition as nvarchar(max)
 	    SET @ParmDefinition = N'@reportCode varchar(100), @reportLevel varchar(100), @categorySetCode varchar(100), @reportFilter varchar(100), @reportGrade varchar(50), 
-		@reportYear varchar(50)';  
-		EXECUTE sp_executesql @SQL, @ParmDefinition, @reportCode = @reportCode, @reportLevel = @reportLevel, @categorySetCode = @categorySetCode, @reportFilter = @reportFilter, 
-		@reportGrade = @reportGrade, @reportYear = @reportYear;
+		@reportYear varchar(50), @reportLea varchar(50), @reportSchool varchar(50)';
+		EXECUTE sp_executesql @SQL, @ParmDefinition, @reportCode = @reportCode, @reportLevel = @reportLevel, @categorySetCode = @categorySetCode, @reportFilter = @reportFilter,
+		@reportGrade = @reportGrade, @reportYear = @reportYear, @reportLea = @reportLea, @reportSchool = @reportSchool;
 
 	SET NOCOUNT OFF;
 	

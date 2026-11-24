@@ -103,4 +103,12 @@ VersionUpdates\\14.1\\StoredProcedures\\Drop,Utilities.Cleanup_DataMigrationHist
 VersionUpdates\\14.1\\StoredProcedures\\Create,Utilities.Cleanup_DataMigrationHistories.StoredProcedure.sql,0
 VersionUpdates\\14.1\\StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 VersionUpdates\\14.1\\StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Drop,RDS.Get_UpdatedReportDebugData.StoredProcedure.sql, 0
+VersionUpdates\\14.1\\StoredProcedures\\Create,RDS.Get_UpdatedReportDebugData.StoredProcedure.sql, 0
 VersionUpdates\\14.1,UpdateDbVersion.sql,0
